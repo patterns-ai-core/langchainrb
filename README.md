@@ -1,2 +1,3 @@
-# langchainrb
-Building ML/AI-supercharged applications with Ruby's LangChain
+🦜️🔗 LangChain.rb
+--- 
+⚡ Building applications with LLMs through composability ⚡
