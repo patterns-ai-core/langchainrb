@@ -6,7 +6,7 @@
 
 ![Tests status](https://github.com/andreibondarev/langchainrb/actions/workflows/ci.yml/badge.svg) [![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
 
-Vectorsearch library is an abstraction layer on top of many popular vector search databases. It is a modern ORM that allows developers to easily chunk data, generate embeddings, store, search, query and retrieve data from vector search databases. Vectorsearch offers a straight-forward DSL and abstracts away overly complicated machine learning/data science-specific configurations and concepts
+Langchain.rb is a library that's an abstraction layer on top many emergent AI, ML and other DS tools. The goal is to abstract complexity and difficult concepts to make building AI/ML-supercharged applications approachable for traditional software engineers.
 
 ## Installation
 
