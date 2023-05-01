@@ -33,7 +33,7 @@ List of currently supported vector search databases and features:
 | Milvus   | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
 | Pinecone | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
 
-### Create an instance
+### Using Vector Search Databases
 
 Choose the LLM provider you'll be using (OpenAI or Cohere) and retrieve the API key.
 
@@ -86,6 +86,30 @@ client.similarity_search_by_vector(
 client.ask(
     question:
 )
+```
+
+### Using Standalone LLMs
+
+#### OpenAI
+```ruby
+openai = LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+```
+```ruby
+openai.embed(text: "foo bar")
+```
+```ruby
+openai.complete(prompt: "What is the meaning of life?")
+```
+
+#### Cohere
+```ruby
+cohere = LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
+```
+```ruby
+cohere.embed(text: "foo bar")
+```
+```ruby
+cohere.complete(prompt: "What is the meaning of life?")
 ```
 
 ## Development
