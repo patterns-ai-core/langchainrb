@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "langchain"
+
+# You can add fixtures and/or initialization code here to make experimenting
+# with your gem easier. You can also use a different console, if you like.
+
+# (If you use this, don't forget to add pry to your Gemfile!)
+
+require "dotenv/load"
+require "pry"
+
+weaviate = Vectorsearch::Weaviate.new(
+  url: ENV["WEAVIATE_URL"],
+  api_key: ENV["WEAVIATE_API_KEY"],
+  index_name: "",
+  llm: :openai,
+  llm_api_key: ENV["OPENAI_API_KEY"]
+  # llm: :cohere,
+  # llm_api_key: ENV["COHERE_API_KEY"]
+)
+
+qdrant = Vectorsearch::Qdrant.new(
+  url: ENV["QDRANT_URL"],
+  api_key: ENV["QDRANT_API_KEY"],
+  index_name: "",
+  llm: :cohere,
+  llm_api_key: ENV["COHERE_API_KEY"]
+  # llm: :openai,
+  # llm_api_key: ENV["OPENAI_API_KEY"]
+)
+
+milvus = Vectorsearch::Milvus.new(
+  url: ENV["MILVUS_URL"],
+  index_name: "",
+  llm: :openai,
+  llm_api_key: ENV["OPENAI_API_KEY"]
+)
+
+pinecone = Vectorsearch::Pinecone.new(
+  environment: ENV["PINECONE_ENVIRONMENT"],
+  api_key: ENV["PINECONE_API_KEY"],
+  index_name: "",
+  # llm: :cohere,
+  # llm_api_key: ENV["COHERE_API_KEY"]
+  llm: :openai,
+  llm_api_key: ENV["OPENAI_API_KEY"]
+)
+
+require "irb"
+IRB.start(__FILE__)
