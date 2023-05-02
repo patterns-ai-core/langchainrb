@@ -37,18 +37,6 @@ module Vectorsearch
       :generate_completion,
       :default_dimension
 
-    # def generate_embedding(text:)
-    #   llm_client.embed(text: text)
-    # end
-
-    # def generate_completion(prompt:)
-    #   llm_client.complete(prompt: prompt)
-    # end
-
-    # def default_dimension
-    #   llm_client.default_dimension
-    # end
-
     def generate_prompt(question:, context:)
       "Context:\n" +
       "#{context}\n" +
@@ -61,9 +49,9 @@ module Vectorsearch
     private
 
     def validate_llm!(llm:)
-      # TODO: Fix that this works is string `llm` value is passed in instead of symbol
+      # TODO: Fix so this works when `llm` value is a string instead of a symbol
       unless LLM::Base::LLMS.keys.include?(llm)
-        raise ArgumentError, "LLM must be one of #{LLMS}"
+        raise ArgumentError, "LLM must be one of #{LLM::Base::LLMS.keys}"
       end
     end
   end

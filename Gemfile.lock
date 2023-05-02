@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.1.3)
+    langchainrb (0.1.4)
       cohere-ruby (~> 0.9.1)
       milvus (~> 0.9.0)
       pinecone (~> 0.1.6)
