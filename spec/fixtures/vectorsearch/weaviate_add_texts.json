@@ -1,0 +1,16 @@
+[
+  {
+    "class": "Products",
+    "creationTimeUnix": 1683046771758,
+    "id": "d3092b45-4936-493f-8e85-40059d902f81",
+    "lastUpdateTimeUnix": 1683046771758,
+    "properties": {
+      "content": "Hello world"
+    },
+    "vector": [
+      -0.0018150936,
+      0.0017554426,
+      -0.022715086
+    ]
+  }
+]
