@@ -111,6 +111,8 @@ GEM
     multipart-post (2.3.0)
     nokogiri (1.14.3-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.14.3-x86_64-linux)
+      racc (~> 1.4)
     pinecone (0.1.71)
       dry-struct (~> 1.6.0)
       dry-validation (~> 1.10.0)
@@ -167,6 +169,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-19
+  x86_64-linux
 
 DEPENDENCIES
   dotenv-rails (~> 2.7.6)
