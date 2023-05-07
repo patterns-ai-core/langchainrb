@@ -15,3 +15,11 @@ module LLM
   autoload :Cohere, "llm/cohere"
   autoload :OpenAI, "llm/openai"
 end
+
+module Prompts
+  require_relative "prompts/loading"
+
+  autoload :Base, "prompts/base"
+  autoload :PromptTemplate, "prompts/prompt_template"
+  autoload :FewShotPromptTemplate, "prompts/few_shot_prompt_template"
+end
