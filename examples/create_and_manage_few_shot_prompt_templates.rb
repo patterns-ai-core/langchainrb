@@ -28,6 +28,9 @@ prompt.format(adjective: "good")
 # Input: good
 # Output:
 
+# Save prompt template to JSON file
+Prompt.save(file_path: "spec/fixtures/prompt/few_shot_prompt_template.json")
+
 # Loading a new prompt template using a JSON file
 prompt = Prompt.load_from_path(file_path: "spec/fixtures/prompt/few_shot_prompt_template.json")
 prompt.prefix # "Write antonyms for the following words."
