@@ -140,6 +140,12 @@ prompt.input_variables # ["adjective", "content"]
 prompt.format(adjective: "funny", content: "chickens") # "Tell me a funny joke about chickens."
 ```
 
+Save prompt template to JSON file:
+
+```ruby
+prompt.save(file_path: "spec/fixtures/prompt/prompt_template.json")
+```
+
 Loading a new prompt template using a JSON file:
 
 ```ruby
@@ -178,6 +184,12 @@ prompt.format(adjective: "good")
 #
 # Input: good
 # Output:
+```
+
+Save prompt template to JSON file:
+
+```ruby
+prompt.save(file_path: "spec/fixtures/prompt/few_shot_prompt_template.json")
 ```
 
 Loading a new prompt template using a JSON file:

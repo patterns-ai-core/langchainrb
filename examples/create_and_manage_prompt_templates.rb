@@ -14,7 +14,7 @@ prompt.input_variables # ["adjective", "content"]
 prompt.format(adjective: "funny", content: "chickens") # "Tell me a funny joke about chickens."
 
 # Save prompt template to JSON file
-Prompt.save(file_path: "spec/fixtures/prompt/prompt_template.json")
+prompt.save(file_path: "spec/fixtures/prompt/prompt_template.json")
 
 # Loading a new prompt template using a JSON file
 prompt = Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.json")
