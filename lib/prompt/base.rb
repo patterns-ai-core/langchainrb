@@ -2,7 +2,7 @@
 
 require 'strscan'
 
-module Prompts
+module Prompt
   class Base
     def format(**kwargs)
       raise NotImplementedError
@@ -13,16 +13,22 @@ module Prompts
     end
 
     def to_h
-      {
-        _type: prompt_type,
-        input_variables: @input_variables,
-        template: @template
-      }
+      raise NotImplementedError
     end
 
+    #
+    # Validate the input variables against the template.
+    #
+    # @param template [String] The template to validate against.
+    # @param input_variables [Array<String>] The input variables to validate.
+    #
+    # @raise [ArgumentError] If there are missing or extra variables.
+    #
+    # @return [void]
+    #
     def validate(template:, input_variables:)
       input_variables_set = @input_variables.uniq
-      variables_from_template = Prompts::Base.extract_variables_from_template(template)
+      variables_from_template = Prompt::Base.extract_variables_from_template(template)
 
       missing_variables = variables_from_template - input_variables_set
       extra_variables = input_variables_set - variables_from_template
@@ -31,6 +37,15 @@ module Prompts
       raise ArgumentError, "Extra variables: #{extra_variables}" if extra_variables.any?
     end
 
+    #
+    # Save the object to a file in JSON format.
+    #
+    # @param file_path [String, Pathname] The path to the file to save the object to
+    #
+    # @raise [ArgumentError] If file_path doesn't end with .json
+    #
+    # @return [void]
+    #
     def save(file_path:)
       save_path = file_path.is_a?(String) ? Pathname.new(file_path) : file_path
       directory_path = save_path.dirname
@@ -45,6 +60,17 @@ module Prompts
 
     private
 
+    #
+    # Extracts variables from a template string.
+    #
+    # This method takes a template string and returns an array of input variable names
+    # contained within the template. Input variables are defined as text enclosed in
+    # curly braces (e.g. "{variable_name}").
+    #
+    # @param template [String] The template string to extract variables from.
+    #
+    # @return [Array<String>] An array of input variable names.
+    #
     def self.extract_variables_from_template(template)
       input_variables = []
       scanner = StringScanner.new(template)

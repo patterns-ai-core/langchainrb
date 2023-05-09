@@ -16,10 +16,10 @@ module LLM
   autoload :OpenAI, "llm/openai"
 end
 
-module Prompts
-  require_relative "prompts/loading"
+module Prompt
+  require_relative "prompt/loading"
 
-  autoload :Base, "prompts/base"
-  autoload :PromptTemplate, "prompts/prompt_template"
-  autoload :FewShotPromptTemplate, "prompts/few_shot_prompt_template"
+  autoload :Base, "prompt/base"
+  autoload :PromptTemplate, "prompt/prompt_template"
+  autoload :FewShotPromptTemplate, "prompt/few_shot_prompt_template"
 end

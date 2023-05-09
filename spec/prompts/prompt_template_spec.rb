@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Prompts::PromptTemplate do
+RSpec.describe Prompt::PromptTemplate do
   let!(:prompt_example) do
     <<~PROMPT.chomp
       I want you to act as a naming consultant for new companies.
@@ -15,7 +15,7 @@ RSpec.describe Prompts::PromptTemplate do
           template: prompt_example,
           input_variables: ["product"]
         )
-      ).to be_a(Prompts::PromptTemplate)
+      ).to be_a(Prompt::PromptTemplate)
     end
   end
 
@@ -61,6 +61,17 @@ RSpec.describe Prompts::PromptTemplate do
       prompt = described_class.from_template("Tell me a {adjective} joke about {content}.")
       expect(prompt.input_variables).to eq(["adjective", "content"])
       expect(prompt.format(adjective: "funny", content: "chickens")).to eq("Tell me a funny joke about chickens.")
+    end
+  end
+
+  describe "#to_h" do
+    it "returns Hash representation of prompt template" do
+      prompt = described_class.from_template("Tell me a {adjective} joke about {content}.")
+      expect(prompt.to_h).to eq({
+        _type: "prompt",
+        input_variables: ["adjective", "content"],
+        template: "Tell me a {adjective} joke about {content}."
+      })
     end
   end
 end

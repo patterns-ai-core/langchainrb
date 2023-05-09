@@ -114,6 +114,79 @@ cohere.embed(text: "foo bar")
 cohere.complete(prompt: "What is the meaning of life?")
 ```
 
+### Using Prompts
+
+#### Prompt Templates
+
+Create a prompt with one input variable:
+
+```ruby
+prompt = Prompt::PromptTemplate.new(template: "Tell me a {adjective} joke.", input_variables: ["adjective"])
+prompt.format(adjective: "funny") # "Tell me a funny joke."
+```
+
+Create a prompt with multiple input variables:
+
+```ruby
+prompt = Prompt::PromptTemplate.new(template: "Tell me a {adjective} joke about {content}.", input_variables: ["adjective", "content"])
+prompt.format(adjective: "funny", content: "chickens") # "Tell me a funny joke about chickens."
+```
+
+Creating a PromptTemplate using just a prompt and no input_variables:
+
+```ruby
+prompt = Prompt::PromptTemplate.from_template("Tell me a {adjective} joke about {content}.")
+prompt.input_variables # ["adjective", "content"]
+prompt.format(adjective: "funny", content: "chickens") # "Tell me a funny joke about chickens."
+```
+
+Loading a new prompt template using a JSON file:
+
+```ruby
+prompt = Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.json")
+prompt.input_variables # ["adjective", "content"]
+```
+
+#### Few Shot Prompt Templates
+
+Create a prompt with a few shot examples:
+
+```ruby
+prompt = Prompt::FewShotPromptTemplate.new(
+  prefix: "Write antonyms for the following words.",
+  suffix: "Input: {adjective}\nOutput:",
+  example_prompt: Prompt::PromptTemplate.new(
+    input_variables: ["input", "output"],
+    template: "Input: {input}\nOutput: {output}"
+  ),
+  examples: [
+    { "input": "happy", "output": "sad" },
+    { "input": "tall", "output": "short" }
+  ],
+   input_variables: ["adjective"]
+)
+
+prompt.format(adjective: "good")
+
+# Write antonyms for the following words.
+#
+# Input: happy
+# Output: sad
+#
+# Input: tall
+# Output: short
+#
+# Input: good
+# Output:
+```
+
+Loading a new prompt template using a JSON file:
+
+```ruby
+prompt = Prompt.load_from_path(file_path: "spec/fixtures/prompt/few_shot_prompt_template.json")
+prompt.prefix # "Write antonyms for the following words."
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

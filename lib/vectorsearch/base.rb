@@ -38,12 +38,21 @@ module Vectorsearch
       :default_dimension
 
     def generate_prompt(question:, context:)
-      "Context:\n" +
-      "#{context}\n" +
-      "---\n" +
-      "Question: #{question}\n" +
-      "---\n" +
-      "Answer:"
+      prompt_template = Prompt::FewShotPromptTemplate.new(
+        prefix: "Context:",
+        suffix: "---\nQuestion: {question}\n---\nAnswer:",
+        example_prompt: Prompt::PromptTemplate.new(
+          template: "{context}",
+          input_variables: ["context"]
+        ),
+        examples: [
+          { context: context }
+        ],
+        input_variables: ["question"],
+        example_separator: "\n"
+      )
+
+      prompt_template.format(question: question)
     end
 
     private
