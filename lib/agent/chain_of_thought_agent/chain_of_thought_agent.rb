@@ -41,7 +41,6 @@ module Agent
           max_tokens: 500
         )
 
-        binding.pry
         # Append the response to the prompt
         prompt += response;
     
