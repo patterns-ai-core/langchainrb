@@ -33,15 +33,21 @@ module LLM
     # Generate a completion for a given prompt
     # @param prompt [String] The prompt to generate a completion for
     # @return [String] The completion
-    def complete(prompt:)
-      response = client.completions(
-        parameters: {
-          model: DEFAULTS[:completion_model_name],
-          temperature: DEFAULTS[:temperature],
-          prompt: prompt
-        }
-      )
-      response.dig("choices").first.dig("text")
+    def complete(prompt:, **params)
+      default_params = {
+        model: DEFAULTS[:completion_model_name],
+        temperature: DEFAULTS[:temperature],
+        prompt: prompt
+      }
+
+      if params[:stop_sequences]
+        default_params[:stop] = params.delete(:stop_sequences)
+      end
+
+      default_params.merge!(params)
+
+      response = client.completions(parameters: default_params)
+      response.dig("choices", 0, "text")
     end
 
     alias_method :generate_completion, :complete

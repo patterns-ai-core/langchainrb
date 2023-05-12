@@ -26,7 +26,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 require "langchain"
 ```
 
-List of currently supported vector search databases and features:
+#### Supported vector search databases and features:
 
 | Database | Querying           | Storage | Schema Management | Backups | Rails Integration | ??? |
 | -------- |:------------------:| -------:| -----------------:| -------:| -----------------:| ---:|
@@ -35,7 +35,7 @@ List of currently supported vector search databases and features:
 | Milvus   | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
 | Pinecone | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
 
-### Using Vector Search Databases
+### Using Vector Search Databases 🔍
 
 Choose the LLM provider you'll be using (OpenAI or Cohere) and retrieve the API key.
 
@@ -90,7 +90,7 @@ client.ask(
 )
 ```
 
-### Using Standalone LLMs
+### Using Standalone LLMs 🗣️
 
 #### OpenAI
 ```ruby
@@ -114,7 +114,7 @@ cohere.embed(text: "foo bar")
 cohere.complete(prompt: "What is the meaning of life?")
 ```
 
-### Using Prompts
+### Using Prompts 📋
 
 #### Prompt Templates
 
@@ -199,15 +199,48 @@ prompt = Prompt.load_from_path(file_path: "spec/fixtures/prompt/few_shot_prompt_
 prompt.prefix # "Write antonyms for the following words."
 ```
 
+### Using Agents 🤖
+Agents are semi-autonomous bots that can respond to user questions and use available to them Tools to provide informed replies. They break down problems into series of steps and define Actions (and Action Inputs) along the way that are executed and fed back to them as additional information. Once an Agent decides that it has the Final Answer it responds with it.
+
+#### Chain-of-Thought Agent
+
+```ruby
+agent = Agent::ChainOfThoughtAgent.new(llm: :openai, llm_api_key: ENV["OPENAI_API_KEY"], tools: ['search', 'calculator'])
+
+agent.tools
+# => ["search", "calculator"]
+```
+```ruby
+agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?", logging: true)
+#=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
+```
+
+#### Demo
+![May-12-2023 13-09-13](https://github.com/andreibondarev/langchainrb/assets/541665/6bad4cd9-976c-420f-9cf9-b85bf84f7eaf)
+
+![May-12-2023 13-07-45](https://github.com/andreibondarev/langchainrb/assets/541665/9aacdcc7-4225-4ea0-ab96-7ee48826eb9b)
+
+#### Available Tools 🛠️
+
+| Name     | Description          | Requirements         |
+| -------- | :------------------: | :------------------: |
+| "search" | A wrapper around Google Search | `ENV["SERP_API_KEY"]` (https://serpapi.com/manage-api-key)
+| "calculator" | Useful for getting the result of a math expression | |
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
+## Core Contributors
+[<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://github.com/andreibondarev)
+
 ## Honorary Contributors
 [<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://github.com/andreibondarev)
 [<img style="border-radius:50%" alt="Rafael Figueiredo" src="https://avatars.githubusercontent.com/u/35845775?v=4" width="80" height="80" class="avatar">](https://github.com/rafaelqfigueiredo)
+
+(Criteria of becoming an Honorary Contributor or Core Contributor is pending...)
 
 ## Contributing
 

@@ -11,7 +11,7 @@ module Vectorsearch
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
     def initialize(llm:, llm_api_key:)
-      validate_llm!(llm: llm)
+      LLM::Base.validate_llm!(llm: llm)
 
       @llm = llm
       @llm_api_key = llm_api_key
@@ -53,15 +53,6 @@ module Vectorsearch
       )
 
       prompt_template.format(question: question)
-    end
-
-    private
-
-    def validate_llm!(llm:)
-      # TODO: Fix so this works when `llm` value is a string instead of a symbol
-      unless LLM::Base::LLMS.keys.include?(llm)
-        raise ArgumentError, "LLM must be one of #{LLM::Base::LLMS.keys}"
-      end
     end
   end
 end

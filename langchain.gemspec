@@ -32,10 +32,12 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry-byebug", "~> 3.10.0"
   spec.add_development_dependency "dotenv-rails", "~> 2.7.6"
 
-  spec.add_dependency "cohere-ruby", "~> 0.9.1"
+  spec.add_dependency "cohere-ruby", "~> 0.9.3"
+  spec.add_dependency "eqn", "~> 1.6.5"
   spec.add_dependency "milvus", "~> 0.9.0"
   spec.add_dependency "pinecone", "~> 0.1.6"
   spec.add_dependency "ruby-openai", "~> 4.0.0"
   spec.add_dependency "qdrant-ruby", "~> 0.9.0"
+  spec.add_dependency "google_search_results", "~> 2.0.0"
   spec.add_dependency "weaviate-ruby", "~> 0.8.0"
 end
