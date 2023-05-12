@@ -204,7 +204,6 @@ Agents are semi-autonomous bots that can respond to user questions and use avail
 
 #### Chain-of-Thought Agent
 
-
 ```ruby
 agent = Agent::ChainOfThoughtAgent.new(llm: :openai, llm_api_key: ENV["OPENAI_API_KEY"], tools: ['search', 'calculator'])
 
@@ -212,7 +211,8 @@ agent.tools
 # => ["search", "calculator"]
 ```
 ```ruby
-agent.run(question: "What is the square root of average Fahrenheit temperature in Miami, FL in May?", logging: true)
+agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?", logging: true)
+#=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
 ```
 
 #### Demo
