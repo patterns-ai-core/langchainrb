@@ -13,7 +13,7 @@ module Tool
     # @return [String] Answer
     def self.execute(input:)
       Eqn::Calculator.calc(input)
-    rescue Eqn::ParseError
+    rescue Eqn::ParseError, Eqn::NoVariableValueError
       # Sometimes the input is not a pure math expression, e.g: "12F in Celsius"
       # We can use the google answer box to evaluate this expression
       hash_results = Tool::SerpApi.execute_search(input: input)

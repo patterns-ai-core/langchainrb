@@ -54,16 +54,18 @@ module Agent
         prompt += response;
     
         # Find the requested action in the "Action: search" format
-        action = response.match(/Action: (.*)/).try(:[], -1)
+        action = response.match(/Action: (.*)/)&.send(:[], -1)
         
         if action
           # Find the input to the action in the "Action Input: [action_input]" format
-          action_input = response.match(/Action Input: "?(.*)"?/).try(:[], -1)
+          action_input = response.match(/Action Input: "?(.*)"?/)&.send(:[], -1)
 
           puts("Agent: Using the \"#{action}\" Tool with \"#{action_input}\"") if logging
 
-          # Have the Tool execute with action_input
-          result = Tool::Base::TOOLS[action.strip].constantize.execute(input: action_input)
+          # Retrieve the Tool::[ToolName] class and call `execute`` with action_input as the input
+          result = Tool
+            .const_get(Tool::Base::TOOLS[action.strip])
+            .execute(input: action_input)
 
           # Append the Observation to the prompt
           if prompt.end_with?("Observation:")
@@ -73,7 +75,7 @@ module Agent
           end
         else
           # Return the final answer
-          break response.match(/Final Answer: (.*)/).try(:[], -1)
+          break response.match(/Final Answer: (.*)/)&.send(:[], -1)
         end
       end
     end
@@ -90,7 +92,7 @@ module Agent
         question: question,
         tool_names: "[#{tools.join(", ")}]",
         tools: tools.map do |tool|
-          "#{tool}: #{Tool::Base::TOOLS[tool].constantize.const_get("DESCRIPTION")}"
+          "#{tool}: #{Tool.const_get(Tool::Base::TOOLS[tool]).const_get("DESCRIPTION")}"
         end.join("\n")
       )
     end
