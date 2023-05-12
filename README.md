@@ -202,7 +202,7 @@ prompt.prefix # "Write antonyms for the following words."
 ### Using Agents 🤖
 Agents are semi-autonomous bots that can respond to user questions and use available to them Tools to provide informed replies. They break down problems into series of steps and define Actions (and Action Inputs) along the way that are executed and fed back to them as additional information. Once an Agent decides that it has the Final Answer it responds with it.
 
-#### `Agent::ChainOfThoughtAgent`
+#### Chain-of-Thought Agent
 
 
 ```ruby
@@ -222,10 +222,10 @@ agent.run(question: "What is the square root of average Fahrenheit temperature i
 
 #### Available Tools 🛠️
 
-| Name | Description           | 
-| -------- |:------------------:|
-| Search | A wrapper around Google Search |
-| Calculator | Useful for getting the result of a math expression |
+| Name     | Description          | Requirements         |
+| -------- | :------------------: | :------------------: |
+| "search" | A wrapper around Google Search | `ENV["SERP_API_KEY"]` (https://serpapi.com/manage-api-key)
+| "calculator" | Useful for getting the result of a math expression | |
 
 ## Development
 
