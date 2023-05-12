@@ -216,8 +216,9 @@ agent.run(question: "What is the square root of average Fahrenheit temperature i
 ```
 
 #### Demo
+![May-12-2023 13-09-13](https://github.com/andreibondarev/langchainrb/assets/541665/6bad4cd9-976c-420f-9cf9-b85bf84f7eaf)
 
-
+![May-12-2023 13-07-45](https://github.com/andreibondarev/langchainrb/assets/541665/9aacdcc7-4225-4ea0-ab96-7ee48826eb9b)
 
 #### Available Tools
 
