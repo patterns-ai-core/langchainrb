@@ -4,6 +4,12 @@ module Agent
   class ChainOfThoughtAgent < Base
     attr_reader :llm, :llm_api_key, :llm_client, :tools
 
+    # Initializes the Agent
+    # 
+    # @param llm [Symbol] The LLM to use
+    # @param llm_api_key [String] The API key for the LLM
+    # @param tools [Array] The tools to use
+    # @return [ChainOfThoughtAgent] The Agent::ChainOfThoughtAgent instance
     def initialize(llm:, llm_api_key:, tools: [])
       LLM::Base.validate_llm!(llm: llm)
       Tool::Base.validate_tools!(tools: tools)
@@ -16,13 +22,16 @@ module Agent
     end
 
     # Validate tools when they're re-assigned
+    # 
     # @param value [Array] The tools to use
+    # @return [Array] The tools that will be used
     def tools=(value)
       Tool::Base.validate_tools!(tools: value)
       @tools = value
     end
 
     # Run the Agent!
+    # 
     # @param question [String] The question to ask
     # @param logging [Boolean] Whether or not to log the Agent's actions
     # @return [String] The answer to the question
