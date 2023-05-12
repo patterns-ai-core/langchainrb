@@ -1,4 +1,5 @@
 ## [Unreleased]
+## [0.3.0] - 2023-05-12
 
 - Agents
   - Introducing `Agent::ChainOfThoughtAgent`, a semi-autonomous bot that uses Tools to retrieve additional information in order to make best-effort informed replies to user's questions.

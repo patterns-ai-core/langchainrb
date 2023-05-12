@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.2.0)
+    langchainrb (0.3.0)
       cohere-ruby (~> 0.9.3)
       eqn (~> 1.6.5)
       google_search_results (~> 2.0.0)
