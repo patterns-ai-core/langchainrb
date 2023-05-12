@@ -220,7 +220,7 @@ agent.run(question: "What is the square root of average Fahrenheit temperature i
 
 ![May-12-2023 13-07-45](https://github.com/andreibondarev/langchainrb/assets/541665/9aacdcc7-4225-4ea0-ab96-7ee48826eb9b)
 
-#### Available Tools
+#### Available Tools 🛠️
 
 | Name | Description           | 
 | -------- |:------------------:|
