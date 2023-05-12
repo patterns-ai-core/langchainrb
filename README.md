@@ -90,7 +90,7 @@ client.ask(
 )
 ```
 
-### Using Standalone LLMs
+### Using Standalone LLMs 🗣️
 
 #### OpenAI
 ```ruby
