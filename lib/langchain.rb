@@ -33,4 +33,5 @@ module Tool
   autoload :Base, "tool/base"
   autoload :Calculator, "tool/calculator"
   autoload :SerpApi, "tool/serp_api"
+  autoload :Wikipedia, "tool/wikipedia"
 end

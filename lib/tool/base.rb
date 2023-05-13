@@ -11,7 +11,8 @@ module Tool
 
     TOOLS = {
       "calculator" => "Tool::Calculator",
-      "search" => "Tool::SerpApi"
+      "search" => "Tool::SerpApi",
+      "wikipedia" => "Tool::Wikipedia"
     }
 
     # Executes the tool and returns the answer
