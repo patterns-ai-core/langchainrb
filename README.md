@@ -224,8 +224,9 @@ agent.run(question: "How many full soccer fields would be needed to cover the di
 
 | Name     | Description          | Requirements         |
 | -------- | :------------------: | :------------------: |
-| "search" | A wrapper around Google Search | `ENV["SERP_API_KEY"]` (https://serpapi.com/manage-api-key)
 | "calculator" | Useful for getting the result of a math expression | |
+| "search" | A wrapper around Google Search | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key)
+| "wikipedia" | Calls Wikipedia API to retrieve the summary | |
 
 ## Development
 

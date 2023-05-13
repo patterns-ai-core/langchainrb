@@ -40,4 +40,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "qdrant-ruby", "~> 0.9.0"
   spec.add_dependency "google_search_results", "~> 2.0.0"
   spec.add_dependency "weaviate-ruby", "~> 0.8.0"
+  spec.add_dependency "wikipedia-client", "~> 1.17.0"
 end

@@ -4,6 +4,9 @@ require "google_search_results"
 
 module Tool
   class SerpApi < Base
+    # Wrapper around SerpAPI
+    # Set ENV["SERPAPI_API_KEY"] to use it
+
     DESCRIPTION = "A wrapper around Google Search. " +
       "Useful for when you need to answer questions about current events. " +
       "Always one of the first options when you need to find information on internet. " +
@@ -28,7 +31,7 @@ module Tool
     def self.execute_search(input:)
       GoogleSearch.new(
         q: input,
-        serp_api_key: ENV["SERP_API_KEY"]
+        serp_api_key: ENV["SERPAPI_API_KEY"]
       )
       .get_hash
     end
