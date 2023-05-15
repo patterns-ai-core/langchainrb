@@ -35,14 +35,14 @@ RSpec.describe Vectorsearch::Base do
       expect(
         subject.generate_prompt(question: "What is the meaning of life?", context: "41\n42\n43")
       ).to eq <<~PROMPT.chomp
-      Context:
-      41
-      42
-      43
-      ---
-      Question: What is the meaning of life?
-      ---
-      Answer:
+        Context:
+        41
+        42
+        43
+        ---
+        Question: What is the meaning of life?
+        ---
+        Answer:
       PROMPT
     end
   end

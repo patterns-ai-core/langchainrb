@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'strscan'
+require "strscan"
 
 module Prompt
   class Base
@@ -52,13 +52,11 @@ module Prompt
       FileUtils.mkdir_p(directory_path) unless directory_path.directory?
 
       if save_path.extname == ".json"
-        File.open(file_path, "w") { |f| f.write(to_h.to_json) }
+        File.write(file_path, to_h.to_json)
       else
         raise ArgumentError, "#{file_path} must be json"
       end
     end
-
-    private
 
     #
     # Extracts variables from a template string.

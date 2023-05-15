@@ -30,19 +30,18 @@ RSpec.describe Vectorsearch::Weaviate do
       allow_any_instance_of(
         Weaviate::Objects
       ).to receive(:batch_create)
-      .with(
-        objects: [{
-          class: "products",
-          properties: { content: "Hello World" }
-        }]
-      )
-      .and_return(fixture)
+        .with(
+          objects: [{
+            class: "products",
+            properties: {content: "Hello World"}
+          }]
+        )
+        .and_return(fixture)
     end
 
     it "adds texts" do
       expect(subject.add_texts(texts: ["Hello World"])).to eq(fixture)
     end
-
   end
 
   describe "#similarity_search" do
@@ -52,13 +51,13 @@ RSpec.describe Vectorsearch::Weaviate do
       allow_any_instance_of(
         Weaviate::Query
       ).to receive(:get)
-      .with(
-        class_name: "products",
-        near_text: "{ concepts: [\"earth\"] }",
-        limit: "4",
-        fields: "content _additional { id }"
-      )
-      .and_return(fixture)
+        .with(
+          class_name: "products",
+          near_text: "{ concepts: [\"earth\"] }",
+          limit: "4",
+          fields: "content _additional { id }"
+        )
+        .and_return(fixture)
     end
 
     it "searches for similar texts" do
@@ -73,13 +72,13 @@ RSpec.describe Vectorsearch::Weaviate do
       allow_any_instance_of(
         Weaviate::Query
       ).to receive(:get)
-      .with(
-        class_name: "products",
-        near_vector: "{ vector: [0.1, 0.2, 0.3] }",
-        limit: "4",
-        fields: "content _additional { id }"
-      )
-      .and_return(fixture)
+        .with(
+          class_name: "products",
+          near_vector: "{ vector: [0.1, 0.2, 0.3] }",
+          limit: "4",
+          fields: "content _additional { id }"
+        )
+        .and_return(fixture)
     end
 
     it "searches for similar vectors" do

@@ -37,7 +37,7 @@ module Vectorsearch
       objects = texts.map do |text|
         {
           class: index_name,
-          properties: { content: text }
+          properties: {content: text}
         }
       end
 
@@ -50,7 +50,7 @@ module Vectorsearch
     def create_default_schema
       client.schema.create(
         class_name: index_name,
-        vectorizer: "text2vec-#{llm.to_s}",
+        vectorizer: "text2vec-#{llm}",
         # TODO: Figure out a way to optionally enable it
         # "module_config": {
         #   "qna-openai": {}

@@ -4,7 +4,6 @@ require "cohere"
 
 module LLM
   class Cohere < Base
-
     DEFAULTS = {
       temperature: 0.0,
       completion_model_name: "base",
@@ -22,7 +21,7 @@ module LLM
     def embed(text:)
       response = client.embed(
         texts: [text],
-        model: DEFAULTS[:embeddings_model_name],
+        model: DEFAULTS[:embeddings_model_name]
       )
       response.dig("embeddings").first
     end

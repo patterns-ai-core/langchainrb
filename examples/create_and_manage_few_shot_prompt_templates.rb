@@ -9,10 +9,10 @@ prompt = Prompt::FewShotPromptTemplate.new(
     template: "Input: {input}\nOutput: {output}"
   ),
   examples: [
-    { "input": "happy", "output": "sad" },
-    { "input": "tall", "output": "short" }
+    {input: "happy", output: "sad"},
+    {input: "tall", output: "short"}
   ],
-   input_variables: ["adjective"]
+  input_variables: ["adjective"]
 )
 
 prompt.format(adjective: "good")

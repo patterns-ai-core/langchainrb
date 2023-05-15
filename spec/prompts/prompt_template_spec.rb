@@ -28,8 +28,8 @@ RSpec.describe Prompt::PromptTemplate do
 
       expect(prompt.format(product: "colorful socks")).to eq(
         <<~PROMPT.chomp
-        I want you to act as a naming consultant for new companies.
-        What is a good name for a company that makes colorful socks?
+          I want you to act as a naming consultant for new companies.
+          What is a good name for a company that makes colorful socks?
         PROMPT
       )
 

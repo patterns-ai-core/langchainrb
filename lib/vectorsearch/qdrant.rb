@@ -32,12 +32,12 @@ module Vectorsearch
     def add_texts(
       texts:
     )
-      batch = { ids: [], vectors: [], payloads: [] }
+      batch = {ids: [], vectors: [], payloads: []}
 
       texts.each do |text|
         batch[:ids].push(SecureRandom.uuid)
         batch[:vectors].push(generate_embedding(text: text))
-        batch[:payloads].push({ content: text })
+        batch[:payloads].push({content: text})
       end
 
       client.points.upsert(

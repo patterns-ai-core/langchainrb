@@ -18,7 +18,7 @@ module Tool
     # TODO: Glance at all of the fields that langchain Python looks through: https://github.com/hwchase17/langchain/blob/v0.0.166/langchain/utilities/serpapi.py#L128-L156
     # We may need to do the same thing here.
     def self.execute(input:)
-      hash_results = self.execute_search(input: input)
+      hash_results = execute_search(input: input)
 
       hash_results.dig(:answer_box, :answer) ||
         hash_results.dig(:answer_box, :snippet) ||
@@ -33,7 +33,7 @@ module Tool
         q: input,
         serp_api_key: ENV["SERPAPI_API_KEY"]
       )
-      .get_hash
+        .get_hash
     end
   end
 end

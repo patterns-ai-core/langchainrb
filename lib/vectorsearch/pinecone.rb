@@ -18,10 +18,10 @@ module Vectorsearch
       llm_api_key:
     )
       ::Pinecone.configure do |config|
-        config.api_key  = api_key
+        config.api_key = api_key
         config.environment = environment
       end
-    
+
       @client = ::Pinecone::Client.new
       @index_name = index_name
 
@@ -38,7 +38,7 @@ module Vectorsearch
         {
           # TODO: Allows passing in your own IDs
           id: SecureRandom.uuid,
-          metadata: { content: text },
+          metadata: {content: text},
           values: generate_embedding(text: text)
         }
       end

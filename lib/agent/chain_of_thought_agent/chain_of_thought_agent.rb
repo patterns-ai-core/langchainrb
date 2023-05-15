@@ -5,7 +5,7 @@ module Agent
     attr_reader :llm, :llm_api_key, :llm_client, :tools
 
     # Initializes the Agent
-    # 
+    #
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
     # @param tools [Array] The tools to use
@@ -22,7 +22,7 @@ module Agent
     end
 
     # Validate tools when they're re-assigned
-    # 
+    #
     # @param value [Array] The tools to use
     # @return [Array] The tools that will be used
     def tools=(value)
@@ -31,7 +31,7 @@ module Agent
     end
 
     # Run the Agent!
-    # 
+    #
     # @param question [String] The question to ask
     # @param logging [Boolean] Whether or not to log the Agent's actions
     # @return [String] The answer to the question
@@ -51,11 +51,11 @@ module Agent
         )
 
         # Append the response to the prompt
-        prompt += response;
-    
+        prompt += response
+
         # Find the requested action in the "Action: search" format
         action = response.match(/Action: (.*)/)&.send(:[], -1)
-        
+
         if action
           # Find the input to the action in the "Action Input: [action_input]" format
           action_input = response.match(/Action Input: "?(.*)"?/)&.send(:[], -1)
@@ -68,10 +68,10 @@ module Agent
             .execute(input: action_input)
 
           # Append the Observation to the prompt
-          if prompt.end_with?("Observation:")
-            prompt += " #{result}\nThought:"
+          prompt += if prompt.end_with?("Observation:")
+            " #{result}\nThought:"
           else
-            prompt += "\nObservation: #{result}\nThought:"
+            "\nObservation: #{result}\nThought:"
           end
         else
           # Return the final answer
@@ -92,7 +92,7 @@ module Agent
         question: question,
         tool_names: "[#{tools.join(", ")}]",
         tools: tools.map do |tool|
-          "#{tool}: #{Tool.const_get(Tool::Base::TOOLS[tool]).const_get("DESCRIPTION")}"
+          "#{tool}: #{Tool.const_get(Tool::Base::TOOLS[tool]).const_get(:DESCRIPTION)}"
         end.join("\n")
       )
     end

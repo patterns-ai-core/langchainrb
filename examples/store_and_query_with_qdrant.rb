@@ -9,7 +9,6 @@ qdrant = Vectorsearch::Qdrant.new(
   llm_api_key: ENV["COHERE_API_KEY"]
 )
 
-
 # Create the default schema.
 qdrant.create_default_schema
 
