@@ -33,9 +33,8 @@ module Agent
     # Run the Agent!
     # 
     # @param question [String] The question to ask
-    # @param logging [Boolean] Whether or not to log the Agent's actions
     # @return [String] The answer to the question
-    def run(question:, logging: false)
+    def run(question:)
       question = question.strip
       prompt = create_prompt(
         question: question,
@@ -43,7 +42,7 @@ module Agent
       )
 
       loop do
-        puts("Agent: Passing the prompt to the #{llm} LLM") if logging
+        Langchain.logger.info("Agent: Passing the prompt to the #{llm} LLM")
         response = llm_client.generate_completion(
           prompt: prompt,
           stop_sequences: ["Observation:"],
@@ -60,7 +59,7 @@ module Agent
           # Find the input to the action in the "Action Input: [action_input]" format
           action_input = response.match(/Action Input: "?(.*)"?/)&.send(:[], -1)
 
-          puts("Agent: Using the \"#{action}\" Tool with \"#{action_input}\"") if logging
+          Langchain.logger.info("Agent: Using the \"#{action}\" Tool with \"#{action_input}\"")
 
           # Retrieve the Tool::[ToolName] class and call `execute`` with action_input as the input
           result = Tool

@@ -211,7 +211,7 @@ agent.tools
 # => ["search", "calculator"]
 ```
 ```ruby
-agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?", logging: true)
+agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
 #=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
 ```
 
@@ -227,6 +227,16 @@ agent.run(question: "How many full soccer fields would be needed to cover the di
 | "calculator" | Useful for getting the result of a math expression | |
 | "search" | A wrapper around Google Search | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key)
 | "wikipedia" | Calls Wikipedia API to retrieve the summary | |
+
+
+## Logging
+
+LangChain.rb uses standard logging mechanisms and defaults to `:debug` level. Most messages are at info level, but we will add debug or warn statements as needed.
+To show all log messages:
+
+```ruby
+Lanchgain.logger.level = :info
+```
 
 ## Development
 
