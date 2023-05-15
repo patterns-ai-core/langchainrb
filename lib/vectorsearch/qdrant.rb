@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "qdrant"
-
 module Vectorsearch
   class Qdrant < Base
     # Initialize the Qdrant client
@@ -17,6 +15,9 @@ module Vectorsearch
       llm:,
       llm_api_key:
     )
+      depends_on "qdrant"
+      require "qdrant"
+
       @client = ::Qdrant::Client.new(
         url: url,
         api_key: api_key

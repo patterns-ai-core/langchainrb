@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "milvus"
-
 module Vectorsearch
   class Milvus < Base
     def initialize(
@@ -11,6 +9,9 @@ module Vectorsearch
       @client = ::Milvus::Client.new(
         url: url
       )
+      depdends_on "milvus"
+      require "milvus"
+
       @index_name = index_name
 
       super(llm: llm, llm_api_key: llm_api_key)

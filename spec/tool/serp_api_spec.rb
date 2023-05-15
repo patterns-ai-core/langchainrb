@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "google_search_results"
+
 RSpec.describe Tool::SerpApi do
   let(:response) do
     {
@@ -18,13 +20,13 @@ RSpec.describe Tool::SerpApi do
 
   describe "#execute_search" do
     it "returns the raw hash" do
-      expect(described_class.execute_search(input: "how tall is empire state building")).to be_a(Hash)
+      expect(subject.execute_search(input: "how tall is empire state building")).to be_a(Hash)
     end
   end
 
   describe "#execute" do
     it "returns the answer" do
-      expect(described_class.execute(input: "how tall is empire state building")).to eq("1,250′, 1,454′ to tip")
+      expect(subject.execute(input: "how tall is empire state building")).to eq("1,250′, 1,454′ to tip")
     end
   end
 end

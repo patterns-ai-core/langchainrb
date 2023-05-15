@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "weaviate"
-
 module Vectorsearch
   class Weaviate < Base
     # Initialize the Weaviate adapter
@@ -17,6 +15,9 @@ module Vectorsearch
       llm:,
       llm_api_key:
     )
+      depends_on "weaviate-ruby"
+      require "weaviate"
+
       @client = ::Weaviate::Client.new(
         url: url,
         api_key: api_key,

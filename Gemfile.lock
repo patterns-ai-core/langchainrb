@@ -2,14 +2,6 @@ PATH
   remote: .
   specs:
     langchainrb (0.3.2)
-      eqn (~> 1.6.5)
-      google_search_results (~> 2.0.0)
-      milvus (~> 0.9.0)
-      pinecone (~> 0.1.6)
-      qdrant-ruby (~> 0.9.0)
-      ruby-openai (~> 4.0.0)
-      weaviate-ruby (~> 0.8.0)
-      wikipedia-client (~> 1.17.0)
 
 GEM
   remote: https://rubygems.org/
@@ -253,11 +245,19 @@ PLATFORMS
 DEPENDENCIES
   cohere-ruby (~> 0.9.3)
   dotenv-rails (~> 2.7.6)
+  eqn (~> 1.6.5)
+  google_search_results (~> 2.0.0)
   langchainrb!
+  milvus (~> 0.9.0)
+  pinecone (~> 0.1.6)
   pry-byebug (~> 3.10.0)
+  qdrant-ruby (~> 0.9.0)
   rake (~> 13.0)
   rspec (~> 3.0)
+  ruby-openai (~> 4.0.0)
   standardrb
+  weaviate-ruby (~> 0.8.0)
+  wikipedia-client (~> 1.17.0)
 
 BUNDLED WITH
    2.4.0

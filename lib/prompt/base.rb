@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "strscan"
+require "json"
 
 module Prompt
   class Base

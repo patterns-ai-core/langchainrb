@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "weaviate"
+
 RSpec.describe Vectorsearch::Weaviate do
   subject {
     described_class.new(

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pinecone"
-
 module Vectorsearch
   class Pinecone < Base
     # Initialize the Pinecone client
@@ -17,6 +15,9 @@ module Vectorsearch
       llm:,
       llm_api_key:
     )
+      depends_on "pinecone"
+      require "pinecone"
+
       ::Pinecone.configure do |config|
         config.api_key = api_key
         config.environment = environment

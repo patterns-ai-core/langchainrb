@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "wikipedia"
+
 RSpec.describe Tool::Wikipedia do
   describe "#execute" do
     before do

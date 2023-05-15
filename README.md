@@ -39,6 +39,8 @@ require "langchain"
 
 Choose the LLM provider you'll be using (OpenAI or Cohere) and retrieve the API key.
 
+Add `gem "weaviate-ruby", "~> 0.8.0"`  to your Gemfile.
+
 Pick the vector search database you'll be using and instantiate the client:
 ```ruby
 client = Vectorsearch::Weaviate.new(
@@ -49,9 +51,9 @@ client = Vectorsearch::Weaviate.new(
 )
 
 # You can instantiate any other supported vector search database:
-client = Vectorsearch::Milvus.new(...)
-client = Vectorsearch::Qdrant.new(...)
-client = Vectorsearch::Pinecone.new(...)
+client = Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.0"`
+client = Vectorsearch::Qdrant.new(...) # `gem"qdrant-ruby", "~> 0.9.0"`
+client = Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
 ```
 
 ```ruby
@@ -91,6 +93,8 @@ client.ask(
 ```
 
 ### Using Standalone LLMs 🗣️
+
+Add `gem "ruby-openai", "~> 4.0.0"` to your Gemfile.
 
 #### OpenAI
 ```ruby
@@ -205,6 +209,8 @@ prompt.prefix # "Write antonyms for the following words."
 Agents are semi-autonomous bots that can respond to user questions and use available to them Tools to provide informed replies. They break down problems into series of steps and define Actions (and Action Inputs) along the way that are executed and fed back to them as additional information. Once an Agent decides that it has the Final Answer it responds with it.
 
 #### Chain-of-Thought Agent
+
+Add `gem "openai-ruby"`, `gem "eqn"`, and `gem "google_search_results"` to your Gemfile
 
 ```ruby
 agent = Agent::ChainOfThoughtAgent.new(llm: :openai, llm_api_key: ENV["OPENAI_API_KEY"], tools: ['search', 'calculator'])
