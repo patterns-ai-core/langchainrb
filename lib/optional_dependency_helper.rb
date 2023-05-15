@@ -3,6 +3,8 @@
 def require_optional_dependency(name)
   gem name # require the gem
 
+  return unless defined?(Bundler) # If we're in a non-bundler environment, we're no longer able to determine if we'll meet requirements
+
   gem_version = Gem.loaded_specs[name].version
   gem_requirement = Bundler.load.dependencies.find { |g| g.name == name }.requirement
 
