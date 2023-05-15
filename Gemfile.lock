@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     langchainrb (0.3.1)
-      cohere-ruby (~> 0.9.3)
       eqn (~> 1.6.5)
       google_search_results (~> 2.0.0)
       milvus (~> 0.9.0)
@@ -209,6 +208,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  cohere-ruby (~> 0.9.3)
   dotenv-rails (~> 2.7.6)
   langchainrb!
   pry-byebug (~> 3.10.0)
