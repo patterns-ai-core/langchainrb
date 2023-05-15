@@ -4,8 +4,11 @@ require "eqn"
 
 module Tool
   class Calculator < Base
-    DESCRIPTION = "Useful for getting the result of a math expression. " +
-      "The input to this tool should be a valid mathematical expression that could be executed by a simple calculator."
+    description <<~DESC
+      Useful for getting the result of a math expression.
+
+      The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.
+    DESC
 
     # Evaluates a pure math expression or if equation contains non-math characters (e.g.: "12F in Celsius") then
     # it uses the google search calculator to evaluate the expression

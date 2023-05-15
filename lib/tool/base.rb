@@ -15,6 +15,10 @@ module Tool
       "wikipedia" => "Tool::Wikipedia"
     }
 
+    def self.description(value)
+      const_set(:DESCRIPTION, value.tr("\n", " ").strip)
+    end
+
     # Executes the tool and returns the answer
     # @param input [String] input to the tool
     # @return [String] answer

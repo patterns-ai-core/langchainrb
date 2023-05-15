@@ -7,10 +7,14 @@ module Tool
     # Wrapper around SerpAPI
     # Set ENV["SERPAPI_API_KEY"] to use it
 
-    DESCRIPTION = "A wrapper around Google Search. " +
-      "Useful for when you need to answer questions about current events. " +
-      "Always one of the first options when you need to find information on internet. " +
-      "Input should be a search query."
+    description <<~DESC
+      A wrapper around Google Search.
+
+      Useful for when you need to answer questions about current events.
+      Always one of the first options when you need to find information on internet.
+
+      Input should be a search query.
+    DESC
 
     # Executes Google Search and returns hash_results JSON
     # @param input [String] search query

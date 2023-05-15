@@ -6,10 +6,14 @@ module Tool
   class Wikipedia < Base
     # Tool that adds the capability to search using the Wikipedia API
 
-    DESCRIPTION = "A wrapper around Wikipedia. " +
-      "Useful for when you need to answer general questions about " +
-      "people, places, companies, facts, historical events, or other subjects. " +
-      "Input should be a search query."
+    description <<~DESC
+      A wrapper around Wikipedia.
+
+      Useful for when you need to answer general questions about
+      people, places, companies, facts, historical events, or other subjects.
+
+      Input should be a search query.
+    DESC
 
     # Executes Wikipedia API search and returns the answer
     # @param input [String] search query
