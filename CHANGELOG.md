@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.3.2] - 2023-05-15
+- Agents
+  - Fix Chain of Thought prompt loader
+
 ## [0.3.1] - 2023-05-12
 - Tools
   - Introducing `Tool::Wikipedia`, a tool that looks up Wikipedia entries
