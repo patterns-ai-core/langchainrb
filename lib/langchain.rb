@@ -2,6 +2,7 @@
 
 require_relative "./version"
 require_relative "./dependency_helper"
+require_relative "./logging"
 
 module Agent
   autoload :Base, "agent/base"
