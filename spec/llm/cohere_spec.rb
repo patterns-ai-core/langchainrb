@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "cohere"
+
 RSpec.describe LLM::Cohere do
   let(:subject) { described_class.new(api_key: "123") }
 
