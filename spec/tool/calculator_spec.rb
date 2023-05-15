@@ -9,7 +9,7 @@ RSpec.describe Tool::Calculator do
     it "calls Serp API when eqn throws an error" do
       allow(Eqn::Calculator).to receive(:calc).and_raise(Eqn::ParseError)
 
-      expect(Tool::SerpApi).to receive(:execute_search).with(input: "2+2").and_return({ answer_box: { to: 4 } })
+      expect(Tool::SerpApi).to receive(:execute_search).with(input: "2+2").and_return({answer_box: {to: 4}})
 
       described_class.execute(input: "2+2")
     end

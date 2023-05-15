@@ -10,8 +10,8 @@ RSpec.describe Prompt::FewShotPromptTemplate do
         template: "Input: {input}\nOutput: {output}"
       ),
       examples: [
-        { "input": "happy", "output": "sad" },
-        { "input": "tall", "output": "short" }
+        {input: "happy", output: "sad"},
+        {input: "tall", output: "short"}
       ],
       input_variables: ["adjective"]
     )
@@ -22,16 +22,16 @@ RSpec.describe Prompt::FewShotPromptTemplate do
       expect(prompt).to be_a(Prompt::FewShotPromptTemplate)
       expect(prompt.format(adjective: "good")).to eq(
         <<~PROMPT.chomp
-        Write antonyms for the following words.
+          Write antonyms for the following words.
 
-        Input: happy
-        Output: sad
+          Input: happy
+          Output: sad
 
-        Input: tall
-        Output: short
+          Input: tall
+          Output: short
 
-        Input: good
-        Output:
+          Input: good
+          Output:
         PROMPT
       )
     end
@@ -44,13 +44,13 @@ RSpec.describe Prompt::FewShotPromptTemplate do
         input_variables: ["adjective"],
         prefix: "Write antonyms for the following words.",
         example_prompt: {
-          "_type": "prompt",
-          "input_variables": ["input", "output"],
-          "template": "Input: {input}\nOutput: {output}"
+          _type: "prompt",
+          input_variables: ["input", "output"],
+          template: "Input: {input}\nOutput: {output}"
         },
         examples: [
-          { input: "happy", output: "sad"},
-          { input: "tall", output: "short"}
+          {input: "happy", output: "sad"},
+          {input: "tall", output: "short"}
         ],
         suffix: "Input: {adjective}\nOutput:"
       })

@@ -2,7 +2,7 @@
 
 RSpec.describe Tool::SerpApi do
   let(:response) do
-    { 
+    {
       answer_box: {
         type: "organic_result",
         title: "Empire State Building/Height",
@@ -28,5 +28,3 @@ RSpec.describe Tool::SerpApi do
     end
   end
 end
-
-

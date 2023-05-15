@@ -20,8 +20,8 @@ RSpec.describe LLM::OpenAI do
         ]
       })
     end
-  
-    it "returns an embedding"  do
+
+    it "returns an embedding" do
       expect(subject.embed(text: "Hello World")).to eq([-0.007097351, 0.0035200312, -0.0069700438])
     end
   end
@@ -60,5 +60,5 @@ RSpec.describe LLM::OpenAI do
     it "returns the default dimension" do
       expect(subject.default_dimension).to eq(1536)
     end
-  end  
+  end
 end

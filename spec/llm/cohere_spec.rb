@@ -15,8 +15,8 @@ RSpec.describe LLM::Cohere do
         }
       )
     end
-  
-    it "returns an embedding"  do
+
+    it "returns an embedding" do
       expect(subject.embed(text: "Hello World")).to eq([-1.5693359, -0.9458008, 1.9355469])
     end
   end
@@ -33,7 +33,7 @@ RSpec.describe LLM::Cohere do
             }
           ],
           "prompt" => "What is the meaining of life?",
-          "meta" => { "api_version" => { "version" => "1" } }
+          "meta" => {"api_version" => {"version" => "1"}}
         }
       )
     end

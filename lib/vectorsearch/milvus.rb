@@ -6,10 +6,7 @@ module Vectorsearch
   class Milvus < Base
     def initialize(
       url:,
-      api_key: nil,
-      index_name:,
-      llm:,
-      llm_api_key:
+      index_name:, llm:, llm_api_key:, api_key: nil
     )
       @client = ::Milvus::Client.new(
         url: url
@@ -96,7 +93,7 @@ module Vectorsearch
       client.search(
         collection_name: index_name,
         top_k: k.to_s,
-        vectors: [ embedding ],
+        vectors: [embedding],
         dsl_type: 1,
         params: "{\"nprobe\": 10}",
         anns_field: "content",

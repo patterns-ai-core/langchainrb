@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'strscan'
-require 'pathname'
+require "strscan"
+require "pathname"
 
 module Prompt
   TYPE_TO_LOADER = {

@@ -6,7 +6,7 @@ module Vectorsearch
 
     attr_reader :client, :index_name, :llm, :llm_api_key, :llm_client
 
-    DEFAULT_METRIC = "cosine".freeze
+    DEFAULT_METRIC = "cosine"
 
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
@@ -46,7 +46,7 @@ module Vectorsearch
           input_variables: ["context"]
         ),
         examples: [
-          { context: context }
+          {context: context}
         ],
         input_variables: ["question"],
         example_separator: "\n"

@@ -4,7 +4,6 @@ require "openai"
 
 module LLM
   class OpenAI < Base
-
     DEFAULTS = {
       temperature: 0.0,
       completion_model_name: "text-davinci-003",

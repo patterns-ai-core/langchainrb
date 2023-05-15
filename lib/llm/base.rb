@@ -12,14 +12,14 @@ module LLM
     }.freeze
 
     def default_dimension
-      self.class.const_get("DEFAULTS").dig(:dimension)
+      self.class.const_get(:DEFAULTS).dig(:dimension)
     end
 
     # Ensure that the LLM value passed in is supported
     # @param llm [Symbol] The LLM to use
     def self.validate_llm!(llm:)
       # TODO: Fix so this works when `llm` value is a string instead of a symbol
-      unless LLM::Base::LLMS.keys.include?(llm)
+      unless LLM::Base::LLMS.key?(llm)
         raise ArgumentError, "LLM must be one of #{LLM::Base::LLMS.keys}"
       end
     end

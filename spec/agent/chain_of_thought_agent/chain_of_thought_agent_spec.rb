@@ -21,10 +21,9 @@ RSpec.describe Agent::ChainOfThoughtAgent do
     let(:question) { "What is the square root of the average temperature in Miami, Florida in May?" }
 
     let(:original_prompt) {
-      subject.send(:create_prompt, 
+      subject.send(:create_prompt,
         question: question,
-        tools: subject.tools
-      )
+        tools: subject.tools)
     }
     let(:updated_prompt) { original_prompt + llm_first_response + "\nObservation: #{search_tool_response}\nThought:" }
     let(:final_prompt) { updated_prompt + llm_second_response + "\nObservation: #{calculator_tool_response}\nThought:" }
@@ -37,30 +36,30 @@ RSpec.describe Agent::ChainOfThoughtAgent do
 
     before do
       allow_any_instance_of(LLM::OpenAI).to receive(:generate_completion).with(
-          prompt: original_prompt,
-          stop_sequences: ["Observation:"],
-          max_tokens: 500
-        ).and_return(llm_first_response)
+        prompt: original_prompt,
+        stop_sequences: ["Observation:"],
+        max_tokens: 500
+      ).and_return(llm_first_response)
 
       allow(Tool::SerpApi).to receive(:execute).with(
-          input: "average temperature in Miami, FL in May\""
-        ).and_return(search_tool_response)
+        input: "average temperature in Miami, FL in May\""
+      ).and_return(search_tool_response)
 
       allow_any_instance_of(LLM::OpenAI).to receive(:generate_completion).with(
-          prompt: updated_prompt,
-          stop_sequences: ["Observation:"],
-          max_tokens: 500
-        ).and_return(llm_second_response)
+        prompt: updated_prompt,
+        stop_sequences: ["Observation:"],
+        max_tokens: 500
+      ).and_return(llm_second_response)
 
       allow(Tool::Calculator).to receive(:execute).with(
-          input: "sqrt(83+86)/2"
-        ).and_return(calculator_tool_response)
+        input: "sqrt(83+86)/2"
+      ).and_return(calculator_tool_response)
 
       allow_any_instance_of(LLM::OpenAI).to receive(:generate_completion).with(
-          prompt: final_prompt,
-          stop_sequences: ["Observation:"],
-          max_tokens: 500
-        ).and_return(llm_final_response)
+        prompt: final_prompt,
+        stop_sequences: ["Observation:"],
+        max_tokens: 500
+      ).and_return(llm_final_response)
     end
 
     it "runs the agent" do
@@ -77,29 +76,28 @@ RSpec.describe Agent::ChainOfThoughtAgent do
       expect(
         subject.send(:create_prompt,
           question: "What is the meaning of life?",
-          tools: subject.tools
-        )
+          tools: subject.tools)
       ).to eq <<~PROMPT.chomp
-      Today is May 12, 2023 and you can use tools to get new information. Answer the following questions as best you can using the following tools:
-      
-      calculator: Useful for getting the result of a math expression. The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.
-      search: A wrapper around Google Search. Useful for when you need to answer questions about current events. Always one of the first options when you need to find information on internet. Input should be a search query.
-      
-      Use the following format:
-      
-      Question: the input question you must answer
-      Thought: you should always think about what to do
-      Action: the action to take, should be one of [calculator, search]
-      Action Input: the input to the action
-      Observation: the result of the action
-      ... (this Thought/Action/Action Input/Observation can repeat N times)
-      Thought: I now know the final answer
-      Final Answer: the final answer to the original input question
-      
-      Begin!
-      
-      Question: What is the meaning of life?
-      Thought:
+        Today is May 12, 2023 and you can use tools to get new information. Answer the following questions as best you can using the following tools:
+
+        calculator: Useful for getting the result of a math expression.  The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.
+        search: A wrapper around Google Search.  Useful for when you need to answer questions about current events. Always one of the first options when you need to find information on internet.  Input should be a search query.
+
+        Use the following format:
+
+        Question: the input question you must answer
+        Thought: you should always think about what to do
+        Action: the action to take, should be one of [calculator, search]
+        Action Input: the input to the action
+        Observation: the result of the action
+        ... (this Thought/Action/Action Input/Observation can repeat N times)
+        Thought: I now know the final answer
+        Final Answer: the final answer to the original input question
+
+        Begin!
+
+        Question: What is the meaning of life?
+        Thought:
       PROMPT
     end
   end

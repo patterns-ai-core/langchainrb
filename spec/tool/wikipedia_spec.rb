@@ -6,7 +6,7 @@ RSpec.describe Tool::Wikipedia do
       allow(Wikipedia).to receive(:find)
         .with("Ruby")
         .and_return(
-          double(summary: "Ruby is an interpreted, high-level, general-purpose programming language.")  
+          double(summary: "Ruby is an interpreted, high-level, general-purpose programming language.")
         )
     end
 

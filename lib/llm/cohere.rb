@@ -22,7 +22,7 @@ module LLM
     def embed(text:)
       response = client.embed(
         texts: [text],
-        model: DEFAULTS[:embeddings_model_name],
+        model: DEFAULTS[:embeddings_model_name]
       )
       response.dig("embeddings").first
     end
