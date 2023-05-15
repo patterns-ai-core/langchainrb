@@ -10,7 +10,8 @@ module LLM
     }.freeze
 
     def initialize(api_key:)
-      require_optional_dependency "cohere-ruby"
+      depends_on "cohere-ruby"
+      require "cohere"
 
       @client = ::Cohere::Client.new(api_key: api_key)
     end

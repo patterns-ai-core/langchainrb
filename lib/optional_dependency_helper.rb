@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-def require_optional_dependency(name)
+def depends_on(name)
   gem name # require the gem
 
   return unless defined?(Bundler) # If we're in a non-bundler environment, we're no longer able to determine if we'll meet requirements
