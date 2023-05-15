@@ -101,7 +101,7 @@ module Agent
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template
       @template ||= Prompt.load_from_path(
-        file_path: "lib/agent/chain_of_thought_agent/chain_of_thought_agent_prompt.json"
+        file_path: Pathname.new(__dir__).join("chain_of_thought_agent_prompt.json")
       )
     end
   end
