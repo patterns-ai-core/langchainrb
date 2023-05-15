@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-require "cohere"
-
 module LLM
   class Cohere < Base
-
     DEFAULTS = {
       temperature: 0.0,
       completion_model_name: "base",
@@ -13,6 +10,9 @@ module LLM
     }.freeze
 
     def initialize(api_key:)
+      depends_on "cohere-ruby"
+      require "cohere"
+
       @client = ::Cohere::Client.new(api_key: api_key)
     end
 

@@ -104,6 +104,8 @@ openai.complete(prompt: "What is the meaning of life?")
 ```
 
 #### Cohere
+Add `gem "cohere-ruby", "~> 0.9.3"` to your Gemfile.
+
 ```ruby
 cohere = LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
 ```

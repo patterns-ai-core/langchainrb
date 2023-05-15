@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "./version"
+require_relative "./dependency_helper"
 
 module Agent
   autoload :Base, "agent/base"
