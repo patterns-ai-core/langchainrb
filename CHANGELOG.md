@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.3.3] - 2023-05-16
+- Dependencies are now optionally loaded and required at runtime
+- Start using `standardrb` for linting
+- Use the Ruby logger
+
 ## [0.3.2] - 2023-05-15
 - Agents
   - Fix Chain of Thought prompt loader
