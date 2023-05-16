@@ -20,10 +20,20 @@ RSpec.describe Vectorsearch::Base do
       ).to be_a(LLM::OpenAI)
     end
 
-    it "throws an error with currently unsupported llm: :huggingface" do
-      expect {
+    it "correctly with llm: :huggingface" do
+      expect(
         described_class.new(
           llm: :huggingface,
+          llm_api_key: "123"
+        )
+        .llm_client
+      ).to be_a(LLM::HuggingFace)
+    end
+
+    it "throws an error with currently unsupported llm: :anthropic" do
+      expect {
+        described_class.new(
+          llm: :anthropic,
           llm_api_key: "123"
         )
       }.to raise_error(ArgumentError)

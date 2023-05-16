@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.3.5] - 2023-05-16
+- Bug fixes
+
 ## [0.3.4] - 2023-05-16
 - LLMs
   - Introducing support for HuggingFace

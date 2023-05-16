@@ -8,7 +8,8 @@ module LLM
     # TODO: Add support for HuggingFace and other LLMs
     LLMS = {
       openai: "OpenAI",
-      cohere: "Cohere"
+      cohere: "Cohere",
+      huggingface: "HuggingFace"
     }.freeze
 
     def default_dimension
