@@ -243,7 +243,7 @@ LangChain.rb uses standard logging mechanisms and defaults to `:debug` level. Mo
 To show all log messages:
 
 ```ruby
-Lanchgain.logger.level = :info
+Langchain.logger.level = :info
 ```
 
 ## Development
