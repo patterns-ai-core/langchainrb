@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.3.4] - 2023-05-16
+- LLMs
+  - Introducing support for HuggingFace
+
 ## [0.3.3] - 2023-05-16
 - Dependencies are now optionally loaded and required at runtime
 - Start using `standardrb` for linting
