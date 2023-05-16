@@ -16,4 +16,10 @@ RSpec.describe LLM::HuggingFace do
       expect(subject.embed(text: "Hello World")).to eq([-1.5693359, -0.9458008, 1.9355469])
     end
   end
+
+  describe "#default_dimension" do
+    it "returns the default dimension" do
+      expect(subject.default_dimension).to eq(384)
+    end
+  end
 end
