@@ -8,13 +8,7 @@ module Vectorsearch
     # @param index_name [String] The name of the index to use
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
-    def initialize(
-      url:,
-      api_key:,
-      index_name:,
-      llm:,
-      llm_api_key:
-    )
+    def initialize(url:, api_key:, index_name:, llm:, llm_api_key:)
       depends_on "weaviate-ruby"
       require "weaviate"
 
@@ -32,9 +26,7 @@ module Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
-    def add_texts(
-      texts:
-    )
+    def add_texts(texts:)
       objects = texts.map do |text|
         {
           class: index_name,
@@ -70,10 +62,7 @@ module Vectorsearch
     # @param query [String] The query to search for
     # @param k [Integer|String] The number of results to return
     # @return [Hash] The search results
-    def similarity_search(
-      query:,
-      k: 4
-    )
+    def similarity_search(query:, k: 4)
       near_text = "{ concepts: [\"#{query}\"] }"
 
       client.query.get(
@@ -88,10 +77,7 @@ module Vectorsearch
     # @param embedding [Array] The vector to search for
     # @param k [Integer|String] The number of results to return
     # @return [Hash] The search results
-    def similarity_search_by_vector(
-      embedding:,
-      k: 4
-    )
+    def similarity_search_by_vector(embedding:, k: 4)
       near_vector = "{ vector: #{embedding} }"
 
       client.query.get(
@@ -105,9 +91,7 @@ module Vectorsearch
     # Ask a question and return the answer
     # @param question [String] The question to ask
     # @return [Hash] The answer
-    def ask(
-      question:
-    )
+    def ask(question:)
       # Weaviate currently supports the `ask:` parameter only for the OpenAI LLM (with `qna-openai` module enabled).
       # The Cohere support is on the way: https://github.com/weaviate/weaviate/pull/2600
       if llm == :openai

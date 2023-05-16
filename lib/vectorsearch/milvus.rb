@@ -2,24 +2,17 @@
 
 module Vectorsearch
   class Milvus < Base
-    def initialize(
-      url:,
-      index_name:, llm:, llm_api_key:, api_key: nil
-    )
-      @client = ::Milvus::Client.new(
-        url: url
-      )
+    def initialize(url:, index_name:, llm:, llm_api_key:, api_key: nil)
       depdends_on "milvus"
       require "milvus"
 
+      @client = ::Milvus::Client.new(url: url)
       @index_name = index_name
 
       super(llm: llm, llm_api_key: llm_api_key)
     end
 
-    def add_texts(
-      texts:
-    )
+    def add_texts(texts:)
       client.entities.insert(
         collection_name: index_name,
         num_rows: texts.count,
@@ -75,10 +68,7 @@ module Vectorsearch
       )
     end
 
-    def similarity_search(
-      query:,
-      k: 4
-    )
+    def similarity_search(query:, k: 4)
       embedding = generate_embedding(text: query)
 
       similarity_search_by_vector(
@@ -87,10 +77,7 @@ module Vectorsearch
       )
     end
 
-    def similarity_search_by_vector(
-      embedding:,
-      k: 4
-    )
+    def similarity_search_by_vector(embedding:, k: 4)
       client.search(
         collection_name: index_name,
         top_k: k.to_s,

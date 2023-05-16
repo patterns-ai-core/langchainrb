@@ -8,13 +8,7 @@ module Vectorsearch
     # @param index_name [String] The name of the index to use
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
-    def initialize(
-      url:,
-      api_key:,
-      index_name:,
-      llm:,
-      llm_api_key:
-    )
+    def initialize(url:, api_key:, index_name:, llm:, llm_api_key:)
       depends_on "qdrant"
       require "qdrant"
 
@@ -30,9 +24,7 @@ module Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
-    def add_texts(
-      texts:
-    )
+    def add_texts(texts:)
       batch = {ids: [], vectors: [], payloads: []}
 
       texts.each do |text|

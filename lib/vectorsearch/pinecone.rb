@@ -8,13 +8,7 @@ module Vectorsearch
     # @param index_name [String] The name of the index to use
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
-    def initialize(
-      environment:,
-      api_key:,
-      index_name:,
-      llm:,
-      llm_api_key:
-    )
+    def initialize(environment:, api_key:, index_name:, llm:, llm_api_key:)
       depends_on "pinecone"
       require "pinecone"
 
@@ -32,9 +26,7 @@ module Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
-    def add_texts(
-      texts:
-    )
+    def add_texts(texts:)
       vectors = texts.map do |text|
         {
           # TODO: Allows passing in your own IDs
@@ -79,10 +71,7 @@ module Vectorsearch
     # @param embedding [Array] The embedding to search for
     # @param k [Integer] The number of results to return
     # @return [Array] The list of results
-    def similarity_search_by_vector(
-      embedding:,
-      k: 4
-    )
+    def similarity_search_by_vector(embedding:, k: 4)
       index = client.index(index_name)
 
       response = index.query(
