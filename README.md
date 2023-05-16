@@ -1,5 +1,5 @@
 🦜️🔗 LangChain.rb
---- 
+---
 ⚡ Building applications with LLMs through composability ⚡
 
 👨‍💻👩‍💻 CURRENTLY SEEKING PEOPLE TO FORM THE CORE GROUP OF MAINTAINERS WITH

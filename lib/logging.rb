@@ -4,7 +4,7 @@ require "logger"
 
 module Langchain
   def self.logger
-    @@logger ||= Logger.new(STDOUT, level: :warn, formatter: -> (severity, datetime, progname, msg) { "[LangChain.rb] #{msg}\n" })
+    @@logger ||= Logger.new($stdout, level: :warn, formatter: ->(severity, datetime, progname, msg) { "[LangChain.rb] #{msg}\n" })
   end
 
   def self.logger=(instance)
