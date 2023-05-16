@@ -1,5 +1,5 @@
 🦜️🔗 LangChain.rb
---- 
+---
 ⚡ Building applications with LLMs through composability ⚡
 
 👨‍💻👩‍💻 CURRENTLY SEEKING PEOPLE TO FORM THE CORE GROUP OF MAINTAINERS WITH
@@ -39,6 +39,8 @@ require "langchain"
 
 Choose the LLM provider you'll be using (OpenAI or Cohere) and retrieve the API key.
 
+Add `gem "weaviate-ruby", "~> 0.8.0"`  to your Gemfile.
+
 Pick the vector search database you'll be using and instantiate the client:
 ```ruby
 client = Vectorsearch::Weaviate.new(
@@ -49,9 +51,9 @@ client = Vectorsearch::Weaviate.new(
 )
 
 # You can instantiate any other supported vector search database:
-client = Vectorsearch::Milvus.new(...)
-client = Vectorsearch::Qdrant.new(...)
-client = Vectorsearch::Pinecone.new(...)
+client = Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.0"`
+client = Vectorsearch::Qdrant.new(...) # `gem"qdrant-ruby", "~> 0.9.0"`
+client = Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
 ```
 
 ```ruby
@@ -91,6 +93,8 @@ client.ask(
 ```
 
 ### Using Standalone LLMs 🗣️
+
+Add `gem "ruby-openai", "~> 4.0.0"` to your Gemfile.
 
 #### OpenAI
 ```ruby
@@ -206,6 +210,8 @@ Agents are semi-autonomous bots that can respond to user questions and use avail
 
 #### Chain-of-Thought Agent
 
+Add `gem "openai-ruby"`, `gem "eqn"`, and `gem "google_search_results"` to your Gemfile
+
 ```ruby
 agent = Agent::ChainOfThoughtAgent.new(llm: :openai, llm_api_key: ENV["OPENAI_API_KEY"], tools: ['search', 'calculator'])
 
@@ -237,7 +243,7 @@ LangChain.rb uses standard logging mechanisms and defaults to `:debug` level. Mo
 To show all log messages:
 
 ```ruby
-Lanchgain.logger.level = :info
+Langchain.logger.level = :info
 ```
 
 ## Development

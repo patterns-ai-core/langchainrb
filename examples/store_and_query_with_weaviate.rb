@@ -1,5 +1,8 @@
 require "langchain"
 
+# gem install weaviate-ruby
+# or add `gem "weaviate-ruby"` to your Gemfile
+
 # Instantiate the Weaviate client
 weaviate = Vectorsearch::Weaviate.new(
   url: ENV["WEAVIATE_URL"],

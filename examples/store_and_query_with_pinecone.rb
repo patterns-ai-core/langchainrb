@@ -1,5 +1,8 @@
 require "langchain"
 
+# gem install pinecone
+# or add `gem "pinecone"` to your Gemfile
+
 # Instantiate the Qdrant client
 pinecone = Vectorsearch::Pinecone.new(
   environment: ENV["PINECONE_ENVIRONMENT"],

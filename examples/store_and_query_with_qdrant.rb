@@ -1,5 +1,8 @@
 require "langchain"
 
+# gem install qdrant-ruby
+# or add `gem "qdrant-ruby"` to your Gemfile
+
 # Instantiate the Qdrant client
 qdrant = Vectorsearch::Qdrant.new(
   url: ENV["QDRANT_URL"],

@@ -19,11 +19,18 @@ module Tool
       const_set(:DESCRIPTION, value.tr("\n", " ").strip)
     end
 
-    # Executes the tool and returns the answer
+    # Instantiates and executes the tool and returns the answer
     # @param input [String] input to the tool
     # @return [String] answer
     def self.execute(input:)
-      raise NotImplementedError, "Your tool must implement the `self.execute(input:)` method that returns a string"
+      new.execute(input: input)
+    end
+
+    # Executes the tool and returns the answer
+    # @param input [String] input to the tool
+    # @return [String] answer
+    def execute(input:)
+      raise NotImplementedError, "Your tool must implement the `#execute(input:)` method that returns a string"
     end
 
     #

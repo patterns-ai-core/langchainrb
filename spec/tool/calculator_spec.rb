@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
+require "eqn"
+
 RSpec.describe Tool::Calculator do
   describe "#execute" do
     it "calculates the result" do
-      expect(described_class.execute(input: "2+2")).to eq(4)
+      expect(subject.execute(input: "2+2")).to eq(4)
     end
 
     it "calls Serp API when eqn throws an error" do
@@ -11,7 +13,7 @@ RSpec.describe Tool::Calculator do
 
       expect(Tool::SerpApi).to receive(:execute_search).with(input: "2+2").and_return({answer_box: {to: 4}})
 
-      described_class.execute(input: "2+2")
+      subject.execute(input: "2+2")
     end
   end
 end

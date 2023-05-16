@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "openai"
-
 module LLM
   class OpenAI < Base
     DEFAULTS = {
@@ -12,6 +10,9 @@ module LLM
     }.freeze
 
     def initialize(api_key:)
+      depends_on "ruby-openai"
+      require "openai"
+
       # TODO: Add support to pass `organization_id:`
       @client = ::OpenAI::Client.new(access_token: api_key)
     end

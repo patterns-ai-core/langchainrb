@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "eqn"
-
 module Tool
   class Calculator < Base
     description <<~DESC
@@ -10,11 +8,16 @@ module Tool
       The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.
     DESC
 
+    def initialize
+      depends_on "eqn"
+      require "eqn"
+    end
+
     # Evaluates a pure math expression or if equation contains non-math characters (e.g.: "12F in Celsius") then
     # it uses the google search calculator to evaluate the expression
     # @param input [String] math expression
     # @return [String] Answer
-    def self.execute(input:)
+    def execute(input:)
       Eqn::Calculator.calc(input)
     rescue Eqn::ParseError, Eqn::NoVariableValueError
       # Sometimes the input is not a pure math expression, e.g: "12F in Celsius"
