@@ -120,6 +120,9 @@ cohere.embed(text: "foo bar")
 cohere.complete(prompt: "What is the meaning of life?")
 ```
 
+#### HuggingFace
+Add `gem "hugging-face", "~> 0.3.2"` to your Gemfile.
+
 ### Using Prompts 📋
 
 #### Prompt Templates

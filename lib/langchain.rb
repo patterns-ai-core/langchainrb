@@ -20,6 +20,7 @@ end
 module LLM
   autoload :Base, "llm/base"
   autoload :Cohere, "llm/cohere"
+  autoload :HuggingFace, "llm/hugging_face"
   autoload :OpenAI, "llm/openai"
 end
 

@@ -3,7 +3,7 @@
 module Vectorsearch
   class Milvus < Base
     def initialize(url:, index_name:, llm:, llm_api_key:, api_key: nil)
-      depdends_on "milvus"
+      depends_on "milvus"
       require "milvus"
 
       @client = ::Milvus::Client.new(url: url)

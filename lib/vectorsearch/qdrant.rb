@@ -9,7 +9,7 @@ module Vectorsearch
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
     def initialize(url:, api_key:, index_name:, llm:, llm_api_key:)
-      depends_on "qdrant"
+      depends_on "qdrant-ruby"
       require "qdrant"
 
       @client = ::Qdrant::Client.new(
