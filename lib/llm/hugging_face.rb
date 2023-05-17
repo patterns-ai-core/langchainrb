@@ -25,7 +25,7 @@ module LLM
     # @param text [String] The text to embed
     # @return [Array] The embedding
     def embed(text:)
-      response = client.embedding(
+      client.embedding(
         input: text
       )
     end
