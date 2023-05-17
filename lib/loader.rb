@@ -16,13 +16,10 @@ module Loader
 
     def first_loadable_loader(path)
       @loaders
-        .lazy
-        .map do |loader_klass|
+        .each do |loader_klass|
           loader_instance = loader_klass.new(path)
-          next(loader_instance) if loader_instance.loadable?
+          return(loader_instance) if loader_instance.loadable?
         end
-        .compact
-        .first
     end
   end
 end
