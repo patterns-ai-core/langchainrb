@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.3.5)
+    langchainrb (0.3.6)
 
 GEM
   remote: https://rubygems.org/
@@ -120,7 +120,7 @@ GEM
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    hugging-face (0.3.2)
+    hugging-face (0.3.3)
       faraday (~> 1.0)
     i18n (1.13.0)
       concurrent-ruby (~> 1.0)
@@ -260,7 +260,7 @@ DEPENDENCIES
   dotenv-rails (~> 2.7.6)
   eqn (~> 1.6.5)
   google_search_results (~> 2.0.0)
-  hugging-face (~> 0.3.2)
+  hugging-face (~> 0.3.3)
   langchainrb!
   milvus (~> 0.9.0)
   pdf-reader (~> 1.4)
