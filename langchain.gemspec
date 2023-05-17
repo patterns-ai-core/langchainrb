@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "cohere-ruby", "~> 0.9.3"
   spec.add_development_dependency "eqn", "~> 1.6.5"
   spec.add_development_dependency "google_search_results", "~> 2.0.0"
-  spec.add_development_dependency "hugging-face", "~> 0.3.2"
+  spec.add_development_dependency "hugging-face", "~> 0.3.3"
   spec.add_development_dependency "milvus", "~> 0.9.0"
   spec.add_development_dependency "pinecone", "~> 0.1.6"
   spec.add_development_dependency "qdrant-ruby", "~> 0.9.0"

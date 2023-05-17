@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.3.6] - 2023-05-17
+- LLMs
+  - Bump `hugging-face` gem version
+
 ## [0.3.5] - 2023-05-16
 - Bug fixes
 

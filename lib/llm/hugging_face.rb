@@ -26,7 +26,8 @@ module LLM
     # @return [Array] The embedding
     def embed(text:)
       response = client.embedding(
-        input: text
+        input: text,
+        model: DEFAULTS[:embeddings_model_name]
       )
     end
   end
