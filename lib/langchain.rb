@@ -3,6 +3,7 @@
 require_relative "./version"
 require_relative "./dependency_helper"
 require_relative "./logging"
+require_relative "./root"
 
 module Agent
   autoload :Base, "agent/base"
@@ -38,3 +39,11 @@ module Tool
   autoload :SerpApi, "tool/serp_api"
   autoload :Wikipedia, "tool/wikipedia"
 end
+
+module Loaders
+  autoload :Base, "loaders/base"
+  autoload :PDF, "loaders/pdf"
+  autoload :Text, "loaders/text"
+end
+
+autoload :Loader, "loader"
