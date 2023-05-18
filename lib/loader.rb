@@ -8,8 +8,9 @@ module Loader
       @loaders = Array(loaders)
     end
 
-    def load(paths)
-      paths
+    def load(*paths)
+      Array(paths)
+        .flatten
         .map { |path| first_loadable_loader(path)&.load }
         .compact
     end

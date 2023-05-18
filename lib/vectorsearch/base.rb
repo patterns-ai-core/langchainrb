@@ -19,6 +19,8 @@ module Vectorsearch
       @llm_api_key = llm_api_key
 
       @llm_client = LLM.const_get(LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
+
+      @loaders = Langchain.default_loaders
     end
 
     def create_default_schema
@@ -55,6 +57,24 @@ module Vectorsearch
       )
 
       prompt_template.format(question: question)
+    end
+
+    def add_data(path: nil, paths: nil)
+      raise ArgumentError, "Either path or paths must be provided" if path.nil? && paths.nil?
+      raise ArgumentError, "Either path or paths must be provided, not both" if !path.nil? && !paths.nil?
+
+      texts =
+        Loader
+          .with(*loaders)
+          .load(path || paths)
+
+      add_texts(texts: texts)
+    end
+
+    attr_reader :loaders
+
+    def add_loader(*loaders)
+      loaders.each { |loader| @loaders << loader }
     end
   end
 end
