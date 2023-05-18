@@ -96,7 +96,7 @@ module Vectorsearch
 
       prompt = generate_prompt(question: question, context: context)
 
-      generate_completion(prompt: prompt)
+      llm_client.chat(prompt: prompt)
     end
   end
 end

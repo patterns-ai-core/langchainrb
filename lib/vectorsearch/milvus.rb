@@ -88,9 +88,5 @@ module Vectorsearch
         metric_type: "L2"
       )
     end
-
-    def ask(question:)
-      raise NotImplementedError
-    end
   end
 end
