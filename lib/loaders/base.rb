@@ -11,7 +11,7 @@ module Loaders
     end
 
     def loadable?
-      raise "Not implemented"
+      raise NotImplementedError
     end
   end
 end
