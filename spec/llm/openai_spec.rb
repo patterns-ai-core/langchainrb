@@ -61,4 +61,36 @@ RSpec.describe LLM::OpenAI do
       expect(subject.default_dimension).to eq(1536)
     end
   end
+
+  describe "#chat" do
+    before do
+      allow_any_instance_of(OpenAI::Client).to receive(:chat).and_return(
+        {
+          "id" => "chatcmpl-7Hcl1sXOtsaUBKJGGhNujEIwhauaD",
+          "object" => "chat.completion",
+          "created" => 1684434915,
+          "model" => "gpt-3.5-turbo-0301",
+          "usage" => {
+            "prompt_tokens" => 14,
+            "completion_tokens" => 25,
+            "total_tokens" => 39
+          },
+          "choices" => [
+            {
+              "message" => {
+                "role" => "assistant",
+                "content" => "As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?"
+              },
+              "finish_reason" => "stop",
+              "index" => 0
+            }
+          ]
+        }
+      )
+    end
+
+    it "returns a chat message" do
+      expect(subject.chat(prompt: "Hello! How are you?")).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+    end
+  end  
 end
