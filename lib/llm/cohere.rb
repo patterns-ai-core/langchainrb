@@ -52,7 +52,6 @@ module LLM
       complete(...)
     end
 
-    alias_method :generate_completion, :complete
     alias_method :generate_embedding, :embed
   end
 end

@@ -35,7 +35,7 @@ RSpec.describe Agent::ChainOfThoughtAgent do
     let(:llm_final_response) { " I now know the final answer\nFinal Answer: 8.6" }
 
     before do
-      allow_any_instance_of(LLM::OpenAI).to receive(:generate_completion).with(
+      allow_any_instance_of(LLM::OpenAI).to receive(:complete).with(
         prompt: original_prompt,
         stop_sequences: ["Observation:"],
         max_tokens: 500
@@ -45,7 +45,7 @@ RSpec.describe Agent::ChainOfThoughtAgent do
         input: "average temperature in Miami, FL in May\""
       ).and_return(search_tool_response)
 
-      allow_any_instance_of(LLM::OpenAI).to receive(:generate_completion).with(
+      allow_any_instance_of(LLM::OpenAI).to receive(:complete).with(
         prompt: updated_prompt,
         stop_sequences: ["Observation:"],
         max_tokens: 500
@@ -55,7 +55,7 @@ RSpec.describe Agent::ChainOfThoughtAgent do
         input: "sqrt(83+86)/2"
       ).and_return(calculator_tool_response)
 
-      allow_any_instance_of(LLM::OpenAI).to receive(:generate_completion).with(
+      allow_any_instance_of(LLM::OpenAI).to receive(:complete).with(
         prompt: final_prompt,
         stop_sequences: ["Observation:"],
         max_tokens: 500

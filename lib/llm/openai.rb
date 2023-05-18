@@ -72,7 +72,6 @@ module LLM
       response.dig("choices", 0, "message", "content")
     end
 
-    alias_method :generate_completion, :complete
     alias_method :generate_embedding, :embed
   end
 end

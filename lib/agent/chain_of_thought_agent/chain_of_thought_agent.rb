@@ -43,7 +43,7 @@ module Agent
 
       loop do
         Langchain.logger.info("Agent: Passing the prompt to the #{llm} LLM")
-        response = llm_client.generate_completion(
+        response = llm_client.complete(
           prompt: prompt,
           stop_sequences: ["Observation:"],
           max_tokens: 500

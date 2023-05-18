@@ -49,7 +49,6 @@ module Vectorsearch
 
     def_delegators :llm_client,
       :generate_embedding,
-      :generate_completion,
       :default_dimension
 
     def generate_prompt(question:, context:)
