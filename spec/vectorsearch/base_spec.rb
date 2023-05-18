@@ -40,6 +40,30 @@ RSpec.describe Vectorsearch::Base do
     end
   end
 
+  describe "#create_default_schema" do
+    it "raises an error" do
+      expect { subject.create_default_schema }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe "#add_texts" do
+    it "raises an error" do
+      expect { subject.add_texts }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe "#similarity_search" do
+    it "raises an error" do
+      expect { subject.similarity_search }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe "#similarity_search_by_vector" do
+    it "raises an error" do
+      expect { subject.similarity_search_by_vector }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe "#generate_prompt" do
     it "produces a prompt with the correct format" do
       expect(

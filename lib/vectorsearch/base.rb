@@ -21,22 +21,34 @@ module Vectorsearch
       @llm_client = LLM.const_get(LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
     end
 
+    # Method supported by Vectorsearch DB to create a default schema
     def create_default_schema
-      raise NotImplementedError
+      raise NotImplementedError, "#{self.class.name} does not support creating a default schema"
     end
 
-    def add_texts(texts:)
-      raise NotImplementedError
+    # Method supported by Vectorsearch DB to add a list of texts to the index
+    def add_texts(...)
+      raise NotImplementedError, "#{self.class.name} does not support adding texts"
     end
 
-    # NotImplementedError will be raised if the subclass does not implement this method
-    def ask(question:)
-      raise NotImplementedError
+    # Method supported by Vectorsearch DB to search for similar texts in the index
+    def similarity_search(...)
+      raise NotImplementedError, "#{self.class.name} does not support similarity search"
+    end
+
+    # Method supported by Vectorsearch DB to search for similar texts in the index by the passed in vector.
+    # You must generate your own vector using the same LLM that generated the embeddings stored in the Vectorsearch DB.
+    def similarity_search_by_vector(...)
+      raise NotImplementedError, "#{self.class.name} does not support similarity search by vector"
+    end
+
+    # Method supported by Vectorsearch DB to answer a question given a context (data) pulled from your Vectorsearch DB.
+    def ask(...)
+      raise NotImplementedError, "#{self.class.name} does not support asking questions"
     end
 
     def_delegators :llm_client,
       :generate_embedding,
-      :generate_completion,
       :default_dimension
 
     def generate_prompt(question:, context:)

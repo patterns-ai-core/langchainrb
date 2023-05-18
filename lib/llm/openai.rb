@@ -5,6 +5,7 @@ module LLM
     DEFAULTS = {
       temperature: 0.0,
       completion_model_name: "text-davinci-003",
+      chat_completion_model_name: "gpt-3.5-turbo",
       embeddings_model_name: "text-embedding-ada-002",
       dimension: 1536
     }.freeze
@@ -50,7 +51,27 @@ module LLM
       response.dig("choices", 0, "text")
     end
 
-    alias_method :generate_completion, :complete
+    # Generate a chat completion for a given prompt
+    # @param prompt [String] The prompt to generate a chat completion for
+    # @return [String] The chat completion
+    def chat(prompt:, **params)
+      default_params = {
+        model: DEFAULTS[:chat_completion_model_name],
+        temperature: DEFAULTS[:temperature],
+        # TODO: Figure out how to introduce persisted conversations
+        messages: [{ role: "user", content: prompt }]
+      }
+
+      if params[:stop_sequences]
+        default_params[:stop] = params.delete(:stop_sequences)
+      end
+
+      default_params.merge!(params)
+
+      response = client.chat(parameters: default_params)
+      response.dig("choices", 0, "message", "content")
+    end
+
     alias_method :generate_embedding, :embed
   end
 end

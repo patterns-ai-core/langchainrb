@@ -47,7 +47,11 @@ module LLM
       response.dig("generations").first.dig("text")
     end
 
-    alias_method :generate_completion, :complete
+    # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`
+    def chat(...)
+      complete(...)
+    end
+
     alias_method :generate_embedding, :embed
   end
 end
