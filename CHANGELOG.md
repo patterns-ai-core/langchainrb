@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.3.7] - 2023-05-19
+- Loaders
+  - Introduce `Loaders::Text` to parse .txt files
+  - Introduec `Loaders::PDF` to parse .pdf files
+
 ## [0.3.6] - 2023-05-17
 - LLMs
   - Bump `hugging-face` gem version
