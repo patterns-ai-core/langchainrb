@@ -59,7 +59,7 @@ module LLM
         model: DEFAULTS[:chat_completion_model_name],
         temperature: DEFAULTS[:temperature],
         # TODO: Figure out how to introduce persisted conversations
-        messages: [{ role: "user", content: prompt }]
+        messages: [{role: "user", content: prompt}]
       }
 
       if params[:stop_sequences]

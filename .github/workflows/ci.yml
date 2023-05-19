@@ -24,9 +24,8 @@ jobs:
           bundler: default
           bundler-cache: true
 
-      # TODO: Re-enable standardrb check
-      # - name: StandardRb check
-      #   run: bundle exec standardrb
+      - name: StandardRb check
+        run: bundle exec standardrb
 
       - name: Run tests
         run: |
