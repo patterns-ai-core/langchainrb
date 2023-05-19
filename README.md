@@ -62,7 +62,7 @@ client.create_default_schema
 ```
 
 ```ruby
-# Store your documents in your vector search database
+# Store plain texts in your vector search database
 client.add_texts(
     texts: [
         "Begin by preheating your oven to 375°F (190°C). Prepare four boneless, skinless chicken breasts by cutting a pocket into the side of each breast, being careful not to cut all the way through. Season the chicken with salt and pepper to taste. In a large skillet, melt 2 tablespoons of unsalted butter over medium heat. Add 1 small diced onion and 2 minced garlic cloves, and cook until softened, about 3-4 minutes. Add 8 ounces of fresh spinach and cook until wilted, about 3 minutes. Remove the skillet from heat and let the mixture cool slightly.",
@@ -70,7 +70,13 @@ client.add_texts(
     ]
 )
 ```
+```ruby
+# Store the contents of your files in your vector search database
+my_pdf = Langchain.root.join("path/to/my.pdf")
+my_text = Langchain.root.join("path/to/my.txt")
 
+client.add_data(paths: [my_pdf, my_text])
+```
 ```ruby
 # Retrieve similar documents based on the query string passed in
 client.similarity_search(
