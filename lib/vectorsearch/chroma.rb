@@ -43,7 +43,7 @@ module Vectorsearch
     # Create the collection with the default schema
     # @return [Hash] The response from the server
     def create_default_schema
-      collection = ::Chroma::Resources::Collection.create(index_name)
+      ::Chroma::Resources::Collection.create(index_name)
     end
 
     # Search for similar texts
