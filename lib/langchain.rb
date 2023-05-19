@@ -12,7 +12,6 @@ module Langchain
     attr_reader :root
   end
 
-  @default_loaders ||= []
   @logger ||= ::Logger.new($stdout, level: :warn, formatter: ->(severity, datetime, progname, msg) { "[LangChain.rb] #{msg}\n" })
 
   @root = Pathname.new(__dir__)
@@ -60,3 +59,6 @@ module Loaders
 end
 
 autoload :Loader, "loader"
+
+# Load the default Loaders
+Langchain.default_loaders ||= [::Loaders::Text, ::Loaders::PDF]
