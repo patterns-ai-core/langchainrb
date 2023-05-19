@@ -8,7 +8,7 @@ module Vectorsearch
     # @param index_name [String] The name of the index to use
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
-    def initialize(url:, api_key: nil, index_name:, llm:, llm_api_key:)
+    def initialize(url:, index_name:, llm:, llm_api_key:, api_key: nil)
       depends_on "chroma-db"
       require "chroma-db"
 
@@ -28,10 +28,10 @@ module Vectorsearch
       embeddings = Array(texts).map do |text|
         ::Chroma::Resources::Embedding.new(
           # TODO: Add support for passing your own IDs
-          id: SecureRandom.uuid, 
+          id: SecureRandom.uuid,
           embedding: llm_client.embed(text: text),
           # TODO: Add support for passing metadata
-          metadata: [], #metadatas[index],
+          metadata: [], # metadatas[index],
           document: text # Do we actually need to store the whole original document?
         )
       end

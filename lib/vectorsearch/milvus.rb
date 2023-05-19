@@ -15,7 +15,7 @@ module Vectorsearch
     def add_texts(texts:)
       client.entities.insert(
         collection_name: index_name,
-        num_rows: Array(texts).count,
+        num_rows: Array(texts).size,
         fields_data: [
           {
             field_name: "content",
