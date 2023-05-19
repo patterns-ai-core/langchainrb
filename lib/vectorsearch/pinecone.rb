@@ -32,7 +32,7 @@ module Vectorsearch
           # TODO: Allows passing in your own IDs
           id: SecureRandom.uuid,
           metadata: {content: text},
-          values: generate_embedding(text: text)
+          values: llm_client.embed(text: text)
         }
       end
 
@@ -59,7 +59,7 @@ module Vectorsearch
       query:,
       k: 4
     )
-      embedding = generate_embedding(text: query)
+      embedding = llm_client.embed(text: query)
 
       similarity_search_by_vector(
         embedding: embedding,

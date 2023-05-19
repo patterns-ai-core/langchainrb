@@ -51,7 +51,5 @@ module LLM
     def chat(...)
       complete(...)
     end
-
-    alias_method :generate_embedding, :embed
   end
 end

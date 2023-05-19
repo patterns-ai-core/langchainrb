@@ -24,7 +24,7 @@ module Vectorsearch
           }, {
             field_name: "vectors",
             type: ::Milvus::DATA_TYPES["binary_vector"],
-            field: texts.map { |text| generate_embedding(text: text) }
+            field: texts.map { |text| llm_client.embed(text: text) }
           }
         ]
       )
@@ -69,7 +69,7 @@ module Vectorsearch
     end
 
     def similarity_search(query:, k: 4)
-      embedding = generate_embedding(text: query)
+      embedding = llm_client.embed(text: query)
 
       similarity_search_by_vector(
         embedding: embedding,
