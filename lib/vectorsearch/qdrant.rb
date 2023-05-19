@@ -27,7 +27,7 @@ module Vectorsearch
     def add_texts(texts:)
       batch = {ids: [], vectors: [], payloads: []}
 
-      texts.each do |text|
+      Array(texts).each do |text|
         batch[:ids].push(SecureRandom.uuid)
         batch[:vectors].push(llm_client.embed(text: text))
         batch[:payloads].push({content: text})

@@ -30,10 +30,11 @@ require "langchain"
 
 | Database | Querying           | Storage | Schema Management | Backups | Rails Integration | ??? |
 | -------- |:------------------:| -------:| -----------------:| -------:| -----------------:| ---:|
-| Weaviate | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
-| Qdrant   | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
-| Milvus   | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
-| Pinecone | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
+| Chroma   | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
+| Milvus   | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
+| Pinecone | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
+| Qdrant   | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
+| Weaviate | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
 
 ### Using Vector Search Databases 🔍
 
@@ -54,6 +55,7 @@ client = Vectorsearch::Weaviate.new(
 client = Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.0"`
 client = Vectorsearch::Qdrant.new(...) # `gem"qdrant-ruby", "~> 0.9.0"`
 client = Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
+client = Vectorsearch::Chroma.new(...) # `gem "chroma-db", "~> 0.3.0"`
 ```
 
 ```ruby

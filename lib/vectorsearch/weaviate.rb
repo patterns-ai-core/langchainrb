@@ -27,7 +27,7 @@ module Vectorsearch
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
     def add_texts(texts:)
-      objects = texts.map do |text|
+      objects = Array(texts).map do |text|
         {
           class: index_name,
           properties: {content: text}

@@ -15,16 +15,16 @@ module Vectorsearch
     def add_texts(texts:)
       client.entities.insert(
         collection_name: index_name,
-        num_rows: texts.count,
+        num_rows: Array(texts).count,
         fields_data: [
           {
             field_name: "content",
             type: ::Milvus::DATA_TYPES["varchar"],
-            field: texts
+            field: Array(texts)
           }, {
             field_name: "vectors",
             type: ::Milvus::DATA_TYPES["binary_vector"],
-            field: texts.map { |text| llm_client.embed(text: text) }
+            field: Array(texts).map { |text| llm_client.embed(text: text) }
           }
         ]
       )

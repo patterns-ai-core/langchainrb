@@ -12,9 +12,9 @@ module Vectorsearch
       depends_on "chroma-db"
       require "chroma-db"
 
-      Chroma.connect_host = url
-      Chroma.logger = Langchain.logger
-      Chroma.log_level = Langchain.logger.level
+      ::Chroma.connect_host = url
+      ::Chroma.logger = Langchain.logger
+      ::Chroma.log_level = Langchain.logger.level
 
       @index_name = index_name
 
@@ -25,31 +25,31 @@ module Vectorsearch
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
     def add_texts(texts:)
-      embeddings = texts.map do |text|
-        Chroma::Resources::Embedding.new(
+      embeddings = Array(texts).map do |text|
+        ::Chroma::Resources::Embedding.new(
           # TODO: Add support for passing your own IDs
           id: SecureRandom.uuid, 
-          embedding: llm_client.embed(text),
+          embedding: llm_client.embed(text: text),
           # TODO: Add support for passing metadata
-          # metadata: metadatas[index],
+          metadata: [], #metadatas[index],
           document: text # Do we actually need to store the whole original document?
         )
       end
 
-      collection = Chroma::Resources::Collection.get(index_name)
+      collection = ::Chroma::Resources::Collection.get(index_name)
       collection.add(embeddings)
     end
 
     # Create the collection with the default schema
     # @return [Hash] The response from the server
     def create_default_schema
-      collection = Chroma::Resources::Collection.create(index_name)
+      collection = ::Chroma::Resources::Collection.create(index_name)
     end
 
     # Search for similar texts
     # @param query [String] The text to search for
     # @param k [Integer] The number of results to return
-    # @return [Hash] The response from the server
+    # @return [Chroma::Resources::Embedding] The response from the server
     def similarity_search(
       query:,
       k: 4
@@ -65,12 +65,17 @@ module Vectorsearch
     # Search for similar texts by embedding
     # @param embedding [Array] The embedding to search for
     # @param k [Integer] The number of results to return
-    # @return [Hash] The response from the server
+    # @return [Chroma::Resources::Embedding] The response from the server
     def similarity_search_by_vector(
       embedding:,
       k: 4
     )
-      collection.query(query_embeddings: [embedding], results: k)
+      # Requesting more results than the number of documents in the collection currently throws an error in Chroma DB
+      # Temporary fix inspired by this comment: https://github.com/chroma-core/chroma/issues/301#issuecomment-1520494512
+      count = collection.count
+      n_results = [count, k].min
+
+      collection.query(query_embeddings: [embedding], results: n_results)
     end
 
     # Ask a question and return the answer
@@ -79,9 +84,10 @@ module Vectorsearch
     def ask(question:)
       search_results = similarity_search(query: question)
 
-      context = search_results.dig("result").map do |result|
-        result.dig("payload").to_s
+      context = search_results.map do |result|
+        result.document
       end
+
       context = context.join("\n---\n")
 
       prompt = generate_prompt(question: question, context: context)
@@ -93,7 +99,7 @@ module Vectorsearch
 
     # @return [Chroma::Resources::Collection] The collection
     def collection
-      @collection ||= Chroma::Resources::Collection.get(index_name)
+      @collection ||= ::Chroma::Resources::Collection.get(index_name)
     end
   end
 end
