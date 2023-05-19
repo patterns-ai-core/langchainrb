@@ -1,8 +1,22 @@
 # frozen_string_literal: true
 
+require "logger"
+
 require_relative "./version"
 require_relative "./dependency_helper"
-require_relative "./logging"
+module Langchain
+  class << self
+    attr_accessor :default_loaders
+    attr_accessor :logger
+
+    attr_reader :root
+  end
+
+  @default_loaders ||= []
+  @logger ||= ::Logger.new($stdout, level: :warn, formatter: ->(severity, datetime, progname, msg) { "[LangChain.rb] #{msg}\n" })
+
+  @root = Pathname.new(__dir__)
+end
 
 module Agent
   autoload :Base, "agent/base"
@@ -38,3 +52,11 @@ module Tool
   autoload :SerpApi, "tool/serp_api"
   autoload :Wikipedia, "tool/wikipedia"
 end
+
+module Loaders
+  autoload :Base, "loaders/base"
+  autoload :PDF, "loaders/pdf"
+  autoload :Text, "loaders/text"
+end
+
+autoload :Loader, "loader"
