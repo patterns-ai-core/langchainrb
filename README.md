@@ -261,9 +261,10 @@ Langchain.logger.level = :info
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+1. `git clone https://github.com/andreibondarev/langchainrb.git`
+2. `cp .env.example .env`, then fill out the environment variables in `.env`
+3. `rspec spec/` to ensure that the tests pass
+4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
 
 ## Core Contributors
 [<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://github.com/andreibondarev)
