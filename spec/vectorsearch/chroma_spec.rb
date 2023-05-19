@@ -14,6 +14,10 @@ RSpec.describe Vectorsearch::Chroma do
     )
   }
 
+  before(:each) do
+    allow(Chroma::Resources::Collection).to receive(:get).with(index_name).and_return(collection)
+  end
+
   describe "#create_default_schema" do
     it "returns true" do
       allow(Chroma::Resources::Collection).to receive(:create).with(index_name).and_return(true)
@@ -39,7 +43,6 @@ RSpec.describe Vectorsearch::Chroma do
   describe "add_texts" do
     before do
       allow(subject.llm_client).to receive(:embed).with(text: text).and_return([0.1, 0.2, 0.3])
-      allow(Chroma::Resources::Collection).to receive(:get).with(index_name).and_return(collection)
       allow_any_instance_of(Chroma::Resources::Collection).to receive(:add).and_return(true)
     end
 
@@ -49,10 +52,6 @@ RSpec.describe Vectorsearch::Chroma do
   end
 
   describe "#collection" do
-    before do
-      allow(Chroma::Resources::Collection).to receive(:get).with(index_name).and_return(collection)
-    end
-
     it "returns the collection" do
       expect(subject.send(:collection)).to be_a(Chroma::Resources::Collection)
     end
@@ -60,7 +59,6 @@ RSpec.describe Vectorsearch::Chroma do
 
   describe "#similarity_search_by_vector" do
     before do
-      allow_any_instance_of(Chroma::Resources::Collection).to receive(:get).with.and_return(count)
       allow_any_instance_of(Chroma::Resources::Collection).to receive(:count).and_return(count)
       allow_any_instance_of(Chroma::Resources::Collection).to receive(:query).with(query_embeddings: [embedding], results: count).and_return(results)
     end
