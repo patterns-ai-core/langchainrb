@@ -71,7 +71,5 @@ module LLM
       response = client.chat(parameters: default_params)
       response.dig("choices", 0, "message", "content")
     end
-
-    alias_method :generate_embedding, :embed
   end
 end

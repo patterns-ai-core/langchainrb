@@ -27,9 +27,9 @@ module Vectorsearch
     def add_texts(texts:)
       batch = {ids: [], vectors: [], payloads: []}
 
-      texts.each do |text|
+      Array(texts).each do |text|
         batch[:ids].push(SecureRandom.uuid)
-        batch[:vectors].push(generate_embedding(text: text))
+        batch[:vectors].push(llm_client.embed(text: text))
         batch[:payloads].push({content: text})
       end
 
@@ -59,7 +59,7 @@ module Vectorsearch
       query:,
       k: 4
     )
-      embedding = generate_embedding(text: query)
+      embedding = llm_client.embed(text: query)
 
       similarity_search_by_vector(
         embedding: embedding,

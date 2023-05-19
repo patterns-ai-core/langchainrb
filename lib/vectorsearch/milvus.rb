@@ -15,16 +15,16 @@ module Vectorsearch
     def add_texts(texts:)
       client.entities.insert(
         collection_name: index_name,
-        num_rows: texts.count,
+        num_rows: Array(texts).size,
         fields_data: [
           {
             field_name: "content",
             type: ::Milvus::DATA_TYPES["varchar"],
-            field: texts
+            field: Array(texts)
           }, {
             field_name: "vectors",
             type: ::Milvus::DATA_TYPES["binary_vector"],
-            field: texts.map { |text| generate_embedding(text: text) }
+            field: Array(texts).map { |text| llm_client.embed(text: text) }
           }
         ]
       )
@@ -69,7 +69,7 @@ module Vectorsearch
     end
 
     def similarity_search(query:, k: 4)
-      embedding = generate_embedding(text: query)
+      embedding = llm_client.embed(text: query)
 
       similarity_search_by_vector(
         embedding: embedding,

@@ -49,5 +49,12 @@ pinecone = Vectorsearch::Pinecone.new(
   llm_api_key: ENV["OPENAI_API_KEY"]
 )
 
+chroma = Vectorsearch::Chroma.new(
+  url: ENV["CHROMA_URL"],
+  index_name: "documents",
+  llm: :openai,
+  llm_api_key: ENV["OPENAI_API_KEY"],
+)
+
 require "irb"
 IRB.start(__FILE__)
