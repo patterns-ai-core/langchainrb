@@ -3,10 +3,12 @@
 require "chroma-db"
 
 RSpec.describe Vectorsearch::Chroma do
+  let(:index_name) { "documents" }
+
   subject {
     described_class.new(
       url: "http://localhost:8000",
-      index_name: "documents",
+      index_name: index_name,
       llm: :openai,
       llm_api_key: "123"
     )
@@ -14,12 +16,13 @@ RSpec.describe Vectorsearch::Chroma do
 
   describe "#create_default_schema" do
     it "returns true" do
-      allow(Chroma::Resources::Collection).to receive(:create).with("documents").and_return(true)
+      allow(Chroma::Resources::Collection).to receive(:create).with(index_name).and_return(true)
       expect(subject.create_default_schema).to eq(true)
     end
   end
 
   let(:text) { "Hello World" }
+  let(:collection) { Chroma::Resources::Collection.new(name: "documents") }
   let(:embedding) { [0.1, 0.2, 0.3] }
   let(:count) { 1 }
   let(:query) { "Greetings Earth" }
@@ -36,7 +39,7 @@ RSpec.describe Vectorsearch::Chroma do
   describe "add_texts" do
     before do
       allow(subject.llm_client).to receive(:embed).with(text: text).and_return([0.1, 0.2, 0.3])
-      allow(Chroma::Resources::Collection).to receive(:get).with("documents").and_return(Chroma::Resources::Collection.new(name: "documents"))
+      allow(Chroma::Resources::Collection).to receive(:get).with(index_name).and_return(collection)
       allow_any_instance_of(Chroma::Resources::Collection).to receive(:add).and_return(true)
     end
 
@@ -47,7 +50,7 @@ RSpec.describe Vectorsearch::Chroma do
 
   describe "#collection" do
     before do
-      allow(Chroma::Resources::Collection).to receive(:get).with("documents").and_return(Chroma::Resources::Collection.new(name: "documents"))
+      allow(Chroma::Resources::Collection).to receive(:get).with(index_name).and_return(collection)
     end
 
     it "returns the collection" do
@@ -57,6 +60,7 @@ RSpec.describe Vectorsearch::Chroma do
 
   describe "#similarity_search_by_vector" do
     before do
+      allow_any_instance_of(Chroma::Resources::Collection).to receive(:get).with.and_return(count)
       allow_any_instance_of(Chroma::Resources::Collection).to receive(:count).and_return(count)
       allow_any_instance_of(Chroma::Resources::Collection).to receive(:query).with(query_embeddings: [embedding], results: count).and_return(results)
     end
