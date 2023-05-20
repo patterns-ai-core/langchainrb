@@ -1,12 +1,3 @@
-GIT
-  remote: https://github.com/ruby-docx/docx.git
-  revision: 08b734da349d980d2d7549b907459a9e2aa5d3bb
-  branch: master
-  specs:
-    docx (0.7.0)
-      nokogiri (~> 1.13, >= 1.13.0)
-      rubyzip (~> 2.0)
-
 PATH
   remote: .
   specs:
@@ -50,6 +41,9 @@ GEM
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     diff-lcs (1.5.0)
+    docx (0.8.0)
+      nokogiri (~> 1.13, >= 1.13.0)
+      rubyzip (~> 2.0)
     dotenv (2.7.6)
     dotenv-rails (2.7.6)
       dotenv (= 2.7.6)
@@ -277,7 +271,7 @@ PLATFORMS
 DEPENDENCIES
   chroma-db (~> 0.3.0)
   cohere-ruby (~> 0.9.3)
-  docx!
+  docx (~> 0.8.0)
   dotenv-rails (~> 2.7.6)
   eqn (~> 1.6.5)
   google_search_results (~> 2.0.0)

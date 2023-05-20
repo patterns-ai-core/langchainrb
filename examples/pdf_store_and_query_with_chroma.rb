@@ -22,7 +22,7 @@ chroma.create_default_schema
 docs = [
   Langchain.root.join("/docs/document.pdf"),
   Langchain.root.join("/docs/document.txt"),
-  Langchain.root.join("/docs/document.docx")  
+  Langchain.root.join("/docs/document.docx")
 ]
 
 # Add data to the index. Weaviate will use OpenAI to generate embeddings behind the scene.
