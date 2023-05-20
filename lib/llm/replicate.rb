@@ -2,8 +2,22 @@
 
 module LLM
   class Replicate < Base
+    # Wrapper around Replicate.com LLM provider
+    # Use it directly:
+    # replicate = LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
+    #
+    # Or pass it to be instantiated by a vector search DB:
+    # chroma = Vectorsearch::Chroma.new(
+    #   url: ENV["CHROMA_URL"],
+    #   index_name: "...",
+    #   llm: :replicate,
+    #   llm_api_key: ENV["REPLICATE_API_KEY"],
+    # )
+
     DEFAULTS = {
+      # TODO: Figure out how to send the temperature to the API
       temperature: 0.01, # Minimum accepted value
+      # TODO: Design the interface to pass and use different models
       completion_model_name: "replicate/vicuna-13b",
       embeddings_model_name: "creatorrr/all-mpnet-base-v2",
       dimension: 384
