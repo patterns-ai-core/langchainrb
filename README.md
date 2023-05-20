@@ -257,6 +257,8 @@ Need to read data from various sources? Load it up.
 | pdf  | Loaders::PDF  | `gem "pdf-reader", "~> 1.4"` |
 | text | Loaders::Text |                              |
 
+## Examples
+Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
 
 ## Logging
 
