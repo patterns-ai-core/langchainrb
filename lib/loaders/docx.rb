@@ -1,36 +1,34 @@
 # frozen_string_literal: true
 
 module Loaders
-  class PDF < Base
+  class Docx < Base
     #
-    # This Loader parses PDF files into text.
+    # This Loader parses Docx files into text.
     # If you'd like to use it directly you can do so like this:
-    # Loaders::PDF.new("path/to/my.pdf").load
+    # Loaders::Docx.new("path/to/my.docx").load
     #
     # This parser is also invoked when you're adding data to a Vectorsearch DB:
     # qdrant = Vectorsearch::Qdrant.new(...)
-    # path = Langchain.root.join("path/to/my.pdf")
+    # path = Langchain.root.join("path/to/my.docx")
     # qdrant.add_data(path: path)
     #
 
     def initialize(path)
-      depends_on "pdf-reader"
-      require "pdf-reader"
+      depends_on "docx"
+      require "docx"
 
       @path = path
     end
 
-    # Check that the file is a PDF file
+    # Check that the file is a `.docx` file
     def loadable?
-      @path.to_s.end_with?(".pdf")
+      @path.to_s.end_with?(".docx")
     end
 
     def load
-      ::PDF::Reader
-        .new(@path)
-        .pages
-        .map(&:text)
-        .join("\n\n")
+      ::Docx::Document
+        .open(@path.to_s)
+        .text
     end
   end
 end
