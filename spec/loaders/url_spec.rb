@@ -7,7 +7,7 @@ RSpec.describe Loaders::URL do
   let(:response) { double("response", status: status, read: body) }
 
   before do
-    allow(URI).to receive(:open).and_return(response)
+    allow(URI).to receive(:parse).and_return(double(open: response))
   end
 
   describe "#load" do

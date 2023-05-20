@@ -28,11 +28,11 @@ module Loaders
       return unless response.status.first == "200"
 
       doc = Nokogiri::HTML(response.read)
-      doc.css(TEXT_CONTENT_TAGS.join(',')).map(&:inner_text).join("\n\n")
+      doc.css(TEXT_CONTENT_TAGS.join(",")).map(&:inner_text).join("\n\n")
     end
 
     def response
-      @response ||= URI.open(@url)
+      @response ||= URI.parse(@url).open
     end
   end
 end
