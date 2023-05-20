@@ -55,6 +55,7 @@ end
 
 module Loaders
   autoload :Base, "loaders/base"
+  autoload :Docx, "loaders/docx"
   autoload :PDF, "loaders/pdf"
   autoload :Text, "loaders/text"
 end
@@ -62,4 +63,4 @@ end
 autoload :Loader, "loader"
 
 # Load the default Loaders
-Langchain.default_loaders ||= [::Loaders::Text, ::Loaders::PDF]
+Langchain.default_loaders ||= [::Loaders::Text, ::Loaders::PDF, ::Loaders::Docx]

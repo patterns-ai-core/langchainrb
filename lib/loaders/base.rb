@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: Add chunking options to the loaders
+
 module Loaders
   class Base
     def self.load(path)
