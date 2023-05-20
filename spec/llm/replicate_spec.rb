@@ -32,16 +32,17 @@ RSpec.describe LLM::Replicate do
   describe "#embed" do
     let(:embeddings_model) { Replicate::Record::ModelVersion.new({}, {}) }
     let(:embedding) { [0.1, 0.2, 0.3] }
+    let(:text) { "Hello World" }
 
     before do
       allow(subject.client).to receive_message_chain(:retrieve_model, :latest_version).and_return(embeddings_model)
-      allow(embeddings_model).to predict(input: text).and_return(
+      allow(embeddings_model).to receive(:predict).with(input: text).and_return(
         double(finished?: true, output: embedding)
       )
     end
 
     it "returns an embedding" do
-      expect(subject.embed(text: "Hello World")).to eq(embedding)
+      expect(subject.embed(text: text)).to eq(embedding)
     end
   end
 end
