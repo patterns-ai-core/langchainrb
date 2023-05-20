@@ -131,6 +131,15 @@ cohere.complete(prompt: "What is the meaning of life?")
 
 #### HuggingFace
 Add `gem "hugging-face", "~> 0.3.2"` to your Gemfile.
+```ruby
+cohere = LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
+```
+
+#### Replicate
+Add `gem "replicate-ruby", git: "https://github.com/andreibondarev/replicate-ruby.git", branch: "faraday-1.x"` to your Gemfile.
+```ruby
+cohere = LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
+```
 
 ### Using Prompts 📋
 
