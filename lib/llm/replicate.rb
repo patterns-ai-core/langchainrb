@@ -27,8 +27,8 @@ module LLM
     # @return [Hash] The embedding
     def embed(text:)
       response = embeddings_model.predict(input: text)
-      
-      until response.finished? do
+
+      until response.finished?
         response.refetch
         sleep(1)
       end
@@ -42,7 +42,7 @@ module LLM
     def complete(prompt:, **params)
       response = completion_model.predict(prompt: prompt)
 
-      until response.finished? do
+      until response.finished?
         response.refetch
         sleep(1)
       end

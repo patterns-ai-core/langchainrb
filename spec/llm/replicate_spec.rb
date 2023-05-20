@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-
-binding.pry
-
 require "replicate"
 
 RSpec.describe LLM::Replicate do
@@ -32,4 +29,3 @@ RSpec.describe LLM::Replicate do
     end
   end
 end
-
