@@ -13,7 +13,7 @@ RSpec.describe LLM::Replicate do
     end
 
     it "returns the model" do
-      expect(subject.completion_model).to be_a(Replicate::Record::ModelVersion)
+      expect(subject.send(:completion_model)).to be_a(Replicate::Record::ModelVersion)
     end
   end
 
@@ -25,7 +25,7 @@ RSpec.describe LLM::Replicate do
     end
 
     it "returns the model" do
-      expect(subject.embeddings_model).to be_a(Replicate::Record::ModelVersion)
+      expect(subject.send(:embeddings_model)).to be_a(Replicate::Record::ModelVersion)
     end
   end
 end
