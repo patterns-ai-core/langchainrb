@@ -12,7 +12,7 @@ module Loaders
     #
 
     def loadable?
-      true
+      @path.to_s.end_with?(".txt")
     end
 
     def load

@@ -11,4 +11,14 @@ RSpec.describe Loaders::Text do
       expect(subject.load).to include("Lorem Ipsum")
     end
   end
+
+  describe "#loadable?" do
+    it "returns false" do
+      file_path = Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf")
+
+      subject = described_class.new(file_path)
+
+      expect(subject).not_to be_loadable
+    end
+  end
 end
