@@ -76,8 +76,9 @@ client.add_texts(
 # Store the contents of your files in your vector search database
 my_pdf = Langchain.root.join("path/to/my.pdf")
 my_text = Langchain.root.join("path/to/my.txt")
+my_docx = Langchain.root.join("path/to/my.docx")
 
-client.add_data(paths: [my_pdf, my_text])
+client.add_data(paths: [my_pdf, my_text, my_docx])
 ```
 ```ruby
 # Retrieve similar documents based on the query string passed in
@@ -254,6 +255,7 @@ Need to read data from various sources? Load it up.
 
 | Name | Class         | Gem Requirements             |
 | ---- | ------------- | :--------------------------: |
+| docx | Loaders::Docx | `gem "docx", branch: "master", git: "https://github.com/ruby-docx/docx.git"` |
 | pdf  | Loaders::PDF  | `gem "pdf-reader", "~> 1.4"` |
 | text | Loaders::Text |                              |
 
