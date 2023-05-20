@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'open-uri'
+require "open-uri"
 
 module Loaders
   class URL < Base
     # We only look for headings and paragraphs
-    TEXT_CONTENT_TAGS = %w(h1 h2 h3 h4 h5 h6 p)
+    TEXT_CONTENT_TAGS = %w[h1 h2 h3 h4 h5 h6 p]
 
     #
     # This Loader parses URL into a text.
@@ -21,7 +21,7 @@ module Loaders
 
     # Check that url is a valid URL
     def loadable?
-      !!(@url =~ URI::regexp)
+      !!(@url =~ URI::DEFAULT_PARSER.make_regexp)
     end
 
     def load
