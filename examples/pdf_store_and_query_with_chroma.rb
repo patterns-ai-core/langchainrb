@@ -14,10 +14,15 @@ chroma = Vectorsearch::Chroma.new(
 # Create the default schema.
 chroma.create_default_schema
 
+# gem install these or add them to your Gemfile
+# Add `gem "pdf-reader", "~> 1.4"` to your Gemfile
+# Add `gem "docx", branch: "master", git: "https://github.com/ruby-docx/docx.git"` to your Gemfile
+
 # Set up an array of PDF and TXT documents
 docs = [
   Langchain.root.join("/docs/document.pdf"),
-  Langchain.root.join("/docs/document.txt")
+  Langchain.root.join("/docs/document.txt"),
+  Langchain.root.join("/docs/document.docx")  
 ]
 
 # Add data to the index. Weaviate will use OpenAI to generate embeddings behind the scene.
