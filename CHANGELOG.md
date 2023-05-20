@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.3.9] - 2023-05-19
+- 🚚 Loaders
+  - Introduce `Loaders::Docx` to parse .docx files
+
 ## [0.3.8] - 2023-05-19
 - 🔍 Vectorsearch
   - Introduce support for Chroma DB
