@@ -3,7 +3,7 @@
 require "open-uri"
 
 module Loaders
-  class URL < Base
+  class HTML < Base
     # We only look for headings and paragraphs
     TEXT_CONTENT_TAGS = %w[h1 h2 h3 h4 h5 h6 p]
 

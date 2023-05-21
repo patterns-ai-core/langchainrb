@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Loaders::URL do
+RSpec.describe Loaders::HTML do
   let(:url) { "https://www.example.com" }
   let(:status) { ["200", "OK"] }
   let(:body) { "<html><body><h1>Lorem Ipsum</h1><p>Dolor sit amet.</p></body></html>" }
