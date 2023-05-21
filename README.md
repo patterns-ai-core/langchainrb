@@ -258,6 +258,7 @@ Need to read data from various sources? Load it up.
 | docx | Loaders::Docx | `gem "docx", branch: "master", git: "https://github.com/ruby-docx/docx.git"` |
 | pdf  | Loaders::PDF  | `gem "pdf-reader", "~> 1.4"` |
 | text | Loaders::Text |                              |
+| url  | Loaders::URL  | `gem "nokogiri", "~> 1.13"`  |
 
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
