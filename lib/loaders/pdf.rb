@@ -22,7 +22,7 @@ module Loaders
 
     # Check that the file is a PDF file
     def loadable?
-      path.to_s.end_with?(".pdf")
+      path_extension == ".pdf"
     end
 
     def load

@@ -14,7 +14,7 @@ module Loaders
     #
 
     def loadable?
-      path.to_s.end_with?(".txt")
+      path_extension == ".txt"
     end
 
     def load

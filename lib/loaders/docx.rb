@@ -22,7 +22,7 @@ module Loaders
 
     # Check that the file is a `.docx` file
     def loadable?
-      path.to_s.end_with?(".docx")
+      path_extension == ".docx"
     end
 
     def load

@@ -19,6 +19,10 @@ module Loaders
 
     attr_reader :path, :chunker
 
+    def path_extension
+      path.extname
+    end
+
     private
 
     def setup_chunker(chunker)
