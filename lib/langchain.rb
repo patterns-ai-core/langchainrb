@@ -65,6 +65,7 @@ end
 module Chunkers
   autoload :Base, "chunkers/base"
   autoload :TextSplitter, "chunkers/text_splitter"
+  autoload :MarkdownSplitter, "chunkers/markdown_splitter"
 end
 
 autoload :Loader, "loader"
