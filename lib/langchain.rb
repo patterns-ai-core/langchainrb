@@ -59,6 +59,7 @@ module Loaders
   autoload :Docx, "loaders/docx"
   autoload :PDF, "loaders/pdf"
   autoload :Text, "loaders/text"
+  autoload :HTML, "loaders/html"
 end
 
 autoload :Loader, "loader"
