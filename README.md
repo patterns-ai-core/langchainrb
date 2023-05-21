@@ -28,13 +28,13 @@ require "langchain"
 
 #### Supported vector search databases and features:
 
-| Database | Querying           | Storage | Schema Management | Backups | Rails Integration | ??? |
-| -------- |:------------------:| -------:| -----------------:| -------:| -----------------:| ---:|
-| Chroma   | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
-| Milvus   | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
-| Pinecone | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
-| Qdrant   | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
-| Weaviate | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
+| Database | Querying           | Storage | Schema Management | Backups | Rails Integration |
+| -------- |:------------------:| -------:| -----------------:| -------:| -----------------:|
+| [Chroma](https://trychroma.com/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Milvus](https://milvus.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Pinecone](https://www.pinecone.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Qdrant](https://qdrant.tech/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Weaviate](https://weaviate.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 
 ### Using Vector Search Databases 🔍
 
