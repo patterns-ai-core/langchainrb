@@ -42,7 +42,7 @@ RSpec.describe LLM::Replicate do
     end
 
     it "returns an embedding" do
-      expect(subject.complete(prompt: prompt)).to eq(output)
+      expect(subject.complete(prompt: prompt)).to eq("Foo bar !")
     end
   end
 
