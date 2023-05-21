@@ -1,3 +1,14 @@
+GIT
+  remote: https://github.com/andreibondarev/replicate-ruby.git
+  revision: 6276dec02ce33ae68a57cdd362eb8e87ed29c8e6
+  branch: faraday-1.x
+  specs:
+    replicate-ruby (0.2.1)
+      addressable
+      faraday (>= 1.0)
+      faraday-multipart
+      faraday-retry
+
 PATH
   remote: .
   specs:
@@ -35,9 +46,9 @@ GEM
       dry-monads (~> 1.6)
       ruby-next-core (>= 0.15.0)
     coderay (1.1.3)
-    cohere-ruby (0.9.3)
-      faraday (~> 1)
-      faraday_middleware (~> 1)
+    cohere-ruby (0.9.4)
+      faraday (>= 1.0.0)
+      faraday_middleware (>= 1.0.0)
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     diff-lcs (1.5.0)
@@ -130,8 +141,8 @@ GEM
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    hugging-face (0.3.3)
-      faraday (~> 1.0)
+    hugging-face (0.3.4)
+      faraday (>= 1.0)
     i18n (1.13.0)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
@@ -270,12 +281,12 @@ PLATFORMS
 
 DEPENDENCIES
   chroma-db (~> 0.3.0)
-  cohere-ruby (~> 0.9.3)
+  cohere-ruby (~> 0.9.4)
   docx (~> 0.8.0)
   dotenv-rails (~> 2.7.6)
   eqn (~> 1.6.5)
   google_search_results (~> 2.0.0)
-  hugging-face (~> 0.3.3)
+  hugging-face (~> 0.3.4)
   langchainrb!
   milvus (~> 0.9.0)
   pdf-reader (~> 1.4)
@@ -283,6 +294,7 @@ DEPENDENCIES
   pry-byebug (~> 3.10.0)
   qdrant-ruby (~> 0.9.0)
   rake (~> 13.0)
+  replicate-ruby!
   rspec (~> 3.0)
   ruby-openai (~> 4.0.0)
   standardrb
