@@ -21,4 +21,14 @@ RSpec.describe Loaders::PDF do
       expect(text).to eq("This document was scanned and then OCRd with Adobe ClearScan")
     end
   end
+
+  describe "initialize with chunker" do
+    file_path = Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf")
+    let(:chunker) { Chunkers::TextSplitter.new }
+    subject { described_class.new(file_path, chunker: chunker) }
+
+    it "has handle to chunker" do
+      expect(subject.chunker).to be_a(Chunkers::TextSplitter)
+    end
+  end
 end

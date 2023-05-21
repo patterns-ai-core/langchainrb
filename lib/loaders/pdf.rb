@@ -13,16 +13,16 @@ module Loaders
     # qdrant.add_data(path: path)
     #
 
-    def initialize(path)
+    def initialize(path, **kwargs)
       depends_on "pdf-reader"
       require "pdf-reader"
 
-      @path = path
+      super(path, **kwargs)
     end
 
     # Check that the file is a PDF file
     def loadable?
-      @path.to_s.end_with?(".pdf")
+      path.to_s.end_with?(".pdf")
     end
 
     def load

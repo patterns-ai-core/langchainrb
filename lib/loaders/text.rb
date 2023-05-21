@@ -14,11 +14,11 @@ module Loaders
     #
 
     def loadable?
-      @path.to_s.end_with?(".txt")
+      path.to_s.end_with?(".txt")
     end
 
     def load
-      @path.read
+      path.read
     end
   end
 end

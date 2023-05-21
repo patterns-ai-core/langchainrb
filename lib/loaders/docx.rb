@@ -13,21 +13,21 @@ module Loaders
     # qdrant.add_data(path: path)
     #
 
-    def initialize(path)
+    def initialize(path, **kwargs)
       depends_on "docx"
       require "docx"
 
-      @path = path
+      super(path, **kwargs)
     end
 
     # Check that the file is a `.docx` file
     def loadable?
-      @path.to_s.end_with?(".docx")
+      path.to_s.end_with?(".docx")
     end
 
     def load
       ::Docx::Document
-        .open(@path.to_s)
+        .open(path.to_s)
         .text
     end
   end

@@ -7,6 +7,7 @@ require_relative "./dependency_helper"
 module Langchain
   class << self
     attr_accessor :default_loaders
+    attr_accessor :default_chunker
     attr_accessor :logger
 
     attr_reader :root
@@ -72,3 +73,4 @@ autoload :Loader, "loader"
 
 # Load the default Loaders
 Langchain.default_loaders ||= [::Loaders::Text, ::Loaders::PDF, ::Loaders::Docx]
+Langchain.default_chunker ||= ::Chunkers::TextSplitter.new
