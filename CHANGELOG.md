@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.3.10] - 2023-05-19
+- 🗣️ LLMs
+  - Introducing support for Replicate.com
+
 ## [0.3.9] - 2023-05-19
 - 🚚 Loaders
   - Introduce `Loaders::Docx` to parse .docx files
