@@ -62,6 +62,11 @@ module Loaders
   autoload :HTML, "loaders/html"
 end
 
+module Chunkers
+  autoload :Base, "chunkers/base"
+  autoload :TextSplitter, "chunkers/text_splitter"
+end
+
 autoload :Loader, "loader"
 
 # Load the default Loaders
