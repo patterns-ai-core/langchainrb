@@ -5,7 +5,7 @@ module Chunkers
     def initialize(delimeter: "\n\n", delimeter_function: nil, **kwargs)
       super(**kwargs)
 
-      @delimeter = delimeter
+      @delimeter = prepare_delimeter(delimeter)
       @delimeter_function = delimeter_function
     end
 
@@ -30,5 +30,18 @@ module Chunkers
     end
 
     attr_reader :delimeter, :delimeter_function
+
+    private
+
+    def prepare_delimeter(delimeter)
+      case delimeter
+      when Array
+        Regexp.union(delimeter)
+      when String, Regexp
+        delimeter
+      else
+        raise ArgumentError, "Delimeter must be a String, Regexp, or Array of Strings or Regexp."
+      end
+    end
   end
 end
