@@ -11,7 +11,7 @@ module Loader
     def load(*paths)
       Array(paths)
         .flatten
-        .map { |path| first_loadable_loader(path)&.load }
+        .map { |path| first_loadable_loader(path)&.load } # TODO: first_loadable_loader(path)&.load_chunked
         .compact
     end
 

@@ -17,6 +17,14 @@ module Loaders
       raise NotImplementedError
     end
 
+    def load
+      raise NotImplementedError
+    end
+
+    def load_chunked
+      chunker.chunked(load)
+    end
+
     attr_reader :path, :chunker
 
     def path_extension
