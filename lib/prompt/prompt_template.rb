@@ -28,7 +28,7 @@ module Prompt
     def format(**kwargs)
       result = @template
       kwargs.each { |key, value| result = result.gsub(/\{#{key}\}/, value.to_s) }
-      result
+      result.gsub(/{{/, '{').gsub(/}}/, '}')
     end
 
     #

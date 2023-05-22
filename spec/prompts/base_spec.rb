@@ -34,4 +34,19 @@ RSpec.describe Prompt::Base do
       expect(File.directory?(non_existent_dir)).to be_truthy
     end
   end
+
+  describe "#extract_variables_from_template" do
+    let(:basic_template) { "Tell me a {adjective} joke." }
+    let(:escaped_template) { "Tell me a {adjective} joke. Return in JSON in the format {{joke: 'The joke'}}" }
+    
+    it "extracts variables" do
+      input_variables = Prompt::Base.extract_variables_from_template(basic_template)
+      expect(input_variables).to eq(%w[adjective])
+    end
+
+    it "excludes double curly brace variables" do
+      input_variables = Prompt::Base.extract_variables_from_template(escaped_template)
+      expect(input_variables).to eq(%w[adjective])
+    end
+  end
 end
