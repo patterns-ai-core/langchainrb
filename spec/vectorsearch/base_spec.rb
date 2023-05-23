@@ -30,6 +30,16 @@ RSpec.describe Vectorsearch::Base do
       ).to be_a(LLM::HuggingFace)
     end
 
+    it "correctly with llm: :replicate" do
+      expect(
+        described_class.new(
+          llm: :replicate,
+          llm_api_key: "123"
+        )
+        .llm_client
+      ).to be_a(LLM::Replicate)
+    end
+
     it "throws an error with currently unsupported llm: :anthropic" do
       expect {
         described_class.new(

@@ -9,7 +9,8 @@ module LLM
     LLMS = {
       openai: "OpenAI",
       cohere: "Cohere",
-      huggingface: "HuggingFace"
+      huggingface: "HuggingFace",
+      replicate: "Replicate"
     }.freeze
 
     def default_dimension

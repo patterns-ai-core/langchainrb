@@ -35,6 +35,7 @@ module LLM
   autoload :Cohere, "llm/cohere"
   autoload :HuggingFace, "llm/hugging_face"
   autoload :OpenAI, "llm/openai"
+  autoload :Replicate, "llm/replicate"
 end
 
 module Prompt

@@ -28,13 +28,13 @@ require "langchain"
 
 #### Supported vector search databases and features:
 
-| Database | Querying           | Storage | Schema Management | Backups | Rails Integration | ??? |
-| -------- |:------------------:| -------:| -----------------:| -------:| -----------------:| ---:|
-| Chroma   | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
-| Milvus   | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
-| Pinecone | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
-| Qdrant   | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
-| Weaviate | :white_check_mark: | WIP     | WIP               | WIP     | WIP               |     |
+| Database | Querying           | Storage | Schema Management | Backups | Rails Integration |
+| -------- |:------------------:| -------:| -----------------:| -------:| -----------------:|
+| [Chroma](https://trychroma.com/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Milvus](https://milvus.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Pinecone](https://www.pinecone.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Qdrant](https://qdrant.tech/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Weaviate](https://weaviate.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 
 ### Using Vector Search Databases 🔍
 
@@ -131,6 +131,15 @@ cohere.complete(prompt: "What is the meaning of life?")
 
 #### HuggingFace
 Add `gem "hugging-face", "~> 0.3.2"` to your Gemfile.
+```ruby
+cohere = LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
+```
+
+#### Replicate
+Add `gem "replicate-ruby", "~> 0.2.2"` to your Gemfile.
+```ruby
+cohere = LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
+```
 
 ### Using Prompts 📋
 
@@ -255,10 +264,10 @@ Need to read data from various sources? Load it up.
 
 | Name | Class         | Gem Requirements             |
 | ---- | ------------- | :--------------------------: |
-| docx | Loaders::Docx | `gem "docx", branch: "master", git: "https://github.com/ruby-docx/docx.git"` |
+| docx | Loaders::Docx | `gem "docx", "~> 0.8.0"`     |
+| html | Loaders::HTML | `gem "nokogiri", "~> 1.13"`  |
 | pdf  | Loaders::PDF  | `gem "pdf-reader", "~> 1.4"` |
 | text | Loaders::Text |                              |
-| html | Loaders::HTML | `gem "nokogiri", "~> 1.13"`  |
 
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
