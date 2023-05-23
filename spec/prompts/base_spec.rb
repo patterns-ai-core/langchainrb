@@ -38,7 +38,7 @@ RSpec.describe Prompt::Base do
   describe "#extract_variables_from_template" do
     let(:basic_template) { "Tell me a {adjective} joke." }
     let(:escaped_template) { "Tell me a {adjective} joke. Return in JSON in the format {{joke: 'The joke'}}" }
-    
+
     it "extracts variables" do
       input_variables = Prompt::Base.extract_variables_from_template(basic_template)
       expect(input_variables).to eq(%w[adjective])
