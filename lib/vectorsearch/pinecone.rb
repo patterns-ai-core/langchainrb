@@ -9,8 +9,8 @@ module Vectorsearch
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
     def initialize(environment:, api_key:, index_name:, llm:, llm_api_key:)
-      depends_on 'pinecone'
-      require 'pinecone'
+      depends_on "pinecone"
+      require "pinecone"
 
       ::Pinecone.configure do |config|
         config.api_key = api_key
@@ -84,7 +84,7 @@ module Vectorsearch
         include_values: true,
         include_metadata: true
       )
-      response['matches']
+      response.dig("matches")
     end
 
     # Ask a question and return the answer
@@ -94,7 +94,7 @@ module Vectorsearch
       search_results = similarity_search(query: question, namespace: namespace)
 
       context = search_results.map do |result|
-        result['metadata'].to_s
+        result.dig("metadata").to_s
       end
       context = context.join("\n---\n")
 
