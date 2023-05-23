@@ -25,6 +25,7 @@ module Vectorsearch
 
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
+    # @param namespace [String] The namespace to add the texts to
     # @return [Hash] The response from the server
     def add_texts(texts:, namespace: '')
       vectors = texts.map do |text|
@@ -55,6 +56,7 @@ module Vectorsearch
     # Search for similar texts
     # @param query [String] The text to search for
     # @param k [Integer] The number of results to return
+    # @param namespace [String] The namespace to search in
     # @return [Array] The list of results
     def similarity_search(
       query:,
@@ -73,6 +75,7 @@ module Vectorsearch
     # Search for similar texts by embedding
     # @param embedding [Array] The embedding to search for
     # @param k [Integer] The number of results to return
+    # @param namespace [String] The namespace to search in
     # @return [Array] The list of results
     def similarity_search_by_vector(embedding:, k: 4, namespace: '')
       index = client.index(index_name)
@@ -89,6 +92,7 @@ module Vectorsearch
 
     # Ask a question and return the answer
     # @param question [String] The question to ask
+    # @param namespace [String] The namespace to search in
     # @return [String] The answer to the question
     def ask(question:, namespace: '')
       search_results = similarity_search(query: question, namespace: namespace)
