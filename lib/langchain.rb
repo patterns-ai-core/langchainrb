@@ -6,7 +6,6 @@ require_relative "./version"
 require_relative "./dependency_helper"
 module Langchain
   class << self
-    attr_accessor :default_loaders
     attr_accessor :logger
 
     attr_reader :root
@@ -55,13 +54,10 @@ end
 
 module Loaders
   autoload :Base, "loaders/base"
-  autoload :Docx, "loaders/docx"
-  autoload :PDF, "loaders/pdf"
-  autoload :Text, "loaders/text"
-  autoload :HTML, "loaders/html"
+  module Processors
+    autoload :PDF, "loaders/processors/pdf"
+    autoload :HTML, "loaders/processors/html"
+    autoload :Text, "loaders/processors/text"
+    autoload :Docx, "loaders/processors/docx"
+  end
 end
-
-autoload :Loader, "loader"
-
-# Load the default Loaders
-Langchain.default_loaders ||= [::Loaders::Text, ::Loaders::PDF, ::Loaders::Docx]
