@@ -12,7 +12,7 @@ GIT
 PATH
   remote: .
   specs:
-    langchainrb (0.3.10)
+    langchainrb (0.3.11)
 
 GEM
   remote: https://rubygems.org/
@@ -274,6 +274,7 @@ GEM
     zeitwerk (2.6.8)
 
 PLATFORMS
+  arm64-darwin-21
   arm64-darwin-22
   x86_64-darwin-19
   x86_64-darwin-22
