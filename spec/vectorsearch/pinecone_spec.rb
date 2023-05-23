@@ -16,11 +16,6 @@ RSpec.describe Vectorsearch::Pinecone do
     )
   }
 
-  before(:each) do
-    # expect(Pinecone.configuration.api_key).to eq('secret')
-    # expect(Pinecone.configuration.environment).to eq('test')
-  end
-
   describe '#create_default_schema' do
     it 'returns true' do
       allow_any_instance_of(Pinecone::Client).to receive(:create_index).with(
