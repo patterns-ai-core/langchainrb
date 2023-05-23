@@ -66,6 +66,8 @@ module Prompt
     # contained within the template. Input variables are defined as text enclosed in
     # curly braces (e.g. "{variable_name}").
     #
+    # Content within two consecutive curly braces (e.g. "{{ignore_me}}) are ignored.
+    #
     # @param template [String] The template string to extract variables from.
     #
     # @return [Array<String>] An array of input variable names.

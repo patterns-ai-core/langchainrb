@@ -20,7 +20,7 @@ module Prompt
     end
 
     #
-    # Format the prompt with the inputs.
+    # Format the prompt with the inputs. Double {{}} replaced with single {} to adhere to f-string spec.
     #
     # @param kwargs [Hash] Any arguments to be passed to the prompt template.
     # @return [String] A formatted string.
@@ -28,7 +28,7 @@ module Prompt
     def format(**kwargs)
       result = @template
       kwargs.each { |key, value| result = result.gsub(/\{#{key}\}/, value.to_s) }
-      result.gsub(/{{/, '{').gsub(/}}/, '}')
+      result.gsub(/{{/, "{").gsub(/}}/, "}")
     end
 
     #
