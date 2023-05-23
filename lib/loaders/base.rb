@@ -4,9 +4,10 @@ require "open-uri"
 
 module Loaders
   class FileNotFound < StandardError; end
+
   class UnknownFormatError < StandardError; end
 
-  URI_REGEX = %r{\A[A-Za-z][A-Za-z0-9+\-\.]*://}
+  URI_REGEX = %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}
 
   class Base
     def self.load(path)

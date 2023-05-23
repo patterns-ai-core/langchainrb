@@ -14,7 +14,7 @@ RSpec.describe Loaders::Base do
     end
 
     context "Text" do
-      context 'from local file' do
+      context "from local file" do
         let(:path) { "spec/fixtures/loaders/example.txt" }
 
         it "loads text from file" do
@@ -22,7 +22,7 @@ RSpec.describe Loaders::Base do
         end
       end
 
-      context 'from url' do
+      context "from url" do
         let(:path) { "http://example.com/example.txt" }
 
         it "loads text from URL" do
@@ -32,7 +32,7 @@ RSpec.describe Loaders::Base do
     end
 
     context "HTML" do
-      context 'from local file' do
+      context "from local file" do
         let(:path) { "spec/fixtures/loaders/example.html" }
 
         it "loads text from file" do
@@ -40,7 +40,7 @@ RSpec.describe Loaders::Base do
         end
       end
 
-      context 'from url' do
+      context "from url" do
         let(:path) { "http://example.com/example.html" }
         let(:body) { "<html><body><h1>Lorem Ipsum</h1><p>Dolor sit amet.</p></body></html>" }
         let(:content_type) { "text/html" }
@@ -52,7 +52,7 @@ RSpec.describe Loaders::Base do
     end
 
     context "PDF" do
-      context 'from local file' do
+      context "from local file" do
         let(:path) { "spec/fixtures/loaders/cairo-unicode.pdf" }
 
         it "loads text from file" do
@@ -65,7 +65,7 @@ RSpec.describe Loaders::Base do
         end
       end
 
-      context 'from url' do
+      context "from url" do
         let(:path) { "http://example.com/example.pdf" }
         let(:body) { File.read("spec/fixtures/loaders/cairo-unicode.pdf") }
         let(:content_type) { "application/pdf" }
@@ -82,7 +82,7 @@ RSpec.describe Loaders::Base do
     end
 
     context "DOCX" do
-      context 'from local file' do
+      context "from local file" do
         let(:path) { "spec/fixtures/loaders/sample.docx" }
 
         it "loads text from file" do
@@ -90,7 +90,7 @@ RSpec.describe Loaders::Base do
         end
       end
 
-      context 'from url' do
+      context "from url" do
         let(:path) { "http://example.com/sample.docx" }
         let(:body) { File.read("spec/fixtures/loaders/sample.docx") }
         let(:content_type) { "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }
@@ -101,22 +101,22 @@ RSpec.describe Loaders::Base do
       end
     end
 
-    context 'Unsupported file type' do
+    context "Unsupported file type" do
       context "from local file" do
         let(:path) { "spec/fixtures/loaders/example.swf" }
 
         it "raises unknown format" do
-          expect{subject}.to raise_error Loaders::UnknownFormatError
+          expect { subject }.to raise_error Loaders::UnknownFormatError
         end
       end
 
       context "from url" do
         let(:path) { "http://example.com/sample.swf" }
-        let(:body) { '' }
+        let(:body) { "" }
         let(:content_type) { "application/vnd.swf" }
 
         it "raises unknown format" do
-          expect{subject}.to raise_error Loaders::UnknownFormatError
+          expect { subject }.to raise_error Loaders::UnknownFormatError
         end
       end
     end
@@ -125,38 +125,38 @@ RSpec.describe Loaders::Base do
   describe "#url?" do
     subject { described_class.new(path).url? }
 
-    context 'with relative unix path' do
-      let(:path) { './tmp/file.txt' }
+    context "with relative unix path" do
+      let(:path) { "./tmp/file.txt" }
 
       it { expect(subject).to be_falsey }
     end
 
-    context 'with absolute unix path' do
-      let(:path) { '/users/tmp/file.txt' }
+    context "with absolute unix path" do
+      let(:path) { "/users/tmp/file.txt" }
 
       it { expect(subject).to be_falsey }
     end
 
-    context 'with absolute window path' do
+    context "with absolute window path" do
       let(:path) { 'C:\Program Files\file.txt' }
 
       it { expect(subject).to be_falsey }
     end
 
-    context 'with https URL' do
-      let(:path) { 'https://example.com/file.txt' }
+    context "with https URL" do
+      let(:path) { "https://example.com/file.txt" }
 
       it { expect(subject).to be_truthy }
     end
 
-    context 'with http URL' do
-      let(:path) { 'http://example.com/file.txt' }
+    context "with http URL" do
+      let(:path) { "http://example.com/file.txt" }
 
       it { expect(subject).to be_truthy }
     end
 
-    context 'with ftp URL' do
-      let(:path) { 'ftp://example.com/file.txt' }
+    context "with ftp URL" do
+      let(:path) { "ftp://example.com/file.txt" }
 
       it { expect(subject).to be_truthy }
     end

@@ -2,9 +2,9 @@
 
 module Loaders
   module Processors
-    class Docx < Base
-      EXTENSIONS = ['.docx']
-      CONTENT_TYPES = ['application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+    class Docx
+      EXTENSIONS = [".docx"]
+      CONTENT_TYPES = ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
 
       def initialize
         depends_on "docx"
@@ -19,4 +19,3 @@ module Loaders
     end
   end
 end
-

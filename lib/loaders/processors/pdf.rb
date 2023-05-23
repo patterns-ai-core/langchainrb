@@ -3,8 +3,8 @@
 module Loaders
   module Processors
     class PDF
-      EXTENSIONS = ['.pdf']
-      CONTENT_TYPES = ['application/pdf']
+      EXTENSIONS = [".pdf"]
+      CONTENT_TYPES = ["application/pdf"]
 
       def initialize
         depends_on "pdf-reader"
