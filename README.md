@@ -136,7 +136,7 @@ cohere = LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
 ```
 
 #### Replicate
-Add `gem "replicate-ruby", git: "https://github.com/andreibondarev/replicate-ruby.git", branch: "faraday-1.x"` to your Gemfile.
+Add `gem "replicate-ruby", "~> 0.2.2"` to your Gemfile.
 ```ruby
 cohere = LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
 ```
@@ -264,10 +264,10 @@ Need to read data from various sources? Load it up.
 
 | Name | Class         | Gem Requirements             |
 | ---- | ------------- | :--------------------------: |
-| docx | Loaders::Docx | `gem "docx", branch: "master", git: "https://github.com/ruby-docx/docx.git"` |
+| docx | Loaders::Docx | `gem "docx", "~> 0.8.0"`     |
+| html | Loaders::HTML | `gem "nokogiri", "~> 1.13"`  |
 | pdf  | Loaders::PDF  | `gem "pdf-reader", "~> 1.4"` |
 | text | Loaders::Text |                              |
-| html | Loaders::HTML | `gem "nokogiri", "~> 1.13"`  |
 
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)

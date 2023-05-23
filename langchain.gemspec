@@ -44,7 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "nokogiri", "~> 1.13"
   spec.add_development_dependency "pdf-reader", "~> 1.4"
   spec.add_development_dependency "pinecone", "~> 0.1.6"
-  spec.add_development_dependency "replicate-ruby"
+  spec.add_development_dependency "replicate-ruby", "~> 0.2.2"
   spec.add_development_dependency "qdrant-ruby", "~> 0.9.0"
   spec.add_development_dependency "ruby-openai", "~> 4.0.0"
   spec.add_development_dependency "weaviate-ruby", "~> 0.8.0"
