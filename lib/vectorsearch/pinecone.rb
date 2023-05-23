@@ -27,13 +27,13 @@ module Vectorsearch
     # @param texts [Array] The list of texts to add
     # @param namespace [String] The namespace to add the texts to
     # @return [Hash] The response from the server
-    def add_texts(texts:, namespace: '')
+    def add_texts(texts:, namespace: "")
       vectors = texts.map do |text|
         {
           # TODO: Allows passing in your own IDs
           id: SecureRandom.uuid,
           namespace: namespace,
-          metadata: { content: text },
+          metadata: {content: text},
           values: llm_client.embed(text: text)
         }
       end
@@ -61,7 +61,7 @@ module Vectorsearch
     def similarity_search(
       query:,
       k: 4,
-      namespace: ''
+      namespace: ""
     )
       embedding = llm_client.embed(text: query)
 
@@ -77,7 +77,7 @@ module Vectorsearch
     # @param k [Integer] The number of results to return
     # @param namespace [String] The namespace to search in
     # @return [Array] The list of results
-    def similarity_search_by_vector(embedding:, k: 4, namespace: '')
+    def similarity_search_by_vector(embedding:, k: 4, namespace: "")
       index = client.index(index_name)
 
       response = index.query(
@@ -94,7 +94,7 @@ module Vectorsearch
     # @param question [String] The question to ask
     # @param namespace [String] The namespace to search in
     # @return [String] The answer to the question
-    def ask(question:, namespace: '')
+    def ask(question:, namespace: "")
       search_results = similarity_search(query: question, namespace: namespace)
 
       context = search_results.map do |result|
