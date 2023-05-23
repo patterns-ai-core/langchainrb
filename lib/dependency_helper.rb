@@ -14,7 +14,9 @@ def depends_on(gem_name)
   return(true) unless defined?(Bundler) # If we're in a non-bundler environment, we're no longer able to determine if we'll meet requirements
 
   gem_version = Gem.loaded_specs[gem_name].version
-  gem_requirement = Bundler.load.dependencies.find { |g| g.name == gem_name }.requirement
+  gem_requirement = Bundler.load.dependencies.find { |g| g.name == gem_name }&.requirement
+
+  raise LoadError if !gem_requirement
 
   if !gem_requirement.satisfied_by?(gem_version)
     raise "The #{gem_name} gem is installed, but version #{gem_requirement} is required. You have #{gem_version}."
