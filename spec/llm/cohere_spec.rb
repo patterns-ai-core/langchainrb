@@ -7,7 +7,7 @@ RSpec.describe LLM::Cohere do
 
   describe "#embed" do
     before do
-      allow_any_instance_of(Cohere::Client).to receive(:embed).and_return(
+      allow(subject.client).to receive(:embed).and_return(
         {
           "id" => "a86a12ca-7ce5-4433-b68a-4d8454b22de7",
           "texts" => ["Hello World"],
@@ -23,7 +23,7 @@ RSpec.describe LLM::Cohere do
 
   describe "#complete" do
     before do
-      allow_any_instance_of(Cohere::Client).to receive(:generate).and_return(
+      allow(subject.client).to receive(:generate).and_return(
         {
           "id" => "812c650e-a0d0-4502-a084-45b0d32fcb9c",
           "generations" => [

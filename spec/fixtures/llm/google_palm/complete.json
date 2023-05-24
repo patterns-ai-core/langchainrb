@@ -1,0 +1,33 @@
+{
+  "candidates": [
+    {
+      "output": "A man walks into a library and asks for books about paranoia. The librarian whispers, \"They're right behind you!\"",
+      "safetyRatings": [
+        {
+          "category": "HARM_CATEGORY_DEROGATORY",
+          "probability": "NEGLIGIBLE"
+        },
+        {
+          "category": "HARM_CATEGORY_TOXICITY",
+          "probability": "NEGLIGIBLE"
+        },
+        {
+          "category": "HARM_CATEGORY_VIOLENCE",
+          "probability": "NEGLIGIBLE"
+        },
+        {
+          "category": "HARM_CATEGORY_SEXUAL",
+          "probability": "NEGLIGIBLE"
+        },
+        {
+          "category": "HARM_CATEGORY_MEDICAL",
+          "probability": "NEGLIGIBLE"
+        },
+        {
+          "category": "HARM_CATEGORY_DANGEROUS",
+          "probability": "NEGLIGIBLE"
+        }
+      ]
+    }
+  ]
+}
