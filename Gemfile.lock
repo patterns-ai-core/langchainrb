@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     langchainrb (0.3.11)
-      pathname (~> 0.1.0)
+      pathname (~> 0.2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -161,7 +161,7 @@ GEM
     parallel (1.23.0)
     parser (3.2.2.1)
       ast (~> 2.4.1)
-    pathname (0.1.0)
+    pathname (0.2.1)
     pdf-reader (1.4.1)
       Ascii85 (~> 1.0.0)
       afm (~> 0.2.1)
