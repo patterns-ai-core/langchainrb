@@ -285,7 +285,7 @@ Langchain.logger.level = :info
 
 1. `git clone https://github.com/andreibondarev/langchainrb.git`
 2. `cp .env.example .env`, then fill out the environment variables in `.env`
-3. `rspec spec/` to ensure that the tests pass
+3. `bundle exec rake` to ensure that the tests pass and to run standardrb
 4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
 
 ## Core Contributors
