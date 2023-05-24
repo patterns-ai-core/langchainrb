@@ -59,7 +59,6 @@ RSpec.describe Vectorsearch::Pinecone do
       allow(SecureRandom).to receive(:uuid).and_return("123")
       allow(subject.llm_client).to receive(:embed).with(text: text).and_return(embedding)
       allow(subject.client).to receive(:index).with(index_name).and_return(Pinecone::Index.new)
-      allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(vectors: vectors).and_return(true)
     end
 
     describe "without a namespace" do
@@ -67,11 +66,16 @@ RSpec.describe Vectorsearch::Pinecone do
         [
           {
             id: "123",
-            namespace: "",
             metadata: {content: text},
             values: embedding
           }
         ]
+      end
+
+      before(:each) do
+        allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
+          vectors: vectors, namespace: ""
+        ).and_return(true)
       end
 
       it "adds texts" do
@@ -84,11 +88,16 @@ RSpec.describe Vectorsearch::Pinecone do
         [
           {
             id: "123",
-            namespace: namespace,
             metadata: {content: text},
             values: embedding
           }
         ]
+      end
+
+      before(:each) do
+        allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
+          vectors: vectors, namespace: namespace
+        ).and_return(true)
       end
 
       it "adds texts" do

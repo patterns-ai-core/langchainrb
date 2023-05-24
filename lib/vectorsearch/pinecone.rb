@@ -32,7 +32,6 @@ module Vectorsearch
         {
           # TODO: Allows passing in your own IDs
           id: SecureRandom.uuid,
-          namespace: namespace,
           metadata: {content: text},
           values: llm_client.embed(text: text)
         }
@@ -40,7 +39,7 @@ module Vectorsearch
 
       index = client.index(index_name)
 
-      index.upsert(vectors: vectors)
+      index.upsert(vectors: vectors, namespace: namespace)
     end
 
     # Create the index with the default schema
