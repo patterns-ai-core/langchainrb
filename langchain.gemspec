@@ -29,6 +29,8 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "pathname", "~> 0.1.0"
+
   # development dependencies
   spec.add_development_dependency "dotenv-rails", "~> 2.7.6"
   spec.add_development_dependency "pry-byebug", "~> 3.10.0"
