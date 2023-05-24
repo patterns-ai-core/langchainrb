@@ -141,6 +141,12 @@ Add `gem "replicate-ruby", "~> 0.2.2"` to your Gemfile.
 cohere = LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
 ```
 
+#### Google PaLM (Pathways Language Model)
+Add `"google_palm_api", "~> 0.1.0"` to your Gemfile.
+```ruby
+google_palm = LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
+```
+
 ### Using Prompts 📋
 
 #### Prompt Templates
