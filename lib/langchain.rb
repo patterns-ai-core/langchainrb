@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "logger"
+require "pathname"
 
 require_relative "./version"
 require_relative "./dependency_helper"
@@ -34,6 +35,7 @@ end
 module LLM
   autoload :Base, "llm/base"
   autoload :Cohere, "llm/cohere"
+  autoload :GooglePalm, "llm/google_palm"
   autoload :HuggingFace, "llm/hugging_face"
   autoload :OpenAI, "llm/openai"
   autoload :Replicate, "llm/replicate"

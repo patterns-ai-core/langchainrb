@@ -1,8 +1,13 @@
 ## [Unreleased]
 
-## [0.3.11] - 2023-05-22
+## [0.3.12] - 2023-05-22
 - 🔍 Vectorsearch
   - Introduce namespace support for Pinecone
+
+## [0.3.11] - 2023-05-23
+- 🗣️ LLMs
+  - Introducing support for Google PaLM (Pathways Language Model)
+- Bug fixes and improvements
 
 ## [0.3.10] - 2023-05-19
 - 🗣️ LLMs

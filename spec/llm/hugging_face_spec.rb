@@ -7,7 +7,7 @@ RSpec.describe LLM::HuggingFace do
 
   describe "#embed" do
     before do
-      allow_any_instance_of(HuggingFace::InferenceApi).to receive(:embedding).and_return(
+      allow(subject.client).to receive(:embedding).and_return(
         [-1.5693359, -0.9458008, 1.9355469]
       )
     end
