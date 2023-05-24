@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "logger"
+require "pathname"
 
 require_relative "./version"
 require_relative "./dependency_helper"
