@@ -26,13 +26,14 @@ module Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @param namespace [String] The namespace to add the texts to
+    # @param metadata [Hash] The metadata to use for the texts
     # @return [Hash] The response from the server
-    def add_texts(texts:, namespace: "")
+    def add_texts(texts:, namespace: "", metadata: nil)
       vectors = texts.map do |text|
         {
           # TODO: Allows passing in your own IDs
           id: SecureRandom.uuid,
-          metadata: {content: text},
+          metadata: metadata || {content: text},
           values: llm_client.embed(text: text)
         }
       end

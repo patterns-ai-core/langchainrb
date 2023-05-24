@@ -33,7 +33,8 @@ RSpec.describe Vectorsearch::Pinecone do
   let(:k) { 4 }
   let(:metadata) do
     {
-      "foo" => "bar"
+      "foo" => "bar",
+      "meaningful" => "data"
     }
   end
   let(:matches) do
@@ -55,6 +56,16 @@ RSpec.describe Vectorsearch::Pinecone do
   end
 
   describe "add_texts" do
+    let(:vectors) do
+      [
+        {
+          id: "123",
+          metadata: {content: text},
+          values: embedding
+        }
+      ]
+    end
+
     before do
       allow(SecureRandom).to receive(:uuid).and_return("123")
       allow(subject.llm_client).to receive(:embed).with(text: text).and_return(embedding)
@@ -62,16 +73,6 @@ RSpec.describe Vectorsearch::Pinecone do
     end
 
     describe "without a namespace" do
-      let(:vectors) do
-        [
-          {
-            id: "123",
-            metadata: {content: text},
-            values: embedding
-          }
-        ]
-      end
-
       before(:each) do
         allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
           vectors: vectors, namespace: ""
@@ -84,16 +85,6 @@ RSpec.describe Vectorsearch::Pinecone do
     end
 
     describe "with a namespace" do
-      let(:vectors) do
-        [
-          {
-            id: "123",
-            metadata: {content: text},
-            values: embedding
-          }
-        ]
-      end
-
       before(:each) do
         allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
           vectors: vectors, namespace: namespace
@@ -102,6 +93,40 @@ RSpec.describe Vectorsearch::Pinecone do
 
       it "adds texts" do
         expect(subject.add_texts(texts: [text], namespace: namespace)).to eq(true)
+      end
+    end
+
+    describe "without a namespace" do
+      before(:each) do
+        allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
+          vectors: vectors, namespace: ""
+        ).and_return(true)
+      end
+
+      it "adds texts" do
+        expect(subject.add_texts(texts: [text])).to eq(true)
+      end
+    end
+
+    describe "with supplied metadata" do
+      let!(:vectors) do
+        [
+          {
+            id: "123",
+            metadata: metadata,
+            values: embedding
+          }
+        ]
+      end
+
+      before(:each) do
+        allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
+          vectors: vectors, namespace: ""
+        ).and_return(true)
+      end
+
+      it "adds texts" do
+        expect(subject.add_texts(texts: [text], metadata: metadata)).to eq(true)
       end
     end
   end

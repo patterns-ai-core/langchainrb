@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.3.12)
+    langchainrb (0.3.13)
 
 GEM
   remote: https://rubygems.org/
