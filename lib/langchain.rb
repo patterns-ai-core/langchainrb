@@ -34,6 +34,7 @@ end
 module LLM
   autoload :Base, "llm/base"
   autoload :Cohere, "llm/cohere"
+  autoload :GooglePalm, "llm/google_palm"
   autoload :HuggingFace, "llm/hugging_face"
   autoload :OpenAI, "llm/openai"
   autoload :Replicate, "llm/replicate"
