@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
+VersionError = Class.new(ScriptError)
+
 # This method requires and loads the given gem, and then checks to see if the version of the gem meets the requirements listed in `langchain.gemspec`
 # This solution was built to avoid auto-loading every single gem in the Gemfile when the developer will mostly likely be only using a few of them.
 #
 # @param gem_name [String] The name of the gem to load
 # @return [Boolean] Whether or not the gem was loaded successfully
 # @raise [LoadError] If the gem is not installed
-# @raise [LoadError] If the gem is installed, but the version does not meet the requirements
+# @raise [VersionError] If the gem is installed, but the version does not meet the requirements
 #
 def depends_on(gem_name)
   gem(gem_name) # require the gem
@@ -16,10 +18,10 @@ def depends_on(gem_name)
   gem_version = Gem.loaded_specs[gem_name].version
   gem_requirement = Bundler.load.dependencies.find { |g| g.name == gem_name }&.requirement
 
-  raise LoadError if !gem_requirement
+  raise LoadError unless gem_requirement
 
-  if !gem_requirement.satisfied_by?(gem_version)
-    raise "The #{gem_name} gem is installed, but version #{gem_requirement} is required. You have #{gem_version}."
+  unless gem_requirement.satisfied_by?(gem_version)
+    raise VersionError, "The #{gem_name} gem is installed, but version #{gem_requirement} is required. You have #{gem_version}."
   end
 
   true
