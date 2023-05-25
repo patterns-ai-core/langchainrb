@@ -24,6 +24,8 @@ module Langchain
     autoload :HTML, "langchain/processors/html"
     autoload :Text, "langchain/processors/text"
     autoload :Docx, "langchain/processors/docx"
+    autoload :JSON, "langchain/processors/json"
+    autoload :JSONL, "langchain/processors/jsonl"
   end
 end
 
