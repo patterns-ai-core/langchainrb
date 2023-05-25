@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 module Vectorsearch
+  # The PostgreSQL vector search adapter
   class Pgvector < Base
+    # @param url [String] The URL of the PostgreSQL database
+    # @param index_name [String] The name of the table to use for the index
+    # @param llm [String] The URL of the Language Layer API
+    # @param llm_api_key [String] The API key for the Language Layer API
+    # @param api_key [String] The API key for the Vectorsearch DB (not used for PostgreSQL)
     def initialize(url:, index_name:, llm:, llm_api_key:, api_key: nil)
       require "pg"
       require "pgvector"
@@ -16,6 +22,9 @@ module Vectorsearch
       super(llm: llm, llm_api_key: llm_api_key)
     end
 
+    # Add a list of texts to the index
+    # @param texts [Array<String>] The texts to add to the index
+    # @return [PG::Result] The response from the database
     def add_texts(texts:)
       data = texts.flat_map do |text|
         [text, llm_client.embed(text: text)]
@@ -28,7 +37,7 @@ module Vectorsearch
     end
 
     # Create default schema
-    # @return [Hash] The response from the server
+    # @return [PG::Result] The response from the database
     def create_default_schema
       client.exec("CREATE EXTENSION IF NOT EXISTS vector;")
       client.exec(
@@ -42,6 +51,10 @@ module Vectorsearch
       )
     end
 
+    # Search for similar texts in the index
+    # @param query [String] The text to search for
+    # @param k [Integer] The number of top results to return
+    # @return [Array<Hash>] The results of the search
     def similarity_search(query:, k: 4)
       embedding = llm_client.embed(text: query)
 
@@ -51,6 +64,11 @@ module Vectorsearch
       )
     end
 
+    # Search for similar texts in the index by the passed in vector.
+    # You must generate your own vector using the same LLM that generated the embeddings stored in the Vectorsearch DB.
+    # @param embedding [Array<Float>] The vector to search for
+    # @param k [Integer] The number of top results to return
+    # @return [Array<Hash>] The results of the search
     def similarity_search_by_vector(embedding:, k: 4)
       result = client.transaction do |conn|
         conn.exec("SET LOCAL ivfflat.probes = 10;")
