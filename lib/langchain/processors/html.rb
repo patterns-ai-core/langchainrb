@@ -14,6 +14,9 @@ module Langchain
         require "nokogiri"
       end
 
+      # Parse the document and return the text
+      # @param [File] data
+      # @return [String]
       def parse(data)
         Nokogiri::HTML(data.read)
           .css(TEXT_CONTENT_TAGS.join(","))

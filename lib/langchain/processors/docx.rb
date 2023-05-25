@@ -11,6 +11,9 @@ module Langchain
         require "docx"
       end
 
+      # Parse the document and return the text
+      # @param [File] data
+      # @return [String]
       def parse(data)
         ::Docx::Document
           .open(StringIO.new(data.read))

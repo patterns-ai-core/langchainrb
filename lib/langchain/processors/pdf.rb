@@ -11,6 +11,9 @@ module Langchain
         require "pdf-reader"
       end
 
+      # Parse the document and return the text
+      # @param [File] data
+      # @return [String]
       def parse(data)
         ::PDF::Reader
           .new(StringIO.new(data.read))

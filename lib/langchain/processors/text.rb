@@ -6,6 +6,9 @@ module Langchain
       EXTENSIONS = [".txt"]
       CONTENT_TYPES = ["text/plain"]
 
+      # Parse the document and return the text
+      # @param [File] data
+      # @return [String]
       def parse(data)
         data.read
       end

@@ -10,20 +10,31 @@ module Langchain
 
     URI_REGEX = %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}
 
+    # Load data from a file or url
+    # Equivalent to Langchain::Loader.new(path).load
+    # @param path [String | Pathname] path to file or url
+    # @return [String] file content
     def self.load(path)
       new(path).load
     end
 
+    # Initialize Langchain::Loader
+    # @param path [String | Pathname] path to file or url
+    # @return [Langchain::Loader] loader instance
     def initialize(path)
       @path = path
     end
 
+    # Check if path is url
+    # @return [Boolean] true if path is url
     def url?
       return false if @path.is_a?(Pathname)
 
       !!(@path =~ URI_REGEX)
     end
 
+    # Load data from a file or url
+    # @return [String] file content
     def load
       url? ? from_url(@path) : from_path(@path)
     end
