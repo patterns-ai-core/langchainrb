@@ -284,6 +284,7 @@ Langchain::Loader.load('https://www.example.com/file.pdf')
 | html   | Processors::HTML | `gem "nokogiri", "~> 1.13"`  |
 | pdf    | Processors::PDF  | `gem "pdf-reader", "~> 1.4"` |
 | text   | Processors::Text |                              |
+| csv    | Processors::CSV  |                              |
 
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
