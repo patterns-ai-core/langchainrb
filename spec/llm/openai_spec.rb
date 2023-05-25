@@ -5,7 +5,7 @@ RSpec.describe LLM::OpenAI do
 
   describe "#embed" do
     before do
-      allow_any_instance_of(OpenAI::Client).to receive(:embeddings).and_return({
+      allow(subject.client).to receive(:embeddings).and_return({
         "object" => "list",
         "data" => [
           {
@@ -28,7 +28,7 @@ RSpec.describe LLM::OpenAI do
 
   describe "#complete" do
     before do
-      allow_any_instance_of(OpenAI::Client).to receive(:completions).and_return(
+      allow(subject.client).to receive(:completions).and_return(
         {
           "id" => "cmpl-7BZg4cP5xzga4IyLI6u97WMepAJj2",
           "object" => "text_completion",
@@ -64,7 +64,7 @@ RSpec.describe LLM::OpenAI do
 
   describe "#chat" do
     before do
-      allow_any_instance_of(OpenAI::Client).to receive(:chat).and_return(
+      allow(subject.client).to receive(:chat).and_return(
         {
           "id" => "chatcmpl-7Hcl1sXOtsaUBKJGGhNujEIwhauaD",
           "object" => "chat.completion",
