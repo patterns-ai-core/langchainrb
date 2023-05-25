@@ -2,14 +2,14 @@
 
 require "open-uri"
 
-module Loaders
-  class FileNotFound < StandardError; end
+module Langchain
+  class Loader
+    class FileNotFound < StandardError; end
 
-  class UnknownFormatError < StandardError; end
+    class UnknownFormatError < StandardError; end
 
-  URI_REGEX = %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}
+    URI_REGEX = %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}
 
-  class Base
     def self.load(path)
       new(path).load
     end
@@ -49,9 +49,9 @@ module Loaders
     def process(&block)
       data, processor = yield
 
-      raise Loaders::UnknownFormatError unless processor
+      raise UnknownFormatError unless processor
 
-      Loaders::Processors.const_get(processor).new.parse(data)
+      Langchain::Processors.const_get(processor).new.parse(data)
     end
 
     def find_processor(constant, value)
@@ -59,11 +59,11 @@ module Loaders
     end
 
     def processor_matches?(constant, value)
-      Loaders::Processors.const_get(constant).include?(value)
+      Langchain::Processors.const_get(constant).include?(value)
     end
 
     def processors
-      Loaders::Processors.constants
+      Langchain::Processors.constants
     end
   end
 end

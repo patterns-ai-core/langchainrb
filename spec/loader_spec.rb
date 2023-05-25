@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Loaders::Base do
+RSpec.describe Langchain::Loader do
   describe "#load" do
     let(:status) { ["200", "OK"] }
     let(:body) { "Lorem Ipsum" }
@@ -106,7 +106,7 @@ RSpec.describe Loaders::Base do
         let(:path) { "spec/fixtures/loaders/example.swf" }
 
         it "raises unknown format" do
-          expect { subject }.to raise_error Loaders::UnknownFormatError
+          expect { subject }.to raise_error Langchain::Loader::UnknownFormatError
         end
       end
 
@@ -116,7 +116,7 @@ RSpec.describe Loaders::Base do
         let(:content_type) { "application/vnd.swf" }
 
         it "raises unknown format" do
-          expect { subject }.to raise_error Loaders::UnknownFormatError
+          expect { subject }.to raise_error Langchain::Loader::UnknownFormatError
         end
       end
     end

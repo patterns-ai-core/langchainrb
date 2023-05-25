@@ -14,6 +14,15 @@ module Langchain
   @logger ||= ::Logger.new($stdout, level: :warn, formatter: ->(severity, datetime, progname, msg) { "[LangChain.rb] #{msg}\n" })
 
   @root = Pathname.new(__dir__)
+
+  autoload :Loader, "langchain/loader"
+
+  module Processors
+    autoload :PDF, "langchain/processors/pdf"
+    autoload :HTML, "langchain/processors/html"
+    autoload :Text, "langchain/processors/text"
+    autoload :Docx, "langchain/processors/docx"
+  end
 end
 
 module Agent
@@ -51,14 +60,4 @@ module Tool
   autoload :Calculator, "tool/calculator"
   autoload :SerpApi, "tool/serp_api"
   autoload :Wikipedia, "tool/wikipedia"
-end
-
-module Loaders
-  autoload :Base, "loaders/base"
-  module Processors
-    autoload :PDF, "loaders/processors/pdf"
-    autoload :HTML, "loaders/processors/html"
-    autoload :Text, "loaders/processors/text"
-    autoload :Docx, "loaders/processors/docx"
-  end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Loaders
+module Langchain
   module Processors
     class Text
       EXTENSIONS = [".txt"]
