@@ -23,6 +23,7 @@ module Langchain
     autoload :HTML, "langchain/processors/html"
     autoload :Text, "langchain/processors/text"
     autoload :Docx, "langchain/processors/docx"
+    autoload :CSV, "langchain/processors/csv"
   end
 end
 

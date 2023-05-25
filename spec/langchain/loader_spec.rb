@@ -101,6 +101,37 @@ RSpec.describe Langchain::Loader do
       end
     end
 
+    context "CSV" do
+      let(:result) do
+        [
+          ["Username","Identifier","First name","Last name"],
+          ["booker12","9012","Rachel","Booker"],
+          ["grey07","2070","Laura","Grey"],
+          ["johnson81","4081","Craig","Johnson"],
+          ["jenkins46","9346","Mary","Jenkins"],
+          ["smith79","5079","Jamie","Smith"],
+        ]
+      end
+
+      context "from local file" do
+        let(:path) { "spec/fixtures/loaders/example.csv" }
+
+        it "loads text from file" do
+          expect(subject).to eq(result)
+        end
+      end
+
+      context "from url" do
+        let(:path) { "http://example.com/example.csv" }
+        let(:body) { File.read("spec/fixtures/loaders/example.csv") }
+        let(:content_type) { "text/csv" }
+
+        it "loads text from URL" do
+          expect(subject).to eq(result)
+        end
+      end
+    end
+
     context "Unsupported file type" do
       context "from local file" do
         let(:path) { "spec/fixtures/loaders/example.swf" }
