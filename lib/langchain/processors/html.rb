@@ -2,7 +2,7 @@
 
 module Langchain
   module Processors
-    class HTML
+    class HTML < Base
       EXTENSIONS = [".html", ".htm"]
       CONTENT_TYPES = ["text/html"]
 

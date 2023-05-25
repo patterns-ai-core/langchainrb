@@ -2,12 +2,12 @@
 
 module Langchain
   module Processors
-    class Text < Base
-      EXTENSIONS = [".txt"]
-      CONTENT_TYPES = ["text/plain"]
+    class Base
+      EXTENSIONS = []
+      CONTENT_TYPES = []
 
       def parse(data)
-        data.read
+        raise NotImplementedError
       end
     end
   end

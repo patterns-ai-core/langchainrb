@@ -2,7 +2,7 @@
 
 module Langchain
   module Processors
-    class PDF
+    class PDF < Base
       EXTENSIONS = [".pdf"]
       CONTENT_TYPES = ["application/pdf"]
 

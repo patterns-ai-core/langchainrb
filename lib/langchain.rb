@@ -18,6 +18,7 @@ module Langchain
   autoload :Loader, "langchain/loader"
 
   module Processors
+    autoload :Base, "langchain/processors/base"
     autoload :PDF, "langchain/processors/pdf"
     autoload :HTML, "langchain/processors/html"
     autoload :Text, "langchain/processors/text"

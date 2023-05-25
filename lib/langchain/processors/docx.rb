@@ -2,7 +2,7 @@
 
 module Langchain
   module Processors
-    class Docx
+    class Docx < Base
       EXTENSIONS = [".docx"]
       CONTENT_TYPES = ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
 
