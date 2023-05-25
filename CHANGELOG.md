@@ -1,8 +1,10 @@
 ## [Unreleased]
 
-## [0.3.12] - 2023-05-22
+## [0.3.12] - 2023-05-25
 - 🔍 Vectorsearch
   - Introduce namespace support for Pinecone
+- 🚚 Loaders
+  - Loaders overhaul
 
 ## [0.3.11] - 2023-05-23
 - 🗣️ LLMs
