@@ -268,12 +268,28 @@ agent.run(question: "How many full soccer fields would be needed to cover the di
 
 Need to read data from various sources? Load it up.
 
-| Name | Class         | Gem Requirements             |
-| ---- | ------------- | :--------------------------: |
-| docx | Loaders::Docx | `gem "docx", "~> 0.8.0"`     |
-| html | Loaders::HTML | `gem "nokogiri", "~> 1.13"`  |
-| pdf  | Loaders::PDF  | `gem "pdf-reader", "~> 1.4"` |
-| text | Loaders::Text |                              |
+##### Usage
+
+Just call `Langchan::Loader.load` with the path to the file or a URL you want to load.
+
+```ruby
+Langchaing::Loader.load('/path/to/file.pdf')
+```
+
+or
+
+```ruby
+Langchain::Loader.load('https://www.example.com/file.pdf')
+```
+
+##### Supported Formats
+
+| Format | Pocessor         |       Gem Requirements       |
+| ------ | ---------------- | :--------------------------: |
+| docx   | Processors::Docx |   `gem "docx", "~> 0.8.0"`   |
+| html   | Processors::HTML | `gem "nokogiri", "~> 1.13"`  |
+| pdf    | Processors::PDF  | `gem "pdf-reader", "~> 1.4"` |
+| text   | Processors::Text |                              |
 
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
