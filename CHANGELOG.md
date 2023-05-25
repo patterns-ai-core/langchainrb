@@ -1,9 +1,5 @@
 ## [Unreleased]
 
-## [0.3.13] - 2023-05-24
-- 🔍 Vectorsearch
-  - Introduce custom metadata support for Pinecone
-
 ## [0.3.12] - 2023-05-22
 - 🔍 Vectorsearch
   - Introduce namespace support for Pinecone
