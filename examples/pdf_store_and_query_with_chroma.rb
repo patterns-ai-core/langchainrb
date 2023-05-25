@@ -26,8 +26,8 @@ docs = [
 ]
 
 # Add data to the index. Weaviate will use OpenAI to generate embeddings behind the scene.
-chroma.add_texts(
-  texts: docs
+chroma.add_data(
+  paths: docs
 )
 
 # Query your data
