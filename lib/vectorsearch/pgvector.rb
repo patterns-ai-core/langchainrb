@@ -20,7 +20,7 @@ module Vectorsearch
       data = texts.flat_map do |text|
         [text, llm_client.embed(text: text)]
       end
-      values = texts.length.times.map { |i| "($#{2*i+1}, $#{2*i+2})" }.join(',')
+      values = texts.length.times.map { |i| "($#{2 * i + 1}, $#{2 * i + 2})" }.join(",")
       client.exec_params(
         "INSERT INTO #{@index_name} (content, vectors) VALUES #{values};",
         data
@@ -30,7 +30,7 @@ module Vectorsearch
     # Create default schema
     # @return [Hash] The response from the server
     def create_default_schema
-      client.exec('CREATE EXTENSION IF NOT EXISTS vector;')
+      client.exec("CREATE EXTENSION IF NOT EXISTS vector;")
       client.exec(
         <<~SQL
           CREATE TABLE IF NOT EXISTS #{@index_name} (
@@ -53,7 +53,7 @@ module Vectorsearch
 
     def similarity_search_by_vector(embedding:, k: 4)
       result = client.transaction do |conn|
-        conn.exec('SET LOCAL ivfflat.probes = 10;')
+        conn.exec("SET LOCAL ivfflat.probes = 10;")
         query = <<~SQL
           SELECT id, content FROM #{@index_name} ORDER BY vectors <-> $1 ASC LIMIT $2;
         SQL

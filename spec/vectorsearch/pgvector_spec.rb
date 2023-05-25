@@ -2,11 +2,11 @@
 
 require "pg"
 
-if ENV['POSTGRES_URL']
+if ENV["POSTGRES_URL"] && RUBY_VERSION >= "3.0.0"
   RSpec.describe Vectorsearch::Pgvector do
-    let(:client) { ::PG.connect(ENV['POSTGRES_URL']) }
+    let(:client) { ::PG.connect(ENV["POSTGRES_URL"]) }
 
-    let(:url) { ENV['POSTGRES_URL'] }
+    let(:url) { ENV["POSTGRES_URL"] }
     subject {
       described_class.new(
         url: url,
@@ -17,7 +17,7 @@ if ENV['POSTGRES_URL']
       )
     }
 
-    after { client.exec('TRUNCATE TABLE products;') }
+    after { client.exec("TRUNCATE TABLE products;") }
 
     describe "#create_default_schema" do
       it "creates the default schema" do
@@ -34,13 +34,13 @@ if ENV['POSTGRES_URL']
         ).to receive(:embeddings)
           .with(
             parameters: {
-              model: 'text-embedding-ada-002',
+              model: "text-embedding-ada-002",
               input: "Hello World"
             }
           )
           .and_return({
-            'data' => [
-              { 'embedding' => 1536.times.map { rand } }
+            "data" => [
+              {"embedding" => 1536.times.map { rand }}
             ]
           })
       end
@@ -62,45 +62,45 @@ if ENV['POSTGRES_URL']
         ).to receive(:embeddings)
           .with(
             parameters: {
-              model: 'text-embedding-ada-002',
+              model: "text-embedding-ada-002",
               input: "earth"
             }
           )
           .and_return({
-            'data' => [
-              { 'embedding' => 1536.times.map { 0 } }
+            "data" => [
+              {"embedding" => 1536.times.map { 0 }}
             ]
           })
       end
 
       before {
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', ["something about earth", 1536.times.map { 0 }])
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', ["Hello World", 1536.times.map { rand }])
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', ["Hello World", 1536.times.map { rand }])
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', ["Hello World", 1536.times.map { rand }])
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', ["Hello World", 1536.times.map { rand }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["something about earth", 1536.times.map { 0 }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
       }
 
       it "searches for similar texts" do
         result = subject.similarity_search(query: "earth")
-        expect(result[0]['content']).to eq('something about earth')
+        expect(result[0]["content"]).to eq("something about earth")
       end
     end
 
     describe "#similarity_search_by_vector" do
       before {
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', ["Some valuable data", 1536.times.map { 0 }])
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', ["Hello World", 1536.times.map { rand }])
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', ["Hello World", 1536.times.map { rand }])
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', ["Hello World", 1536.times.map { rand }])
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', ["Hello World", 1536.times.map { rand }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Some valuable data", 1536.times.map { 0 }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
       }
 
       it "searches for similar vectors" do
         result = subject.similarity_search_by_vector(embedding: 1536.times.map { 0 })
 
         expect(result.length).to eq(4)
-        expect(result[0]['content']).to eq('Some valuable data')
+        expect(result[0]["content"]).to eq("Some valuable data")
       end
     end
 
@@ -116,21 +116,20 @@ if ENV['POSTGRES_URL']
         ).to receive(:embeddings)
           .with(
             parameters: {
-              model: 'text-embedding-ada-002',
+              model: "text-embedding-ada-002",
               input: question
             }
           )
           .and_return({
-            'data' => [
-              { 'embedding' => 1536.times.map { 0 } }
+            "data" => [
+              {"embedding" => 1536.times.map { 0 }}
             ]
           })
       end
 
       before do
-        client.exec_params('INSERT INTO products (content, vectors) VALUES ($1, $2);', [text, 1536.times.map { 0 }])
+        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", [text, 1536.times.map { 0 }])
       end
-
 
       before do
         allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
