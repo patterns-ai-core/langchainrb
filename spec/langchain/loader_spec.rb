@@ -104,12 +104,12 @@ RSpec.describe Langchain::Loader do
     context "CSV" do
       let(:result) do
         [
-          ["Username","Identifier","First name","Last name"],
-          ["booker12","9012","Rachel","Booker"],
-          ["grey07","2070","Laura","Grey"],
-          ["johnson81","4081","Craig","Johnson"],
-          ["jenkins46","9346","Mary","Jenkins"],
-          ["smith79","5079","Jamie","Smith"],
+          ["Username", "Identifier", "First name", "Last name"],
+          ["booker12", "9012", "Rachel", "Booker"],
+          ["grey07", "2070", "Laura", "Grey"],
+          ["johnson81", "4081", "Craig", "Johnson"],
+          ["jenkins46", "9346", "Mary", "Jenkins"],
+          ["smith79", "5079", "Jamie", "Smith"]
         ]
       end
 
