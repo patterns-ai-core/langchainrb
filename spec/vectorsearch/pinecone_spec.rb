@@ -37,6 +37,11 @@ RSpec.describe Vectorsearch::Pinecone do
       "meaningful" => "data"
     }
   end
+  let(:filter) do
+    {
+      foo: {"$eq": "bar"}
+    }
+  end
   let(:matches) do
     [
       {
@@ -168,6 +173,23 @@ RSpec.describe Vectorsearch::Pinecone do
         expect(subject.similarity_search_by_vector(embedding: embedding, namespace: namespace)).to be_a(Array)
       end
     end
+
+    describe "with a filter" do
+      before(:each) do
+        allow_any_instance_of(Pinecone::Index).to receive(:query).with(
+          vector: embedding,
+          namespace: "",
+          filter: filter,
+          top_k: k,
+          include_values: true,
+          include_metadata: true
+        ).and_return(results)
+      end
+
+      it "searches for similar texts" do
+        expect(subject.similarity_search_by_vector(embedding: embedding, filter: filter)).to be_a(Array)
+      end
+    end
   end
 
   describe "#similarity_search" do
@@ -178,7 +200,7 @@ RSpec.describe Vectorsearch::Pinecone do
     describe "without a namespace" do
       before do
         allow(subject).to receive(:similarity_search_by_vector).with(
-          embedding: embedding, k: k, namespace: ""
+          embedding: embedding, k: k, namespace: "", filter: nil
         ).and_return(matches)
       end
 
@@ -192,12 +214,25 @@ RSpec.describe Vectorsearch::Pinecone do
     describe "with a namespace" do
       before do
         allow(subject).to receive(:similarity_search_by_vector).with(
-          embedding: embedding, k: k, namespace: namespace
+          embedding: embedding, k: k, namespace: namespace, filter: nil
         ).and_return(matches)
       end
 
       it "searches for similar texts" do
         response = subject.similarity_search(query: query, k: k, namespace: namespace)
+        expect(response).to eq(matches)
+      end
+    end
+
+    describe "with a filter" do
+      before do
+        allow(subject).to receive(:similarity_search_by_vector).with(
+          embedding: embedding, k: k, namespace: "", filter: filter
+        ).and_return(matches)
+      end
+
+      it "searches for similar texts" do
+        response = subject.similarity_search(query: query, k: k, filter: filter)
         expect(response).to eq(matches)
       end
     end
@@ -210,7 +245,9 @@ RSpec.describe Vectorsearch::Pinecone do
 
     describe "without a namespace" do
       before do
-        allow(subject).to receive(:similarity_search).with(query: question, namespace: "").and_return(matches)
+        allow(subject).to receive(:similarity_search).with(
+          query: question, namespace: "", filter: nil
+        ).and_return(matches)
         allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
 
@@ -221,12 +258,27 @@ RSpec.describe Vectorsearch::Pinecone do
 
     describe "with a namespace" do
       before do
-        allow(subject).to receive(:similarity_search).with(query: question, namespace: namespace).and_return(matches)
+        allow(subject).to receive(:similarity_search).with(
+          query: question, namespace: namespace, filter: nil
+        ).and_return(matches)
         allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
 
       it "asks a question" do
         expect(subject.ask(question: question, namespace: namespace)).to eq(answer)
+      end
+    end
+
+    describe "with a filter" do
+      before do
+        allow(subject).to receive(:similarity_search).with(
+          query: question, namespace: "", filter: filter
+        ).and_return(matches)
+        allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
+      end
+
+      it "asks a question" do
+        expect(subject.ask(question: question, filter: filter)).to eq(answer)
       end
     end
   end
