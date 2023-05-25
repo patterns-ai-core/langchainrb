@@ -33,7 +33,13 @@ RSpec.describe Vectorsearch::Pinecone do
   let(:k) { 4 }
   let(:metadata) do
     {
-      "foo" => "bar"
+      "foo" => "bar",
+      "meaningful" => "data"
+    }
+  end
+  let(:filter) do
+    {
+      foo: {"$eq": "bar"}
     }
   end
   let(:matches) do
@@ -55,6 +61,16 @@ RSpec.describe Vectorsearch::Pinecone do
   end
 
   describe "add_texts" do
+    let(:vectors) do
+      [
+        {
+          id: "123",
+          metadata: {content: text},
+          values: embedding
+        }
+      ]
+    end
+
     before do
       allow(SecureRandom).to receive(:uuid).and_return("123")
       allow(subject.llm_client).to receive(:embed).with(text: text).and_return(embedding)
@@ -62,16 +78,6 @@ RSpec.describe Vectorsearch::Pinecone do
     end
 
     describe "without a namespace" do
-      let(:vectors) do
-        [
-          {
-            id: "123",
-            metadata: {content: text},
-            values: embedding
-          }
-        ]
-      end
-
       before(:each) do
         allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
           vectors: vectors, namespace: ""
@@ -84,16 +90,6 @@ RSpec.describe Vectorsearch::Pinecone do
     end
 
     describe "with a namespace" do
-      let(:vectors) do
-        [
-          {
-            id: "123",
-            metadata: {content: text},
-            values: embedding
-          }
-        ]
-      end
-
       before(:each) do
         allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
           vectors: vectors, namespace: namespace
@@ -102,6 +98,40 @@ RSpec.describe Vectorsearch::Pinecone do
 
       it "adds texts" do
         expect(subject.add_texts(texts: [text], namespace: namespace)).to eq(true)
+      end
+    end
+
+    describe "without a namespace" do
+      before(:each) do
+        allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
+          vectors: vectors, namespace: ""
+        ).and_return(true)
+      end
+
+      it "adds texts" do
+        expect(subject.add_texts(texts: [text])).to eq(true)
+      end
+    end
+
+    describe "with supplied metadata" do
+      let!(:vectors) do
+        [
+          {
+            id: "123",
+            metadata: metadata,
+            values: embedding
+          }
+        ]
+      end
+
+      before(:each) do
+        allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
+          vectors: vectors, namespace: ""
+        ).and_return(true)
+      end
+
+      it "adds texts" do
+        expect(subject.add_texts(texts: [text], metadata: metadata)).to eq(true)
       end
     end
   end
@@ -143,6 +173,23 @@ RSpec.describe Vectorsearch::Pinecone do
         expect(subject.similarity_search_by_vector(embedding: embedding, namespace: namespace)).to be_a(Array)
       end
     end
+
+    describe "with a filter" do
+      before(:each) do
+        allow_any_instance_of(Pinecone::Index).to receive(:query).with(
+          vector: embedding,
+          namespace: "",
+          filter: filter,
+          top_k: k,
+          include_values: true,
+          include_metadata: true
+        ).and_return(results)
+      end
+
+      it "searches for similar texts" do
+        expect(subject.similarity_search_by_vector(embedding: embedding, filter: filter)).to be_a(Array)
+      end
+    end
   end
 
   describe "#similarity_search" do
@@ -153,7 +200,7 @@ RSpec.describe Vectorsearch::Pinecone do
     describe "without a namespace" do
       before do
         allow(subject).to receive(:similarity_search_by_vector).with(
-          embedding: embedding, k: k, namespace: ""
+          embedding: embedding, k: k, namespace: "", filter: nil
         ).and_return(matches)
       end
 
@@ -167,12 +214,25 @@ RSpec.describe Vectorsearch::Pinecone do
     describe "with a namespace" do
       before do
         allow(subject).to receive(:similarity_search_by_vector).with(
-          embedding: embedding, k: k, namespace: namespace
+          embedding: embedding, k: k, namespace: namespace, filter: nil
         ).and_return(matches)
       end
 
       it "searches for similar texts" do
         response = subject.similarity_search(query: query, k: k, namespace: namespace)
+        expect(response).to eq(matches)
+      end
+    end
+
+    describe "with a filter" do
+      before do
+        allow(subject).to receive(:similarity_search_by_vector).with(
+          embedding: embedding, k: k, namespace: "", filter: filter
+        ).and_return(matches)
+      end
+
+      it "searches for similar texts" do
+        response = subject.similarity_search(query: query, k: k, filter: filter)
         expect(response).to eq(matches)
       end
     end
@@ -185,7 +245,9 @@ RSpec.describe Vectorsearch::Pinecone do
 
     describe "without a namespace" do
       before do
-        allow(subject).to receive(:similarity_search).with(query: question, namespace: "").and_return(matches)
+        allow(subject).to receive(:similarity_search).with(
+          query: question, namespace: "", filter: nil
+        ).and_return(matches)
         allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
 
@@ -196,12 +258,27 @@ RSpec.describe Vectorsearch::Pinecone do
 
     describe "with a namespace" do
       before do
-        allow(subject).to receive(:similarity_search).with(query: question, namespace: namespace).and_return(matches)
+        allow(subject).to receive(:similarity_search).with(
+          query: question, namespace: namespace, filter: nil
+        ).and_return(matches)
         allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
 
       it "asks a question" do
         expect(subject.ask(question: question, namespace: namespace)).to eq(answer)
+      end
+    end
+
+    describe "with a filter" do
+      before do
+        allow(subject).to receive(:similarity_search).with(
+          query: question, namespace: "", filter: filter
+        ).and_return(matches)
+        allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
+      end
+
+      it "asks a question" do
+        expect(subject.ask(question: question, filter: filter)).to eq(answer)
       end
     end
   end
