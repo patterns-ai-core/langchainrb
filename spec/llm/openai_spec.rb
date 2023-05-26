@@ -93,4 +93,16 @@ RSpec.describe LLM::OpenAI do
       expect(subject.chat(prompt: "Hello! How are you?")).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
     end
   end
+
+  describe "#summarize" do
+    let(:text) { "Text to summarize" }
+
+    before do
+      allow(subject).to receive(:complete).and_return("Summary")
+    end
+
+    it "returns a summary" do
+      expect(subject.summarize(text: text)).to eq("Summary")
+    end
+  end
 end

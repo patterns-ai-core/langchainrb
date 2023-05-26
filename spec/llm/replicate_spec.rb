@@ -62,4 +62,16 @@ RSpec.describe LLM::Replicate do
       expect(subject.embed(text: text)).to eq(embedding)
     end
   end
+
+  describe "#summarize" do
+    let(:text) { "Text to summarize" }
+
+    before do
+      allow(subject).to receive(:complete).and_return("Summary")
+    end
+
+    it "returns a summary" do
+      expect(subject.summarize(text: text)).to eq("Summary")
+    end
+  end
 end

@@ -81,5 +81,25 @@ module LLM
       response = client.generate_chat_message(**default_params)
       response.dig("candidates", 0, "content")
     end
+
+    #
+    # Generate a summarization for a given text
+    #
+    # @param text [String] The text to generate a summarization for
+    # @return [String] The summarization
+    #
+    def summarize(text:)
+      prompt_template = Prompt.load_from_path(
+        file_path: Langchain.root.join("llm/prompts/summarize_template.json")
+      )
+      prompt = prompt_template.format(text: text)
+
+      complete(
+        prompt: prompt,
+        temperature: DEFAULTS[:temperature],
+        # Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
+        max_tokens: 2048
+      )
+    end
   end
 end
