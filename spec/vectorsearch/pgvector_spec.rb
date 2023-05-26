@@ -2,7 +2,7 @@
 
 require "pg"
 
-if ENV["POSTGRES_URL"] && RUBY_VERSION >= "3.0.0"
+if ENV["POSTGRES_URL"]
   RSpec.describe Vectorsearch::Pgvector do
     let(:client) { ::PG.connect(ENV["POSTGRES_URL"]) }
 
