@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe LLM::OpenAI do
+RSpec.describe Langchain::LLM::OpenAI do
   let(:subject) { described_class.new(api_key: "123") }
 
   describe "#embed" do

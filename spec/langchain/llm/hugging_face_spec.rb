@@ -2,7 +2,7 @@
 
 require "hugging_face"
 
-RSpec.describe LLM::HuggingFace do
+RSpec.describe Langchain::LLM::HuggingFace do
   let(:subject) { described_class.new(api_key: "123") }
 
   describe "#embed" do

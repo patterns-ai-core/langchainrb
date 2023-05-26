@@ -2,7 +2,7 @@
 
 require "cohere"
 
-RSpec.describe LLM::Base do
+RSpec.describe Langchain::LLM::Base do
   let(:subject) { described_class.new }
 
   describe "#chat" do

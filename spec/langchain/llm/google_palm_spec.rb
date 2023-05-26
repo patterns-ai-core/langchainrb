@@ -2,7 +2,7 @@
 
 require "google_palm_api"
 
-RSpec.describe LLM::GooglePalm do
+RSpec.describe Langchain::LLM::GooglePalm do
   let(:subject) { described_class.new(api_key: "123") }
 
   describe "#embed" do

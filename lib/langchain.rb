@@ -23,6 +23,15 @@ module Langchain
     autoload :ChainOfThoughtAgent, "langchain/agent/chain_of_thought_agent/chain_of_thought_agent.rb"
   end
 
+  module LLM
+    autoload :Base, "langchain/llm/base"
+    autoload :Cohere, "langchain/llm/cohere"
+    autoload :GooglePalm, "langchain/llm/google_palm"
+    autoload :HuggingFace, "langchain/llm/hugging_face"
+    autoload :OpenAI, "langchain/llm/openai"
+    autoload :Replicate, "langchain/llm/replicate"
+  end
+
   module Processors
     autoload :Base, "langchain/processors/base"
     autoload :CSV, "langchain/processors/csv"
@@ -43,15 +52,6 @@ module Langchain
     autoload :Qdrant, "langchain/vectorsearch/qdrant"
     autoload :Weaviate, "langchain/vectorsearch/weaviate"
   end
-end
-
-module LLM
-  autoload :Base, "llm/base"
-  autoload :Cohere, "llm/cohere"
-  autoload :GooglePalm, "llm/google_palm"
-  autoload :HuggingFace, "llm/hugging_face"
-  autoload :OpenAI, "llm/openai"
-  autoload :Replicate, "llm/replicate"
 end
 
 module Prompt
