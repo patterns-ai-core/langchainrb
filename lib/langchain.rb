@@ -51,6 +51,12 @@ module Langchain
     autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"
   end
 
+  module Tool
+    autoload :Base, "langchain/tool/base"
+    autoload :Calculator, "langchain/tool/calculator"
+    autoload :SerpApi, "langchain/tool/serp_api"
+    autoload :Wikipedia, "langchain/tool/wikipedia"
+  end
 
   module Vectorsearch
     autoload :Base, "langchain/vectorsearch/base"
@@ -61,11 +67,4 @@ module Langchain
     autoload :Qdrant, "langchain/vectorsearch/qdrant"
     autoload :Weaviate, "langchain/vectorsearch/weaviate"
   end
-end
-
-module Tool
-  autoload :Base, "tool/base"
-  autoload :Calculator, "tool/calculator"
-  autoload :SerpApi, "tool/serp_api"
-  autoload :Wikipedia, "tool/wikipedia"
 end
