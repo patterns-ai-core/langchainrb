@@ -43,6 +43,15 @@ module Langchain
     autoload :Text, "langchain/processors/text"
   end
 
+  module Prompt
+    require_relative "langchain/prompt/loading"
+
+    autoload :Base, "langchain/prompt/base"
+    autoload :PromptTemplate, "langchain/prompt/prompt_template"
+    autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"
+  end
+
+
   module Vectorsearch
     autoload :Base, "langchain/vectorsearch/base"
     autoload :Chroma, "langchain/vectorsearch/chroma"
@@ -52,14 +61,6 @@ module Langchain
     autoload :Qdrant, "langchain/vectorsearch/qdrant"
     autoload :Weaviate, "langchain/vectorsearch/weaviate"
   end
-end
-
-module Prompt
-  require_relative "prompt/loading"
-
-  autoload :Base, "prompt/base"
-  autoload :PromptTemplate, "prompt/prompt_template"
-  autoload :FewShotPromptTemplate, "prompt/few_shot_prompt_template"
 end
 
 module Tool

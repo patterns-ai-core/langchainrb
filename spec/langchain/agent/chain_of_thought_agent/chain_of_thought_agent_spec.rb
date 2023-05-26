@@ -104,7 +104,7 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
 
   describe "#prompt_template" do
     it "returns a prompt template instance" do
-      expect(subject.send(:prompt_template)).to be_a(Prompt::PromptTemplate)
+      expect(subject.send(:prompt_template)).to be_a(Langchain::Prompt::PromptTemplate)
     end
   end
 end

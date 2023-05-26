@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Prompt::PromptTemplate do
+RSpec.describe Langchain::Prompt::PromptTemplate do
   let!(:prompt_example) do
     <<~PROMPT.chomp
       I want you to act as a naming consultant for new companies.
@@ -15,7 +15,7 @@ RSpec.describe Prompt::PromptTemplate do
           template: prompt_example,
           input_variables: ["product"]
         )
-      ).to be_a(Prompt::PromptTemplate)
+      ).to be_a(Langchain::Prompt::PromptTemplate)
     end
   end
 
