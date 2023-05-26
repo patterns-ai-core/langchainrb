@@ -68,3 +68,9 @@ module Langchain
     autoload :Weaviate, "langchain/vectorsearch/weaviate"
   end
 end
+
+Agent = Langchain::Agent
+LLM = Langchain::LLM
+Prompt = Langchain::Prompt
+Tool = Langchain::Tool
+Vectorsearch = Langchain::Vectorsearch
