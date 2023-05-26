@@ -23,8 +23,11 @@ module LLM
       dimension: 384
     }.freeze
 
+    #
     # Intialize the Replicate LLM
+    #
     # @param api_key [String] The API key to use
+    #
     def initialize(api_key:)
       depends_on "replicate-ruby"
       require "replicate"
@@ -36,9 +39,12 @@ module LLM
       @client = ::Replicate.client
     end
 
+    #
     # Generate an embedding for a given text
+    #
     # @param text [String] The text to generate an embedding for
     # @return [Hash] The embedding
+    #
     def embed(text:)
       response = embeddings_model.predict(input: text)
 
@@ -50,9 +56,12 @@ module LLM
       response.output
     end
 
+    #
     # Generate a completion for a given prompt
+    #
     # @param prompt [String] The prompt to generate a completion for
     # @return [Hash] The completion
+    #
     def complete(prompt:, **params)
       response = completion_model.predict(prompt: prompt)
 

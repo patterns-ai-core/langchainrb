@@ -18,12 +18,12 @@ module LLM
       @client = ::OpenAI::Client.new(access_token: api_key)
     end
 
-    # 
+    #
     # Generate an embedding for a given text
-    # 
+    #
     # @param text [String] The text to generate an embedding for
     # @return [Array] The embedding
-    # 
+    #
     def embed(text:)
       response = client.embeddings(
         parameters: {
@@ -34,12 +34,12 @@ module LLM
       response.dig("data").first.dig("embedding")
     end
 
-    # 
+    #
     # Generate a completion for a given prompt
-    # 
+    #
     # @param prompt [String] The prompt to generate a completion for
     # @return [String] The completion
-    # 
+    #
     def complete(prompt:, **params)
       default_params = {
         model: DEFAULTS[:completion_model_name],
@@ -57,12 +57,12 @@ module LLM
       response.dig("choices", 0, "text")
     end
 
-    # 
+    #
     # Generate a chat completion for a given prompt
-    # 
+    #
     # @param prompt [String] The prompt to generate a chat completion for
     # @return [String] The chat completion
-    # 
+    #
     def chat(prompt:, **params)
       default_params = {
         model: DEFAULTS[:chat_completion_model_name],
@@ -80,13 +80,13 @@ module LLM
       response = client.chat(parameters: default_params)
       response.dig("choices", 0, "message", "content")
     end
-    
-    # 
+
+    #
     # Generate a summary for a given text
-    # 
+    #
     # @param text [String] The text to generate a summary for
     # @return [String] The summary
-    # 
+    #
     def summarize(text:)
       prompt_template = Prompt.load_from_path(
         file_path: Langchain.root.join("llm/prompts/summarize_template.json")

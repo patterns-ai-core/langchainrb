@@ -16,9 +16,12 @@ module LLM
       @client = ::Cohere::Client.new(api_key: api_key)
     end
 
+    #
     # Generate an embedding for a given text
+    #
     # @param text [String] The text to generate an embedding for
     # @return [Hash] The embedding
+    #
     def embed(text:)
       response = client.embed(
         texts: [text],
@@ -27,9 +30,12 @@ module LLM
       response.dig("embeddings").first
     end
 
+    #
     # Generate a completion for a given prompt
+    #
     # @param prompt [String] The prompt to generate a completion for
     # @return [Hash] The completion
+    #
     def complete(prompt:, **params)
       default_params = {
         prompt: prompt,
