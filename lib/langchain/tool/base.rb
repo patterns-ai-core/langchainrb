@@ -11,9 +11,9 @@ module Langchain
       # 4. Add your tool to the README.md
 
       TOOLS = {
-        "calculator" => "Tool::Calculator",
-        "search" => "Tool::SerpApi",
-        "wikipedia" => "Tool::Wikipedia"
+        "calculator" => "Langchain::Tool::Calculator",
+        "search" => "Langchain::Tool::SerpApi",
+        "wikipedia" => "Langchain::Tool::Wikipedia"
       }
 
       def self.description(value)

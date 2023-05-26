@@ -41,7 +41,7 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
         max_tokens: 500
       ).and_return(llm_first_response)
 
-      allow(Tool::SerpApi).to receive(:execute).with(
+      allow(Langchain::Tool::SerpApi).to receive(:execute).with(
         input: "average temperature in Miami, FL in May\""
       ).and_return(search_tool_response)
 
@@ -51,7 +51,7 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
         max_tokens: 500
       ).and_return(llm_second_response)
 
-      allow(Tool::Calculator).to receive(:execute).with(
+      allow(Langchain::Tool::Calculator).to receive(:execute).with(
         input: "sqrt(83+86)/2"
       ).and_return(calculator_tool_response)
 

@@ -92,7 +92,8 @@ module Langchain
           question: question,
           tool_names: "[#{tools.join(", ")}]",
           tools: tools.map do |tool|
-            "#{tool}: #{Langchain::Tool.const_get(Tool::Base::TOOLS[tool]).const_get(:DESCRIPTION)}"
+            # binding.irb
+            "#{tool}: #{Tool.const_get(Tool::Base::TOOLS[tool]).const_get(:DESCRIPTION)}"
           end.join("\n")
         )
       end
