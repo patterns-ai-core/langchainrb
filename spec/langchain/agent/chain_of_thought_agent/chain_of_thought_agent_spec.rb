@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Agent::ChainOfThoughtAgent do
+RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
   subject {
     described_class.new(
       llm: :openai,

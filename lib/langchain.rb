@@ -18,6 +18,11 @@ module Langchain
 
   autoload :Loader, "langchain/loader"
 
+  module Agent
+    autoload :Base, "langchain/agent/base"
+    autoload :ChainOfThoughtAgent, "langchain/agent/chain_of_thought_agent/chain_of_thought_agent.rb"
+  end
+
   module Processors
     autoload :Base, "langchain/processors/base"
     autoload :CSV, "langchain/processors/csv"
@@ -38,11 +43,6 @@ module Langchain
     autoload :Qdrant, "langchain/vectorsearch/qdrant"
     autoload :Weaviate, "langchain/vectorsearch/weaviate"
   end
-end
-
-module Agent
-  autoload :Base, "agent/base"
-  autoload :ChainOfThoughtAgent, "agent/chain_of_thought_agent/chain_of_thought_agent.rb"
 end
 
 module LLM
