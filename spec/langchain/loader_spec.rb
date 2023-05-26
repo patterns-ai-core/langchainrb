@@ -132,6 +132,59 @@ RSpec.describe Langchain::Loader do
       end
     end
 
+    context "JSON" do
+      let(:result) do
+        {"name" => "Luke Skywalker", "height" => 172, "mass" => 77}
+      end
+
+      context "from local file" do
+        let(:path) { "spec/fixtures/loaders/example.json" }
+
+        it "loads text from file" do
+          expect(subject).to include(result)
+        end
+      end
+
+      context "from url" do
+        let(:path) { "http://example.com/example.json" }
+        let(:content_type) { "application/json" }
+        let(:body) { File.read("spec/fixtures/loaders/example.json") }
+
+        it "loads text from URL" do
+          expect(subject).to include(result)
+        end
+      end
+    end
+
+    context "JSONL" do
+      let(:result) do
+        [
+          {"name" => "Luke Skywalker", "height" => "172", "mass" => "77"},
+          {"name" => "C-3PO", "height" => "167", "mass" => "75"},
+          {"name" => "R2-D2", "height" => "96", "mass" => "32"},
+          {"name" => "Darth Vader", "height" => "202", "mass" => "136"},
+          {"name" => "Leia Organa", "height" => "150", "mass" => "49"}
+        ]
+      end
+      context "from local file" do
+        let(:path) { "spec/fixtures/loaders/example.jsonl" }
+
+        it "loads text from file" do
+          expect(subject).to eq(result)
+        end
+      end
+
+      context "from url" do
+        let(:path) { "http://example.com/example.jsonl" }
+        let(:content_type) { "application/jsonlines" }
+        let(:body) { File.read("spec/fixtures/loaders/example.jsonl") }
+
+        it "loads text from URL" do
+          expect(subject).to eq(result)
+        end
+      end
+    end
+
     context "Unsupported file type" do
       context "from local file" do
         let(:path) { "spec/fixtures/loaders/example.swf" }

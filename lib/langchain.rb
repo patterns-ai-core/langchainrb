@@ -20,11 +20,13 @@ module Langchain
 
   module Processors
     autoload :Base, "langchain/processors/base"
-    autoload :PDF, "langchain/processors/pdf"
-    autoload :HTML, "langchain/processors/html"
-    autoload :Text, "langchain/processors/text"
-    autoload :Docx, "langchain/processors/docx"
     autoload :CSV, "langchain/processors/csv"
+    autoload :Docx, "langchain/processors/docx"
+    autoload :HTML, "langchain/processors/html"
+    autoload :JSON, "langchain/processors/json"
+    autoload :JSONL, "langchain/processors/jsonl"
+    autoload :PDF, "langchain/processors/pdf"
+    autoload :Text, "langchain/processors/text"
   end
 end
 

@@ -284,13 +284,16 @@ Langchain::Loader.load('https://www.example.com/file.pdf')
 
 ##### Supported Formats
 
-| Format | Pocessor         |       Gem Requirements       |
-| ------ | ---------------- | :--------------------------: |
-| docx   | Processors::Docx |   `gem "docx", "~> 0.8.0"`   |
-| html   | Processors::HTML | `gem "nokogiri", "~> 1.13"`  |
-| pdf    | Processors::PDF  | `gem "pdf-reader", "~> 1.4"` |
-| text   | Processors::Text |                              |
-| csv    | Processors::CSV  |                              |
+
+| Format | Pocessor                     |       Gem Requirements       |
+| ------ | ---------------------------- | :--------------------------: |
+| docx   | Langchain::Processors::Docx  |   `gem "docx", "~> 0.8.0"`   |
+| html   | Langchain::Processors::HTML  | `gem "nokogiri", "~> 1.13"`  |
+| pdf    | Langchain::Processors::PDF   | `gem "pdf-reader", "~> 1.4"` |
+| text   | Langchain::Processors::Text  |                              |
+| JSON   | Langchain::Processors::JSON  |                              |
+| JSONL  | Langchain::Processors::JSONL |                              |
+| csv    | Langchain::Processors::CSV   |                              |
 
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
