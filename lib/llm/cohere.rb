@@ -51,5 +51,16 @@ module LLM
     def chat(...)
       complete(...)
     end
+
+    # Generate a summary in English for a given text
+    #
+    # More parameters available to extend this method with: https://github.com/andreibondarev/cohere-ruby/blob/0.9.4/lib/cohere/client.rb#L107-L115
+    #
+    # @param text [String] The text to generate a summary for
+    # @return [String] The summary
+    def summarize(text:)
+      response = client.summarize(text: text)
+      response.dig("summary")
+    end
   end
 end

@@ -49,4 +49,16 @@ RSpec.describe LLM::GooglePalm do
       expect(subject.chat(prompt: "Hey there! How are you?")).to eq("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?")
     end
   end
+
+  describe "#summarize" do
+    let(:text) { "Text to summarize" }
+
+    before do
+      allow(subject).to receive(:complete).and_return("Summary")
+    end
+
+    it "returns a summary" do
+      expect(subject.summarize(text: text)).to eq("Summary")
+    end
+  end
 end

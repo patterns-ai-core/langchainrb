@@ -48,4 +48,22 @@ RSpec.describe LLM::Cohere do
       expect(subject.default_dimension).to eq(1024)
     end
   end
+
+  describe "#summarize" do
+    let(:text) { "Text to summarize" }
+
+    before do
+      allow(subject.client).to receive(:summarize).and_return(
+        {
+          "id" => "123",
+          "summary" => "Summary",
+          "meta" => {"api_version" => {"version" => "1"}}
+        }
+      )
+    end
+
+    it "returns a summary" do
+      expect(subject.summarize(text: text)).to eq("Summary")
+    end
+  end
 end

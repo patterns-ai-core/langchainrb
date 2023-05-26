@@ -23,6 +23,12 @@ RSpec.describe LLM::Base do
     end
   end
 
+  describe "#summarize" do
+    it "raises an error" do
+      expect { subject.summarize }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe "#validate_llm!" do
     it "raises an error" do
       expect {

@@ -33,6 +33,11 @@ module LLM
       raise NotImplementedError, "#{self.class.name} does not support generating embeddings"
     end
 
+    # Method supported by an LLM that summarizes a given text
+    def summarize(...)
+      raise NotImplementedError, "#{self.class.name} does not support summarization"
+    end
+
     # Ensure that the LLM value passed in is supported
     # @param llm [Symbol] The LLM to use
     def self.validate_llm!(llm:)
