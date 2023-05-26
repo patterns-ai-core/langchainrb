@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require "logger"
+require "pathname"
 
 require_relative "./version"
 require_relative "./dependency_helper"
 module Langchain
   class << self
-    attr_accessor :default_loaders
     attr_accessor :logger
 
     attr_reader :root
@@ -15,6 +15,18 @@ module Langchain
   @logger ||= ::Logger.new($stdout, level: :warn, formatter: ->(severity, datetime, progname, msg) { "[LangChain.rb] #{msg}\n" })
 
   @root = Pathname.new(__dir__)
+
+  autoload :Loader, "langchain/loader"
+
+  module Processors
+    autoload :Base, "langchain/processors/base"
+    autoload :PDF, "langchain/processors/pdf"
+    autoload :HTML, "langchain/processors/html"
+    autoload :Text, "langchain/processors/text"
+    autoload :Docx, "langchain/processors/docx"
+    autoload :JSON, "langchain/processors/json"
+    autoload :JSONL, "langchain/processors/jsonl"
+  end
 end
 
 module Agent
@@ -35,6 +47,7 @@ end
 module LLM
   autoload :Base, "llm/base"
   autoload :Cohere, "llm/cohere"
+  autoload :GooglePalm, "llm/google_palm"
   autoload :HuggingFace, "llm/hugging_face"
   autoload :OpenAI, "llm/openai"
   autoload :Replicate, "llm/replicate"
@@ -54,16 +67,3 @@ module Tool
   autoload :SerpApi, "tool/serp_api"
   autoload :Wikipedia, "tool/wikipedia"
 end
-
-module Loaders
-  autoload :Base, "loaders/base"
-  autoload :Docx, "loaders/docx"
-  autoload :PDF, "loaders/pdf"
-  autoload :Text, "loaders/text"
-  autoload :HTML, "loaders/html"
-end
-
-autoload :Loader, "loader"
-
-# Load the default Loaders
-Langchain.default_loaders ||= [::Loaders::Text, ::Loaders::PDF, ::Loaders::Docx]

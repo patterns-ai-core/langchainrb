@@ -136,9 +136,15 @@ cohere = LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
 ```
 
 #### Replicate
-Add `gem "replicate-ruby", git: "https://github.com/andreibondarev/replicate-ruby.git", branch: "faraday-1.x"` to your Gemfile.
+Add `gem "replicate-ruby", "~> 0.2.2"` to your Gemfile.
 ```ruby
 cohere = LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
+```
+
+#### Google PaLM (Pathways Language Model)
+Add `"google_palm_api", "~> 0.1.0"` to your Gemfile.
+```ruby
+google_palm = LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
 ```
 
 ### Using Prompts 📋
@@ -262,12 +268,30 @@ agent.run(question: "How many full soccer fields would be needed to cover the di
 
 Need to read data from various sources? Load it up.
 
-| Name | Class         | Gem Requirements             |
-| ---- | ------------- | :--------------------------: |
-| docx | Loaders::Docx | `gem "docx", branch: "master", git: "https://github.com/ruby-docx/docx.git"` |
-| pdf  | Loaders::PDF  | `gem "pdf-reader", "~> 1.4"` |
-| text | Loaders::Text |                              |
-| html | Loaders::HTML | `gem "nokogiri", "~> 1.13"`  |
+##### Usage
+
+Just call `Langchan::Loader.load` with the path to the file or a URL you want to load.
+
+```ruby
+Langchaing::Loader.load('/path/to/file.pdf')
+```
+
+or
+
+```ruby
+Langchain::Loader.load('https://www.example.com/file.pdf')
+```
+
+##### Supported Formats
+
+| Format | Pocessor          |       Gem Requirements       |
+| ------ | ----------------- | :--------------------------: |
+| docx   | Processors::Docx  |   `gem "docx", "~> 0.8.0"`   |
+| html   | Processors::HTML  | `gem "nokogiri", "~> 1.13"`  |
+| pdf    | Processors::PDF   | `gem "pdf-reader", "~> 1.4"` |
+| text   | Processors::Text  |                              |
+| JSON   | Processors::JSON  |                              |
+| JSONL  | Processors::JSONL |                              |
 
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
@@ -285,7 +309,7 @@ Langchain.logger.level = :info
 
 1. `git clone https://github.com/andreibondarev/langchainrb.git`
 2. `cp .env.example .env`, then fill out the environment variables in `.env`
-3. `rspec spec/` to ensure that the tests pass
+3. `bundle exec rake` to ensure that the tests pass and to run standardrb
 4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
 
 ## Core Contributors
