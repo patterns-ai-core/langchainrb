@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+## [0.3.13] - 2023-05-26
+- 🔍 Vectorsearch
+  - Pgvector support
+- 🚚 Loaders
+  - CSV loader
+  - JSON loader
+  - JSONL loader
+
 ## [0.3.12] - 2023-05-25
 - 🔍 Vectorsearch
   - Introduce namespace support for Pinecone
