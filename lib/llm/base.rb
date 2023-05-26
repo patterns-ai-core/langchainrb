@@ -7,9 +7,10 @@ module LLM
     # Currently supported LLMs
     # TODO: Add support for HuggingFace and other LLMs
     LLMS = {
-      openai: "OpenAI",
       cohere: "Cohere",
+      google_palm: "GooglePalm",
       huggingface: "HuggingFace",
+      openai: "OpenAI",
       replicate: "Replicate"
     }.freeze
 
