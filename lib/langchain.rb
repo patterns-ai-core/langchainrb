@@ -40,6 +40,7 @@ module Vectorsearch
   autoload :Chroma, "vectorsearch/chroma"
   autoload :Milvus, "vectorsearch/milvus"
   autoload :Pinecone, "vectorsearch/pinecone"
+  autoload :Pgvector, "vectorsearch/pgvector"
   autoload :Qdrant, "vectorsearch/qdrant"
   autoload :Weaviate, "vectorsearch/weaviate"
 end

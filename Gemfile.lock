@@ -148,9 +148,13 @@ GEM
     milvus (0.9.1)
       faraday (~> 1)
     mini_mime (1.1.2)
+    mini_portile2 (2.8.2)
     minitest (5.18.0)
     multi_xml (0.6.0)
     multipart-post (2.3.0)
+    nokogiri (1.14.3)
+      mini_portile2 (~> 2.8.0)
+      racc (~> 1.4)
     nokogiri (1.14.3-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.14.3-x86_64-darwin)
@@ -166,6 +170,8 @@ GEM
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
+    pg (1.5.3)
+    pgvector (0.1.1)
     pinecone (0.1.71)
       dry-struct (~> 1.6.0)
       dry-validation (~> 1.10.0)
@@ -273,6 +279,7 @@ GEM
 PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
+  ruby
   x86_64-darwin-19
   x86_64-darwin-22
   x86_64-linux
@@ -290,6 +297,8 @@ DEPENDENCIES
   milvus (~> 0.9.0)
   nokogiri (~> 1.13)
   pdf-reader (~> 1.4)
+  pg (~> 1.5)
+  pgvector (< 0.2)
   pinecone (~> 0.1.6)
   pry-byebug (~> 3.10.0)
   qdrant-ruby (~> 0.9.0)
