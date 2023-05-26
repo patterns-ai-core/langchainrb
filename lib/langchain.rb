@@ -3,7 +3,7 @@
 require "logger"
 require "pathname"
 
-require_relative "./version"
+require_relative "./langchain/version"
 require_relative "./dependency_helper"
 module Langchain
   class << self

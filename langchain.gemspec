@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "lib/version"
+require_relative "lib/langchain/version"
 
 Gem::Specification.new do |spec|
   spec.name = "langchainrb"
