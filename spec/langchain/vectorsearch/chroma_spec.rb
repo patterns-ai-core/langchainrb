@@ -2,7 +2,7 @@
 
 require "chroma-db"
 
-RSpec.describe Vectorsearch::Chroma do
+RSpec.describe Langchain::Vectorsearch::Chroma do
   let(:index_name) { "documents" }
 
   subject {

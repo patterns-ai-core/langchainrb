@@ -28,21 +28,21 @@ module Langchain
     autoload :PDF, "langchain/processors/pdf"
     autoload :Text, "langchain/processors/text"
   end
+
+  module Vectorsearch
+    autoload :Base, "langchain/vectorsearch/base"
+    autoload :Chroma, "langchain/vectorsearch/chroma"
+    autoload :Milvus, "langchain/vectorsearch/milvus"
+    autoload :Pinecone, "langchain/vectorsearch/pinecone"
+    autoload :Pgvector, "langchain/vectorsearch/pgvector"
+    autoload :Qdrant, "langchain/vectorsearch/qdrant"
+    autoload :Weaviate, "langchain/vectorsearch/weaviate"
+  end
 end
 
 module Agent
   autoload :Base, "agent/base"
   autoload :ChainOfThoughtAgent, "agent/chain_of_thought_agent/chain_of_thought_agent.rb"
-end
-
-module Vectorsearch
-  autoload :Base, "vectorsearch/base"
-  autoload :Chroma, "vectorsearch/chroma"
-  autoload :Milvus, "vectorsearch/milvus"
-  autoload :Pinecone, "vectorsearch/pinecone"
-  autoload :Pgvector, "vectorsearch/pgvector"
-  autoload :Qdrant, "vectorsearch/qdrant"
-  autoload :Weaviate, "vectorsearch/weaviate"
 end
 
 module LLM

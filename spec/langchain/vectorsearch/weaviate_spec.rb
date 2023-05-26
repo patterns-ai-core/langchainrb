@@ -2,7 +2,7 @@
 
 require "weaviate"
 
-RSpec.describe Vectorsearch::Weaviate do
+RSpec.describe Langchain::Vectorsearch::Weaviate do
   subject {
     described_class.new(
       url: "http://localhost:8080",

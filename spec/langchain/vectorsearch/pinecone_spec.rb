@@ -2,7 +2,7 @@
 
 require "pinecone"
 
-RSpec.describe Vectorsearch::Pinecone do
+RSpec.describe Langchain::Vectorsearch::Pinecone do
   let(:index_name) { "documents" }
   let(:namespace) { "namespaced" }
 

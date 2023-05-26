@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Vectorsearch::Base do
+RSpec.describe Langchain::Vectorsearch::Base do
   subject { described_class.new(llm: :openai, llm_api_key: "123") }
 
   describe "#initialize" do
