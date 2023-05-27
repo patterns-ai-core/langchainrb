@@ -18,7 +18,8 @@ RSpec.describe Langchain::Loader do
         let(:path) { "spec/fixtures/loaders/example.txt" }
 
         it "loads text from file" do
-          expect(subject).to include("Lorem Ipsum")
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include("Lorem Ipsum")
         end
       end
 
@@ -26,7 +27,8 @@ RSpec.describe Langchain::Loader do
         let(:path) { "http://example.com/example.txt" }
 
         it "loads text from URL" do
-          expect(subject).to eq("Lorem Ipsum")
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq("Lorem Ipsum")
         end
       end
     end
@@ -36,7 +38,8 @@ RSpec.describe Langchain::Loader do
         let(:path) { "spec/fixtures/loaders/example.html" }
 
         it "loads text from file" do
-          expect(subject).to eq("Lorem Ipsum\n\nDolor sit amet.")
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq("Lorem Ipsum\n\nDolor sit amet.")
         end
       end
 
@@ -46,7 +49,8 @@ RSpec.describe Langchain::Loader do
         let(:content_type) { "text/html" }
 
         it "loads text from URL" do
-          expect(subject).to eq("Lorem Ipsum\n\nDolor sit amet.")
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq("Lorem Ipsum\n\nDolor sit amet.")
         end
       end
     end
@@ -56,12 +60,13 @@ RSpec.describe Langchain::Loader do
         let(:path) { "spec/fixtures/loaders/cairo-unicode.pdf" }
 
         it "loads text from file" do
-          expect(subject).to include("UTF-8 encoded sample plain-text file")
-          expect(subject).to include("The ASCII compatible UTF-8 encoding used in this plain-text file")
-          expect(subject).to include("The Greek anthem:")
-          expect(subject).to include("τελευτῆς ὁντινοῦν ποιεῖσθαι λόγον.")
-          expect(subject).to include("Proverbs in the Amharic language")
-          expect(subject).to include("ወዳጅህ ማር ቢሆን ጨርስህ አትላሰው።")
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include("UTF-8 encoded sample plain-text file")
+          expect(subject.value).to include("The ASCII compatible UTF-8 encoding used in this plain-text file")
+          expect(subject.value).to include("The Greek anthem:")
+          expect(subject.value).to include("τελευτῆς ὁντινοῦν ποιεῖσθαι λόγον.")
+          expect(subject.value).to include("Proverbs in the Amharic language")
+          expect(subject.value).to include("ወዳጅህ ማር ቢሆን ጨርስህ አትላሰው።")
         end
       end
 
@@ -71,12 +76,13 @@ RSpec.describe Langchain::Loader do
         let(:content_type) { "application/pdf" }
 
         it "loads text from URL" do
-          expect(subject).to include("UTF-8 encoded sample plain-text file")
-          expect(subject).to include("The ASCII compatible UTF-8 encoding used in this plain-text file")
-          expect(subject).to include("The Greek anthem:")
-          expect(subject).to include("τελευτῆς ὁντινοῦν ποιεῖσθαι λόγον.")
-          expect(subject).to include("Proverbs in the Amharic language")
-          expect(subject).to include("ወዳጅህ ማር ቢሆን ጨርስህ አትላሰው።")
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include("UTF-8 encoded sample plain-text file")
+          expect(subject.value).to include("The ASCII compatible UTF-8 encoding used in this plain-text file")
+          expect(subject.value).to include("The Greek anthem:")
+          expect(subject.value).to include("τελευτῆς ὁντινοῦν ποιεῖσθαι λόγον.")
+          expect(subject.value).to include("Proverbs in the Amharic language")
+          expect(subject.value).to include("ወዳጅህ ማር ቢሆን ጨርስህ አትላሰው።")
         end
       end
     end
@@ -86,7 +92,8 @@ RSpec.describe Langchain::Loader do
         let(:path) { "spec/fixtures/loaders/sample.docx" }
 
         it "loads text from file" do
-          expect(subject).to include("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac faucibus odio.")
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac faucibus odio.")
         end
       end
 
@@ -96,7 +103,8 @@ RSpec.describe Langchain::Loader do
         let(:content_type) { "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }
 
         it "loads text from URL" do
-          expect(subject).to include("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac faucibus odio.")
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac faucibus odio.")
         end
       end
     end
@@ -117,7 +125,8 @@ RSpec.describe Langchain::Loader do
         let(:path) { "spec/fixtures/loaders/example.csv" }
 
         it "loads text from file" do
-          expect(subject).to eq(result)
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq(result)
         end
       end
 
@@ -127,7 +136,8 @@ RSpec.describe Langchain::Loader do
         let(:content_type) { "text/csv" }
 
         it "loads text from URL" do
-          expect(subject).to eq(result)
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq(result)
         end
       end
     end
@@ -141,7 +151,8 @@ RSpec.describe Langchain::Loader do
         let(:path) { "spec/fixtures/loaders/example.json" }
 
         it "loads text from file" do
-          expect(subject).to include(result)
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include(result)
         end
       end
 
@@ -151,7 +162,8 @@ RSpec.describe Langchain::Loader do
         let(:body) { File.read("spec/fixtures/loaders/example.json") }
 
         it "loads text from URL" do
-          expect(subject).to include(result)
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include(result)
         end
       end
     end
@@ -170,7 +182,8 @@ RSpec.describe Langchain::Loader do
         let(:path) { "spec/fixtures/loaders/example.jsonl" }
 
         it "loads text from file" do
-          expect(subject).to eq(result)
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq(result)
         end
       end
 
@@ -180,7 +193,8 @@ RSpec.describe Langchain::Loader do
         let(:body) { File.read("spec/fixtures/loaders/example.jsonl") }
 
         it "loads text from URL" do
-          expect(subject).to eq(result)
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq(result)
         end
       end
     end

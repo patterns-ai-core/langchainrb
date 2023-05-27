@@ -17,6 +17,7 @@ module Langchain
   @root = Pathname.new(__dir__)
 
   autoload :Loader, "langchain/loader"
+  autoload :Data, "langchain/data"
 
   module Processors
     autoload :Base, "langchain/processors/base"

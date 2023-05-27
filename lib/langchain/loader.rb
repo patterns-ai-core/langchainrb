@@ -58,11 +58,12 @@ module Langchain
     end
 
     def process(&block)
-      data, processor = yield
+      raw_data, kind = yield
 
-      raise UnknownFormatError unless processor
+      raise UnknownFormatError unless kind
 
-      Langchain::Processors.const_get(processor).new.parse(data)
+      processor = Langchain::Processors.const_get(kind).new
+      Langchain::Data.new(processor.parse(raw_data), source: @path)
     end
 
     def find_processor(constant, value)
