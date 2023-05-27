@@ -11,3 +11,5 @@
 .rspec_status
 
 .env
+.DS_Store
+.idea

@@ -7,9 +7,11 @@ module LLM
     # Currently supported LLMs
     # TODO: Add support for HuggingFace and other LLMs
     LLMS = {
-      openai: "OpenAI",
       cohere: "Cohere",
-      huggingface: "HuggingFace"
+      google_palm: "GooglePalm",
+      huggingface: "HuggingFace",
+      openai: "OpenAI",
+      replicate: "Replicate"
     }.freeze
 
     def default_dimension
@@ -29,6 +31,11 @@ module LLM
     # Method supported by an LLM that generates an embedding for a given text or array of texts
     def embed(...)
       raise NotImplementedError, "#{self.class.name} does not support generating embeddings"
+    end
+
+    # Method supported by an LLM that summarizes a given text
+    def summarize(...)
+      raise NotImplementedError, "#{self.class.name} does not support summarization"
     end
 
     # Ensure that the LLM value passed in is supported

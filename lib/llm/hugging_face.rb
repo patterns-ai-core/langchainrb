@@ -12,6 +12,7 @@ module LLM
 
     #
     # Intialize the HuggingFace LLM
+    #
     # @param api_key [String] The API key to use
     #
     def initialize(api_key:)
@@ -21,11 +22,14 @@ module LLM
       @client = ::HuggingFace::InferenceApi.new(api_token: api_key)
     end
 
+    #
     # Generate an embedding for a given text
+    #
     # @param text [String] The text to embed
     # @return [Array] The embedding
+    #
     def embed(text:)
-      response = client.embedding(
+      client.embedding(
         input: text,
         model: DEFAULTS[:embeddings_model_name]
       )

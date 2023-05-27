@@ -28,12 +28,13 @@ require "langchain"
 
 #### Supported vector search databases and features:
 
-| Database | Querying           | Storage | Schema Management | Backups | Rails Integration | ??? |
-| -------- |:------------------:| -------:| -----------------:| -------:| -----------------:| ---:|
-| Weaviate | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
-| Qdrant   | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
-| Milvus   | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
-| Pinecone | :white_check_mark: | WIP     | WIP               | WIP     |                   |     |
+| Database | Querying           | Storage | Schema Management | Backups | Rails Integration |
+| -------- |:------------------:| -------:| -----------------:| -------:| -----------------:|
+| [Chroma](https://trychroma.com/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Milvus](https://milvus.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Pinecone](https://www.pinecone.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Qdrant](https://qdrant.tech/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Weaviate](https://weaviate.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 
 ### Using Vector Search Databases 🔍
 
@@ -54,6 +55,7 @@ client = Vectorsearch::Weaviate.new(
 client = Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.0"`
 client = Vectorsearch::Qdrant.new(...) # `gem"qdrant-ruby", "~> 0.9.0"`
 client = Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
+client = Vectorsearch::Chroma.new(...) # `gem "chroma-db", "~> 0.3.0"`
 ```
 
 ```ruby
@@ -62,7 +64,7 @@ client.create_default_schema
 ```
 
 ```ruby
-# Store your documents in your vector search database
+# Store plain texts in your vector search database
 client.add_texts(
     texts: [
         "Begin by preheating your oven to 375°F (190°C). Prepare four boneless, skinless chicken breasts by cutting a pocket into the side of each breast, being careful not to cut all the way through. Season the chicken with salt and pepper to taste. In a large skillet, melt 2 tablespoons of unsalted butter over medium heat. Add 1 small diced onion and 2 minced garlic cloves, and cook until softened, about 3-4 minutes. Add 8 ounces of fresh spinach and cook until wilted, about 3 minutes. Remove the skillet from heat and let the mixture cool slightly.",
@@ -70,7 +72,14 @@ client.add_texts(
     ]
 )
 ```
+```ruby
+# Store the contents of your files in your vector search database
+my_pdf = Langchain.root.join("path/to/my.pdf")
+my_text = Langchain.root.join("path/to/my.txt")
+my_docx = Langchain.root.join("path/to/my.docx")
 
+client.add_data(paths: [my_pdf, my_text, my_docx])
+```
 ```ruby
 # Retrieve similar documents based on the query string passed in
 client.similarity_search(
@@ -122,6 +131,21 @@ cohere.complete(prompt: "What is the meaning of life?")
 
 #### HuggingFace
 Add `gem "hugging-face", "~> 0.3.2"` to your Gemfile.
+```ruby
+cohere = LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
+```
+
+#### Replicate
+Add `gem "replicate-ruby", "~> 0.2.2"` to your Gemfile.
+```ruby
+cohere = LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
+```
+
+#### Google PaLM (Pathways Language Model)
+Add `"google_palm_api", "~> 0.1.0"` to your Gemfile.
+```ruby
+google_palm = LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
+```
 
 ### Using Prompts 📋
 
@@ -233,12 +257,46 @@ agent.run(question: "How many full soccer fields would be needed to cover the di
 
 #### Available Tools 🛠️
 
-| Name     | Description          | Requirements         |
-| -------- | :------------------: | :------------------: |
-| "calculator" | Useful for getting the result of a math expression | |
-| "search" | A wrapper around Google Search | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key)
-| "wikipedia" | Calls Wikipedia API to retrieve the summary | |
+| Name         | Description                                        | ENV Requirements                                              | Gem Requirements                          |
+| ------------ | :------------------------------------------------: | :-----------------------------------------------------------: | :---------------------------------------: |
+| "calculator" | Useful for getting the result of a math expression |                                                               | `gem "eqn", "~> 1.6.5"`                   |
+| "search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |                      |
+| "wikipedia"  | Calls Wikipedia API to retrieve the summary        |                                                               | `gem "wikipedia-client", "~> 1.17.0"`     |
 
+
+#### Loaders 🚚
+
+Need to read data from various sources? Load it up.
+
+##### Usage
+
+Just call `Langchan::Loader.load` with the path to the file or a URL you want to load.
+
+```ruby
+Langchaing::Loader.load('/path/to/file.pdf')
+```
+
+or
+
+```ruby
+Langchain::Loader.load('https://www.example.com/file.pdf')
+```
+
+##### Supported Formats
+
+
+| Format | Pocessor                     |       Gem Requirements       |
+| ------ | ---------------------------- | :--------------------------: |
+| docx   | Langchain::Processors::Docx  |   `gem "docx", "~> 0.8.0"`   |
+| html   | Langchain::Processors::HTML  | `gem "nokogiri", "~> 1.13"`  |
+| pdf    | Langchain::Processors::PDF   | `gem "pdf-reader", "~> 1.4"` |
+| text   | Langchain::Processors::Text  |                              |
+| JSON   | Langchain::Processors::JSON  |                              |
+| JSONL  | Langchain::Processors::JSONL |                              |
+| csv    | Langchain::Processors::CSV   |                              |
+
+## Examples
+Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
 
 ## Logging
 
@@ -251,9 +309,10 @@ Langchain.logger.level = :info
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+1. `git clone https://github.com/andreibondarev/langchainrb.git`
+2. `cp .env.example .env`, then fill out the environment variables in `.env`
+3. `bundle exec rake` to ensure that the tests pass and to run standardrb
+4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
 
 ## Core Contributors
 [<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://github.com/andreibondarev)

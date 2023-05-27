@@ -7,7 +7,7 @@ RSpec.describe LLM::Cohere do
 
   describe "#embed" do
     before do
-      allow_any_instance_of(Cohere::Client).to receive(:embed).and_return(
+      allow(subject.client).to receive(:embed).and_return(
         {
           "id" => "a86a12ca-7ce5-4433-b68a-4d8454b22de7",
           "texts" => ["Hello World"],
@@ -23,7 +23,7 @@ RSpec.describe LLM::Cohere do
 
   describe "#complete" do
     before do
-      allow_any_instance_of(Cohere::Client).to receive(:generate).and_return(
+      allow(subject.client).to receive(:generate).and_return(
         {
           "id" => "812c650e-a0d0-4502-a084-45b0d32fcb9c",
           "generations" => [
@@ -46,6 +46,24 @@ RSpec.describe LLM::Cohere do
   describe "#default_dimension" do
     it "returns the default dimension" do
       expect(subject.default_dimension).to eq(1024)
+    end
+  end
+
+  describe "#summarize" do
+    let(:text) { "Text to summarize" }
+
+    before do
+      allow(subject.client).to receive(:summarize).and_return(
+        {
+          "id" => "123",
+          "summary" => "Summary",
+          "meta" => {"api_version" => {"version" => "1"}}
+        }
+      )
+    end
+
+    it "returns a summary" do
+      expect(subject.summarize(text: text)).to eq("Summary")
     end
   end
 end

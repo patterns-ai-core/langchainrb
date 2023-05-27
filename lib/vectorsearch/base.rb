@@ -48,7 +48,6 @@ module Vectorsearch
     end
 
     def_delegators :llm_client,
-      :generate_embedding,
       :default_dimension
 
     def generate_prompt(question:, context:)
@@ -67,6 +66,18 @@ module Vectorsearch
       )
 
       prompt_template.format(question: question)
+    end
+
+    def add_data(path: nil, paths: nil)
+      raise ArgumentError, "Either path or paths must be provided" if path.nil? && paths.nil?
+      raise ArgumentError, "Either path or paths must be provided, not both" if !path.nil? && !paths.nil?
+
+      texts = Array(path || paths)
+        .flatten
+        .map { |path| Langchain::Loader.new(path)&.load }
+        .compact
+
+      add_texts(texts: texts)
     end
   end
 end
