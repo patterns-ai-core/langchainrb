@@ -321,6 +321,7 @@ Langchain.logger.level = :info
 [<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://github.com/andreibondarev)
 [<img style="border-radius:50%" alt="Rafael Figueiredo" src="https://avatars.githubusercontent.com/u/35845775?v=4" width="80" height="80" class="avatar">](https://github.com/rafaelqfigueiredo)
 [<img style="border-radius:50%" alt="Ricky Chilcott" src="https://avatars.githubusercontent.com/u/445759?v=4" width="80" height="80" class="avatar">](https://github.com/rickychilcott)
+[<img style="border-radius:50%" alt="Alex Chaplinsky" src="https://avatars.githubusercontent.com/u/695947?v=4" width="80" height="80" class="avatar">](https://github.com/alchaplinsky)
 
 (Criteria for becoming an Honorary Contributor or Core Contributor is pending...)
 
