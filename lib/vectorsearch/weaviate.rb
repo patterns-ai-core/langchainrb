@@ -14,7 +14,7 @@ module Vectorsearch
 
       @client = ::Weaviate::Client.new(
         url: url,
-        api_key: api_key,
+        api_key: api_key
       )
       @index_name = index_name
 
@@ -92,7 +92,6 @@ module Vectorsearch
       prompt = generate_prompt(question: question, context: context)
 
       llm_client.chat(prompt: prompt)
-
     end
   end
 end

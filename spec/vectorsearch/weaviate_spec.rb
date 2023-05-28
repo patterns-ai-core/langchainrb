@@ -42,18 +42,18 @@ RSpec.describe Vectorsearch::Weaviate do
         .and_return(fixture)
 
       allow_any_instance_of(
-          ::OpenAI::Client
-        ).to receive(:embeddings).and_return({
-          "data" => [
-            {
-              "embedding" => [
-                -0.0018150936,
-                0.0017554426,
-                -0.022715086
-              ]
-            }
-          ]
-        })
+        ::OpenAI::Client
+      ).to receive(:embeddings).and_return({
+        "data" => [
+          {
+            "embedding" => [
+              -0.0018150936,
+              0.0017554426,
+              -0.022715086
+            ]
+          }
+        ]
+      })
     end
 
     it "adds texts" do
