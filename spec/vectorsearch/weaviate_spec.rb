@@ -117,5 +117,21 @@ RSpec.describe Vectorsearch::Weaviate do
     end
   end
 
-  xdescribe "#ask"
+  describe "#ask" do
+    let(:matches) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_search.json")) }
+    let(:prompt) { "Context:\nHello world\n---\nQuestion: #{question}\n---\nAnswer:" }
+    let(:question) { "How many times is \"lorem\" mentioned in this text?" }
+    let(:answer) { "5 times" }
+
+    before do
+      allow(subject).to receive(:similarity_search).with(
+        query: question
+      ).and_return(matches)
+      allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
+    end
+
+    it "asks a question" do
+      expect(subject.ask(question: question)).to eq(answer)
+    end
+  end
 end
