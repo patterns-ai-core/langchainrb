@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     langchainrb (0.3.13)
+      tiktoken_ruby (~> 0.0.5)
 
 GEM
   remote: https://rubygems.org/
@@ -205,6 +206,7 @@ GEM
       zeitwerk (~> 2.5)
     rainbow (3.1.1)
     rake (13.0.6)
+    rb_sys (0.9.78)
     regexp_parser (2.8.0)
     replicate-ruby (0.2.2)
       addressable
@@ -262,6 +264,11 @@ GEM
     standardrb (1.0.1)
       standard
     thor (1.2.1)
+    tiktoken_ruby (0.0.5)
+      rb_sys (~> 0.9.68)
+    tiktoken_ruby (0.0.5-arm64-darwin)
+    tiktoken_ruby (0.0.5-x86_64-darwin)
+    tiktoken_ruby (0.0.5-x86_64-linux)
     treetop (1.6.12)
       polyglot (~> 0.3)
     ttfunk (1.7.0)
