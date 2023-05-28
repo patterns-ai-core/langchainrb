@@ -29,7 +29,7 @@ module Vectorsearch
         {
           class: index_name,
           properties: {content: text},
-          vector: generate_embedding(text: text)
+          vector: llm_client.embed(text: text)
         }
       end
 
@@ -58,7 +58,7 @@ module Vectorsearch
     # @param k [Integer|String] The number of results to return
     # @return [Hash] The search results
     def similarity_search(query:, k: 4)
-      embedding = generate_embedding(text: query)
+      embedding = llm_client.embed(text: query)
 
       similarity_search_by_vector(embedding: embedding, k: k)
     end
