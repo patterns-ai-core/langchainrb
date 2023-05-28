@@ -14,9 +14,7 @@ module Vectorsearch
 
       @client = ::Weaviate::Client.new(
         url: url,
-        api_key: api_key,
-        model_service: llm,
-        model_service_api_key: llm_api_key
+        api_key: api_key
       )
       @index_name = index_name
 
@@ -30,7 +28,8 @@ module Vectorsearch
       objects = Array(texts).map do |text|
         {
           class: index_name,
-          properties: {content: text}
+          properties: {content: text},
+          vector: llm_client.embed(text: text)
         }
       end
 
@@ -43,11 +42,7 @@ module Vectorsearch
     def create_default_schema
       client.schema.create(
         class_name: index_name,
-        vectorizer: "text2vec-#{llm}",
-        # TODO: Figure out a way to optionally enable it
-        # "module_config": {
-        #   "qna-openai": {}
-        # },
+        vectorizer: "none",
         properties: [
           # TODO: Allow passing in your own IDs
           {
@@ -63,14 +58,9 @@ module Vectorsearch
     # @param k [Integer|String] The number of results to return
     # @return [Hash] The search results
     def similarity_search(query:, k: 4)
-      near_text = "{ concepts: [\"#{query}\"] }"
+      embedding = llm_client.embed(text: query)
 
-      client.query.get(
-        class_name: index_name,
-        near_text: near_text,
-        limit: k.to_s,
-        fields: "content _additional { id }"
-      )
+      similarity_search_by_vector(embedding: embedding, k: k)
     end
 
     # Return documents similar to the vector
@@ -92,29 +82,16 @@ module Vectorsearch
     # @param question [String] The question to ask
     # @return [Hash] The answer
     def ask(question:)
-      # Weaviate currently supports the `ask:` parameter only for the OpenAI LLM (with `qna-openai` module enabled).
-      # The Cohere support is on the way: https://github.com/weaviate/weaviate/pull/2600
-      if llm == :openai
-        ask_object = "{ question: \"#{question}\" }"
+      search_results = similarity_search(query: question)
 
-        client.query.get(
-          class_name: index_name,
-          ask: ask_object,
-          limit: "1",
-          fields: "_additional { answer { result } }"
-        )
-      elsif llm == :cohere
-        search_results = similarity_search(query: question)
-
-        context = search_results.map do |result|
-          result.dig("content").to_s
-        end
-        context = context.join("\n---\n")
-
-        prompt = generate_prompt(question: question, context: context)
-
-        llm_client.chat(prompt: prompt)
+      context = search_results.map do |result|
+        result.dig("content").to_s
       end
+      context = context.join("\n---\n")
+
+      prompt = generate_prompt(question: question, context: context)
+
+      llm_client.chat(prompt: prompt)
     end
   end
 end
