@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+## [0.3.14] - 2023-05-28
+- 🔍 Vectorsearch
+  - Not relying on Weaviate modules anymore
+  - Adding missing specs for Qdrant and Milvus classes
+- 🚚 Loaders
+  - Add Langchain::Data result object for data loaders
+- 🗣️ LLMs
+  - Add `summarize()` method to the LLMs
+
 ## [0.3.13] - 2023-05-26
 - 🔍 Vectorsearch
   - Pgvector support
