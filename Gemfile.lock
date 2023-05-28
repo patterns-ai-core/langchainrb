@@ -154,6 +154,8 @@ GEM
     multipart-post (2.3.0)
     nokogiri (1.15.2-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.15.2-x86_64-linux)
+      racc (~> 1.4)
     parallel (1.23.0)
     parser (3.2.2.1)
       ast (~> 2.4.1)
@@ -257,6 +259,7 @@ GEM
       standard
     thor (1.2.2)
     tiktoken_ruby (0.0.5-x86_64-darwin)
+    tiktoken_ruby (0.0.5-x86_64-linux)
     treetop (1.6.12)
       polyglot (~> 0.3)
     ttfunk (1.7.0)
@@ -273,6 +276,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-19
+  x86_64-linux
 
 DEPENDENCIES
   chroma-db (~> 0.3.0)
