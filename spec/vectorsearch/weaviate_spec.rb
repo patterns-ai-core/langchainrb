@@ -119,7 +119,7 @@ RSpec.describe Vectorsearch::Weaviate do
 
   describe "#ask" do
     let(:matches) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_search.json")) }
-    let(:prompt) { "Context:\nHello world\n---\nQuestion: #{question}\n---\nAnswer:" }
+    let(:prompt) { "Context:\n#{matches[0]["content"]}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:question) { "How many times is \"lorem\" mentioned in this text?" }
     let(:answer) { "5 times" }
 
