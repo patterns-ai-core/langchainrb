@@ -74,7 +74,7 @@ module Vectorsearch
 
       texts = Array(path || paths)
         .flatten
-        .map { |path| Langchain::Loader.new(path)&.load }
+        .map { |path| Langchain::Loader.new(path)&.load&.value }
         .compact
 
       add_texts(texts: texts)
