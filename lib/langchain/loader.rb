@@ -14,14 +14,15 @@ module Langchain
     # Equivalent to Langchain::Loader.new(path).load
     # @param path [String | Pathname] path to file or url
     # @return [String] file content
-    def self.load(path)
-      new(path).load
+    def self.load(path, options = {}, &block)
+      new(path, options).load(&block)
     end
 
     # Initialize Langchain::Loader
     # @param path [String | Pathname] path to file or url
     # @return [Langchain::Loader] loader instance
-    def initialize(path)
+    def initialize(path, options = {})
+      @options = options
       @path = path
     end
 
@@ -35,39 +36,38 @@ module Langchain
 
     # Load data from a file or url
     # @return [String] file content
-    def load
-      url? ? from_url(@path) : from_path(@path)
+    def load(&block)
+      @raw_data = url? ? load_from_url : load_from_path
+
+      if block_given?
+        data = yield @raw_data.read, @options
+      else
+        data = processor_klass.new(@options).parse(@raw_data)
+      end
+
+      Langchain::Data.new(data, source: @path)
     end
 
     private
 
-    def from_url(url)
-      process do
-        data = URI.parse(url).open
-        processor = find_processor(:CONTENT_TYPES, data.content_type)
-        [data, processor]
-      end
+    def load_from_url
+      URI.parse(@path).open
     end
 
-    def from_path(path)
-      raise FileNotFound unless File.exist?(path)
+    def load_from_path
+      raise FileNotFound unless File.exist?(@path)
 
-      process do
-        [File.open(path), find_processor(:EXTENSIONS, File.extname(path))]
-      end
+      File.open(@path)
     end
 
-    def process(&block)
-      raw_data, kind = yield
+    def processor_klass
+      raise UnknownFormatError unless kind = find_processor
 
-      raise UnknownFormatError unless kind
-
-      processor = Langchain::Processors.const_get(kind).new
-      Langchain::Data.new(processor.parse(raw_data), source: @path)
+      Langchain::Processors.const_get(kind)
     end
 
-    def find_processor(constant, value)
-      processors.find { |klass| processor_matches? "#{klass}::#{constant}", value }
+    def find_processor
+      processors.find { |klass| processor_matches? "#{klass}::#{lookup_constant}", source_type }
     end
 
     def processor_matches?(constant, value)
@@ -76,6 +76,14 @@ module Langchain
 
     def processors
       Langchain::Processors.constants
+    end
+
+    def source_type
+      url? ? @raw_data.content_type : File.extname(@path)
+    end
+
+    def lookup_constant
+      constant = url? ? :CONTENT_TYPES : :EXTENSIONS
     end
   end
 end

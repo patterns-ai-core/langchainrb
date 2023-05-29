@@ -6,7 +6,7 @@ module Langchain
       EXTENSIONS = [".pdf"]
       CONTENT_TYPES = ["application/pdf"]
 
-      def initialize
+      def initialize(*)
         depends_on "pdf-reader"
         require "pdf-reader"
       end
