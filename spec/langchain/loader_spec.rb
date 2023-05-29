@@ -199,6 +199,30 @@ RSpec.describe Langchain::Loader do
       end
     end
 
+    context "Custom processor passed as block" do
+      subject do
+        described_class.new(path).load { |text| text.reverse }
+      end
+
+      context "from local file" do
+        let(:path) { "spec/fixtures/loaders/example.txt" }
+
+        it "returns data processed with custom processor" do
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include("muspI meroL")
+        end
+      end
+
+      context "from url" do
+        let(:path) { "http://example.com/example.txt" }
+
+        it "loads text from URL" do
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq("muspI meroL")
+        end
+      end
+    end
+
     context "Unsupported file type" do
       context "from local file" do
         let(:path) { "spec/fixtures/loaders/example.swf" }
