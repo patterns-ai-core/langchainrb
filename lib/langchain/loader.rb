@@ -39,10 +39,10 @@ module Langchain
     def load(&block)
       @raw_data = url? ? load_from_url : load_from_path
 
-      if block_given?
-        data = yield @raw_data.read, @options
+      data = if block
+        yield @raw_data.read, @options
       else
-        data = processor_klass.new(@options).parse(@raw_data)
+        processor_klass.new(@options).parse(@raw_data)
       end
 
       Langchain::Data.new(data, source: @path)
@@ -61,7 +61,7 @@ module Langchain
     end
 
     def processor_klass
-      raise UnknownFormatError unless kind = find_processor
+      raise UnknownFormatError unless (kind = find_processor)
 
       Langchain::Processors.const_get(kind)
     end
@@ -83,7 +83,7 @@ module Langchain
     end
 
     def lookup_constant
-      constant = url? ? :CONTENT_TYPES : :EXTENSIONS
+      url? ? :CONTENT_TYPES : :EXTENSIONS
     end
   end
 end
