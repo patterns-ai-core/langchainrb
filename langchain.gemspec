@@ -8,11 +8,11 @@ Gem::Specification.new do |spec|
   spec.authors = ["Andrei Bondarev"]
   spec.email = ["andrei.bondarev13@gmail.com"]
 
-  spec.summary = "Build ML/AI-powered applications with Ruby's LangChain"
-  spec.description = "Build ML/AI-powered applications with Ruby's LangChain"
+  spec.summary = "Build LLM-backed Ruby applications with Ruby's LangChain"
+  spec.description = "Build LLM-backed Ruby applications with Ruby's LangChain"
   spec.homepage = "https://rubygems.org/gems/langchainrb"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.0.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/andreibondarev/langchainrb"
@@ -48,7 +48,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "milvus", "~> 0.9.0"
   spec.add_development_dependency "nokogiri", "~> 1.13"
   spec.add_development_dependency "pg", "~> 1.5"
-  spec.add_development_dependency "pgvector", "< 0.2"
+  spec.add_development_dependency "pgvector", "~> 0.2"
   spec.add_development_dependency "pdf-reader", "~> 1.4"
   spec.add_development_dependency "pinecone", "~> 0.1.6"
   spec.add_development_dependency "replicate-ruby", "~> 0.2.2"

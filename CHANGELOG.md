@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.3.15] - 2023-05-30
+- Drop Ruby 2.7 support. It had reached EOD.
+- Bump pgvector-ruby to 0.2
+- 🚚 Loaders
+  - Support for options and block to be passed to CSV processor
+
 ## [0.3.14] - 2023-05-28
 - 🔍 Vectorsearch
   - Not relying on Weaviate modules anymore
