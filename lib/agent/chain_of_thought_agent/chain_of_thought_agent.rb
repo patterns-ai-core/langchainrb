@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Agent
+  # Represents an agent that uses a Chain of Thought approach to answer questions
   class ChainOfThoughtAgent < Base
     attr_reader :llm, :llm_api_key, :llm_client, :tools
 
@@ -11,8 +12,8 @@ module Agent
     # @param tools [Array] The tools to use
     # @return [ChainOfThoughtAgent] The Agent::ChainOfThoughtAgent instance
     def initialize(llm:, llm_api_key:, tools: [])
-      LLM::Base.validate_llm!(llm: llm)
-      Tool::Base.validate_tools!(tools: tools)
+      LLM::Base.validate_llm!(llm:)
+      Tool::Base.validate_tools!(tools:)
 
       @llm = llm
       @llm_api_key = llm_api_key
@@ -35,51 +36,82 @@ module Agent
     # @param question [String] The question to ask
     # @return [String] The answer to the question
     def run(question:)
-      question = question.strip
-      prompt = create_prompt(
-        question: question,
-        tools: tools
-      )
+      @prompt = prepare_prompt(question)
 
       loop do
-        Langchain.logger.info("Agent: Passing the prompt to the #{llm} LLM")
-        response = llm_client.complete(
-          prompt: prompt,
-          stop_sequences: ["Observation:"],
-          max_tokens: 500
-        )
+        response = generate_llm_response
+        append_response_to_prompt(response)
+        action = extract_action(response)
 
-        # Append the response to the prompt
-        prompt += response
+        break extract_final_answer(response) unless action
 
-        # Find the requested action in the "Action: search" format
-        action = response.match(/Action: (.*)/)&.send(:[], -1)
-
-        if action
-          # Find the input to the action in the "Action Input: [action_input]" format
-          action_input = response.match(/Action Input: "?(.*)"?/)&.send(:[], -1)
-
-          Langchain.logger.info("Agent: Using the \"#{action}\" Tool with \"#{action_input}\"")
-
-          # Retrieve the Tool::[ToolName] class and call `execute`` with action_input as the input
-          result = Tool
-            .const_get(Tool::Base::TOOLS[action.strip])
-            .execute(input: action_input)
-
-          # Append the Observation to the prompt
-          prompt += if prompt.end_with?("Observation:")
-            " #{result}\nThought:"
-          else
-            "\nObservation: #{result}\nThought:"
-          end
-        else
-          # Return the final answer
-          break response.match(/Final Answer: (.*)/)&.send(:[], -1)
-        end
+        execute_tool_action(action, response)
       end
     end
 
     private
+
+    def extract_final_answer(response)
+      response.match(/Final Answer: (.*)/)&.send(:[], -1)
+    end
+
+    def execute_tool_action(action, response)
+      action_input = extract_action_input(response)
+      log_tool_usage(action, action_input)
+      result = execute_tool(action, action_input)
+      append_observation_to_prompt(result)
+    end
+
+    def log_tool_usage(action, action_input)
+      Langchain.logger.info("Agent: Using the \"#{action}\" Tool with \"#{action_input}\"")
+    end
+
+    def execute_tool(action, action_input)
+      Tool
+        .const_get(Tool::Base::TOOLS[action.strip])
+        .execute(input: action_input)
+    end
+
+    def extract_action_input(response)
+      response.match(/Action Input: "?(.*)"?/)&.send(:[], -1)
+    end
+
+    def append_observation_to_prompt(result)
+      @prompt += if @prompt.end_with?("Observation:")
+        " #{result}\nThought:"
+      else
+        "\nObservation: #{result}\nThought:"
+      end
+    end
+
+    def extract_action(response)
+      response.match(/Action: (.*)/)&.send(:[], -1)
+    end
+
+    def append_response_to_prompt(response)
+      @prompt += response
+    end
+
+    def generate_llm_response
+      log_llm_prompt_passing
+      llm_client.complete(
+        prompt: @prompt,
+        stop_sequences: ["Observation:"],
+        max_tokens: 500
+      )
+    end
+
+    def log_llm_prompt_passing
+      Langchain.logger.info("Agent: Passing the prompt to the #{llm} LLM")
+    end
+
+    def prepare_prompt(question)
+      question = question.strip
+      create_prompt(
+        question:,
+        tools:
+      )
+    end
 
     # Create the initial prompt to pass to the LLM
     # @param question [String] Question to ask
@@ -88,7 +120,7 @@ module Agent
     def create_prompt(question:, tools:)
       prompt_template.format(
         date: Date.today.strftime("%B %d, %Y"),
-        question: question,
+        question:,
         tool_names: "[#{tools.join(", ")}]",
         tools: tools.map do |tool|
           "#{tool}: #{Tool.const_get(Tool::Base::TOOLS[tool]).const_get(:DESCRIPTION)}"
