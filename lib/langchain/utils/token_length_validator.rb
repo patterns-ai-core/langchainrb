@@ -10,7 +10,8 @@ module Langchain
       TOKEN_LIMITS = {
         "text-embedding-ada-002" => 8191, # Source: https://platform.openai.com/docs/api-reference/embeddings
         "text-davinci-003" => 4097, # Source: https://platform.openai.com/docs/models/gpt-3-5
-        "gpt-3.5-turbo" => 4096 # Source: https://platform.openai.com/docs/models/gpt-3-5
+        "gpt-3.5-turbo" => 4096, # Source: https://platform.openai.com/docs/models/gpt-3-5
+        "gpt-4" => 8192 # Source: https://platform.openai.com/docs/models/gpt-4
       }.freeze
 
       def self.validate!(text, model_name)

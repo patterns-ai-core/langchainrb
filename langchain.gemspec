@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
 
   # dependencies
   # Not sure if we should require this as it only applies to OpenAI usecase.
-  spec.add_dependency "tiktoken_ruby", "~> 0.0.5"
+  spec.add_dependency "tiktoken_ruby", "~> 0.0.4"
 
   # development dependencies
   spec.add_development_dependency "dotenv-rails", "~> 2.7.6"
