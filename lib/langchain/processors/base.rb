@@ -6,6 +6,10 @@ module Langchain
       EXTENSIONS = []
       CONTENT_TYPES = []
 
+      def initialize(options = {})
+        @options = options
+      end
+
       def parse(data)
         raise NotImplementedError
       end

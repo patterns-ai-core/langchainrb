@@ -12,9 +12,15 @@ module Langchain
       # @param [File] data
       # @return [Array of Hash]
       def parse(data)
-        ::CSV.new(data.read).map do |row|
+        ::CSV.new(data.read, col_sep: separator).map do |row|
           row.map(&:strip)
         end
+      end
+
+      private
+
+      def separator
+        @options[:col_sep] || ","
       end
     end
   end

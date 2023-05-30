@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.3.13)
+    langchainrb (0.3.14)
       tiktoken_ruby (~> 0.0.5)
 
 GEM
