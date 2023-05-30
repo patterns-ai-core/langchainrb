@@ -25,9 +25,13 @@ module LLM
     # @return [Array] The embedding
     #
     def embed(text:)
+      model = DEFAULTS[:embeddings_model_name]
+
+      Langchain::Utils::TokenLengthValidator.validate!(text, model)
+
       response = client.embeddings(
         parameters: {
-          model: DEFAULTS[:embeddings_model_name],
+          model: model,
           input: text
         }
       )
@@ -41,8 +45,12 @@ module LLM
     # @return [String] The completion
     #
     def complete(prompt:, **params)
+      model = DEFAULTS[:completion_model_name]
+
+      Langchain::Utils::TokenLengthValidator.validate!(prompt, model)
+
       default_params = {
-        model: DEFAULTS[:completion_model_name],
+        model: model,
         temperature: DEFAULTS[:temperature],
         prompt: prompt
       }
@@ -64,8 +72,12 @@ module LLM
     # @return [String] The chat completion
     #
     def chat(prompt:, **params)
+      model = DEFAULTS[:chat_completion_model_name]
+
+      Langchain::Utils::TokenLengthValidator.validate!(prompt, model)
+
       default_params = {
-        model: DEFAULTS[:chat_completion_model_name],
+        model: model,
         temperature: DEFAULTS[:temperature],
         # TODO: Figure out how to introduce persisted conversations
         messages: [{role: "user", content: prompt}]

@@ -5,6 +5,7 @@ require "pathname"
 
 require_relative "./version"
 require_relative "./dependency_helper"
+
 module Langchain
   class << self
     attr_accessor :logger
@@ -28,6 +29,10 @@ module Langchain
     autoload :JSONL, "langchain/processors/jsonl"
     autoload :PDF, "langchain/processors/pdf"
     autoload :Text, "langchain/processors/text"
+  end
+
+  module Utils
+    autoload :TokenLengthValidator, "langchain/utils/token_length_validator"
   end
 end
 
