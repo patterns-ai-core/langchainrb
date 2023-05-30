@@ -122,11 +122,25 @@ RSpec.describe Langchain::Loader do
       end
 
       context "from local file" do
-        let(:path) { "spec/fixtures/loaders/example.csv" }
+        context "with default options" do
+          let(:path) { "spec/fixtures/loaders/example.csv" }
 
-        it "loads text from file" do
-          expect(subject).to be_a(Langchain::Data)
-          expect(subject.value).to eq(result)
+          it "loads data from file" do
+            expect(subject).to be_a(Langchain::Data)
+            expect(subject.value).to eq(result)
+          end
+        end
+
+        context "with custom options" do
+          let(:path) { "spec/fixtures/loaders/semicolon_example.csv" }
+          let(:options) { {col_sep: ";"} }
+
+          subject { described_class.new(path, options).load }
+
+          it "loads data from csv file separated by semicolon" do
+            expect(subject).to be_a(Langchain::Data)
+            expect(subject.value).to eq(result)
+          end
         end
       end
 
@@ -135,7 +149,7 @@ RSpec.describe Langchain::Loader do
         let(:body) { File.read("spec/fixtures/loaders/example.csv") }
         let(:content_type) { "text/csv" }
 
-        it "loads text from URL" do
+        it "loads data from URL" do
           expect(subject).to be_a(Langchain::Data)
           expect(subject.value).to eq(result)
         end
@@ -195,6 +209,30 @@ RSpec.describe Langchain::Loader do
         it "loads text from URL" do
           expect(subject).to be_a(Langchain::Data)
           expect(subject.value).to eq(result)
+        end
+      end
+    end
+
+    context "Custom processor passed as block" do
+      subject do
+        described_class.new(path).load { |text| text.reverse }
+      end
+
+      context "from local file" do
+        let(:path) { "spec/fixtures/loaders/example.txt" }
+
+        it "returns data processed with custom processor" do
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include("muspI meroL")
+        end
+      end
+
+      context "from url" do
+        let(:path) { "http://example.com/example.txt" }
+
+        it "loads text from URL" do
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq("muspI meroL")
         end
       end
     end

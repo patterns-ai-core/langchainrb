@@ -6,7 +6,7 @@ module Langchain
       EXTENSIONS = [".docx"]
       CONTENT_TYPES = ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
 
-      def initialize
+      def initialize(*)
         depends_on "docx"
         require "docx"
       end

@@ -9,7 +9,7 @@ module Langchain
       # We only look for headings and paragraphs
       TEXT_CONTENT_TAGS = %w[h1 h2 h3 h4 h5 h6 p]
 
-      def initialize
+      def initialize(*)
         depends_on "nokogiri"
         require "nokogiri"
       end
