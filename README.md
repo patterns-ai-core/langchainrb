@@ -237,7 +237,7 @@ Agents are semi-autonomous bots that can respond to user questions and use avail
 
 #### Chain-of-Thought Agent
 
-Add `gem "openai-ruby"`, `gem "eqn"`, and `gem "google_search_results"` to your Gemfile
+Add `gem "ruby-openai"`, `gem "eqn"`, and `gem "google_search_results"` to your Gemfile
 
 ```ruby
 agent = Agent::ChainOfThoughtAgent.new(llm: :openai, llm_api_key: ENV["OPENAI_API_KEY"], tools: ['search', 'calculator'])
