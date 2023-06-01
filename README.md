@@ -273,7 +273,7 @@ Need to read data from various sources? Load it up.
 Just call `Langchan::Loader.load` with the path to the file or a URL you want to load.
 
 ```ruby
-Langchaing::Loader.load('/path/to/file.pdf')
+Langchain::Loader.load('/path/to/file.pdf')
 ```
 
 or
