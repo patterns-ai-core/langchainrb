@@ -12,7 +12,7 @@ require "langchain"
 require "dotenv/load"
 require "pry"
 
-weaviate = Vectorsearch::Weaviate.new(
+weaviate = Langchain::Vectorsearch::Weaviate.new(
   url: ENV["WEAVIATE_URL"],
   api_key: ENV["WEAVIATE_API_KEY"],
   index_name: "",
@@ -22,7 +22,7 @@ weaviate = Vectorsearch::Weaviate.new(
   # llm_api_key: ENV["COHERE_API_KEY"]
 )
 
-qdrant = Vectorsearch::Qdrant.new(
+qdrant = Langchain::Vectorsearch::Qdrant.new(
   url: ENV["QDRANT_URL"],
   api_key: ENV["QDRANT_API_KEY"],
   index_name: "",
@@ -32,14 +32,14 @@ qdrant = Vectorsearch::Qdrant.new(
   # llm_api_key: ENV["OPENAI_API_KEY"]
 )
 
-milvus = Vectorsearch::Milvus.new(
+milvus = Langchain::Vectorsearch::Milvus.new(
   url: ENV["MILVUS_URL"],
   index_name: "",
   llm: :openai,
   llm_api_key: ENV["OPENAI_API_KEY"]
 )
 
-pinecone = Vectorsearch::Pinecone.new(
+pinecone = Langchain::Vectorsearch::Pinecone.new(
   environment: ENV["PINECONE_ENVIRONMENT"],
   api_key: ENV["PINECONE_API_KEY"],
   index_name: "",
@@ -49,7 +49,7 @@ pinecone = Vectorsearch::Pinecone.new(
   llm_api_key: ENV["OPENAI_API_KEY"]
 )
 
-chroma = Vectorsearch::Chroma.new(
+chroma = Langchain::Vectorsearch::Chroma.new(
   url: ENV["CHROMA_URL"],
   index_name: "documents",
   llm: :openai,
