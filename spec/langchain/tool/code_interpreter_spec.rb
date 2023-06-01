@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "eqn"
-
 RSpec.describe Tool::CodeInterpreter do
   describe "#execute" do
     it "executes the expression" do
