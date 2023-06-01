@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Tool
+module Langchain::Tool
   class Calculator < Base
     description <<~DESC
       Useful for getting the result of a math expression.
@@ -22,7 +22,7 @@ module Tool
     rescue Eqn::ParseError, Eqn::NoVariableValueError
       # Sometimes the input is not a pure math expression, e.g: "12F in Celsius"
       # We can use the google answer box to evaluate this expression
-      hash_results = Tool::SerpApi.execute_search(input: input)
+      hash_results = Langchain::Tool::SerpApi.execute_search(input: input)
       hash_results.dig(:answer_box, :to)
     end
   end

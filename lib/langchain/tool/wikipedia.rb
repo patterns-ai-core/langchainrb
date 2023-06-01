@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Tool
+module Langchain::Tool
   class Wikipedia < Base
     # Tool that adds the capability to search using the Wikipedia API
 

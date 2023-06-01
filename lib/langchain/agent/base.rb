@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Agent
+module Langchain::Agent
   class Base
   end
 end

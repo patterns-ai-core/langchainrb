@@ -20,6 +20,18 @@ module Langchain
   autoload :Loader, "langchain/loader"
   autoload :Data, "langchain/data"
 
+  module Agent
+    autoload :Base, "langchain/agent/base"
+    autoload :ChainOfThoughtAgent, "langchain/agent/chain_of_thought_agent/chain_of_thought_agent.rb"
+  end
+
+  module Tool
+    autoload :Base, "langchain/tool/base"
+    autoload :Calculator, "langchain/tool/calculator"
+    autoload :SerpApi, "langchain/tool/serp_api"
+    autoload :Wikipedia, "langchain/tool/wikipedia"
+  end
+
   module Processors
     autoload :Base, "langchain/processors/base"
     autoload :CSV, "langchain/processors/csv"
@@ -61,16 +73,4 @@ module Langchain
     autoload :PromptTemplate, "langchain/prompt/prompt_template"
     autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"
   end
-end
-
-module Agent
-  autoload :Base, "agent/base"
-  autoload :ChainOfThoughtAgent, "agent/chain_of_thought_agent/chain_of_thought_agent.rb"
-end
-
-module Tool
-  autoload :Base, "tool/base"
-  autoload :Calculator, "tool/calculator"
-  autoload :SerpApi, "tool/serp_api"
-  autoload :Wikipedia, "tool/wikipedia"
 end

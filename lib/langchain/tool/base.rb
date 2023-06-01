@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Tool
+module Langchain::Tool
   class Base
     # How to add additional Tools?
     # 1. Create a new file in lib/tool/your_tool_name.rb
@@ -10,9 +10,9 @@ module Tool
     # 4. Add your tool to the README.md
 
     TOOLS = {
-      "calculator" => "Tool::Calculator",
-      "search" => "Tool::SerpApi",
-      "wikipedia" => "Tool::Wikipedia"
+      "calculator" => "Langchain::Tool::Calculator",
+      "search" => "Langchain::Tool::SerpApi",
+      "wikipedia" => "Langchain::Tool::Wikipedia"
     }
 
     def self.description(value)
@@ -40,7 +40,7 @@ module Tool
     # @raise [ArgumentError] If any of the tools are not supported
     #
     def self.validate_tools!(tools:)
-      unrecognized_tools = tools - Tool::Base::TOOLS.keys
+      unrecognized_tools = tools - Langchain::Tool::Base::TOOLS.keys
 
       if unrecognized_tools.any?
         raise ArgumentError, "Unrecognized Tools: #{unrecognized_tools}"
