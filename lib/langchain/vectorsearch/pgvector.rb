@@ -10,6 +10,8 @@ module Langchain::Vectorsearch
     }
     DEFAULT_OPERATOR = "cosine_distance"
 
+    attr_reader :operator, :quoted_table_name
+
     # @param url [String] The URL of the PostgreSQL database
     # @param index_name [String] The name of the table to use for the index
     # @param llm [String] The URL of the Language Layer API
@@ -25,6 +27,7 @@ module Langchain::Vectorsearch
       @client.type_map_for_results = PG::BasicTypeMapForResults.new(@client, registry: registry)
 
       @index_name = index_name
+      @quoted_table_name = @client.quote_ident(index_name)
       @operator = OPERATORS[DEFAULT_OPERATOR]
 
       super(llm: llm, llm_api_key: llm_api_key)
@@ -39,7 +42,7 @@ module Langchain::Vectorsearch
       end
       values = texts.length.times.map { |i| "($#{2 * i + 1}, $#{2 * i + 2})" }.join(",")
       client.exec_params(
-        "INSERT INTO #{@index_name} (content, vectors) VALUES #{values};",
+        "INSERT INTO #{quoted_table_name} (content, vectors) VALUES #{values};",
         data
       )
     end
@@ -50,7 +53,7 @@ module Langchain::Vectorsearch
       client.exec("CREATE EXTENSION IF NOT EXISTS vector;")
       client.exec(
         <<~SQL
-          CREATE TABLE IF NOT EXISTS #{@index_name} (
+          CREATE TABLE IF NOT EXISTS #{quoted_table_name} (
             id serial PRIMARY KEY,
             content TEXT,
             vectors VECTOR(#{default_dimension})
@@ -81,7 +84,7 @@ module Langchain::Vectorsearch
       result = client.transaction do |conn|
         conn.exec("SET LOCAL ivfflat.probes = 10;")
         query = <<~SQL
-          SELECT id, content FROM #{@index_name} ORDER BY vectors #{@operator} $1 ASC LIMIT $2;
+          SELECT id, content FROM #{quoted_table_name} ORDER BY vectors #{operator} $1 ASC LIMIT $2;
         SQL
         conn.exec_params(query, [embedding, k])
       end
