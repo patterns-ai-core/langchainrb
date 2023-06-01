@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Tool
+module Langchain::Tool
   class Database < Base
     description <<~DESC
       Useful for getting the result of a database query.
@@ -14,16 +14,16 @@ module Tool
     end
 
     def schema
-      return "the_schema_string"
+      "the_schema_string"
     end
 
-    # Evaluates a sql expression 
+    # Evaluates a sql expression
     # @param input [String] sql expression
     # @return [String] results
     def execute(sql_string:)
       Langchain.logger.info("Database: Using the Database Tool with \"#{sql_string}\"")
       # Sequel::DB.exec(input)
-      return "Foo, Bar"
+      "Foo, Bar"
     end
   end
 end

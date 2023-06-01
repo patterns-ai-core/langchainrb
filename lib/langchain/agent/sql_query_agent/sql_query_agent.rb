@@ -1,4 +1,6 @@
-module Agent
+# frozen_string_literal: true
+
+module Langchain::Agent
   class SQLQueryAgent
     # Initializes the Agent
     #
@@ -6,13 +8,13 @@ module Agent
     # @param llm_api_key [String] The API key for the LLM
     # @param db_connection_string [String] Database connection info
     def initialize(llm:, llm_api_key:, db_connection_string:)
-      LLM::Base.validate_llm!(llm: llm)
+      Langchain::LLM::Base.validate_llm!(llm: llm)
 
       @llm = llm
       @llm_api_key = llm_api_key
 
-      @llm_client = LLM.const_get(LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
-      @db = Tool::Database.new(db_connection_string)
+      @llm_client = Langchain::LLM.const_get(Langchain::LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
+      @db = Langchain::Tool::Database.new(db_connection_string)
       @schema = @db.schema
     end
 
@@ -41,7 +43,7 @@ module Agent
     # @return [String] Prompt
     def create_prompt_for_sql(question:)
       prompt_template_sql.format(
-        dialect: "Postgres SQL",
+        dialect: "standard SQL",
         schema: @schema,
         question: question
       )
@@ -50,8 +52,8 @@ module Agent
     # Load the PromptTemplate from the JSON file
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template_sql
-      @template ||= Prompt.load_from_path(
-        file_path: Langchain.root.join("agent/sql_query_agent/sql_query_agent_sql_prompt.json")
+      @template ||= Langchain::Prompt.load_from_path(
+        file_path: Langchain.root.join("langchain/agent/sql_query_agent/sql_query_agent_sql_prompt.json")
       )
     end
 
@@ -69,8 +71,8 @@ module Agent
     # Load the PromptTemplate from the JSON file
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template_answer
-      @template ||= Prompt.load_from_path(
-        file_path: Langchain.root.join("agent/sql_query_agent/sql_query_agent_answer_prompt.json")
+      @template ||= Langchain::Prompt.load_from_path(
+        file_path: Langchain.root.join("langchain/agent/sql_query_agent/sql_query_agent_answer_prompt.json")
       )
     end
   end
