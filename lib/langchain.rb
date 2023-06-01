@@ -24,6 +24,7 @@ module Langchain
   module Agent
     autoload :Base, "langchain/agent/base"
     autoload :ChainOfThoughtAgent, "langchain/agent/chain_of_thought_agent/chain_of_thought_agent.rb"
+    autoload :SQLQueryAgent, "langchain/agent/sql_query_agent/sql_query_agent.rb"
   end
 
   module Tool
@@ -32,6 +33,7 @@ module Langchain
     autoload :RubyCodeInterpreter, "langchain/tool/ruby_code_interpreter"
     autoload :SerpApi, "langchain/tool/serp_api"
     autoload :Wikipedia, "langchain/tool/wikipedia"
+    autoload :Database, "langchain/tool/database"
   end
 
   module Processors
