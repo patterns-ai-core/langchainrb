@@ -5,7 +5,7 @@ RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
     described_class.new(
       prefix: "Write antonyms for the following words.",
       suffix: "Input: {adjective}\nOutput:",
-      example_prompt: Prompt::PromptTemplate.new(
+      example_prompt: Langchain::Prompt::PromptTemplate.new(
         input_variables: ["input", "output"],
         template: "Input: {input}\nOutput: {output}"
       ),
@@ -19,7 +19,7 @@ RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
 
   describe "#initialize" do
     it "creates a new instance" do
-      expect(prompt).to be_a(Prompt::FewShotPromptTemplate)
+      expect(prompt).to be_a(Langchain::Prompt::FewShotPromptTemplate)
       expect(prompt.format(adjective: "good")).to eq(
         <<~PROMPT.chomp
           Write antonyms for the following words.

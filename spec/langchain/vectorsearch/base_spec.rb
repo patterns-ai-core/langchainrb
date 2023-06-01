@@ -11,13 +11,13 @@ RSpec.describe Langchain::Vectorsearch::Base do
           llm_api_key: "123"
         )
         .llm_client
-      ).to be_a(LLM::Cohere)
+      ).to be_a(Langchain::LLM::Cohere)
     end
 
     it "correctly with llm: :openai" do
       expect(
         subject.llm_client
-      ).to be_a(LLM::OpenAI)
+      ).to be_a(Langchain::LLM::OpenAI)
     end
 
     it "correctly with llm: :huggingface" do
@@ -27,7 +27,7 @@ RSpec.describe Langchain::Vectorsearch::Base do
           llm_api_key: "123"
         )
         .llm_client
-      ).to be_a(LLM::HuggingFace)
+      ).to be_a(Langchain::LLM::HuggingFace)
     end
 
     it "correctly with llm: :replicate" do
@@ -37,7 +37,7 @@ RSpec.describe Langchain::Vectorsearch::Base do
           llm_api_key: "123"
         )
         .llm_client
-      ).to be_a(LLM::Replicate)
+      ).to be_a(Langchain::LLM::Replicate)
     end
 
     it "throws an error with currently unsupported llm: :anthropic" do

@@ -15,7 +15,7 @@ RSpec.describe Langchain::Prompt::PromptTemplate do
           template: prompt_example,
           input_variables: ["product"]
         )
-      ).to be_a(Prompt::PromptTemplate)
+      ).to be_a(Langchain::Prompt::PromptTemplate)
     end
   end
 

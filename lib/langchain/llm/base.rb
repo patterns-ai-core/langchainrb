@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module LLM
+module Langchain::LLM
   class Base
     attr_reader :client
 
@@ -42,8 +42,8 @@ module LLM
     # @param llm [Symbol] The LLM to use
     def self.validate_llm!(llm:)
       # TODO: Fix so this works when `llm` value is a string instead of a symbol
-      unless LLM::Base::LLMS.key?(llm)
-        raise ArgumentError, "LLM must be one of #{LLM::Base::LLMS.keys}"
+      unless Langchain::LLM::Base::LLMS.key?(llm)
+        raise ArgumentError, "LLM must be one of #{Langchain::LLM::Base::LLMS.keys}"
       end
     end
   end

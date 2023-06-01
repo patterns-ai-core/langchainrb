@@ -89,8 +89,8 @@ module Langchain::LLM
     # @return [String] The summary
     #
     def summarize(text:)
-      prompt_template = Prompt.load_from_path(
-        file_path: Langchain.root.join("llm/prompts/summarize_template.json")
+      prompt_template = Langchain::Prompt.load_from_path(
+        file_path: Langchain.root.join("langchain/llm/prompts/summarize_template.json")
       )
       prompt = prompt_template.format(text: text)
 

@@ -3,7 +3,7 @@
 require "tempfile"
 
 RSpec.describe Langchain::Prompt::Base do
-  subject { Prompt::PromptTemplate.new(template: "Tell me a {adjective} joke.", input_variables: ["adjective"]) }
+  subject { Langchain::Prompt::PromptTemplate.new(template: "Tell me a {adjective} joke.", input_variables: ["adjective"]) }
 
   describe "#save" do
     let(:file_path) { Tempfile.new(["test_file", ".json"]).path }
@@ -40,12 +40,12 @@ RSpec.describe Langchain::Prompt::Base do
     let(:escaped_template) { "Tell me a {adjective} joke. Return in JSON in the format {{joke: 'The joke'}}" }
 
     it "extracts variables" do
-      input_variables = Prompt::Base.extract_variables_from_template(basic_template)
+      input_variables = described_class.extract_variables_from_template(basic_template)
       expect(input_variables).to eq(%w[adjective])
     end
 
     it "excludes double curly brace variables" do
-      input_variables = Prompt::Base.extract_variables_from_template(escaped_template)
+      input_variables = described_class.extract_variables_from_template(escaped_template)
       expect(input_variables).to eq(%w[adjective])
     end
   end

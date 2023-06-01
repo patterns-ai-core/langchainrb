@@ -13,12 +13,12 @@ module Langchain::Vectorsearch
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
     def initialize(llm:, llm_api_key:)
-      LLM::Base.validate_llm!(llm: llm)
+      Langchain::LLM::Base.validate_llm!(llm: llm)
 
       @llm = llm
       @llm_api_key = llm_api_key
 
-      @llm_client = LLM.const_get(LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
+      @llm_client = Langchain::LLM.const_get(Langchain::LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
     end
 
     # Method supported by Vectorsearch DB to create a default schema
@@ -51,10 +51,10 @@ module Langchain::Vectorsearch
       :default_dimension
 
     def generate_prompt(question:, context:)
-      prompt_template = Prompt::FewShotPromptTemplate.new(
+      prompt_template = Langchain::Prompt::FewShotPromptTemplate.new(
         prefix: "Context:",
         suffix: "---\nQuestion: {question}\n---\nAnswer:",
-        example_prompt: Prompt::PromptTemplate.new(
+        example_prompt: Langchain::Prompt::PromptTemplate.new(
           template: "{context}",
           input_variables: ["context"]
         ),
