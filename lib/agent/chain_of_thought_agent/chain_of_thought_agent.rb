@@ -11,14 +11,14 @@ module Agent
     # @param tools [Array] The tools to use
     # @return [ChainOfThoughtAgent] The Agent::ChainOfThoughtAgent instance
     def initialize(llm:, llm_api_key:, tools: [])
-      LLM::Base.validate_llm!(llm: llm)
+      Langchain::LLM::Base.validate_llm!(llm: llm)
       Tool::Base.validate_tools!(tools: tools)
 
       @llm = llm
       @llm_api_key = llm_api_key
       @tools = tools
 
-      @llm_client = LLM.const_get(LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
+      @llm_client = Langchain::LLM.const_get(Langchain::LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
     end
 
     # Validate tools when they're re-assigned
@@ -99,7 +99,7 @@ module Agent
     # Load the PromptTemplate from the JSON file
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template
-      @template ||= Prompt.load_from_path(
+      @template ||= Langchain::Prompt.load_from_path(
         file_path: Langchain.root.join("agent/chain_of_thought_agent/chain_of_thought_agent_prompt.json")
       )
     end

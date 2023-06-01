@@ -34,38 +34,38 @@ module Langchain
   module Utils
     autoload :TokenLengthValidator, "langchain/utils/token_length_validator"
   end
+
+  module Vectorsearch
+    autoload :Base, "langchain/vectorsearch/base"
+    autoload :Chroma, "langchain/vectorsearch/chroma"
+    autoload :Milvus, "langchain/vectorsearch/milvus"
+    autoload :Pinecone, "langchain/vectorsearch/pinecone"
+    autoload :Pgvector, "langchain/vectorsearch/pgvector"
+    autoload :Qdrant, "langchain/vectorsearch/qdrant"
+    autoload :Weaviate, "langchain/vectorsearch/weaviate"
+  end
+
+  module LLM
+    autoload :Base, "langchain/llm/base"
+    autoload :Cohere, "langchain/llm/cohere"
+    autoload :GooglePalm, "langchain/llm/google_palm"
+    autoload :HuggingFace, "langchain/llm/hugging_face"
+    autoload :OpenAI, "langchain/llm/openai"
+    autoload :Replicate, "langchain/llm/replicate"
+  end
+
+  module Prompt
+    require_relative "langchain/prompt/loading"
+
+    autoload :Base, "langchain/prompt/base"
+    autoload :PromptTemplate, "langchain/prompt/prompt_template"
+    autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"
+  end
 end
 
 module Agent
   autoload :Base, "agent/base"
   autoload :ChainOfThoughtAgent, "agent/chain_of_thought_agent/chain_of_thought_agent.rb"
-end
-
-module Vectorsearch
-  autoload :Base, "vectorsearch/base"
-  autoload :Chroma, "vectorsearch/chroma"
-  autoload :Milvus, "vectorsearch/milvus"
-  autoload :Pinecone, "vectorsearch/pinecone"
-  autoload :Pgvector, "vectorsearch/pgvector"
-  autoload :Qdrant, "vectorsearch/qdrant"
-  autoload :Weaviate, "vectorsearch/weaviate"
-end
-
-module LLM
-  autoload :Base, "llm/base"
-  autoload :Cohere, "llm/cohere"
-  autoload :GooglePalm, "llm/google_palm"
-  autoload :HuggingFace, "llm/hugging_face"
-  autoload :OpenAI, "llm/openai"
-  autoload :Replicate, "llm/replicate"
-end
-
-module Prompt
-  require_relative "prompt/loading"
-
-  autoload :Base, "prompt/base"
-  autoload :PromptTemplate, "prompt/prompt_template"
-  autoload :FewShotPromptTemplate, "prompt/few_shot_prompt_template"
 end
 
 module Tool
