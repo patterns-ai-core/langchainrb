@@ -3,8 +3,8 @@
 module Tool
   class CodeInterpreter < Base
     description <<~DESC
-                  A Ruby code interpreter. Use this to execute ruby expressions. Input should be a valid ruby expression. If you want to see the output of the tool, make sure to return a value.
-                DESC
+      A Ruby code interpreter. Use this to execute ruby expressions. Input should be a valid ruby expression. If you want to see the output of the tool, make sure to return a value.
+    DESC
 
     def initialize(timeout: 30)
       @timeout = timeout
