@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Tool::Base do
+RSpec.describe Langchain::Tool::Base do
   describe "#validate_tools!" do
     it "raises an error" do
       expect {

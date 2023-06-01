@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Agent
+module Langchain::Agent
   class ChainOfThoughtAgent < Base
     attr_reader :llm, :llm_api_key, :llm_client, :tools
 
@@ -12,7 +12,7 @@ module Agent
     # @return [ChainOfThoughtAgent] The Agent::ChainOfThoughtAgent instance
     def initialize(llm:, llm_api_key:, tools: [])
       Langchain::LLM::Base.validate_llm!(llm: llm)
-      Tool::Base.validate_tools!(tools: tools)
+      Langchain::Tool::Base.validate_tools!(tools: tools)
 
       @llm = llm
       @llm_api_key = llm_api_key
@@ -26,7 +26,7 @@ module Agent
     # @param value [Array] The tools to use
     # @return [Array] The tools that will be used
     def tools=(value)
-      Tool::Base.validate_tools!(tools: value)
+      Langchain::Tool::Base.validate_tools!(tools: value)
       @tools = value
     end
 
@@ -62,8 +62,8 @@ module Agent
           Langchain.logger.info("Agent: Using the \"#{action}\" Tool with \"#{action_input}\"")
 
           # Retrieve the Tool::[ToolName] class and call `execute`` with action_input as the input
-          result = Tool
-            .const_get(Tool::Base::TOOLS[action.strip])
+          result = Langchain::Tool
+            .const_get(Langchain::Tool::Base::TOOLS[action.strip])
             .execute(input: action_input)
 
           # Append the Observation to the prompt
@@ -91,7 +91,7 @@ module Agent
         question: question,
         tool_names: "[#{tools.join(", ")}]",
         tools: tools.map do |tool|
-          "#{tool}: #{Tool.const_get(Tool::Base::TOOLS[tool]).const_get(:DESCRIPTION)}"
+          "#{tool}: #{Langchain::Tool.const_get(Langchain::Tool::Base::TOOLS[tool]).const_get(:DESCRIPTION)}"
         end.join("\n")
       )
     end
@@ -100,7 +100,7 @@ module Agent
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template
       @template ||= Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("agent/chain_of_thought_agent/chain_of_thought_agent_prompt.json")
+        file_path: Langchain.root.join("langchain/agent/chain_of_thought_agent/chain_of_thought_agent_prompt.json")
       )
     end
   end
