@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.4.0] - 2023-06-01
+- [BREAKING] Everything is namespaced under `Langchain::` now
+- Pgvector similarity search uses the cosine distance by default now
+- OpenAI token length validation using tiktoken_ruby
+
 ## [0.3.15] - 2023-05-30
 - Drop Ruby 2.7 support. It had reached EOD.
 - Bump pgvector-ruby to 0.2
