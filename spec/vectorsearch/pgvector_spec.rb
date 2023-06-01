@@ -102,6 +102,14 @@ if ENV["POSTGRES_URL"]
         expect(result.length).to eq(4)
         expect(result[0]["content"]).to eq("Some valuable data")
       end
+
+      it "should use the cosine distance operator by default" do
+        expect_any_instance_of(PG::Connection).to receive(:exec_params) do |_, query|
+          expect(query).to include("ORDER BY vectors <=> $1")
+          []
+        end
+        subject.similarity_search_by_vector(embedding: 1536.times.map { 0 })
+      end
     end
 
     describe "#ask" do
