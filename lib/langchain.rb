@@ -44,7 +44,7 @@ module Langchain
     autoload :Qdrant, "langchain/vectorsearch/qdrant"
     autoload :Weaviate, "langchain/vectorsearch/weaviate"
   end
-  
+
   module LLM
     autoload :Base, "langchain/llm/base"
     autoload :Cohere, "langchain/llm/cohere"
@@ -53,10 +53,10 @@ module Langchain
     autoload :OpenAI, "langchain/llm/openai"
     autoload :Replicate, "langchain/llm/replicate"
   end
-  
+
   module Prompt
     require_relative "langchain/prompt/loading"
-  
+
     autoload :Base, "langchain/prompt/base"
     autoload :PromptTemplate, "langchain/prompt/prompt_template"
     autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"

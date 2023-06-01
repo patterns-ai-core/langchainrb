@@ -5,8 +5,8 @@ require "pathname"
 
 module Langchain::Prompt
   TYPE_TO_LOADER = {
-    "prompt" => ->(config) { self.load_prompt(config) },
-    "few_shot" => ->(config) { self.load_few_shot_prompt(config) }
+    "prompt" => ->(config) { load_prompt(config) },
+    "few_shot" => ->(config) { load_few_shot_prompt(config) }
   }
 
   class << self
