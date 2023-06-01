@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Tool
+module Langchain::Tool
   class SerpApi < Base
     # Wrapper around SerpAPI
     # Set ENV["SERPAPI_API_KEY"] to use it

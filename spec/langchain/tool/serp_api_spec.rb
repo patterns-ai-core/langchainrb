@@ -2,7 +2,7 @@
 
 require "google_search_results"
 
-RSpec.describe Tool::SerpApi do
+RSpec.describe Langchain::Tool::SerpApi do
   let(:response) do
     {
       answer_box: {
