@@ -24,7 +24,7 @@ module Langchain
     autoload :Base, "langchain/agent/base"
     autoload :ChainOfThoughtAgent, "langchain/agent/chain_of_thought_agent/chain_of_thought_agent.rb"
   end
-  
+
   module Tool
     autoload :Base, "langchain/tool/base"
     autoload :Calculator, "langchain/tool/calculator"
