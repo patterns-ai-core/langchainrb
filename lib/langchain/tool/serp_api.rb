@@ -33,6 +33,8 @@ module Langchain::Tool
     # TODO: Glance at all of the fields that langchain Python looks through: https://github.com/hwchase17/langchain/blob/v0.0.166/langchain/utilities/serpapi.py#L128-L156
     # We may need to do the same thing here.
     def execute(input:)
+      Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing \"#{input}\"")
+
       hash_results = execute_search(input: input)
 
       hash_results.dig(:answer_box, :answer) ||
