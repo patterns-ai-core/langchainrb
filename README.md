@@ -109,6 +109,10 @@ Add `gem "ruby-openai", "~> 4.0.0"` to your Gemfile.
 ```ruby
 openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 ```
+You can pass additional parameters to the constructor, it will be passed to the OpenAI client:
+```ruby
+openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"], llm_options: {uri_base: "http://localhost:1234"}) )
+```
 ```ruby
 openai.embed(text: "foo bar")
 ```
