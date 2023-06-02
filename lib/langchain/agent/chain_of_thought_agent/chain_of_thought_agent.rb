@@ -42,7 +42,7 @@ module Langchain::Agent
       )
 
       loop do
-        Langchain.logger.info("Agent: Passing the prompt to the #{llm} LLM")
+        Langchain.logger.info("[#{self.class.name.demodulize}]".red + ": Sending the prompt to the #{llm} LLM")
         response = llm_client.complete(
           prompt: prompt,
           stop_sequences: ["Observation:"],
@@ -59,12 +59,11 @@ module Langchain::Agent
           # Find the input to the action in the "Action Input: [action_input]" format
           action_input = response.match(/Action Input: "?(.*)"?/)&.send(:[], -1)
 
-          Langchain.logger.info("Agent: Using the \"#{action}\" Tool with \"#{action_input}\"")
-
           # Retrieve the Tool::[ToolName] class and call `execute`` with action_input as the input
-          result = Langchain::Tool
-            .const_get(Langchain::Tool::Base::TOOLS[action.strip])
-            .execute(input: action_input)
+          tool = Langchain::Tool.const_get(Langchain::Tool::Base::TOOLS[action.strip])
+          Langchain.logger.info("[#{self.class.name.demodulize}]".red + ": Invoking \"#{tool}\" Tool with \"#{action_input}\"")
+
+          result = tool.execute(input: action_input)
 
           # Append the Observation to the prompt
           prompt += if prompt.end_with?("Observation:")

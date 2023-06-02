@@ -2,6 +2,7 @@
 
 require "logger"
 require "pathname"
+require "colorize"
 
 require_relative "./version"
 require_relative "./dependency_helper"
@@ -13,7 +14,7 @@ module Langchain
     attr_reader :root
   end
 
-  @logger ||= ::Logger.new($stdout, level: :warn, formatter: ->(severity, datetime, progname, msg) { "[LangChain.rb] #{msg}\n" })
+  @logger ||= ::Logger.new($stdout, level: :warn, formatter: ->(severity, datetime, progname, msg) { "[LangChain.rb]".yellow + " #{msg}\n" })
 
   @root = Pathname.new(__dir__)
 
