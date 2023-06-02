@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.4.1] - 2023-06-02
+- Beautiful colored log messages
+- 🛠️ Tools
+  - Introducing `Langchain::Tool::RubyCodeInterpreter`, a tool executes sandboxed Ruby code
+
 ## [0.4.0] - 2023-06-01
 - [BREAKING] Everything is namespaced under `Langchain::` now
 - Pgvector similarity search uses the cosine distance by default now

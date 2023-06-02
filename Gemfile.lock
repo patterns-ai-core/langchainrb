@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.4.0)
+    langchainrb (0.4.1)
       colorize (~> 0.8.1)
       tiktoken_ruby (~> 0.0.5)
 
@@ -324,4 +324,4 @@ DEPENDENCIES
   wikipedia-client (~> 1.17.0)
 
 BUNDLED WITH
-   2.3.22
+   2.4.0
