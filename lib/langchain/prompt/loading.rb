@@ -2,6 +2,7 @@
 
 require "strscan"
 require "pathname"
+require "json"
 
 module Langchain::Prompt
   TYPE_TO_LOADER = {
