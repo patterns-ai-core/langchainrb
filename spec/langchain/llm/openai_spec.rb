@@ -3,6 +3,27 @@
 RSpec.describe Langchain::LLM::OpenAI do
   let(:subject) { described_class.new(api_key: "123") }
 
+  describe "#initialize" do
+    context "when only required options are passed" do
+      it "initializes the client without any errors" do
+        expect { subject }.not_to raise_error
+      end
+    end
+
+    context "when llm_options are passed" do
+      let(:subject) { described_class.new(api_key: "123", llm_options: {uri_base: "http://localhost:1234"}) }
+
+      it "initializes the client without any errors" do
+        expect { subject }.not_to raise_error
+      end
+
+      it "passes correct options to the client" do
+        # openai-ruby sets global configuration options here: https://github.com/alexrudall/ruby-openai/blob/main/lib/openai/client.rb
+        expect(OpenAI.configuration.uri_base).to eq("http://localhost:1234")
+      end
+    end
+  end
+
   describe "#embed" do
     before do
       allow(subject.client).to receive(:embeddings).and_return({

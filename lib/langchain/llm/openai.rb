@@ -10,12 +10,12 @@ module Langchain::LLM
       dimension: 1536
     }.freeze
 
-    def initialize(api_key:)
+    def initialize(api_key:, llm_options: {})
       depends_on "ruby-openai"
       require "openai"
 
       # TODO: Add support to pass `organization_id:`
-      @client = ::OpenAI::Client.new(access_token: api_key)
+      @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
     end
 
     #
