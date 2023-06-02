@@ -29,6 +29,7 @@ module Langchain
   module Tool
     autoload :Base, "langchain/tool/base"
     autoload :Calculator, "langchain/tool/calculator"
+    autoload :RubyCodeInterpreter, "langchain/tool/ruby_code_interpreter"
     autoload :SerpApi, "langchain/tool/serp_api"
     autoload :Wikipedia, "langchain/tool/wikipedia"
   end
