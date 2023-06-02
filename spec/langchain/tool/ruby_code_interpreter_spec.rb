@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Tool::RubyCodeInterpreter do
+RSpec.describe Langchain::Tool::RubyCodeInterpreter do
   describe "#execute" do
     it "executes the expression" do
       expect(subject.execute(input: '"hello world".reverse!')).to eq("dlrow olleh")
