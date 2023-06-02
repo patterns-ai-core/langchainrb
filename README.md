@@ -260,10 +260,9 @@ agent.run(question: "How many full soccer fields would be needed to cover the di
 | Name         | Description                                        | ENV Requirements                                              | Gem Requirements                          |
 | ------------ | :------------------------------------------------: | :-----------------------------------------------------------: | :---------------------------------------: |
 | "calculator" | Useful for getting the result of a math expression |                                                               | `gem "eqn", "~> 1.6.5"`                   |
-| "search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |                      |
+| "ruby_code_interpreter" | Interprets Ruby expressions             |                                                               | `gem "safe_ruby", "~> 1.0.4"`             |
+| "search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |
 | "wikipedia"  | Calls Wikipedia API to retrieve the summary        |                                                               | `gem "wikipedia-client", "~> 1.17.0"`     |
-| "ruby_code_interpreter" |            Interprets ruby expressions       |                                                               |       `gem "safe_ruby", "~> 1.0.4"`       |
-
 
 #### Loaders 🚚
 
