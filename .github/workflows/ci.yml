@@ -28,7 +28,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -36,9 +35,18 @@ jobs:
           bundler: default
           bundler-cache: true
 
-      - name: StandardRb check
-        run: bundle exec standardrb
-
       - name: Run tests
         run: |
           bundle exec rspec 
+  linters:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+          bundler: default
+          bundler-cache: true
+      - name: StandardRb check
+        run: bundle exec standardrb --format progress --format github --color
