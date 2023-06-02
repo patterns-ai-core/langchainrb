@@ -2,7 +2,7 @@
 
 module Langchain
   module DependencyHelper
-    class VersionError < ScriptError; end 
+    class VersionError < ScriptError; end
 
     # This method requires and loads the given gem, and then checks to see if the version of the gem meets the requirements listed in `langchain.gemspec`
     # This solution was built to avoid auto-loading every single gem in the Gemfile when the developer will mostly likely be only using a few of them.
