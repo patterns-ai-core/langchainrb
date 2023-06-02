@@ -14,7 +14,6 @@ module Langchain::LLM
       depends_on "ruby-openai"
       require "openai"
 
-      # TODO: Add support to pass `organization_id:`
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
     end
 
