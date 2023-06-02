@@ -4,6 +4,7 @@ require "forwardable"
 
 module Langchain::Vectorsearch
   class Base
+    extend Langchain::DependencyHelper
     extend Forwardable
 
     attr_reader :client, :index_name, :llm, :llm_api_key, :llm_client
