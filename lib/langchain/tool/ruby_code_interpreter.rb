@@ -15,6 +15,8 @@ module Langchain::Tool
     # @param input [String] ruby code expression
     # @return [String] Answer
     def execute(input:)
+      Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing \"#{input}\"")
+
       safe_eval(input)
     end
 
