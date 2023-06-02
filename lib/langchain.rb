@@ -5,7 +5,6 @@ require "pathname"
 require "colorize"
 
 require_relative "./version"
-require_relative "./dependency_helper"
 
 module Langchain
   class << self
@@ -20,6 +19,7 @@ module Langchain
 
   autoload :Loader, "langchain/loader"
   autoload :Data, "langchain/data"
+  autoload :DependencyHelper, "langchain/dependency_helper"
 
   module Agent
     autoload :Base, "langchain/agent/base"
