@@ -28,18 +28,4 @@ RSpec.describe Langchain::LLM::Base do
       expect { subject.summarize }.to raise_error(NotImplementedError)
     end
   end
-
-  describe "#validate_llm!" do
-    it "doesn't raises an error for known LLMs" do
-      expect {
-        described_class.validate_llm!(llm: :openai)
-      }.not_to raise_error
-    end
-
-    it "raises an error for unknown LLMs" do
-      expect {
-        described_class.validate_llm!(llm: :anthropic)
-      }.to raise_error(ArgumentError, /LLM must be one of/)
-    end
-  end
 end

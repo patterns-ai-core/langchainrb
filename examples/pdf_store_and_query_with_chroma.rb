@@ -7,8 +7,7 @@ require "langchain"
 chroma = Vectorsearch::Chroma.new(
   url: ENV["CHROMA_URL"],
   index_name: "documents",
-  llm: :openai,
-  llm_api_key: ENV["OPENAI_API_KEY"]
+  llm_client: Langchain::LLM::Base.build(:openai, ENV["OPENAI_API_KEY"])
 )
 
 # Create the default schema.

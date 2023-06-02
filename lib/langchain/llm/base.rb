@@ -39,13 +39,8 @@ module Langchain::LLM
       raise NotImplementedError, "#{self.class.name} does not support summarization"
     end
 
-    # Ensure that the LLM value passed in is supported
-    # @param llm [Symbol] The LLM to use
-    def self.validate_llm!(llm:)
-      # TODO: Fix so this works when `llm` value is a string instead of a symbol
-      unless Langchain::LLM::Base::LLMS.key?(llm)
-        raise ArgumentError, "LLM must be one of #{Langchain::LLM::Base::LLMS.keys}"
-      end
+    def self.build(llm, api_key)
+      Langchain::LLM.const_get(self::LLMS.fetch(llm)).new(api_key: api_key)
     end
   end
 end

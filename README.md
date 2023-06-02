@@ -47,8 +47,7 @@ Pick the vector search database you'll be using and instantiate the client:
 client = Langchain::Vectorsearch::Weaviate.new(
     url: ENV["WEAVIATE_URL"],
     api_key: ENV["WEAVIATE_API_KEY"],
-    llm: :openai, # or :cohere
-    llm_api_key: ENV["OPENAI_API_KEY"]
+    llm_client: Langchain::LLM::Base.build(:openai, ENV["OPENAI_API_KEY"])
 )
 
 # You can instantiate any other supported vector search database:

@@ -11,14 +11,14 @@ module Langchain::Vectorsearch
     # milvus = Langchain::Vectorsearch::Milvus.new(url:, index_name:, llm:, llm_api_key:)
     #
 
-    def initialize(url:, index_name:, llm:, llm_api_key:, api_key: nil)
+    def initialize(url:, index_name:, llm_client:, api_key: nil)
       depends_on "milvus"
       require "milvus"
 
       @client = ::Milvus::Client.new(url: url)
       @index_name = index_name
 
-      super(llm: llm, llm_api_key: llm_api_key)
+      super(llm_client: llm_client)
     end
 
     def add_texts(texts:)

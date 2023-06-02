@@ -22,10 +22,9 @@ module Langchain::Vectorsearch
 
     # @param url [String] The URL of the PostgreSQL database
     # @param index_name [String] The name of the table to use for the index
-    # @param llm [String] The URL of the Language Layer API
-    # @param llm_api_key [String] The API key for the Language Layer API
+    # @param llm_client [Object] The LLM client to use
     # @param api_key [String] The API key for the Vectorsearch DB (not used for PostgreSQL)
-    def initialize(url:, index_name:, llm:, llm_api_key:, api_key: nil)
+    def initialize(url:, index_name:, llm_client:, api_key: nil)
       require "pg"
       require "pgvector"
 
@@ -38,7 +37,7 @@ module Langchain::Vectorsearch
       @quoted_table_name = @client.quote_ident(index_name)
       @operator = OPERATORS[DEFAULT_OPERATOR]
 
-      super(llm: llm, llm_api_key: llm_api_key)
+      super(llm_client: llm_client)
     end
 
     # Add a list of texts to the index

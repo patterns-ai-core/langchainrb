@@ -15,9 +15,8 @@ module Langchain::Vectorsearch
     # @param url [String] The URL of the Weaviate instance
     # @param api_key [String] The API key to use
     # @param index_name [String] The name of the index to use
-    # @param llm [Symbol] The LLM to use
-    # @param llm_api_key [String] The API key for the LLM
-    def initialize(url:, api_key:, index_name:, llm:, llm_api_key:)
+    # @param llm_client [Object] The LLM client to use
+    def initialize(url:, api_key:, index_name:, llm_client:)
       depends_on "weaviate-ruby"
       require "weaviate"
 
@@ -27,7 +26,7 @@ module Langchain::Vectorsearch
       )
       @index_name = index_name
 
-      super(llm: llm, llm_api_key: llm_api_key)
+      super(llm_client: llm_client)
     end
 
     # Add a list of texts to the index

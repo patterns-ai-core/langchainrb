@@ -9,9 +9,8 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     described_class.new(
       url: "http://localhost:8000",
       index_name: index_name,
-      llm: :openai,
       api_key: "secret",
-      llm_api_key: "123"
+      llm_client: Langchain::LLM::Base.build(:openai, "123")
     )
   }
 
