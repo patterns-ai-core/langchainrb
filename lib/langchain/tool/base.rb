@@ -2,7 +2,7 @@
 
 module Langchain::Tool
   class Base
-    extend Langchain::DependencyHelper
+    include Langchain::DependencyHelper
 
     # How to add additional Tools?
     # 1. Create a new file in lib/tool/your_tool_name.rb

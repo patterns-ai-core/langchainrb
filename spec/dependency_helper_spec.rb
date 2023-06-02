@@ -26,6 +26,6 @@ RSpec.describe "depends_on" do
     gem_loaded_spec = double(:specs, "[]": double(:version, version: Gem::Version.new("0.1")))
     allow(Gem).to receive(:loaded_specs).and_return(gem_loaded_spec)
 
-    expect { subject.depends_on("rspec") }.to raise_error(VersionError, /The rspec gem is installed.*You have 0.1/)
+    expect { subject.depends_on("rspec") }.to raise_error(Langchain::DependencyHelper::VersionError, /The rspec gem is installed.*You have 0.1/)
   end
 end

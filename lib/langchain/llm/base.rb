@@ -2,7 +2,7 @@
 
 module Langchain::LLM
   class Base
-    extend Langchain::DependencyHelper
+    include Langchain::DependencyHelper
 
     attr_reader :client
 
