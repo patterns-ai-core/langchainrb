@@ -18,7 +18,7 @@ module Langchain::Tool
     # @param input [String] math expression
     # @return [String] Answer
     def execute(input:)
-      Langchain.logger.info("[#{self.class.name.demodulize}]".light_blue + ": Executing \"#{input}\"")
+      Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing \"#{input}\"")
 
       Eqn::Calculator.calc(input)
     rescue Eqn::ParseError, Eqn::NoVariableValueError

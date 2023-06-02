@@ -42,7 +42,7 @@ module Langchain::Agent
       )
 
       loop do
-        Langchain.logger.info("[#{self.class.name.demodulize}]".red + ": Sending the prompt to the #{llm} LLM")
+        Langchain.logger.info("[#{self.class.name}]".red + ": Sending the prompt to the #{llm} LLM")
         response = llm_client.complete(
           prompt: prompt,
           stop_sequences: ["Observation:"],
@@ -61,7 +61,7 @@ module Langchain::Agent
 
           # Retrieve the Tool::[ToolName] class and call `execute`` with action_input as the input
           tool = Langchain::Tool.const_get(Langchain::Tool::Base::TOOLS[action.strip])
-          Langchain.logger.info("[#{self.class.name.demodulize}]".red + ": Invoking \"#{tool}\" Tool with \"#{action_input}\"")
+          Langchain.logger.info("[#{self.class.name}]".red + ": Invoking \"#{tool}\" Tool with \"#{action_input}\"")
 
           result = tool.execute(input: action_input)
 
