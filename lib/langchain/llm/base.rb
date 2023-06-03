@@ -2,6 +2,8 @@
 
 module Langchain::LLM
   class Base
+    include Langchain::DependencyHelper
+
     attr_reader :client
 
     # Currently supported LLMs

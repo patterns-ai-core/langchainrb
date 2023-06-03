@@ -3,6 +3,8 @@
 module Langchain
   module Processors
     class Base
+      include Langchain::DependencyHelper
+
       EXTENSIONS = []
       CONTENT_TYPES = []
 
