@@ -2,7 +2,11 @@
 
 module Langchain::LLM
   class Replicate < Base
+    #
     # Wrapper around Replicate.com LLM provider
+    #
+    # Gem requirements: gem "replicate-ruby", "~> 0.2.2"
+    #
     # Use it directly:
     # replicate = LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
     #

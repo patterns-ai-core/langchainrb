@@ -2,6 +2,15 @@
 
 module Langchain::Vectorsearch
   class Weaviate < Base
+    #
+    # Wrapper around Weaviate
+    #
+    # Gem requirements: gem "weaviate-ruby", "~> 0.8.0"
+    #
+    # Usage:
+    # weaviate = Langchain::Vectorsearch::Weaviate.new(url:, api_key:, index_name:, llm:, llm_api_key:)
+    #
+
     # Initialize the Weaviate adapter
     # @param url [String] The URL of the Weaviate instance
     # @param api_key [String] The API key to use

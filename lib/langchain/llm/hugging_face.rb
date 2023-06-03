@@ -2,6 +2,15 @@
 
 module Langchain::LLM
   class HuggingFace < Base
+    #
+    # Wrapper around the HuggingFace Inference API.
+    #
+    # Gem requirements: gem "hugging-face", "~> 0.3.2"
+    #
+    # Usage:
+    # hf = Langchain::LLM::HuggingFace.new(api_key: "YOUR_API_KEY")
+    #
+
     # The gem does not currently accept other models:
     # https://github.com/alchaplinsky/hugging-face/blob/main/lib/hugging_face/inference_api.rb#L32-L34
     DEFAULTS = {

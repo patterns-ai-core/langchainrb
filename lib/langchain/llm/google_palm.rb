@@ -2,7 +2,14 @@
 
 module Langchain::LLM
   class GooglePalm < Base
+    #
     # Wrapper around the Google PaLM (Pathways Language Model) APIs.
+    #
+    # Gem requirements: gem "google_palm_api", "~> 0.1.0"
+    #
+    # Usage:
+    # google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")
+    #
 
     DEFAULTS = {
       temperature: 0.0,
