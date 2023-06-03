@@ -8,7 +8,7 @@ pinecone = Vectorsearch::Pinecone.new(
   environment: ENV["PINECONE_ENVIRONMENT"],
   api_key: ENV["PINECONE_API_KEY"],
   index_name: "recipes",
-  llm_client: Langchain::LLM.build(:openai, ENV["OPENAI_API_KEY"])
+  llm_client: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
 # Create the default schema.

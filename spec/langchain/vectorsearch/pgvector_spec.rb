@@ -12,7 +12,7 @@ if ENV["POSTGRES_URL"]
         url: url,
         api_key: "123",
         index_name: "products",
-        llm_client: Langchain::LLM.build(:openai, "123")
+        llm_client: Langchain::LLM::OpenAI.new(api_key: "123")
       )
     }
 

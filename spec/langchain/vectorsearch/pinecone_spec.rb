@@ -11,7 +11,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
       environment: "test",
       api_key: "secret",
       index_name: index_name,
-      llm_client: Langchain::LLM.build(:openai, "123")
+      llm_client: Langchain::LLM::OpenAI.new(api_key: "123")
     )
   }
 
