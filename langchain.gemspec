@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   # development dependencies
   spec.add_development_dependency "dotenv-rails", "~> 2.7.6"
   spec.add_development_dependency "pry-byebug", "~> 3.10.0"
+  spec.add_development_dependency "yard"
 
   # optional dependencies
   spec.add_development_dependency "chroma-db", "~> 0.3.0"
