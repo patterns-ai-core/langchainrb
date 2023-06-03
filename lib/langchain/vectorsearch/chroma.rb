@@ -2,6 +2,15 @@
 
 module Langchain::Vectorsearch
   class Chroma < Base
+    #
+    # Wrapper around Chroma DB
+    #
+    # Gem requirements: gem "chroma-db", "~> 0.3.0"
+    #
+    # Usage:
+    # chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, llm_api_key:, api_key: nil)
+    #
+
     # Initialize the Chroma client
     # @param url [String] The URL of the Qdrant server
     # @param api_key [String] The API key to use

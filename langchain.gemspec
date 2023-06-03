@@ -41,6 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rdiscount" # for github-flavored markdown in yard
 
   # optional dependencies
+  spec.add_development_dependency "ai21", "~> 0.2.0"
   spec.add_development_dependency "chroma-db", "~> 0.3.0"
   spec.add_development_dependency "cohere-ruby", "~> 0.9.4"
   spec.add_development_dependency "docx", "~> 0.8.0"

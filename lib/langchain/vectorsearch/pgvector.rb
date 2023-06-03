@@ -1,8 +1,16 @@
 # frozen_string_literal: true
 
 module Langchain::Vectorsearch
-  # The PostgreSQL vector search adapter
   class Pgvector < Base
+    #
+    # The PostgreSQL vector search adapter
+    #
+    # Gem requirements: gem "pgvector", "~> 0.2"
+    #
+    # Usage:
+    # pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, llm_api_key:)
+    #
+
     # The operators supported by the PostgreSQL vector search adapter
     OPERATORS = {
       "cosine_distance" => "<=>",

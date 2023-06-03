@@ -60,6 +60,7 @@ module Langchain
   end
 
   module LLM
+    autoload :AI21, "langchain/llm/ai21"
     autoload :Base, "langchain/llm/base"
     autoload :Cohere, "langchain/llm/cohere"
     autoload :GooglePalm, "langchain/llm/google_palm"

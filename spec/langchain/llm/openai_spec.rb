@@ -25,8 +25,8 @@ RSpec.describe Langchain::LLM::OpenAI do
   end
 
   describe "#embed" do
-    before do
-      allow(subject.client).to receive(:embeddings).and_return({
+    let(:response) do
+      {
         "object" => "list",
         "data" => [
           {
@@ -39,41 +39,77 @@ RSpec.describe Langchain::LLM::OpenAI do
             ]
           }
         ]
-      })
+      }
     end
 
-    it "returns an embedding" do
-      expect(subject.embed(text: "Hello World")).to eq([-0.007097351, 0.0035200312, -0.0069700438])
+    before do
+      allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
+    end
+
+    context "with default parameters" do
+      let(:parameters) do
+        {parameters: {input: "Hello World", model: "text-embedding-ada-002"}}
+      end
+      it "returns an embedding" do
+        expect(subject.embed(text: "Hello World")).to eq([-0.007097351, 0.0035200312, -0.0069700438])
+      end
+    end
+
+    context "with text and  parameters" do
+      let(:parameters) do
+        {parameters: {input: "Hello World", model: "text-embedding-ada-001", user: "id"}}
+      end
+      it "returns an embedding" do
+        expect(subject.embed(text: "Hello World", model: "text-embedding-ada-001", user: "id")).to eq([-0.007097351, 0.0035200312, -0.0069700438])
+      end
     end
   end
 
   describe "#complete" do
-    before do
-      allow(subject.client).to receive(:completions).and_return(
-        {
-          "id" => "cmpl-7BZg4cP5xzga4IyLI6u97WMepAJj2",
-          "object" => "text_completion",
-          "created" => 1682993108,
-          "model" => "text-davinci-003",
-          "choices" => [
-            {
-              "text" => "\n\nThe meaning of life is subjective and can vary from person to person.",
-              "index" => 0,
-              "logprobs" => nil,
-              "finish_reason" => "length"
-            }
-          ],
-          "usage" => {
-            "prompt_tokens" => 7,
-            "completion_tokens" => 16,
-            "total_tokens" => 23
+    let(:response) do
+      {
+        "id" => "cmpl-7BZg4cP5xzga4IyLI6u97WMepAJj2",
+        "object" => "text_completion",
+        "created" => 1682993108,
+        "model" => "text-davinci-003",
+        "choices" => [
+          {
+            "text" => "\n\nThe meaning of life is subjective and can vary from person to person.",
+            "index" => 0,
+            "logprobs" => nil,
+            "finish_reason" => "length"
           }
+        ],
+        "usage" => {
+          "prompt_tokens" => 7,
+          "completion_tokens" => 16,
+          "total_tokens" => 23
         }
-      )
+      }
     end
 
-    it "returns a completion" do
-      expect(subject.complete(prompt: "Hello World")).to eq("\n\nThe meaning of life is subjective and can vary from person to person.")
+    before do
+      allow(subject.client).to receive(:completions).with(parameters).and_return(response)
+    end
+
+    context "with default parameters" do
+      let(:parameters) do
+        {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0}}
+      end
+
+      it "returns a completion" do
+        expect(subject.complete(prompt: "Hello World")).to eq("\n\nThe meaning of life is subjective and can vary from person to person.")
+      end
+    end
+
+    context "with prompt and parameters" do
+      let(:parameters) do
+        {parameters: {model: "text-curie-001", prompt: "Hello World", temperature: 1.0}}
+      end
+
+      it "returns a completion" do
+        expect(subject.complete(prompt: "Hello World", model: "text-curie-001", temperature: 1.0)).to eq("\n\nThe meaning of life is subjective and can vary from person to person.")
+      end
     end
   end
 
@@ -84,34 +120,52 @@ RSpec.describe Langchain::LLM::OpenAI do
   end
 
   describe "#chat" do
-    before do
-      allow(subject.client).to receive(:chat).and_return(
-        {
-          "id" => "chatcmpl-7Hcl1sXOtsaUBKJGGhNujEIwhauaD",
-          "object" => "chat.completion",
-          "created" => 1684434915,
-          "model" => "gpt-3.5-turbo-0301",
-          "usage" => {
-            "prompt_tokens" => 14,
-            "completion_tokens" => 25,
-            "total_tokens" => 39
-          },
-          "choices" => [
-            {
-              "message" => {
-                "role" => "assistant",
-                "content" => "As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?"
-              },
-              "finish_reason" => "stop",
-              "index" => 0
-            }
-          ]
-        }
-      )
+    let(:response) do
+      {
+        "id" => "chatcmpl-7Hcl1sXOtsaUBKJGGhNujEIwhauaD",
+        "object" => "chat.completion",
+        "created" => 1684434915,
+        "model" => "gpt-3.5-turbo-0301",
+        "usage" => {
+          "prompt_tokens" => 14,
+          "completion_tokens" => 25,
+          "total_tokens" => 39
+        },
+        "choices" => [
+          {
+            "message" => {
+              "role" => "assistant",
+              "content" => "As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?"
+            },
+            "finish_reason" => "stop",
+            "index" => 0
+          }
+        ]
+      }
     end
 
-    it "returns a chat message" do
-      expect(subject.chat(prompt: "Hello! How are you?")).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+    before do
+      allow(subject.client).to receive(:chat).with(parameters).and_return(response)
+    end
+
+    context "with default parameters" do
+      let(:parameters) do
+        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo", temperature: 0.0}}
+      end
+
+      it "returns a chat message" do
+        expect(subject.chat(prompt: "Hello! How are you?")).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+      end
+    end
+
+    context "with prompt and parameters" do
+      let(:parameters) do
+        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo-0301", temperature: 0.75}}
+      end
+
+      it "returns a chat message" do
+        expect(subject.chat(prompt: "Hello! How are you?", model: "gpt-3.5-turbo-0301", temperature: 0.75)).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+      end
     end
   end
 
