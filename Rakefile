@@ -3,7 +3,7 @@
 require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 require "standard/rake"
-require 'yard'
+require "yard"
 
 RSpec::Core::RakeTask.new(:spec)
 
@@ -14,5 +14,5 @@ Rake::Task["spec"].enhance do
 end
 
 YARD::Rake::YardocTask.new do |t|
-  t.options = ['--fail-on-warning']
+  t.options = ["--fail-on-warning"]
 end
