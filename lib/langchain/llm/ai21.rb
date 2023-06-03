@@ -38,7 +38,7 @@ module Langchain::LLM
     # @return [String] The summary
     #
     def summarize(text:, **params)
-      response = client.summarize(text, 'TEXT', params)
+      response = client.summarize(text, "TEXT", params)
       response.dig(:summary)
     end
   end
