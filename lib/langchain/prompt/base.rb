@@ -64,9 +64,9 @@ module Langchain::Prompt
     #
     # This method takes a template string and returns an array of input variable names
     # contained within the template. Input variables are defined as text enclosed in
-    # curly braces (e.g. <code>{variable_name}</code>).
+    # curly braces (e.g. <code>\{variable_name\}</code>).
     #
-    # Content within two consecutive curly braces (e.g. <code>{{ignore_me}}</code>) are ignored.
+    # Content within two consecutive curly braces (e.g. <code>\{\{ignore_me}}</code>) are ignored.
     #
     # @param template [String] The template string to extract variables from.
     #
