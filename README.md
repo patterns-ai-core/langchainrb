@@ -318,6 +318,9 @@ Langchain.logger.level = :info
 3. `bundle exec rake` to ensure that the tests pass and to run standardrb
 4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
 
+## Community
+Join us in the [Ruby AI Builders](https://discord.gg/SBmjAnKT) Discord community in #langchainrb
+
 ## Core Contributors
 [<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://github.com/andreibondarev)
 
