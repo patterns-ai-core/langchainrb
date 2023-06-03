@@ -19,7 +19,7 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
     }
 
     let(:llm_first_response) { "SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);" }
-    let(:sql_string) {"SELECT name, LENGTH(name) FROM users HAVING MAX(length);"}
+    let(:sql_string) { "SELECT name, LENGTH(name) FROM users HAVING MAX(length);" }
     let(:database_tool_response) { "name: Alessandro, length: 10" }
 
     let(:final_prompt) {
@@ -50,8 +50,8 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
   end
 
   describe "#create_prompt_for_sql" do
-    #let(:dialect) {"standard SQL"}
-    #let(:schema) {""}
+    # let(:dialect) {"standard SQL"}
+    # let(:schema) {""}
 
     it "creates a prompt" do
       expect(
