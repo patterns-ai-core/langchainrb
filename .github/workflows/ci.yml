@@ -60,5 +60,5 @@ jobs:
           ruby-version: 3.2
           bundler: default
           bundler-cache: true
-      - name: StandardRb check
+      - name: Build docs
         run: bundle exec rake yard
