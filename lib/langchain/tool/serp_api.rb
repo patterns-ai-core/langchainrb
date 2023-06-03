@@ -2,8 +2,12 @@
 
 module Langchain::Tool
   class SerpApi < Base
+    #
     # Wrapper around SerpAPI
-    # Set ENV["SERPAPI_API_KEY"] to use it
+    #
+    # Gem requirements: gem "google_search_results", "~> 2.0.0"
+    # ENV requirements: ENV["SERPAPI_API_KEY"] # https://serpapi.com/manage-api-key)
+    #
 
     description <<~DESC
       A wrapper around Google Search.
