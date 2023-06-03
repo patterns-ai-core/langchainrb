@@ -1,9 +1,10 @@
 {
   "_type": "prompt",
    "template":
-    "Given an input question and results of a database query, look at the results return the answer. You can order the results by a relevant column to return the most interesting examples in the database. Use the following format:\nQuestion: {question}\nSQLResult: Result of the SQLQuery: {results}\nAnswer: Final answer here",
+    "Given an input question and results of a database query, look at the results return the answer. You can order the results by a relevant column to return the most interesting examples in the database. Use the following format:\nQuestion: {question}\nSQLQuery: The SQL query: {sql_query}\nSQLResult: Result of the SQLQuery: {results}\nAnswer: Final answer here",
   "input_variables": [
     "question",
+    "sql_query",
     "results"
   ]
 }
