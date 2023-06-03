@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "cohere"
-
 RSpec.describe Langchain::LLM::Base do
   let(:subject) { described_class.new }
 
@@ -26,12 +24,6 @@ RSpec.describe Langchain::LLM::Base do
   describe "#summarize" do
     it "raises an error" do
       expect { subject.summarize }.to raise_error(NotImplementedError)
-    end
-  end
-
-  describe ".build" do
-    it "returns an instance of the specified LLM class" do
-      expect(described_class.build(:openai, "123")).to be_a(Langchain::LLM::OpenAI)
     end
   end
 end

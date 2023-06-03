@@ -6,15 +6,6 @@ module Langchain::LLM
 
     attr_reader :client
 
-    # Currently supported LLMs
-    LLMS = {
-      cohere: "Cohere",
-      google_palm: "GooglePalm",
-      huggingface: "HuggingFace",
-      openai: "OpenAI",
-      replicate: "Replicate"
-    }.freeze
-
     def default_dimension
       self.class.const_get(:DEFAULTS).dig(:dimension)
     end
@@ -37,10 +28,6 @@ module Langchain::LLM
     # Method supported by an LLM that summarizes a given text
     def summarize(...)
       raise NotImplementedError, "#{self.class.name} does not support summarization"
-    end
-
-    def self.build(llm, api_key)
-      Langchain::LLM.const_get(self::LLMS.fetch(llm)).new(api_key: api_key)
     end
   end
 end

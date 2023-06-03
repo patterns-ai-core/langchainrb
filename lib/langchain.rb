@@ -59,14 +59,7 @@ module Langchain
     autoload :Weaviate, "langchain/vectorsearch/weaviate"
   end
 
-  module LLM
-    autoload :Base, "langchain/llm/base"
-    autoload :Cohere, "langchain/llm/cohere"
-    autoload :GooglePalm, "langchain/llm/google_palm"
-    autoload :HuggingFace, "langchain/llm/hugging_face"
-    autoload :OpenAI, "langchain/llm/openai"
-    autoload :Replicate, "langchain/llm/replicate"
-  end
+  autoload :LLM, "langchain/llm"
 
   module Prompt
     require_relative "langchain/prompt/loading"

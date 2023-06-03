@@ -8,7 +8,7 @@ weaviate = Vectorsearch::Weaviate.new(
   url: ENV["WEAVIATE_URL"],
   api_key: ENV["WEAVIATE_API_KEY"],
   index_name: "Recipes",
-  llm_client: Langchain::LLM::Base.build(:openai, ENV["OPENAI_API_KEY"])
+  llm_client: Langchain::LLM.build(:openai, ENV["OPENAI_API_KEY"])
 )
 
 # Create the default schema. A text field `content` will be used.

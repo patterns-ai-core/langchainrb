@@ -14,7 +14,7 @@ module Langchain::LLM
     # chroma = Vectorsearch::Chroma.new(
     #   url: ENV["CHROMA_URL"],
     #   index_name: "...",
-    #   llm_client: Langchain::LLM::Base.build(:replicate, ENV["REPLICATE_API_KEY"])
+    #   llm_client: Langchain::LLM.build(:replicate, ENV["REPLICATE_API_KEY"])
     # )
 
     DEFAULTS = {

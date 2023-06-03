@@ -8,7 +8,7 @@ qdrant = Vectorsearch::Qdrant.new(
   url: ENV["QDRANT_URL"],
   api_key: ENV["QDRANT_API_KEY"],
   index_name: "recipes",
-  llm_client: Langchain::LLM::Base.build(:cohere, ENV["COHERE_API_KEY"])
+  llm_client: Langchain::LLM.build(:cohere, ENV["COHERE_API_KEY"])
 )
 
 # Create the default schema.

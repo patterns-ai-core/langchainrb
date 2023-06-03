@@ -9,7 +9,7 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
     described_class.new(
       url: "http://localhost:8000",
       index_name: index_name,
-      llm_client: Langchain::LLM::Base.build(:openai, "123")
+      llm_client: Langchain::LLM.build(:openai, "123")
     )
   }
 

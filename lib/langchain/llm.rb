@@ -1,0 +1,31 @@
+# frozen_string_literal: true
+
+module Langchain
+  module LLM
+    autoload :Base, "langchain/llm/base"
+    autoload :Cohere, "langchain/llm/cohere"
+    autoload :GooglePalm, "langchain/llm/google_palm"
+    autoload :HuggingFace, "langchain/llm/hugging_face"
+    autoload :OpenAI, "langchain/llm/openai"
+    autoload :Replicate, "langchain/llm/replicate"
+
+    extend self
+
+    # Currently supported LLMs
+    LLMS = {
+      cohere: "Cohere",
+      google_palm: "GooglePalm",
+      huggingface: "HuggingFace",
+      openai: "OpenAI",
+      replicate: "Replicate"
+    }.freeze
+
+    def build(llm, api_key)
+      const_get(self::LLMS.fetch(llm)).new(api_key: api_key)
+    end
+
+    def supported?(llm)
+      BUILTIN.key?(llm.to_sym)
+    end
+  end
+end
