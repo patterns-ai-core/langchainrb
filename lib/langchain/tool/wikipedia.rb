@@ -2,7 +2,11 @@
 
 module Langchain::Tool
   class Wikipedia < Base
+    #
     # Tool that adds the capability to search using the Wikipedia API
+    #
+    # Gem requirements: gem "wikipedia-client", "~> 1.17.0"
+    #
 
     description <<~DESC
       A wrapper around Wikipedia.

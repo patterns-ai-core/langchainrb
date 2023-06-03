@@ -2,6 +2,15 @@
 
 module Langchain::Tool
   class Calculator < Base
+    #
+    # A calculator tool that falls back to the Google calculator widget
+    #
+    # Gem requirements:
+    #   gem "eqn", "~> 1.6.5"
+    #   gem "google_search_results", "~> 2.0.0"
+    # ENV requirements: ENV["SERPAPI_API_KEY"]
+    #
+
     description <<~DESC
       Useful for getting the result of a math expression.
 

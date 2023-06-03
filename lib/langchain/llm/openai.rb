@@ -2,6 +2,15 @@
 
 module Langchain::LLM
   class OpenAI < Base
+    #
+    # Wrapper around OpenAI APIs.
+    #
+    # Gem requirements: gem "ruby-openai", "~> 4.0.0"
+    #
+    # Usage:
+    # openai = Langchain::LLM::OpenAI.new(api_key:, llm_options: {})
+    #
+
     DEFAULTS = {
       temperature: 0.0,
       completion_model_name: "text-davinci-003",

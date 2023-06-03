@@ -2,6 +2,12 @@
 
 module Langchain::Tool
   class RubyCodeInterpreter < Base
+    #
+    # A tool that execute Ruby code in a sandboxed environment.
+    #
+    # Gem requirements: gem "safe_ruby", "~> 1.0.4"
+    #
+
     description <<~DESC
       A Ruby code interpreter. Use this to execute ruby expressions. Input should be a valid ruby expression. If you want to see the output of the tool, make sure to return a value.
     DESC
