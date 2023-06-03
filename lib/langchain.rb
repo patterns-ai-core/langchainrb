@@ -4,7 +4,7 @@ require "logger"
 require "pathname"
 require "colorize"
 
-require_relative "./version"
+require_relative "./langchain/version"
 
 module Langchain
   class << self
