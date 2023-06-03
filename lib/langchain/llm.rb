@@ -12,7 +12,7 @@ module Langchain
     extend self
 
     # Currently supported LLMs
-    LLMS = {
+    BUILTIN = {
       cohere: "Cohere",
       google_palm: "GooglePalm",
       huggingface: "HuggingFace",
@@ -21,7 +21,11 @@ module Langchain
     }.freeze
 
     def build(llm, api_key)
-      const_get(self::LLMS.fetch(llm)).new(api_key: api_key)
+      unless supported?(llm)
+        raise ArgumentError, "LLM must be one of #{self::BUILTIN.keys}"
+      end
+
+      const_get(self::BUILTIN.fetch(llm)).new(api_key: api_key)
     end
 
     def supported?(llm)
