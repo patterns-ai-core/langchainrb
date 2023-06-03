@@ -52,7 +52,7 @@ module Langchain::Agent
     # Load the PromptTemplate from the JSON file
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template_sql
-      @template ||= Langchain::Prompt.load_from_path(
+      Langchain::Prompt.load_from_path(
         file_path: Langchain.root.join("langchain/agent/sql_query_agent/sql_query_agent_sql_prompt.json")
       )
     end
@@ -72,7 +72,7 @@ module Langchain::Agent
     # Load the PromptTemplate from the JSON file
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template_answer
-      @template ||= Langchain::Prompt.load_from_path(
+      Langchain::Prompt.load_from_path(
         file_path: Langchain.root.join("langchain/agent/sql_query_agent/sql_query_agent_answer_prompt.json")
       )
     end
