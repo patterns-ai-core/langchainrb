@@ -20,7 +20,7 @@ module Langchain::Prompt
     end
 
     #
-    # Format the prompt with the inputs. Double {{}} replaced with single {} to adhere to f-string spec.
+    # Format the prompt with the inputs. Double <code>{{}}</code> replaced with single <code>{}</code> to adhere to f-string spec.
     #
     # @param kwargs [Hash] Any arguments to be passed to the prompt template.
     # @return [String] A formatted string.
