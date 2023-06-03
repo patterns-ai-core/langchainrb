@@ -3,6 +3,10 @@
 require "sequel"
 
 RSpec.describe Langchain::Tool::Database do
+  subject {
+    described_class.new("mock:///")
+  }
+
   describe "#execute" do
     before do
       rows = []

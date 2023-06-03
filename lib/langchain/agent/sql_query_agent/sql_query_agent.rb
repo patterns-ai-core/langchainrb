@@ -32,8 +32,10 @@ module Langchain::Agent
       # Pass the results and get the LLM to synthesize the answer to the question
       Langchain.logger.info("[#{self.class.name}]".red + ":  Passing the synthesize prompt to the #{@llm} LLM with results: #{results}")
       prompt2 = create_prompt_for_answer(question: question, sql_query: sql_string, results: results)
-      response = @llm_client.complete(prompt: prompt2)
-      response.match(/: (.*)/)&.send(:[], -1)
+      @llm_client.complete(prompt: prompt2)
+      # TODO:
+      # response = @llm_client.complete(prompt: prompt2)
+      # response.match(/: (.*)/)&.send(:[], -1)
     end
 
     private
