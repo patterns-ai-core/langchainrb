@@ -211,6 +211,7 @@ GEM
     rainbow (3.1.1)
     rake (13.0.6)
     rb_sys (0.9.78)
+    rdiscount (2.2.7)
     regexp_parser (2.8.0)
     replicate-ruby (0.2.2)
       addressable
@@ -287,6 +288,7 @@ GEM
       graphlient (~> 0.6.0)
     wikipedia-client (1.17.0)
       addressable (~> 2.7)
+    yard (0.9.34)
     zeitwerk (2.6.8)
 
 PLATFORMS
@@ -317,6 +319,7 @@ DEPENDENCIES
   pry-byebug (~> 3.10.0)
   qdrant-ruby (~> 0.9.0)
   rake (~> 13.0)
+  rdiscount
   replicate-ruby (~> 0.2.2)
   rspec (~> 3.0)
   ruby-openai (~> 4.0.0)
@@ -324,6 +327,7 @@ DEPENDENCIES
   standardrb
   weaviate-ruby (~> 0.8.0)
   wikipedia-client (~> 1.17.0)
+  yard
 
 BUNDLED WITH
    2.4.0
