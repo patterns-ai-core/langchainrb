@@ -5,7 +5,6 @@ module Langchain::LLM
     attr_reader :client
 
     # Currently supported LLMs
-    # TODO: Add support for HuggingFace and other LLMs
     LLMS = {
       cohere: "Cohere",
       google_palm: "GooglePalm",
