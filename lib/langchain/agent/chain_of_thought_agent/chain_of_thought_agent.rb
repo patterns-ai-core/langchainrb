@@ -6,19 +6,18 @@ module Langchain::Agent
 
     # Initializes the Agent
     #
-    # @param llm [Symbol] The LLM to use
-    # @param llm_api_key [String] The API key for the LLM
-    # @param tools [Array] The tools to use
+    # @param llm [Symbol] Name of the LLM to use
+    # @param llm_api_key [String] API key for the LLM
+    # @param tools [Array] List of tools to use, as Strings
     # @return [ChainOfThoughtAgent] The Agent::ChainOfThoughtAgent instance
     def initialize(llm:, llm_api_key:, tools: [])
-      Langchain::LLM::Base.validate_llm!(llm: llm)
       Langchain::Tool::Base.validate_tools!(tools: tools)
 
       @llm = llm
       @llm_api_key = llm_api_key
       @tools = tools
 
-      @llm_client = Langchain::LLM.const_get(Langchain::LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
+      @llm_client = Langchain::LLM.reuse_or_build(llm, api_key: llm_api_key)
     end
 
     # Validate tools when they're re-assigned

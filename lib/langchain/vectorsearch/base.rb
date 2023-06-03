@@ -13,12 +13,10 @@ module Langchain::Vectorsearch
     # @param llm [Symbol] The LLM to use
     # @param llm_api_key [String] The API key for the LLM
     def initialize(llm:, llm_api_key:)
-      Langchain::LLM::Base.validate_llm!(llm: llm)
-
       @llm = llm
       @llm_api_key = llm_api_key
 
-      @llm_client = Langchain::LLM.const_get(Langchain::LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
+      @llm_client = Langchain::LLM.reuse_or_build(llm, api_key: llm_api_key)
     end
 
     # Method supported by Vectorsearch DB to create a default schema
