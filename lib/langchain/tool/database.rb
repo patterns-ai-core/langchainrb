@@ -7,8 +7,7 @@ module Langchain::Tool
     DESC
 
     # Establish a database connection
-    # example: 'postgres://postgres:postgres@localhost:5432/db_name'
-    # Empty string creates memory database using sqlite3
+    # example: 'postgres://user:password@localhost:5432/db_name'
     def initialize(db_connection_string = "")
       depends_on "sequel"
       require "sequel"

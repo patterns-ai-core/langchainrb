@@ -254,6 +254,19 @@ agent.run(question: "How many full soccer fields would be needed to cover the di
 #=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
 ```
 
+#### SQL-Query Agent
+
+Add `gem "sequel"` to your Gemfile
+
+```ruby
+agent = Langchain::Agent::SQLQueryAgent.new(llm: :openai, llm_api_key: ENV["OPENAI_API_KEY"], db_connection_string: "postgres://user:password@localhost:5432/db_name")
+
+```
+```ruby
+agent.ask(question: "How many users have a name with length greater than 5 in the users table?")
+#=> "14 users have a name with length greater than 5 in the users table."
+```
+
 #### Demo
 ![May-12-2023 13-09-13](https://github.com/andreibondarev/langchainrb/assets/541665/6bad4cd9-976c-420f-9cf9-b85bf84f7eaf)
 
@@ -264,6 +277,7 @@ agent.run(question: "How many full soccer fields would be needed to cover the di
 | Name         | Description                                        | ENV Requirements                                              | Gem Requirements                          |
 | ------------ | :------------------------------------------------: | :-----------------------------------------------------------: | :---------------------------------------: |
 | "calculator" | Useful for getting the result of a math expression |                                                               | `gem "eqn", "~> 1.6.5"`                   |
+| "database"   | Useful for querying a SQL database |                                                               | `gem "sequel", "~> 5.68.0"`                   |
 | "ruby_code_interpreter" | Interprets Ruby expressions             |                                                               | `gem "safe_ruby", "~> 1.0.4"`             |
 | "search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |
 | "wikipedia"  | Calls Wikipedia API to retrieve the summary        |                                                               | `gem "wikipedia-client", "~> 1.17.0"`     |

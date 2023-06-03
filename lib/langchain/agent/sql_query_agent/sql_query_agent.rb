@@ -22,17 +22,18 @@ module Langchain::Agent
       prompt = create_prompt_for_sql(question: question)
 
       # Get the SQL string to execute
-      Langchain.logger.info("SQLQueryAgent: Passing the inital prompt to the #{@llm} LLM")
+      Langchain.logger.info("[#{self.class.name}]".red + ":  Passing the inital prompt to the #{@llm} LLM")
       sql_string = @llm_client.complete(prompt: prompt)
 
       # Execute the SQL string and collect the results
-      Langchain.logger.info("SQLQueryAgent: Passing the SQL to the Database: #{sql_string}")
+      Langchain.logger.info("[#{self.class.name}]".red + ":  Passing the SQL to the Database: #{sql_string}")
       results = @db.execute(input: sql_string)
 
       # Pass the results and get the LLM to synthesize the answer to the question
-      Langchain.logger.info("SQLQueryAgent: Passing the synthesize prompt to the #{@llm} LLM with results: #{results}")
+      Langchain.logger.info("[#{self.class.name}]".red + ":  Passing the synthesize prompt to the #{@llm} LLM with results: #{results}")
       prompt2 = create_prompt_for_answer(question: question, sql_query: sql_string, results: results)
-      @llm_client.complete(prompt: prompt2)
+      response = @llm_client.complete(prompt: prompt2)
+      response.match(/: (.*)/)&.send(:[], -1)
     end
 
     private
