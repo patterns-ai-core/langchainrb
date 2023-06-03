@@ -10,12 +10,11 @@ module Langchain::LLM
       dimension: 1536
     }.freeze
 
-    def initialize(api_key:)
+    def initialize(api_key:, llm_options: {})
       depends_on "ruby-openai"
       require "openai"
 
-      # TODO: Add support to pass `organization_id:`
-      @client = ::OpenAI::Client.new(access_token: api_key)
+      @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
     end
 
     #
@@ -24,17 +23,12 @@ module Langchain::LLM
     # @param text [String] The text to generate an embedding for
     # @return [Array] The embedding
     #
-    def embed(text:)
-      model = DEFAULTS[:embeddings_model_name]
+    def embed(text:, **params)
+      parameters = {model: DEFAULTS[:embeddings_model_name], input: text}
 
-      Langchain::Utils::TokenLengthValidator.validate!(text, model)
+      Langchain::Utils::TokenLengthValidator.validate!(text, parameters[:model])
 
-      response = client.embeddings(
-        parameters: {
-          model: model,
-          input: text
-        }
-      )
+      response = client.embeddings(parameters: parameters.merge(params))
       response.dig("data").first.dig("embedding")
     end
 
@@ -45,23 +39,13 @@ module Langchain::LLM
     # @return [String] The completion
     #
     def complete(prompt:, **params)
-      model = DEFAULTS[:completion_model_name]
+      parameters = compose_parameters DEFAULTS[:completion_model_name], params
 
-      Langchain::Utils::TokenLengthValidator.validate!(prompt, model)
+      Langchain::Utils::TokenLengthValidator.validate!(prompt, parameters[:model])
 
-      default_params = {
-        model: model,
-        temperature: DEFAULTS[:temperature],
-        prompt: prompt
-      }
+      parameters[:prompt] = prompt
 
-      if params[:stop_sequences]
-        default_params[:stop] = params.delete(:stop_sequences)
-      end
-
-      default_params.merge!(params)
-
-      response = client.completions(parameters: default_params)
+      response = client.completions(parameters: parameters)
       response.dig("choices", 0, "text")
     end
 
@@ -72,24 +56,13 @@ module Langchain::LLM
     # @return [String] The chat completion
     #
     def chat(prompt:, **params)
-      model = DEFAULTS[:chat_completion_model_name]
+      parameters = compose_parameters DEFAULTS[:chat_completion_model_name], params
 
-      Langchain::Utils::TokenLengthValidator.validate!(prompt, model)
+      Langchain::Utils::TokenLengthValidator.validate!(prompt, parameters[:model])
 
-      default_params = {
-        model: model,
-        temperature: DEFAULTS[:temperature],
-        # TODO: Figure out how to introduce persisted conversations
-        messages: [{role: "user", content: prompt}]
-      }
+      parameters[:messages] = [{role: "user", content: prompt}]
 
-      if params[:stop_sequences]
-        default_params[:stop] = params.delete(:stop_sequences)
-      end
-
-      default_params.merge!(params)
-
-      response = client.chat(parameters: default_params)
+      response = client.chat(parameters: parameters)
       response.dig("choices", 0, "message", "content")
     end
 
@@ -111,6 +84,16 @@ module Langchain::LLM
         # Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
         max_tokens: 2048
       )
+    end
+
+    private
+
+    def compose_parameters(model, params)
+      default_params = {model: model, temperature: DEFAULTS[:temperature]}
+
+      default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
+
+      default_params.merge(params)
     end
   end
 end

@@ -109,6 +109,10 @@ Add `gem "ruby-openai", "~> 4.0.0"` to your Gemfile.
 ```ruby
 openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 ```
+You can pass additional parameters to the constructor, it will be passed to the OpenAI client:
+```ruby
+openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"], llm_options: {uri_base: "http://localhost:1234"}) )
+```
 ```ruby
 openai.embed(text: "foo bar")
 ```
@@ -300,7 +304,7 @@ Additional examples available: [/examples](https://github.com/andreibondarev/lan
 
 ## Logging
 
-LangChain.rb uses standard logging mechanisms and defaults to `:debug` level. Most messages are at info level, but we will add debug or warn statements as needed.
+LangChain.rb uses standard logging mechanisms and defaults to `:warn` level. Most messages are at info level, but we will add debug or warn statements as needed.
 To show all log messages:
 
 ```ruby
