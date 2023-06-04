@@ -31,7 +31,7 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
     before do
       allow(subject.llm).to receive(:complete).with(
         prompt: original_prompt,
-        max_tokens: 500
+        max_tokens: 200
       ).and_return(llm_first_response)
 
       allow(Langchain::Tool::Database).to receive(:execute).with(
