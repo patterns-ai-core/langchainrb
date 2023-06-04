@@ -9,7 +9,7 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
     described_class.new(
       url: "http://localhost:8000",
       index_name: index_name,
-      llm_client: Langchain::LLM::OpenAI.new(api_key: "123")
+      llm: Langchain::LLM::OpenAI.new(api_key: "123")
     )
   }
 
@@ -41,7 +41,7 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
 
   describe "add_texts" do
     before do
-      allow(subject.llm_client).to receive(:embed).with(text: text).and_return([0.1, 0.2, 0.3])
+      allow(subject.llm).to receive(:embed).with(text: text).and_return([0.1, 0.2, 0.3])
       allow_any_instance_of(Chroma::Resources::Collection).to receive(:add).and_return(true)
     end
 
@@ -69,7 +69,7 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
 
   describe "#similarity_search" do
     before do
-      allow(subject.llm_client).to receive(:embed).with(text: query).and_return(embedding)
+      allow(subject.llm).to receive(:embed).with(text: query).and_return(embedding)
       allow(subject).to receive(:similarity_search_by_vector).with(embedding: embedding, k: count).and_return(results)
     end
 
@@ -87,7 +87,7 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
 
     before do
       allow(subject).to receive(:similarity_search).with(query: question).and_return(results)
-      allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
+      allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
     end
 
     it "asks a question" do

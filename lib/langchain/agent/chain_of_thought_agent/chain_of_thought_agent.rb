@@ -2,19 +2,19 @@
 
 module Langchain::Agent
   class ChainOfThoughtAgent < Base
-    attr_reader :llm_client, :tools
+    attr_reader :llm, :tools
 
     # Initializes the Agent
     #
-    # @param llm_client [Object] The LLM client to use
+    # @param llm [Object] The LLM client to use
     # @param tools [Array] The tools to use
     # @return [ChainOfThoughtAgent] The Agent::ChainOfThoughtAgent instance
-    def initialize(llm_client:, tools: [])
+    def initialize(llm:, tools: [])
       Langchain::Tool::Base.validate_tools!(tools: tools)
 
       @tools = tools
 
-      @llm_client = llm_client
+      @llm = llm
     end
 
     # Validate tools when they're re-assigned
@@ -38,8 +38,8 @@ module Langchain::Agent
       )
 
       loop do
-        Langchain.logger.info("[#{self.class.name}]".red + ": Sending the prompt to the #{llm_client.class} LLM")
-        response = llm_client.complete(
+        Langchain.logger.info("[#{self.class.name}]".red + ": Sending the prompt to the #{llm.class} LLM")
+        response = llm.complete(
           prompt: prompt,
           stop_sequences: ["Observation:"],
           max_tokens: 500

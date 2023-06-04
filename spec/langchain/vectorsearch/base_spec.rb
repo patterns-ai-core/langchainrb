@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Vectorsearch::Base do
-  subject { described_class.new(llm_client: Langchain::LLM::OpenAI.new(api_key: "123")) }
+  subject { described_class.new(llm: Langchain::LLM::OpenAI.new(api_key: "123")) }
 
   describe "#initialize" do
-    it "correctly sets llm_client" do
+    it "correctly sets llm" do
       expect(
-        subject.llm_client
+        subject.llm
       ).to be_a(Langchain::LLM::OpenAI)
     end
   end

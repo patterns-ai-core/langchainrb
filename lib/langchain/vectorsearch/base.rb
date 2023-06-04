@@ -7,13 +7,13 @@ module Langchain::Vectorsearch
     include Langchain::DependencyHelper
     extend Forwardable
 
-    attr_reader :client, :index_name, :llm_client
+    attr_reader :client, :index_name, :llm
 
     DEFAULT_METRIC = "cosine"
 
-    # @param llm_client [Object] The LLM client to use
-    def initialize(llm_client:)
-      @llm_client = llm_client
+    # @param llm [Object] The LLM client to use
+    def initialize(llm:)
+      @llm = llm
     end
 
     # Method supported by Vectorsearch DB to create a default schema
@@ -42,7 +42,7 @@ module Langchain::Vectorsearch
       raise NotImplementedError, "#{self.class.name} does not support asking questions"
     end
 
-    def_delegators :llm_client,
+    def_delegators :llm,
       :default_dimension
 
     def generate_prompt(question:, context:)

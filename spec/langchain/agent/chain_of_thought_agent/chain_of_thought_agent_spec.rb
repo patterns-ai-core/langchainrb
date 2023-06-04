@@ -3,7 +3,7 @@
 RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
   subject {
     described_class.new(
-      llm_client: Langchain::LLM::OpenAI.new(api_key: "123"),
+      llm: Langchain::LLM::OpenAI.new(api_key: "123"),
       tools: ["calculator", "search"]
     )
   }

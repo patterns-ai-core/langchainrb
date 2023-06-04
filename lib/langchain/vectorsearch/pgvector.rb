@@ -22,9 +22,9 @@ module Langchain::Vectorsearch
 
     # @param url [String] The URL of the PostgreSQL database
     # @param index_name [String] The name of the table to use for the index
-    # @param llm_client [Object] The LLM client to use
+    # @param llm [Object] The LLM client to use
     # @param api_key [String] The API key for the Vectorsearch DB (not used for PostgreSQL)
-    def initialize(url:, index_name:, llm_client:, api_key: nil)
+    def initialize(url:, index_name:, llm:, api_key: nil)
       require "pg"
       require "pgvector"
 
@@ -37,7 +37,7 @@ module Langchain::Vectorsearch
       @quoted_table_name = @client.quote_ident(index_name)
       @operator = OPERATORS[DEFAULT_OPERATOR]
 
-      super(llm_client: llm_client)
+      super(llm: llm)
     end
 
     # Add a list of texts to the index
@@ -45,7 +45,7 @@ module Langchain::Vectorsearch
     # @return [PG::Result] The response from the database
     def add_texts(texts:)
       data = texts.flat_map do |text|
-        [text, llm_client.embed(text: text)]
+        [text, llm.embed(text: text)]
       end
       values = texts.length.times.map { |i| "($#{2 * i + 1}, $#{2 * i + 2})" }.join(",")
       client.exec_params(
@@ -74,7 +74,7 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of top results to return
     # @return [Array<Hash>] The results of the search
     def similarity_search(query:, k: 4)
-      embedding = llm_client.embed(text: query)
+      embedding = llm.embed(text: query)
 
       similarity_search_by_vector(
         embedding: embedding,
@@ -112,7 +112,7 @@ module Langchain::Vectorsearch
 
       prompt = generate_prompt(question: question, context: context)
 
-      llm_client.chat(prompt: prompt)
+      llm.chat(prompt: prompt)
     end
   end
 end

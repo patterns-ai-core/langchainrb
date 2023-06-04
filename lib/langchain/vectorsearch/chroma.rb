@@ -15,8 +15,8 @@ module Langchain::Vectorsearch
     # @param url [String] The URL of the Qdrant server
     # @param api_key [String] The API key to use
     # @param index_name [String] The name of the index to use
-    # @param llm_client [Object] The LLM client to use
-    def initialize(url:, index_name:, llm_client:, api_key: nil)
+    # @param llm [Object] The LLM client to use
+    def initialize(url:, index_name:, llm:, api_key: nil)
       depends_on "chroma-db"
       require "chroma-db"
 
@@ -26,7 +26,7 @@ module Langchain::Vectorsearch
 
       @index_name = index_name
 
-      super(llm_client: llm_client)
+      super(llm: llm)
     end
 
     # Add a list of texts to the index
@@ -37,7 +37,7 @@ module Langchain::Vectorsearch
         ::Chroma::Resources::Embedding.new(
           # TODO: Add support for passing your own IDs
           id: SecureRandom.uuid,
-          embedding: llm_client.embed(text: text),
+          embedding: llm.embed(text: text),
           # TODO: Add support for passing metadata
           metadata: [], # metadatas[index],
           document: text # Do we actually need to store the whole original document?
@@ -62,7 +62,7 @@ module Langchain::Vectorsearch
       query:,
       k: 4
     )
-      embedding = llm_client.embed(text: query)
+      embedding = llm.embed(text: query)
 
       similarity_search_by_vector(
         embedding: embedding,
@@ -100,7 +100,7 @@ module Langchain::Vectorsearch
 
       prompt = generate_prompt(question: question, context: context)
 
-      llm_client.chat(prompt: prompt)
+      llm.chat(prompt: prompt)
     end
 
     private

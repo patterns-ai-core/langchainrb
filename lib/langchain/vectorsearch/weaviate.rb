@@ -15,8 +15,8 @@ module Langchain::Vectorsearch
     # @param url [String] The URL of the Weaviate instance
     # @param api_key [String] The API key to use
     # @param index_name [String] The name of the index to use
-    # @param llm_client [Object] The LLM client to use
-    def initialize(url:, api_key:, index_name:, llm_client:)
+    # @param llm [Object] The LLM client to use
+    def initialize(url:, api_key:, index_name:, llm:)
       depends_on "weaviate-ruby"
       require "weaviate"
 
@@ -26,7 +26,7 @@ module Langchain::Vectorsearch
       )
       @index_name = index_name
 
-      super(llm_client: llm_client)
+      super(llm: llm)
     end
 
     # Add a list of texts to the index
@@ -37,7 +37,7 @@ module Langchain::Vectorsearch
         {
           class: index_name,
           properties: {content: text},
-          vector: llm_client.embed(text: text)
+          vector: llm.embed(text: text)
         }
       end
 
@@ -66,7 +66,7 @@ module Langchain::Vectorsearch
     # @param k [Integer|String] The number of results to return
     # @return [Hash] The search results
     def similarity_search(query:, k: 4)
-      embedding = llm_client.embed(text: query)
+      embedding = llm.embed(text: query)
 
       similarity_search_by_vector(embedding: embedding, k: k)
     end
@@ -99,7 +99,7 @@ module Langchain::Vectorsearch
 
       prompt = generate_prompt(question: question, context: context)
 
-      llm_client.chat(prompt: prompt)
+      llm.chat(prompt: prompt)
     end
   end
 end

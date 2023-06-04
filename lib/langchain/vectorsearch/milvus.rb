@@ -11,14 +11,14 @@ module Langchain::Vectorsearch
     # milvus = Langchain::Vectorsearch::Milvus.new(url:, index_name:, llm:, llm_api_key:)
     #
 
-    def initialize(url:, index_name:, llm_client:, api_key: nil)
+    def initialize(url:, index_name:, llm:, api_key: nil)
       depends_on "milvus"
       require "milvus"
 
       @client = ::Milvus::Client.new(url: url)
       @index_name = index_name
 
-      super(llm_client: llm_client)
+      super(llm: llm)
     end
 
     def add_texts(texts:)
@@ -33,7 +33,7 @@ module Langchain::Vectorsearch
           }, {
             field_name: "vectors",
             type: ::Milvus::DATA_TYPES["binary_vector"],
-            field: Array(texts).map { |text| llm_client.embed(text: text) }
+            field: Array(texts).map { |text| llm.embed(text: text) }
           }
         ]
       )
@@ -78,7 +78,7 @@ module Langchain::Vectorsearch
     end
 
     def similarity_search(query:, k: 4)
-      embedding = llm_client.embed(text: query)
+      embedding = llm.embed(text: query)
 
       similarity_search_by_vector(
         embedding: embedding,
