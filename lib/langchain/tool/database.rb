@@ -24,12 +24,16 @@ module Langchain::Tool
       @db.dump_schema_migration(same_db: true, indexes: false) unless @db.adapter_scheme == :mock
     end
 
-    # Evaluates a sql expression and outputs labeled values
+    # Evaluates a sql expression
     # @param input [String] sql expression
-    # @return [String] results
+    # @return [Array] results
     def execute(input:)
       Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing \"#{input}\"")
-      @db[input].to_a
+      begin
+        @db[input].to_a
+      rescue Sequel::DatabaseError => e
+        Langchain.logger.error("[#{self.class.name}]".light_red + ": #{e.message}")
+      end
     end
   end
 end
