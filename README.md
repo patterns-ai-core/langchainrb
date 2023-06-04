@@ -177,9 +177,9 @@ prompt.format(adjective: "funny", content: "chickens") # "Tell me a funny joke a
 Creating a PromptTemplate using just a prompt and no input_variables:
 
 ```ruby
-prompt = Langchain::Prompt::PromptTemplate.from_template("Tell me a {adjective} joke about {content}.")
-prompt.input_variables # ["adjective", "content"]
-prompt.format(adjective: "funny", content: "chickens") # "Tell me a funny joke about chickens."
+prompt = Langchain::Prompt::PromptTemplate.from_template("Tell me a funny joke about chickens.")
+prompt.input_variables # []
+prompt.format # "Tell me a funny joke about chickens."
 ```
 
 Save prompt template to JSON file:
