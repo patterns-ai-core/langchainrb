@@ -11,8 +11,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
       environment: "test",
       api_key: "secret",
       index_name: index_name,
-      llm: :openai,
-      llm_api_key: "123"
+      llm: Langchain::LLM::OpenAI.new(api_key: "123")
     )
   }
 
@@ -73,7 +72,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
 
     before do
       allow(SecureRandom).to receive(:uuid).and_return("123")
-      allow(subject.llm_client).to receive(:embed).with(text: text).and_return(embedding)
+      allow(subject.llm).to receive(:embed).with(text: text).and_return(embedding)
       allow(subject.client).to receive(:index).with(index_name).and_return(Pinecone::Index.new)
     end
 
@@ -138,7 +137,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
 
   describe "#similarity_search_by_vector" do
     before do
-      allow(subject.llm_client).to receive(:embed).with(text: text).and_return(embedding)
+      allow(subject.llm).to receive(:embed).with(text: text).and_return(embedding)
       allow(subject.client).to receive(:index).with(index_name).and_return(Pinecone::Index.new)
     end
 
@@ -194,7 +193,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
 
   describe "#similarity_search" do
     before do
-      allow(subject.llm_client).to receive(:embed).with(text: query).and_return(embedding)
+      allow(subject.llm).to receive(:embed).with(text: query).and_return(embedding)
     end
 
     describe "without a namespace" do
@@ -248,7 +247,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         allow(subject).to receive(:similarity_search).with(
           query: question, namespace: "", filter: nil
         ).and_return(matches)
-        allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
 
       it "asks a question" do
@@ -261,7 +260,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         allow(subject).to receive(:similarity_search).with(
           query: question, namespace: namespace, filter: nil
         ).and_return(matches)
-        allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
 
       it "asks a question" do
@@ -274,7 +273,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         allow(subject).to receive(:similarity_search).with(
           query: question, namespace: "", filter: filter
         ).and_return(matches)
-        allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
 
       it "asks a question" do

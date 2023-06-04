@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.4.2] - 2023-06-03
+- 🗣️ LLMs
+  - Introducing support for AI21
+- Better docs generation
+- Refactors
+
 ## [0.4.1] - 2023-06-02
 - Beautiful colored log messages
 - 🛠️ Tools

@@ -1,52 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Vectorsearch::Base do
-  subject { described_class.new(llm: :openai, llm_api_key: "123") }
+  subject { described_class.new(llm: Langchain::LLM::OpenAI.new(api_key: "123")) }
 
   describe "#initialize" do
-    it "correctly with llm: :cohere" do
+    it "correctly sets llm" do
       expect(
-        described_class.new(
-          llm: :cohere,
-          llm_api_key: "123"
-        )
-        .llm_client
-      ).to be_a(Langchain::LLM::Cohere)
-    end
-
-    it "correctly with llm: :openai" do
-      expect(
-        subject.llm_client
+        subject.llm
       ).to be_a(Langchain::LLM::OpenAI)
-    end
-
-    it "correctly with llm: :huggingface" do
-      expect(
-        described_class.new(
-          llm: :huggingface,
-          llm_api_key: "123"
-        )
-        .llm_client
-      ).to be_a(Langchain::LLM::HuggingFace)
-    end
-
-    it "correctly with llm: :replicate" do
-      expect(
-        described_class.new(
-          llm: :replicate,
-          llm_api_key: "123"
-        )
-        .llm_client
-      ).to be_a(Langchain::LLM::Replicate)
-    end
-
-    it "throws an error with currently unsupported llm: :anthropic" do
-      expect {
-        described_class.new(
-          llm: :anthropic,
-          llm_api_key: "123"
-        )
-      }.to raise_error(ArgumentError)
     end
   end
 
