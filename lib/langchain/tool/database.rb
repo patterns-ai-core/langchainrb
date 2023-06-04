@@ -29,9 +29,7 @@ module Langchain::Tool
     # @return [String] results
     def execute(input:)
       Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing \"#{input}\"")
-      @db[input].map do |row|
-        row.map { |key, value| key.to_s + ": " + value.to_s }.each { |col| col.to_s }.join(", ")
-      end.join(", ")
+      @db[input].to_a
     end
   end
 end

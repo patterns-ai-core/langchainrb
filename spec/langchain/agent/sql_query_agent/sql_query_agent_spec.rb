@@ -40,7 +40,7 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
       ).and_return(database_tool_response)
 
       allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
-        prompt: "Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:\nQuestion: What is the longest length name in the users table?\nThe SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);\nResult of the SQLQuery: \nFinal answer: Final answer here"
+        prompt: "Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:\nQuestion: What is the longest length name in the users table?\nThe SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);\nResult of the SQLQuery: []\nFinal answer: Final answer here"
       ).and_return(llm_final_response)
     end
 
