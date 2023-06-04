@@ -47,8 +47,7 @@ Pick the vector search database you'll be using and instantiate the client:
 client = Langchain::Vectorsearch::Weaviate.new(
     url: ENV["WEAVIATE_URL"],
     api_key: ENV["WEAVIATE_API_KEY"],
-    llm: :openai, # or :cohere
-    llm_api_key: ENV["OPENAI_API_KEY"]
+    llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
 # You can instantiate any other supported vector search database:
@@ -250,7 +249,7 @@ Agents are semi-autonomous bots that can respond to user questions and use avail
 Add `gem "ruby-openai"`, `gem "eqn"`, and `gem "google_search_results"` to your Gemfile
 
 ```ruby
-agent = Langchain::Agent::ChainOfThoughtAgent.new(llm: :openai, llm_api_key: ENV["OPENAI_API_KEY"], tools: ['search', 'calculator'])
+agent = Langchain::Agent::ChainOfThoughtAgent.new(llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]), tools: ['search', 'calculator'])
 
 agent.tools
 # => ["search", "calculator"]
