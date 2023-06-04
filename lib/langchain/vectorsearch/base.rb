@@ -7,19 +7,13 @@ module Langchain::Vectorsearch
     include Langchain::DependencyHelper
     extend Forwardable
 
-    attr_reader :client, :index_name, :llm, :llm_api_key, :llm_client
+    attr_reader :client, :index_name, :llm
 
     DEFAULT_METRIC = "cosine"
 
-    # @param llm [Symbol] The LLM to use
-    # @param llm_api_key [String] The API key for the LLM
-    def initialize(llm:, llm_api_key:)
-      Langchain::LLM::Base.validate_llm!(llm: llm)
-
+    # @param llm [Object] The LLM client to use
+    def initialize(llm:)
       @llm = llm
-      @llm_api_key = llm_api_key
-
-      @llm_client = Langchain::LLM.const_get(Langchain::LLM::Base::LLMS.fetch(llm)).new(api_key: llm_api_key)
     end
 
     # Method supported by Vectorsearch DB to create a default schema
@@ -48,7 +42,7 @@ module Langchain::Vectorsearch
       raise NotImplementedError, "#{self.class.name} does not support asking questions"
     end
 
-    def_delegators :llm_client,
+    def_delegators :llm,
       :default_dimension
 
     def generate_prompt(question:, context:)

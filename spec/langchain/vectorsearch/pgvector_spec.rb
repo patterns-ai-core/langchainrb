@@ -12,8 +12,7 @@ if ENV["POSTGRES_URL"]
         url: url,
         api_key: "123",
         index_name: "products",
-        llm: :openai,
-        llm_api_key: "123"
+        llm: Langchain::LLM::OpenAI.new(api_key: "123")
       )
     }
 
@@ -140,7 +139,7 @@ if ENV["POSTGRES_URL"]
       end
 
       before do
-        allow(subject.llm_client).to receive(:chat).with(prompt: prompt).and_return(answer)
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
 
       it "asks a question" do
