@@ -1,5 +1,11 @@
 module Langchain::Tool
   class Database < Base
+    #
+    # Connects to a database, executes SQL queries, and outputs DB schema for Agents to use
+    #
+    # Gem requirements: gem "sequel", "~> 5.68.0"
+    #
+
     description <<~DESC
       Useful for getting the result of a database query.
 

@@ -9,7 +9,6 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
   }
 
   describe "#ask" do
-    # TODO: Still working on this, so xit tests for now
     let(:question) { "What is the longest length name in the users table?" }
 
     let(:original_prompt) {
@@ -30,16 +29,18 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
     let(:llm_final_response) { "The longest length name is Alessandro at 10 characters." }
 
     before do
-      allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
-        prompt: original_prompt
+      allow(subject.llm).to receive(:complete).with(
+        prompt: original_prompt,
+        max_tokens: 500
       ).and_return(llm_first_response)
 
       allow(Langchain::Tool::Database).to receive(:execute).with(
         input: sql_string
       ).and_return(database_tool_response)
 
-      allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
-        prompt: "Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:\nQuestion: What is the longest length name in the users table?\nThe SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);\nResult of the SQLQuery: []\nFinal answer: Final answer here"
+      allow(subject.llm).to receive(:complete).with(
+        prompt: "Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:\nQuestion: What is the longest length name in the users table?\nThe SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);\nResult of the SQLQuery: []\nFinal answer: Final answer here",
+        max_tokens: 500
       ).and_return(llm_final_response)
     end
 
@@ -61,7 +62,7 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
 
         Use the following format:
         Question: What is the meaning of life?
-        SQLQuery: 
+        SQLQuery:
       PROMPT
     end
   end
