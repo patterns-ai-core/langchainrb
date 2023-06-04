@@ -6,8 +6,7 @@ module Langchain::Agent
 
     # Initializes the Agent
     #
-    # @param llm [Symbol] The LLM to use
-    # @param llm_api_key [String] The API key for the LLM
+    # @param llm [Object] The LLM client to use
     # @param db_connection_string [String] Database connection info
     def initialize(llm:, db_connection_string:)
       @llm = llm
@@ -15,6 +14,10 @@ module Langchain::Agent
       @schema = @db.schema
     end
 
+    # Ask a question and get an answer
+    #
+    # @param question [String] Question to ask the LLM/Database
+    # @return [String] Answer to the question
     def ask(question:)
       prompt = create_prompt_for_sql(question: question)
 

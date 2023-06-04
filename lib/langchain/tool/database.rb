@@ -7,7 +7,7 @@ module Langchain::Tool
     DESC
 
     # Establish a database connection
-    # example: 'postgres://user:password@localhost:5432/db_name'
+    # @param db_connection_string [String] Database connection info, e.g. 'postgres://user:password@localhost:5432/db_name'
     def initialize(db_connection_string)
       depends_on "sequel"
       require "sequel"
