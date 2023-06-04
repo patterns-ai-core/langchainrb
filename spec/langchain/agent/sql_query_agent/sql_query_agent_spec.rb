@@ -28,7 +28,7 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
         sql_query: sql_string,
         results: database_tool_response)
     }
-    let(:llm_final_response) { "" }
+    let(:llm_final_response) { "The longest length name is Alessandro at 10 characters." }
 
     before do
       allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
@@ -40,19 +40,16 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
       ).and_return(database_tool_response)
 
       allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
-        prompt: final_prompt
+        prompt: "Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:\nQuestion: What is the longest length name in the users table?\nThe SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);\nResult of the SQLQuery: \nFinal answer: Final answer here"
       ).and_return(llm_final_response)
     end
 
-    xit "runs the agent" do
+    it "runs the agent" do
       subject.ask(question: question)
     end
   end
 
   describe "#create_prompt_for_sql" do
-    # let(:dialect) {"standard SQL"}
-    # let(:schema) {""}
-
     it "creates a prompt" do
       expect(
         subject.send(:create_prompt_for_sql,

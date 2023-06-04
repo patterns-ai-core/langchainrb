@@ -33,16 +33,12 @@ module Langchain::Agent
       Langchain.logger.info("[#{self.class.name}]".red + ":  Passing the synthesize prompt to the #{@llm} LLM with results: #{results}")
       prompt2 = create_prompt_for_answer(question: question, sql_query: sql_string, results: results)
       @llm_client.complete(prompt: prompt2)
-      # TODO:
-      # response = @llm_client.complete(prompt: prompt2)
-      # response.match(/: (.*)/)&.send(:[], -1)
     end
 
     private
 
     # Create the initial prompt to pass to the LLM
-    # @param query_str [String] Question to ask
-    # @param tools [Array] Tools to use
+    # @param question[String] Question to ask
     # @return [String] Prompt
     def create_prompt_for_sql(question:)
       prompt_template_sql.format(
@@ -61,8 +57,7 @@ module Langchain::Agent
     end
 
     # Create the second prompt to pass to the LLM
-    # @param query_str [String] Question to ask
-    # @param tools [Array] Tools to use
+    # @param question [String] Question to ask
     # @return [String] Prompt
     def create_prompt_for_answer(question:, sql_query:, results:)
       prompt_template_answer.format(
