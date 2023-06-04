@@ -3,8 +3,7 @@
 RSpec.describe Langchain::Agent::SQLQueryAgent do
   subject {
     described_class.new(
-      llm: :openai,
-      llm_api_key: "123",
+      llm: Langchain::LLM::OpenAI.new(api_key: "123"),
       db_connection_string: "mock:///"
     )
   }
