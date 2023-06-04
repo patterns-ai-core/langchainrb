@@ -23,7 +23,7 @@ module Langchain::Agent
 
       # Get the SQL string to execute
       Langchain.logger.info("[#{self.class.name}]".red + ":  Passing the inital prompt to the #{llm.class} LLM")
-      sql_string = llm.complete(prompt: prompt, max_tokens: 500)
+      sql_string = llm.complete(prompt: prompt, max_tokens: 200)
 
       # Execute the SQL string and collect the results
       Langchain.logger.info("[#{self.class.name}]".red + ":  Passing the SQL to the Database: #{sql_string}")
