@@ -2,4 +2,7 @@ _type: prompt
 input_variables:
   - adjective
   - content
-template: Tell me a {adjective} joke about {content}.
+template: | 
+  Tell me a {adjective} joke about {content}.
+  It should be funny.
+  Like really funny.
