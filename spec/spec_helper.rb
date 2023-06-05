@@ -4,7 +4,7 @@ require "pathname"
 require "json"
 require "yaml"
 require "langchain"
-require "pry"
+require "pry-byebug"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
