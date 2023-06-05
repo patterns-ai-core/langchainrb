@@ -13,7 +13,7 @@ module Langchain
 
       # Parse the document and return the text
       # @param [File] data
-      # @return [String]
+      # @return [Array<Array<String>>] Array of rows, each row is an array of cells
       def parse(data)
         xlsx_file = Roo::Spreadsheet.open(data)
         xlsx_file.each_with_pagename.flat_map do |_, sheet|
