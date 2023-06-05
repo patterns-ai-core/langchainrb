@@ -63,11 +63,10 @@ module Langchain::Vectorsearch
       prompt_template.format(question: question)
     end
 
-    def add_data(path: nil, paths: nil)
-      raise ArgumentError, "Either path or paths must be provided" if path.nil? && paths.nil?
-      raise ArgumentError, "Either path or paths must be provided, not both" if !path.nil? && !paths.nil?
+    def add_data(paths:)
+      raise ArgumentError, "Paths must be provided" if paths.to_a.empty?
 
-      texts = Array(path || paths)
+      texts = Array(paths)
         .flatten
         .map { |path| Langchain::Loader.new(path)&.load&.value }
         .compact

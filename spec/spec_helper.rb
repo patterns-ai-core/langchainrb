@@ -2,6 +2,7 @@
 
 require "pathname"
 require "json"
+require "yaml"
 require "langchain"
 require "pry"
 

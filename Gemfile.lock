@@ -327,6 +327,7 @@ DEPENDENCIES
   replicate-ruby (~> 0.2.2)
   roo (~> 2.10.0)
   rspec (~> 3.0)
+  rubocop
   ruby-openai (~> 4.0.0)
   safe_ruby (~> 1.0.4)
   sequel (~> 5.68.0)

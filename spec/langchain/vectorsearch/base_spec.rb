@@ -53,12 +53,6 @@ RSpec.describe Langchain::Vectorsearch::Base do
   end
 
   describe "#add_data" do
-    it "allows adding single path" do
-      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 1)) # not sure I love doing this
-
-      subject.add_data(path: Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"))
-    end
-
     it "allows adding multiple paths" do
       paths = [
         Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
@@ -71,12 +65,8 @@ RSpec.describe Langchain::Vectorsearch::Base do
       subject.add_data(paths: paths)
     end
 
-    it "requires path or paths" do
-      expect { subject.add_data }.to raise_error(ArgumentError, /Either path or paths must be provided/)
-    end
-
-    it "requires only path or paths" do
-      expect { subject.add_data(path: [], paths: []) }.to raise_error(ArgumentError, /Either path or paths must be provided, not both/)
+    it "requires paths" do
+      expect { subject.add_data(paths: []) }.to raise_error(ArgumentError, /Paths must be provided/)
     end
 
     def array_with_strings_matcher(size:)

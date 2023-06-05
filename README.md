@@ -241,6 +241,13 @@ prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/few_s
 prompt.prefix # "Write antonyms for the following words."
 ```
 
+Loading a new prompt template using a YAML file:
+
+```ruby
+prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.yaml")
+prompt.input_variables #=> ["adjective", "content"]
+```
+
 ### Using Agents 🤖
 Agents are semi-autonomous bots that can respond to user questions and use available to them Tools to provide informed replies. They break down problems into series of steps and define Actions (and Action Inputs) along the way that are executed and fed back to them as additional information. Once an Agent decides that it has the Final Answer it responds with it.
 
@@ -337,6 +344,7 @@ Langchain.logger.level = :info
 2. `cp .env.example .env`, then fill out the environment variables in `.env`
 3. `bundle exec rake` to ensure that the tests pass and to run standardrb
 4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
+5. Optionally, install lefthook git hooks for pre-commit to auto lint: `gem install lefthook && lefthook install -f`
 
 ## Community
 Join us in the [Ruby AI Builders](https://discord.gg/SBmjAnKT) Discord community in #langchainrb
