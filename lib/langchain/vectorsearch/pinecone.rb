@@ -15,9 +15,8 @@ module Langchain::Vectorsearch
     # @param environment [String] The environment to use
     # @param api_key [String] The API key to use
     # @param index_name [String] The name of the index to use
-    # @param llm [Symbol] The LLM to use
-    # @param llm_api_key [String] The API key for the LLM
-    def initialize(environment:, api_key:, index_name:, llm:, llm_api_key:)
+    # @param llm [Object] The LLM client to use
+    def initialize(environment:, api_key:, index_name:, llm:)
       depends_on "pinecone"
       require "pinecone"
 
@@ -29,7 +28,7 @@ module Langchain::Vectorsearch
       @client = ::Pinecone::Client.new
       @index_name = index_name
 
-      super(llm: llm, llm_api_key: llm_api_key)
+      super(llm: llm)
     end
 
     # Add a list of texts to the index
@@ -43,7 +42,7 @@ module Langchain::Vectorsearch
           # TODO: Allows passing in your own IDs
           id: SecureRandom.uuid,
           metadata: metadata || {content: text},
-          values: llm_client.embed(text: text)
+          values: llm.embed(text: text)
         }
       end
 
@@ -74,7 +73,7 @@ module Langchain::Vectorsearch
       namespace: "",
       filter: nil
     )
-      embedding = llm_client.embed(text: query)
+      embedding = llm.embed(text: query)
 
       similarity_search_by_vector(
         embedding: embedding,
@@ -121,7 +120,7 @@ module Langchain::Vectorsearch
 
       prompt = generate_prompt(question: question, context: context)
 
-      llm_client.chat(prompt: prompt)
+      llm.chat(prompt: prompt)
     end
   end
 end

@@ -15,9 +15,8 @@ module Langchain::Vectorsearch
     # @param url [String] The URL of the Qdrant server
     # @param api_key [String] The API key to use
     # @param index_name [String] The name of the index to use
-    # @param llm [Symbol] The LLM to use
-    # @param llm_api_key [String] The API key for the LLM
-    def initialize(url:, api_key:, index_name:, llm:, llm_api_key:)
+    # @param llm [Object] The LLM client to use
+    def initialize(url:, api_key:, index_name:, llm:)
       depends_on "qdrant-ruby"
       require "qdrant"
 
@@ -27,7 +26,7 @@ module Langchain::Vectorsearch
       )
       @index_name = index_name
 
-      super(llm: llm, llm_api_key: llm_api_key)
+      super(llm: llm)
     end
 
     # Add a list of texts to the index
@@ -38,7 +37,7 @@ module Langchain::Vectorsearch
 
       Array(texts).each do |text|
         batch[:ids].push(SecureRandom.uuid)
-        batch[:vectors].push(llm_client.embed(text: text))
+        batch[:vectors].push(llm.embed(text: text))
         batch[:payloads].push({content: text})
       end
 
@@ -68,7 +67,7 @@ module Langchain::Vectorsearch
       query:,
       k: 4
     )
-      embedding = llm_client.embed(text: query)
+      embedding = llm.embed(text: query)
 
       similarity_search_by_vector(
         embedding: embedding,
@@ -105,7 +104,7 @@ module Langchain::Vectorsearch
 
       prompt = generate_prompt(question: question, context: context)
 
-      llm_client.chat(prompt: prompt)
+      llm.chat(prompt: prompt)
     end
   end
 end

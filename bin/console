@@ -12,48 +12,38 @@ require "langchain"
 require "dotenv/load"
 require "pry"
 
+
 weaviate = Langchain::Vectorsearch::Weaviate.new(
   url: ENV["WEAVIATE_URL"],
   api_key: ENV["WEAVIATE_API_KEY"],
   index_name: "",
-  llm: :openai,
-  llm_api_key: ENV["OPENAI_API_KEY"]
-  # llm: :cohere,
-  # llm_api_key: ENV["COHERE_API_KEY"]
+  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
 qdrant = Langchain::Vectorsearch::Qdrant.new(
   url: ENV["QDRANT_URL"],
   api_key: ENV["QDRANT_API_KEY"],
   index_name: "",
-  llm: :cohere,
-  llm_api_key: ENV["COHERE_API_KEY"]
-  # llm: :openai,
-  # llm_api_key: ENV["OPENAI_API_KEY"]
+  llm: Langchain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
 )
 
 milvus = Langchain::Vectorsearch::Milvus.new(
   url: ENV["MILVUS_URL"],
   index_name: "",
-  llm: :openai,
-  llm_api_key: ENV["OPENAI_API_KEY"]
+  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
 pinecone = Langchain::Vectorsearch::Pinecone.new(
   environment: ENV["PINECONE_ENVIRONMENT"],
   api_key: ENV["PINECONE_API_KEY"],
   index_name: "",
-  # llm: :cohere,
-  # llm_api_key: ENV["COHERE_API_KEY"]
-  llm: :openai,
-  llm_api_key: ENV["OPENAI_API_KEY"]
+  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
 chroma = Langchain::Vectorsearch::Chroma.new(
   url: ENV["CHROMA_URL"],
   index_name: "documents",
-  llm: :openai,
-  llm_api_key: ENV["OPENAI_API_KEY"]
+  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
 require "irb"

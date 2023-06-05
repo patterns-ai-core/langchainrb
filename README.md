@@ -47,8 +47,7 @@ Pick the vector search database you'll be using and instantiate the client:
 client = Langchain::Vectorsearch::Weaviate.new(
     url: ENV["WEAVIATE_URL"],
     api_key: ENV["WEAVIATE_API_KEY"],
-    llm: :openai, # or :cohere
-    llm_api_key: ENV["OPENAI_API_KEY"]
+    llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
 # You can instantiate any other supported vector search database:
@@ -151,6 +150,12 @@ Add `"google_palm_api", "~> 0.1.0"` to your Gemfile.
 google_palm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
 ```
 
+#### AI21
+Add `gem "ai21", "~> 0.2.0"` to your Gemfile.
+```ruby
+ai21 = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
+```
+
 ### Using Prompts 📋
 
 #### Prompt Templates
@@ -172,9 +177,9 @@ prompt.format(adjective: "funny", content: "chickens") # "Tell me a funny joke a
 Creating a PromptTemplate using just a prompt and no input_variables:
 
 ```ruby
-prompt = Langchain::Prompt::PromptTemplate.from_template("Tell me a {adjective} joke about {content}.")
-prompt.input_variables # ["adjective", "content"]
-prompt.format(adjective: "funny", content: "chickens") # "Tell me a funny joke about chickens."
+prompt = Langchain::Prompt::PromptTemplate.from_template("Tell me a funny joke about chickens.")
+prompt.input_variables # []
+prompt.format # "Tell me a funny joke about chickens."
 ```
 
 Save prompt template to JSON file:
@@ -244,7 +249,7 @@ Agents are semi-autonomous bots that can respond to user questions and use avail
 Add `gem "ruby-openai"`, `gem "eqn"`, and `gem "google_search_results"` to your Gemfile
 
 ```ruby
-agent = Langchain::Agent::ChainOfThoughtAgent.new(llm: :openai, llm_api_key: ENV["OPENAI_API_KEY"], tools: ['search', 'calculator'])
+agent = Langchain::Agent::ChainOfThoughtAgent.new(llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]), tools: ['search', 'calculator'])
 
 agent.tools
 # => ["search", "calculator"]
@@ -252,6 +257,19 @@ agent.tools
 ```ruby
 agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
 #=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
+```
+
+#### SQL-Query Agent
+
+Add `gem "sequel"` to your Gemfile
+
+```ruby
+agent = Langchain::Agent::SQLQueryAgent.new(llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]), db_connection_string: "postgres://user:password@localhost:5432/db_name")
+
+```
+```ruby
+agent.ask(question: "How many users have a name with length greater than 5 in the users table?")
+#=> "14 users have a name with length greater than 5 in the users table."
 ```
 
 #### Demo
@@ -264,6 +282,7 @@ agent.run(question: "How many full soccer fields would be needed to cover the di
 | Name         | Description                                        | ENV Requirements                                              | Gem Requirements                          |
 | ------------ | :------------------------------------------------: | :-----------------------------------------------------------: | :---------------------------------------: |
 | "calculator" | Useful for getting the result of a math expression |                                                               | `gem "eqn", "~> 1.6.5"`                   |
+| "database"   | Useful for querying a SQL database |                                                               | `gem "sequel", "~> 5.68.0"`                   |
 | "ruby_code_interpreter" | Interprets Ruby expressions             |                                                               | `gem "safe_ruby", "~> 1.0.4"`             |
 | "search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |
 | "wikipedia"  | Calls Wikipedia API to retrieve the summary        |                                                               | `gem "wikipedia-client", "~> 1.17.0"`     |
@@ -317,6 +336,9 @@ Langchain.logger.level = :info
 2. `cp .env.example .env`, then fill out the environment variables in `.env`
 3. `bundle exec rake` to ensure that the tests pass and to run standardrb
 4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
+
+## Community
+Join us in the [Ruby AI Builders](https://discord.gg/SBmjAnKT) Discord community in #langchainrb
 
 ## Core Contributors
 [<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://github.com/andreibondarev)
