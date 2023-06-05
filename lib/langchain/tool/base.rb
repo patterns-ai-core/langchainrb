@@ -15,7 +15,7 @@ module Langchain::Tool
       "Langchain::Tool::Calculator" => "calculator",
       "Langchain::Tool::SerpApi" => "search",
       "Langchain::Tool::Wikipedia" => "wikipedia",
-      "Langchain::Tool::Database" => "database",
+      "Langchain::Tool::Database" => "database"
     }
 
     def self.description(value)

@@ -82,7 +82,7 @@ module Langchain::Agent
     # @return [String] Prompt
     def create_prompt(question:, tools:)
       tool_list = tools.map do |tool|
-        tool_name = Langchain::Tool::Base::TOOLS[tool.class.to_s]
+        Langchain::Tool::Base::TOOLS[tool.class.to_s]
       end.join(", ")
 
       prompt_template.format(

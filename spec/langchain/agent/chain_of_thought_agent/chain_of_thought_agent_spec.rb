@@ -2,9 +2,9 @@
 
 RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
   subject {
-    calculator_tool = Langchain::Tool::Calculator.new()
+    calculator_tool = Langchain::Tool::Calculator.new
     sql_db_tool = Langchain::Tool::Database.new("mock:///")
-    search_tool = Langchain::Tool::SerpApi.new()
+    search_tool = Langchain::Tool::SerpApi.new
     described_class.new(
       llm: Langchain::LLM::OpenAI.new(api_key: "123"),
       tools: [calculator_tool, sql_db_tool, search_tool]
@@ -14,7 +14,7 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
   describe "#tools" do
     it "sets new tools" do
       expect(subject.tools.count).to eq(3)
-      subject.tools = [Langchain::Tool::Calculator.new()]
+      subject.tools = [Langchain::Tool::Calculator.new]
       expect(subject.tools.count).to eq(1)
     end
   end
