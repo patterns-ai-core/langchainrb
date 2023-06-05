@@ -32,7 +32,7 @@ module Langchain::Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
-    def add_texts(texts:)
+    def add_texts(texts:, uuid:,)
       objects = Array(texts).map do |text|
         {
           class: index_name,
@@ -42,7 +42,8 @@ module Langchain::Vectorsearch
       end
 
       client.objects.batch_create(
-        objects: objects
+        objects: objects,
+        uuid: uuid
       )
     end
 
