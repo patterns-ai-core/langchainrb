@@ -317,6 +317,7 @@ Langchain::Loader.load('https://www.example.com/file.pdf')
 | JSON   | Langchain::Processors::JSON  |                              |
 | JSONL  | Langchain::Processors::JSONL |                              |
 | csv    | Langchain::Processors::CSV   |                              |
+| xlsx   | Langchain::Processors::Xlsx  |   `gem "roo", "~> 2.10.0"`   |
 
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
