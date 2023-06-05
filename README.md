@@ -336,6 +336,7 @@ Langchain.logger.level = :info
 2. `cp .env.example .env`, then fill out the environment variables in `.env`
 3. `bundle exec rake` to ensure that the tests pass and to run standardrb
 4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
+5. Optionally, install lefthook git hooks for pre-commit to auto lint: `gem install lefthook && lefthook install -f`
 
 ## Community
 Join us in the [Ruby AI Builders](https://discord.gg/SBmjAnKT) Discord community in #langchainrb
