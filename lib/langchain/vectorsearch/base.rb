@@ -68,6 +68,7 @@ module Langchain::Vectorsearch
 
       texts =
         Array(paths)
+          .flatten
           .map { |path| Langchain::Loader.new(path)&.load&.value }
           .compact
 
