@@ -13,15 +13,15 @@ module Langchain::LLM
 
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "text-davinci-003",
-      chat_completion_model_name: "gpt-3.5-turbo",
-      embeddings_model_name: "text-embedding-ada-002",
+      completion_model_name: 'text-davinci-003',
+      chat_completion_model_name: 'gpt-3.5-turbo',
+      embeddings_model_name: 'text-embedding-ada-002',
       dimension: 1536
     }.freeze
 
     def initialize(api_key:, llm_options: {})
-      depends_on "ruby-openai"
-      require "openai"
+      depends_on 'ruby-openai'
+      require 'openai'
 
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
     end
@@ -33,12 +33,12 @@ module Langchain::LLM
     # @return [Array] The embedding
     #
     def embed(text:, **params)
-      parameters = {model: DEFAULTS[:embeddings_model_name], input: text}
+      parameters = { model: DEFAULTS[:embeddings_model_name], input: text }
 
       Langchain::Utils::TokenLengthValidator.validate!(text, parameters[:model])
 
       response = client.embeddings(parameters: parameters.merge(params))
-      response.dig("data").first.dig("embedding")
+      response.dig('data').first.dig('embedding')
     end
 
     #
@@ -55,7 +55,7 @@ module Langchain::LLM
       parameters[:prompt] = prompt
 
       response = client.completions(parameters: parameters)
-      response.dig("choices", 0, "text")
+      response.dig('choices', 0, 'text')
     end
 
     #
@@ -64,15 +64,29 @@ module Langchain::LLM
     # @param prompt [String] The prompt to generate a chat completion for
     # @return [String] The chat completion
     #
-    def chat(prompt:, **params)
+    # stream: Enable custom stream processing for chat, ex:
+    #
+    # content = ''
+    # llm_client.chat(prompt: prompt, stream: true) do |new_content|
+    #   content += new_content if new_content
+    #   ActionCable.server.broadcast('ChatChannel', content:)
+    # end
+    #
+    def chat(prompt:, stream: false, **params)
       parameters = compose_parameters DEFAULTS[:chat_completion_model_name], params
 
       Langchain::Utils::TokenLengthValidator.validate!(prompt, parameters[:model])
 
-      parameters[:messages] = [{role: "user", content: prompt}]
+      parameters[:messages] = [{ role: 'user', content: prompt }]
+
+      if stream
+        parameters[:stream] = proc do |chunk, _bytesize|
+          yield chunk.dig('choices', 0, 'delta', 'content') if block_given?
+        end
+      end
 
       response = client.chat(parameters: parameters)
-      response.dig("choices", 0, "message", "content")
+      response.dig('choices', 0, 'message', 'content') unless stream
     end
 
     #
@@ -83,7 +97,7 @@ module Langchain::LLM
     #
     def summarize(text:)
       prompt_template = Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/llm/prompts/summarize_template.json")
+        file_path: Langchain.root.join('langchain/llm/prompts/summarize_template.json')
       )
       prompt = prompt_template.format(text: text)
 
@@ -98,7 +112,7 @@ module Langchain::LLM
     private
 
     def compose_parameters(model, params)
-      default_params = {model: model, temperature: DEFAULTS[:temperature]}
+      default_params = { model: model, temperature: DEFAULTS[:temperature] }
 
       default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
 
