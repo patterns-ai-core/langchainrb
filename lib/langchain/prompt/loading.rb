@@ -3,6 +3,7 @@
 require "strscan"
 require "pathname"
 require "json"
+require "yaml"
 
 module Langchain::Prompt
   TYPE_TO_LOADER = {
