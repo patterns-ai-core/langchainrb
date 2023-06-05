@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.5.0] - 2023-06-05
+- [BREAKING] LLMs are now passed as objects to Vectorsearch classes instead of `llm: :name, llm_api_key:` previously
+- 📋 Prompts
+  - YAML prompt templates are now supported
+- 🚚 Loaders
+  - Introduce `Langchain::Processors::Xlsx` to parse .xlsx files
+
 ## [0.4.2] - 2023-06-03
 - 🗣️ LLMs
   - Introducing support for AI21
