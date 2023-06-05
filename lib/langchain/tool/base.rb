@@ -7,15 +7,15 @@ module Langchain::Tool
     # How to add additional Tools?
     # 1. Create a new file in lib/tool/your_tool_name.rb
     # 2. Add your tool to the TOOLS hash below
-    #   "your_tool_name" => "Tool::YourToolName"
+    #    "Tool::YourToolName" => "your_tool_name"
     # 3. Implement `self.execute(input:)` method in your tool class
     # 4. Add your tool to the README.md
 
     TOOLS = {
-      "calculator" => "Langchain::Tool::Calculator",
-      "search" => "Langchain::Tool::SerpApi",
-      "wikipedia" => "Langchain::Tool::Wikipedia",
-      "database" => "Langchain::Tool::Database"
+      "Langchain::Tool::Calculator" => "calculator",
+      "Langchain::Tool::SerpApi" => "search",
+      "Langchain::Tool::Wikipedia" => "wikipedia",
+      "Langchain::Tool::Database" => "database",
     }
 
     def self.description(value)
@@ -38,15 +38,15 @@ module Langchain::Tool
 
     #
     # Validates the list of strings (tools) are all supported or raises an error
-    # @param tools [Array<String>] list of tools to be used
+    # @param tools [Array<Langchain::Tool>] list of tools to be used
     #
     # @raise [ArgumentError] If any of the tools are not supported
     #
     def self.validate_tools!(tools:)
-      unrecognized_tools = tools - Langchain::Tool::Base::TOOLS.keys
-
-      if unrecognized_tools.any?
-        raise ArgumentError, "Unrecognized Tools: #{unrecognized_tools}"
+      tools.map(&:class).each do |tool_class|
+        unless TOOLS.include?(tool_class.name)
+          raise ArgumentError, "Tool not supported: #{tool_class.name}"
+        end
       end
     end
   end

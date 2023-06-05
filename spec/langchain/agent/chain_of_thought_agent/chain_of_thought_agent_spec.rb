@@ -2,16 +2,19 @@
 
 RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
   subject {
+    calculator_tool = Langchain::Tool::Calculator.new()
+    sql_db_tool = Langchain::Tool::Database.new("mock:///")
+    search_tool = Langchain::Tool::SerpApi.new()
     described_class.new(
       llm: Langchain::LLM::OpenAI.new(api_key: "123"),
-      tools: ["calculator", "search"]
+      tools: [calculator_tool, sql_db_tool, search_tool]
     )
   }
 
   describe "#tools" do
     it "sets new tools" do
-      expect(subject.tools.count).to eq(2)
-      subject.tools = ["calculator"]
+      expect(subject.tools.count).to eq(3)
+      subject.tools = [Langchain::Tool::Calculator.new()]
       expect(subject.tools.count).to eq(1)
     end
   end
@@ -80,13 +83,14 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
         Today is May 12, 2023 and you can use tools to get new information. Answer the following questions as best you can using the following tools:
 
         calculator: Useful for getting the result of a math expression.  The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.
+        database: Useful for getting the result of a database query.  The input to this tool should be valid SQL.
         search: A wrapper around Google Search.  Useful for when you need to answer questions about current events. Always one of the first options when you need to find information on internet.  Input should be a search query.
 
         Use the following format:
 
         Question: the input question you must answer
         Thought: you should always think about what to do
-        Action: the action to take, should be one of [calculator, search]
+        Action: the action to take, should be one of [calculator, database, search]
         Action Input: the input to the action
         Observation: the result of the action
         ... (this Thought/Action/Action Input/Observation can repeat N times)
