@@ -16,13 +16,6 @@ RSpec.describe Langchain::Prompt::Base do
       puts File.dirname(invalid_file_path)
     end
 
-    it "saves to a JSON file" do
-      subject.save(file_path: file_path)
-
-      expect(File.exist?(file_path)).to be_truthy
-      expect(File.read(file_path)).to eq(subject.to_h.to_json)
-    end
-
     it "raises an error for invalid file extension" do
       expect { subject.save(file_path: invalid_file_path) }.to raise_error(ArgumentError, /must be json/)
     end
@@ -32,6 +25,26 @@ RSpec.describe Langchain::Prompt::Base do
       subject.save(file_path: "#{non_existent_dir}/test_file.json")
       expect(File.exist?("#{non_existent_dir}/test_file.json")).to be_truthy
       expect(File.directory?(non_existent_dir)).to be_truthy
+    end
+
+    context "when .json file" do
+      it "saves to a JSON file" do
+        subject.save(file_path: file_path)
+
+        expect(File.exist?(file_path)).to be_truthy
+        expect(File.read(file_path)).to eq(subject.to_h.to_json)
+      end
+    end
+
+    context "when .yaml file" do
+      let(:file_path) { Tempfile.new(["test_file", ".yaml"]).path }
+
+      it "saves to a YAML file" do
+        subject.save(file_path: file_path)
+
+        expect(File.exist?(file_path)).to be_truthy
+        expect(File.read(file_path)).to eq(subject.to_h.to_yaml)
+      end
     end
   end
 
