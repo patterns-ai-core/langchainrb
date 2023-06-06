@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.5.1] - 2023-06-06
+- 🛠️ Tools
+  - Modified Tool usage. Agents now accept Tools instances instead of Tool strings.
+
 ## [0.5.0] - 2023-06-05
 - [BREAKING] LLMs are now passed as objects to Vectorsearch classes instead of `llm: :name, llm_api_key:` previously
 - 📋 Prompts
