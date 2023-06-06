@@ -7,7 +7,7 @@ module Langchain::Tool
     #
     # Gem requirements: gem "wikipedia-client", "~> 1.17.0"
     #
-
+    const_set(:NAME, 'wikipedia')
     description <<~DESC
       A wrapper around Wikipedia.
 

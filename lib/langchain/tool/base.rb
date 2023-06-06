@@ -6,17 +6,10 @@ module Langchain::Tool
 
     # How to add additional Tools?
     # 1. Create a new file in lib/tool/your_tool_name.rb
-    # 2. Add your tool to the TOOLS hash below
-    #    "Tool::YourToolName" => "your_tool_name"
-    # 3. Implement `self.execute(input:)` method in your tool class
-    # 4. Add your tool to the README.md
-
-    TOOLS = {
-      "Langchain::Tool::Calculator" => "calculator",
-      "Langchain::Tool::SerpApi" => "search",
-      "Langchain::Tool::Wikipedia" => "wikipedia",
-      "Langchain::Tool::Database" => "database"
-    }
+    # 2. Create a class in the file that inherits from Langchain::Tool::Base
+    # 3. Implement name and description in your tool class
+    # 4. Implement `self.execute(input:)` method in your tool class
+    # 5. Add your tool to the README.md
 
     def self.description(value)
       const_set(:DESCRIPTION, value.tr("\n", " ").strip)
@@ -37,16 +30,15 @@ module Langchain::Tool
     end
 
     #
-    # Validates the list of strings (tools) are all supported or raises an error
+    # Validates the list of tools or raises an error
     # @param tools [Array<Langchain::Tool>] list of tools to be used
     #
     # @raise [ArgumentError] If any of the tools are not supported
     #
     def self.validate_tools!(tools:)
-      tools.map(&:class).each do |tool_class|
-        unless TOOLS.include?(tool_class.name)
-          raise ArgumentError, "Tool not supported: #{tool_class.name}"
-        end
+      # Check if the count of tools equals the count of unique tools
+      if tools.count != tools.map{|tool| Langchain::Tool.const_get(tool.class.to_s).const_get(:NAME)}.uniq.count
+        raise ArgumentError, "You cannot use the same named tool twice"
       end
     end
   end

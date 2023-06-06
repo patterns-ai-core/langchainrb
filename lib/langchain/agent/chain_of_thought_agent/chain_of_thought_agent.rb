@@ -55,18 +55,19 @@ module Langchain::Agent
           # Find the input to the action in the "Action Input: [action_input]" format
           action_input = response.match(/Action Input: "?(.*)"?/)&.send(:[], -1)
 
-          # Retrieve the Tool::[ToolName] class and call `execute`` with action_input as the input
-          tool = Langchain::Tool.const_get(Langchain::Tool::Base::TOOLS.key(action.strip))
-          Langchain.logger.info("[#{self.class.name}]".red + ": Invoking \"#{tool}\" Tool with \"#{action_input}\"")
+          # Retrieve the Tool::[ToolName] class from tools with the name of the action
+          tool = tools.find { |tool| Langchain::Tool.const_get(tool.class.to_s).const_get(:NAME) == action.strip }
+          Langchain.logger.info("[#{self.class.name}]".red + ": Invoking \"#{tool.class.to_s}\" Tool with \"#{action_input}\"")
 
+          # Call `execute` with action_input as the input
           result = tool.execute(input: action_input)
 
           # Append the Observation to the prompt
           prompt += if prompt.end_with?("Observation:")
-            " #{result}\nThought:"
-          else
-            "\nObservation: #{result}\nThought:"
-          end
+                      " #{result}\nThought:"
+                    else
+                      "\nObservation: #{result}\nThought:"
+                    end
         else
           # Return the final answer
           break response.match(/Final Answer: (.*)/)&.send(:[], -1)
@@ -82,7 +83,7 @@ module Langchain::Agent
     # @return [String] Prompt
     def create_prompt(question:, tools:)
       tool_list = tools.map do |tool|
-        Langchain::Tool::Base::TOOLS[tool.class.to_s]
+        tool.class.const_get(:NAME)
       end.join(", ")
 
       prompt_template.format(
@@ -90,7 +91,7 @@ module Langchain::Agent
         question: question,
         tool_names: "[#{tool_list}]",
         tools: tools.map do |tool|
-          tool_name = Langchain::Tool::Base::TOOLS[tool.class.to_s]
+          tool_name = Langchain::Tool.const_get(tool.class.to_s).const_get(:NAME)
           tool_description = Langchain::Tool.const_get(tool.class.to_s).const_get(:DESCRIPTION)
           "#{tool_name}: #{tool_description}"
         end.join("\n")

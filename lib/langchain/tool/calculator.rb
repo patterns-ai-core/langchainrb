@@ -10,7 +10,7 @@ module Langchain::Tool
     #   gem "google_search_results", "~> 2.0.0"
     # ENV requirements: ENV["SERPAPI_API_KEY"]
     #
-
+    const_set(:NAME, 'calculator')
     description <<~DESC
       Useful for getting the result of a math expression.
 
@@ -33,6 +33,7 @@ module Langchain::Tool
     rescue Eqn::ParseError, Eqn::NoVariableValueError
       # Sometimes the input is not a pure math expression, e.g: "12F in Celsius"
       # We can use the google answer box to evaluate this expression
+      # TODO: SERP_API_KEY is now being passed into SerpApi constructor, so I think below line won't work as is
       hash_results = Langchain::Tool::SerpApi.execute_search(input: input)
       hash_results.dig(:answer_box, :to)
     end
