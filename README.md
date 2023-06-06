@@ -256,7 +256,7 @@ Agents are semi-autonomous bots that can respond to user questions and use avail
 Add `gem "ruby-openai"`, `gem "eqn"`, and `gem "google_search_results"` to your Gemfile
 
 ```ruby
-search_tool = Langchain::Tool::Search.new(api_key: ENV["GOOGLE_SEARCH_API_KEY"])
+search_tool = Langchain::Tool::SerpApi.new(api_key: ENV["SERPAPI_API_KEY"])
 calculator = Langchain::Tool::Calculator.new
 
 openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])

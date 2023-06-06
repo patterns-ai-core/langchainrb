@@ -56,7 +56,7 @@ module Langchain::Agent
           action_input = response.match(/Action Input: "?(.*)"?/)&.send(:[], -1)
 
           # Find the Tool and call `execute`` with action_input as the input
-          tool = tools.find { |tool| tool.class.const_get(:NAME) == action.strip }
+          tool = tools.find { |tool| tool.tool_name == action.strip }
           Langchain.logger.info("[#{self.class.name}]".red + ": Invoking \"#{tool.class}\" Tool with \"#{action_input}\"")
 
           # Call `execute` with action_input as the input
@@ -82,16 +82,14 @@ module Langchain::Agent
     # @param tools [Array] Tools to use
     # @return [String] Prompt
     def create_prompt(question:, tools:)
-      tool_list = tools.map do |tool|
-        tool.class.const_get(:NAME)
-      end.join(", ")
+      tool_list = tools.map(&:tool_name)
 
       prompt_template.format(
         date: Date.today.strftime("%B %d, %Y"),
         question: question,
-        tool_names: "[#{tool_list}]",
+        tool_names: "[#{tool_list.join(", ")}]",
         tools: tools.map do |tool|
-          tool_name = tool.class.const_get(:NAME)
+          tool_name = tool.tool_name
           tool_description = tool.class.const_get(:DESCRIPTION)
           "#{tool_name}: #{tool_description}"
         end.join("\n")

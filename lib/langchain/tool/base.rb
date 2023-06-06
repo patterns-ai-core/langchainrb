@@ -11,6 +11,20 @@ module Langchain::Tool
     # 4. Implement `execute(input:)` method in your tool class
     # 5. Add your tool to the README.md
 
+    #
+    # Returns the NAME constant of the tool
+    #
+    # @return [String] tool name
+    #
+    def tool_name
+      self.class.const_get(:NAME)
+    end
+
+    #
+    # Sets the DESCRIPTION constant of the tool
+    #
+    # @param value [String] tool description
+    #
     def self.description(value)
       const_set(:DESCRIPTION, value.tr("\n", " ").strip)
     end
@@ -43,7 +57,7 @@ module Langchain::Tool
     #
     def self.validate_tools!(tools:)
       # Check if the tool count is equal to unique tool count
-      if tools.count != tools.map { |tool| tool.class.const_get(:NAME) }.uniq.count
+      if tools.count != tools.map(&:tool_name).uniq.count
         raise ArgumentError, "Either tools are not unique or are conflicting with each other"
       end
     end

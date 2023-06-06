@@ -18,4 +18,10 @@ RSpec.describe Langchain::Tool::Calculator do
       subject.execute(input: "2+2")
     end
   end
+
+  describe "#tool_name" do
+    it "returns the tool name" do
+      expect(subject.tool_name).to eq("calculator")
+    end
+  end
 end
