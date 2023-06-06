@@ -1,20 +1,23 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
+  let(:calculator) { Langchain::Tool::Calculator.new }
+  let(:search) { Langchain::Tool::SerpApi.new(api_key: "123") }
+  let(:wikipedia) { Langchain::Tool::Wikipedia.new }
+
+  let(:openai) { Langchain::LLM::OpenAI.new(api_key: "123") }
+
   subject {
-    calculator_tool = Langchain::Tool::Calculator.new
-    sql_db_tool = Langchain::Tool::Database.new("mock:///")
-    search_tool = Langchain::Tool::SerpApi.new(api_key: "123")
     described_class.new(
-      llm: Langchain::LLM::OpenAI.new(api_key: "123"),
-      tools: [calculator_tool, sql_db_tool, search_tool]
+      llm: openai,
+      tools: [calculator, search]
     )
   }
 
   describe "#tools" do
     it "sets new tools" do
-      expect(subject.tools.count).to eq(3)
-      subject.tools = [Langchain::Tool::Calculator.new]
+      expect(subject.tools.count).to eq(2)
+      subject.tools = [wikipedia]
       expect(subject.tools.count).to eq(1)
     end
   end
@@ -33,39 +36,39 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
     let(:llm_first_response) { " I need to find the average temperature first\nAction: search\nAction Input: \"average temperature in Miami, FL in May\"\n" }
     let(:search_tool_response) { "May Weather in Miami Florida, United States. Daily high temperatures increase by 3°F, from 83°F to 86°F, rarely falling below 79°F or exceeding 90°F." }
     let(:llm_second_response) { " I need to calculate the square root of the average temperature\nAction: calculator\nAction Input: sqrt(83+86)/2\n\n" }
-    let(:calculator_tool_response) { 8.6 }
-    let(:llm_final_response) { " I now know the final answer\nFinal Answer: 8.6" }
+    let(:calculator_tool_response) { "8.6" }
+    let(:llm_final_response) { " I now know the final answer\nFinal Answer: #{calculator_tool_response}" }
 
     before do
-      allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
+      allow(subject.llm).to receive(:complete).with(
         prompt: original_prompt,
         stop_sequences: ["Observation:"],
         max_tokens: 500
       ).and_return(llm_first_response)
 
-      allow(Langchain::Tool::SerpApi).to receive(:execute).with(
+      allow(subject.tools[1]).to receive(:execute).with(
         input: "average temperature in Miami, FL in May\""
       ).and_return(search_tool_response)
 
-      allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
+      allow(subject.llm).to receive(:complete).with(
         prompt: updated_prompt,
         stop_sequences: ["Observation:"],
         max_tokens: 500
       ).and_return(llm_second_response)
 
-      allow(Langchain::Tool::Calculator).to receive(:execute).with(
+      allow(subject.tools[0]).to receive(:execute).with(
         input: "sqrt(83+86)/2"
       ).and_return(calculator_tool_response)
 
-      allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
+      allow(subject.llm).to receive(:complete).with(
         prompt: final_prompt,
         stop_sequences: ["Observation:"],
         max_tokens: 500
       ).and_return(llm_final_response)
     end
 
-    xit "runs the agent" do
-      subject.run(question: question)
+    it "runs the agent" do
+      expect(subject.run(question: question)).to eq(calculator_tool_response)
     end
   end
 
@@ -83,14 +86,13 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
         Today is May 12, 2023 and you can use tools to get new information. Answer the following questions as best you can using the following tools:
 
         calculator: Useful for getting the result of a math expression.  The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.
-        database: Useful for getting the result of a database query.  The input to this tool should be valid SQL.
         search: A wrapper around Google Search.  Useful for when you need to answer questions about current events. Always one of the first options when you need to find information on internet.  Input should be a search query.
 
         Use the following format:
 
         Question: the input question you must answer
         Thought: you should always think about what to do
-        Action: the action to take, should be one of [calculator, database, search]
+        Action: the action to take, should be one of [calculator, search]
         Action Input: the input to the action
         Observation: the result of the action
         ... (this Thought/Action/Action Input/Observation can repeat N times)

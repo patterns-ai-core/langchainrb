@@ -4,20 +4,24 @@ module Langchain::Agent
   class SQLQueryAgent < Base
     attr_reader :llm, :db, :schema
 
+    #
     # Initializes the Agent
     #
     # @param llm [Object] The LLM client to use
-    # @param db_connection_string [String] Database connection info
-    def initialize(llm:, db_connection_string:)
+    # @param db [Object] Database connection info
+    #
+    def initialize(llm:, db:)
       @llm = llm
-      @db = Langchain::Tool::Database.new(db_connection_string)
+      @db = db
       @schema = @db.schema
     end
 
+    #
     # Ask a question and get an answer
     #
     # @param question [String] Question to ask the LLM/Database
     # @return [String] Answer to the question
+    #
     def ask(question:)
       prompt = create_prompt_for_sql(question: question)
 

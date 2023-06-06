@@ -2,22 +2,20 @@
 
 RSpec.describe Langchain::Tool::Base do
   describe "#validate_tools!" do
+    let(:calculator_tool) { Langchain::Tool::Calculator.new }
+    let(:sql_db_tool) { Langchain::Tool::Database.new(connection_string: "mock:///") }
+    let(:search_tool) { Langchain::Tool::SerpApi.new(api_key: "123") }
+
     it "does not raise an error" do
-      calculator_tool = Langchain::Tool::Calculator.new
-      sql_db_tool = Langchain::Tool::Database.new("mock:///")
-      search_tool = Langchain::Tool::SerpApi.new(api_key: "123")
       expect {
         described_class.validate_tools!(tools: [calculator_tool, sql_db_tool, search_tool])
       }.not_to raise_error
     end
 
     it "does raise an error" do
-      # class Langchain::Tool::Magic8Ball < Langchain::Tool::Base
-      # end
-      # magic_8_ball = Langchain::Tool::Magic8Ball.new
-      # expect {
-      #   described_class.validate_tools!(tools: [magic_8_ball])
-      # }.to raise_error(ArgumentError, /Tool not supported/)
+      expect {
+        described_class.validate_tools!(tools: [calculator_tool, calculator_tool])
+      }.to raise_error(ArgumentError)
     end
   end
 
