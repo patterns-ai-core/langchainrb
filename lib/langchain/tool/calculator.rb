@@ -10,7 +10,9 @@ module Langchain::Tool
     #   gem "google_search_results", "~> 2.0.0"
     # ENV requirements: ENV["SERPAPI_API_KEY"]
     #
+
     NAME = "calculator"
+
     description <<~DESC
       Useful for getting the result of a math expression.
 
