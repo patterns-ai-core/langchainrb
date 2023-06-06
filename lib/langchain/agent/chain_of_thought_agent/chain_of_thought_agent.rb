@@ -56,7 +56,7 @@ module Langchain::Agent
           action_input = response.match(/Action Input: "?(.*)"?/)&.send(:[], -1)
 
           # Retrieve the Tool::[ToolName] class from tools with the name of the action
-          tool = tools.find { |tool| Langchain::Tool.const_get(tool.class.to_s).const_get(:NAME) == action.strip }
+          tool = tools.find { |tool| tool.class.const_get(:NAME) == action.strip }
           Langchain.logger.info("[#{self.class.name}]".red + ": Invoking \"#{tool.class}\" Tool with \"#{action_input}\"")
 
           # Call `execute` with action_input as the input
@@ -91,8 +91,8 @@ module Langchain::Agent
         question: question,
         tool_names: "[#{tool_list}]",
         tools: tools.map do |tool|
-          tool_name = Langchain::Tool.const_get(tool.class.to_s).const_get(:NAME)
-          tool_description = Langchain::Tool.const_get(tool.class.to_s).const_get(:DESCRIPTION)
+          tool_name = tool.class.const_get(:NAME)
+          tool_description = tool.class.const_get(:DESCRIPTION)
           "#{tool_name}: #{tool_description}"
         end.join("\n")
       )

@@ -5,7 +5,7 @@ module Langchain::Tool
     #
     # Gem requirements: gem "sequel", "~> 5.68.0"
     #
-    const_set(:NAME, "database")
+    NAME = "database"
     description <<~DESC
       Useful for getting the result of a database query.
 

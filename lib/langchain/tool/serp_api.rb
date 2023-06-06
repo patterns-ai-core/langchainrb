@@ -9,7 +9,7 @@ module Langchain::Tool
     #
     attr_reader :api_key
 
-    const_set(:NAME, "search")
+    NAME = "search"
     description <<~DESC
       A wrapper around Google Search.
 
