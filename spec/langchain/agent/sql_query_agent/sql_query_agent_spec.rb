@@ -6,7 +6,7 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
 
   subject { described_class.new(llm: openai, db: db) }
 
-  describe "#ask" do
+  describe "#run" do
     let(:question) { "What is the longest length name in the users table?" }
 
     let(:original_prompt) {
@@ -43,7 +43,7 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
     end
 
     it "runs the agent" do
-      expect(subject.ask(question: question)).to eq(llm_final_response)
+      expect(subject.run(question: question)).to eq(llm_final_response)
     end
   end
 

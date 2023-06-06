@@ -22,7 +22,7 @@ module Langchain::Agent
     # @param question [String] Question to ask the LLM/Database
     # @return [String] Answer to the question
     #
-    def ask(question:)
+    def run(question:)
       prompt = create_prompt_for_sql(question: question)
 
       # Get the SQL string to execute
