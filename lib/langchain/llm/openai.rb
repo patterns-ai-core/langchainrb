@@ -23,6 +23,8 @@ module Langchain::LLM
       depends_on "ruby-openai"
       require "openai"
 
+      # TODO: Add support for other models
+      @model_name = DEFAULTS[:completion_model_name]
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
     end
 

@@ -4,7 +4,7 @@ module Langchain::LLM
   class Base
     include Langchain::DependencyHelper
 
-    attr_reader :client
+    attr_reader :client, :model_name
 
     def default_dimension
       self.class.const_get(:DEFAULTS).dig(:dimension)

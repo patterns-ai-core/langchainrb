@@ -18,4 +18,21 @@ RSpec.describe Langchain::Utils::TokenLengthValidator do
       end
     end
   end
+
+  describe "#calculate_max_tokens" do
+    context "when the text is too long" do
+      it "returns the max tokens" do
+        expect(
+          described_class.calculate_max_tokens("lorem ipsum" * 9000, "text-davinci-003")
+        ).to eq(-40903)
+      end
+    end
+    context "when the text is not too long" do
+      it "returns the max tokens" do
+        expect(
+          described_class.calculate_max_tokens("lorem ipsum" * 100, "gpt-4")
+        ).to eq(7892)
+      end
+    end
+  end
 end

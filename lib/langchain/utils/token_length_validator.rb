@@ -52,6 +52,21 @@ module Langchain
 
         true
       end
+
+      #
+      # Calculate the maximum number of tokens for a given text and model name
+      # Does not raise an error if the text is too long
+      #
+      # @param text [String] The text to validate
+      # @param model_name [String] The model name to validate against
+      # @return [Integer] The maximum number of tokens
+      #
+      def self.calculate_max_tokens(text, model_name)
+        encoder = Tiktoken.encoding_for_model(model_name)
+        token_length = encoder.encode(text).length
+
+        TOKEN_LIMITS[model_name] - token_length
+      end
     end
   end
 end
