@@ -57,17 +57,17 @@ module Langchain::Agent
 
           # Retrieve the Tool::[ToolName] class from tools with the name of the action
           tool = tools.find { |tool| Langchain::Tool.const_get(tool.class.to_s).const_get(:NAME) == action.strip }
-          Langchain.logger.info("[#{self.class.name}]".red + ": Invoking \"#{tool.class.to_s}\" Tool with \"#{action_input}\"")
+          Langchain.logger.info("[#{self.class.name}]".red + ": Invoking \"#{tool.class}\" Tool with \"#{action_input}\"")
 
           # Call `execute` with action_input as the input
           result = tool.execute(input: action_input)
 
           # Append the Observation to the prompt
           prompt += if prompt.end_with?("Observation:")
-                      " #{result}\nThought:"
-                    else
-                      "\nObservation: #{result}\nThought:"
-                    end
+            " #{result}\nThought:"
+          else
+            "\nObservation: #{result}\nThought:"
+          end
         else
           # Return the final answer
           break response.match(/Final Answer: (.*)/)&.send(:[], -1)

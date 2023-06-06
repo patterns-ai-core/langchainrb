@@ -37,7 +37,7 @@ module Langchain::Tool
     #
     def self.validate_tools!(tools:)
       # Check if the count of tools equals the count of unique tools
-      if tools.count != tools.map{|tool| Langchain::Tool.const_get(tool.class.to_s).const_get(:NAME)}.uniq.count
+      if tools.count != tools.map { |tool| Langchain::Tool.const_get(tool.class.to_s).const_get(:NAME) }.uniq.count
         raise ArgumentError, "You cannot use the same named tool twice"
       end
     end
