@@ -256,7 +256,15 @@ Agents are semi-autonomous bots that can respond to user questions and use avail
 Add `gem "ruby-openai"`, `gem "eqn"`, and `gem "google_search_results"` to your Gemfile
 
 ```ruby
-agent = Langchain::Agent::ChainOfThoughtAgent.new(llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]), tools: ['search', 'calculator'])
+search_tool = Langchain::Tool::SerpApi.new(api_key: ENV["SERPAPI_API_KEY"])
+calculator = Langchain::Tool::Calculator.new
+
+openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+
+agent = Langchain::Agent::ChainOfThoughtAgent.new(
+  llm: openai,
+  tools: [search_tool, calculator]
+)
 
 agent.tools
 # => ["search", "calculator"]
@@ -271,7 +279,9 @@ agent.run(question: "How many full soccer fields would be needed to cover the di
 Add `gem "sequel"` to your Gemfile
 
 ```ruby
-agent = Langchain::Agent::SQLQueryAgent.new(llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]), db_connection_string: "postgres://user:password@localhost:5432/db_name")
+database = Langchain::Tool::Database.new(connection_string: "postgres://user:password@localhost:5432/db_name")
+
+agent = Langchain::Agent::SQLQueryAgent.new(llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]), tools: [database])
 
 ```
 ```ruby

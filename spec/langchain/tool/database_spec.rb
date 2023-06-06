@@ -3,9 +3,7 @@
 require "sequel"
 
 RSpec.describe Langchain::Tool::Database do
-  subject {
-    described_class.new("mock:///")
-  }
+  subject { described_class.new(connection_string: "mock:///") }
 
   describe "#execute" do
     before do
@@ -15,11 +13,11 @@ RSpec.describe Langchain::Tool::Database do
       rows2.push(job: "teacher", count: 5)
       rows2.push(job: "cook", count: 98)
 
-      allow_any_instance_of(Sequel::Database).to receive(:[])
+      allow(subject.db).to receive(:[])
         .with("SELECT max(salary), count(*) FROM users")
         .and_return(rows)
 
-      allow_any_instance_of(Sequel::Database).to receive(:[])
+      allow(subject.db).to receive(:[])
         .with("SELECT job, count(*) FROM users GROUP BY job")
         .and_return(rows2)
     end

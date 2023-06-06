@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Agent::SQLQueryAgent do
-  subject {
-    described_class.new(
-      llm: Langchain::LLM::OpenAI.new(api_key: "123"),
-      db_connection_string: "mock:///"
-    )
-  }
+  let(:db) { Langchain::Tool::Database.new(connection_string: "mock:///") }
+  let(:openai) { Langchain::LLM::OpenAI.new(api_key: "123") }
+
+  subject { described_class.new(llm: openai, db: db) }
 
   describe "#ask" do
     let(:question) { "What is the longest length name in the users table?" }
@@ -45,7 +43,7 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
     end
 
     it "runs the agent" do
-      subject.ask(question: question)
+      expect(subject.ask(question: question)).to eq(llm_final_response)
     end
   end
 

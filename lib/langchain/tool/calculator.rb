@@ -8,8 +8,9 @@ module Langchain::Tool
     # Gem requirements:
     #   gem "eqn", "~> 1.6.5"
     #   gem "google_search_results", "~> 2.0.0"
-    # ENV requirements: ENV["SERPAPI_API_KEY"]
     #
+
+    NAME = "calculator"
 
     description <<~DESC
       Useful for getting the result of a math expression.
@@ -33,7 +34,10 @@ module Langchain::Tool
     rescue Eqn::ParseError, Eqn::NoVariableValueError
       # Sometimes the input is not a pure math expression, e.g: "12F in Celsius"
       # We can use the google answer box to evaluate this expression
-      hash_results = Langchain::Tool::SerpApi.execute_search(input: input)
+      # TODO: Figure out to find a better way to evaluate these language expressions.
+      hash_results = Langchain::Tool::SerpApi
+        .new(api_key: ENV["SERPAPI_API_KEY"])
+        .execute_search(input: input)
       hash_results.dig(:answer_box, :to)
     end
   end
