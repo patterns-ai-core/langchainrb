@@ -3,6 +3,7 @@
 require "strscan"
 require "pathname"
 require "json"
+require "yaml"
 
 module Langchain::Prompt
   TYPE_TO_LOADER = {
@@ -23,8 +24,11 @@ module Langchain::Prompt
     def load_from_path(file_path:)
       file_path = file_path.is_a?(String) ? Pathname.new(file_path) : file_path
 
-      if file_path.extname == ".json"
+      case file_path.extname
+      when ".json"
         config = JSON.parse(File.read(file_path))
+      when ".yaml", ".yml"
+        config = YAML.safe_load(File.read(file_path))
       else
         raise ArgumentError, "Got unsupported file type #{file_path.extname}"
       end

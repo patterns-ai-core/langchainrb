@@ -1,0 +1,5 @@
+pre-commit:
+  commands:
+    lint:
+      run: standardrb --fix
+      stage_fixed: true

@@ -45,6 +45,7 @@ module Langchain
     autoload :JSONL, "langchain/processors/jsonl"
     autoload :PDF, "langchain/processors/pdf"
     autoload :Text, "langchain/processors/text"
+    autoload :Xlsx, "langchain/processors/xlsx"
   end
 
   module Utils
