@@ -285,7 +285,7 @@ agent = Langchain::Agent::SQLQueryAgent.new(llm: Langchain::LLM::OpenAI.new(api_
 
 ```
 ```ruby
-agent.ask(question: "How many users have a name with length greater than 5 in the users table?")
+agent.run(question: "How many users have a name with length greater than 5 in the users table?")
 #=> "14 users have a name with length greater than 5 in the users table."
 ```
 
