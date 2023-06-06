@@ -10,7 +10,7 @@ require "langchain"
 # (If you use this, don't forget to add pry to your Gemfile!)
 
 require "dotenv/load"
-require "pry"
+require "pry-byebug"
 
 
 weaviate = Langchain::Vectorsearch::Weaviate.new(
