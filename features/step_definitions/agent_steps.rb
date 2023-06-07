@@ -1,5 +1,4 @@
 Given("I want to know a difficult distance calculation") do
-  Langchain.logger.level = :info
   search_tool = Langchain::Tool::SerpApi.new(api_key: ENV["SERPAPI_API_KEY"])
   calculator = Langchain::Tool::Calculator.new
 
@@ -12,9 +11,10 @@ Given("I want to know a difficult distance calculation") do
 end
 
 When("I ask {string}") do |string|
-  @result = @agent.run(question: "#{string}")
+  @result = @agent.run(question: string.to_s)
 end
 
 Then("I should be told something like {string}") do |string|
+  # TODO: This is a bad test, but it's a start
   expect(@result).to start_with(string)
 end
