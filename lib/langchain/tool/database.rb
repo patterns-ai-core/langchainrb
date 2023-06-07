@@ -39,8 +39,24 @@ module Langchain::Tool
     # @return [String] schema
     #
     def schema
+      return if db.adapter_scheme == :mock
       Langchain.logger.info("[#{self.class.name}]".light_blue + ": Dumping schema")
-      db.dump_schema_migration(same_db: true, indexes: false) unless db.adapter_scheme == :mock
+
+      schema = ""
+      db.tables.each do |table|
+        schema << "CREATE TABLE #{table}(\n"
+        db.schema(table).each do |column|
+          schema << "#{column[0]} #{column[1][:type]}"
+          schema << " PRIMARY KEY" if column[1][:primary_key] == true
+          schema << "," unless column == db.schema(table).last
+          schema << "\n"
+        end
+        schema << ");\n"
+        db.foreign_key_list(table).each do |fk|
+          schema << "ALTER TABLE #{table} ADD FOREIGN KEY (#{fk[:columns][0]}) REFERENCES #{fk[:table]}(#{fk[:key][0]});\n"
+        end
+      end
+      schema
     end
 
     #
