@@ -7,12 +7,7 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
 
   let(:openai) { Langchain::LLM::OpenAI.new(api_key: "123") }
 
-  subject {
-    described_class.new(
-      llm: openai,
-      tools: [calculator, search]
-    )
-  }
+  subject { described_class.new(llm: openai, tools: [calculator, search]) }
 
   describe "#tools" do
     it "sets new tools" do
@@ -31,44 +26,56 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
         tools: subject.tools)
     }
     let(:updated_prompt) { original_prompt + llm_first_response + "\nObservation: #{search_tool_response}\nThought:" }
-    let(:final_prompt) { updated_prompt + llm_second_response + "\nObservation: #{calculator_tool_response}\nThought:" }
+    let(:updated_prompt_2) { updated_prompt + llm_second_response + "\nObservation: #{calculator_tool_response}\nThought:" }
+    let(:final_prompt) { updated_prompt_2 + llm_third_response + "\nObservation: #{calculator_tool_response_2}\nThought:" }
 
-    let(:llm_first_response) { " I need to find the average temperature first\nAction: search\nAction Input: \"average temperature in Miami, FL in May\"\n" }
-    let(:search_tool_response) { "May Weather in Miami Florida, United States. Daily high temperatures increase by 3°F, from 83°F to 86°F, rarely falling below 79°F or exceeding 90°F." }
-    let(:llm_second_response) { " I need to calculate the square root of the average temperature\nAction: calculator\nAction Input: sqrt(83+86)/2\n\n" }
-    let(:calculator_tool_response) { "8.6" }
-    let(:llm_final_response) { " I now know the final answer\nFinal Answer: #{calculator_tool_response}" }
+    let(:llm_first_response) { " I need to find the average temperature in Miami, Florida in May and then calculate the square root of that number.\nAction: search\nAction Input: average temperature in Miami, Florida in May" }
+    let(:search_tool_response) { "May Weather in Miami Florida, United States. Daily high temperatures increase by 3°F, from 83°F to 86°F, rarely falling below 79°F or exceeding 90° ..." }
+    let(:llm_second_response) { " I need to calculate the average temperature\nAction: calculator\nAction Input: (83+86+79+90)/4\n\n" }
+    let(:calculator_tool_response) { "84.5" }
+    let(:llm_third_response) { " I now have the average temperature and can calculate the square root\nAction: calculator\nAction Input: sqrt(84.5)\n\n" }
+    let(:calculator_tool_response_2) { "9.192388155425117" }
+
+    let(:final_answer) { "9.2" }
+
+    let(:llm_final_response) { " I now know the final answer\nFinal Answer: #{final_answer}" }
 
     before do
       allow(subject.llm).to receive(:complete).with(
         prompt: original_prompt,
-        stop_sequences: ["Observation:"],
-        max_tokens: 500
+        stop_sequences: ["Observation:"]
       ).and_return(llm_first_response)
 
       allow(subject.tools[1]).to receive(:execute).with(
-        input: "average temperature in Miami, FL in May\""
+        input: "average temperature in Miami, Florida in May"
       ).and_return(search_tool_response)
 
       allow(subject.llm).to receive(:complete).with(
         prompt: updated_prompt,
-        stop_sequences: ["Observation:"],
-        max_tokens: 500
+        stop_sequences: ["Observation:"]
       ).and_return(llm_second_response)
 
       allow(subject.tools[0]).to receive(:execute).with(
-        input: "sqrt(83+86)/2"
+        input: "(83+86+79+90)/4"
       ).and_return(calculator_tool_response)
 
       allow(subject.llm).to receive(:complete).with(
+        prompt: updated_prompt_2,
+        stop_sequences: ["Observation:"]
+      ).and_return(llm_third_response)
+
+      allow(subject.tools[0]).to receive(:execute).with(
+        input: "sqrt(84.5)"
+      ).and_return(calculator_tool_response_2)
+
+      allow(subject.llm).to receive(:complete).with(
         prompt: final_prompt,
-        stop_sequences: ["Observation:"],
-        max_tokens: 500
+        stop_sequences: ["Observation:"]
       ).and_return(llm_final_response)
     end
 
     it "runs the agent" do
-      expect(subject.run(question: question)).to eq(calculator_tool_response)
+      expect(subject.run(question: question)).to eq(final_answer)
     end
   end
 

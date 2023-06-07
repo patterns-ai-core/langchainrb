@@ -4,7 +4,7 @@ require "langchain"
 # or add `gem "chroma-db", "~> 0.3.0"` to your Gemfile
 
 # Instantiate the Chroma client
-chroma = Vectorsearch::Chroma.new(
+chroma = Langchain::Vectorsearch::Chroma.new(
   url: ENV["CHROMA_URL"],
   index_name: "documents",
   llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])

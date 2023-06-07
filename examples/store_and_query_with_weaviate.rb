@@ -4,7 +4,7 @@ require "langchain"
 # or add `gem "weaviate-ruby"` to your Gemfile
 
 # Instantiate the Weaviate client
-weaviate = Vectorsearch::Weaviate.new(
+weaviate = Langchain::Vectorsearch::Weaviate.new(
   url: ENV["WEAVIATE_URL"],
   api_key: ENV["WEAVIATE_API_KEY"],
   index_name: "Recipes",

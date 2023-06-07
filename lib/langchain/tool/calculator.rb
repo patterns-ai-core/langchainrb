@@ -38,7 +38,8 @@ module Langchain::Tool
       hash_results = Langchain::Tool::SerpApi
         .new(api_key: ENV["SERPAPI_API_KEY"])
         .execute_search(input: input)
-      hash_results.dig(:answer_box, :to)
+      hash_results.dig(:answer_box, :to) ||
+        hash_results.dig(:answer_box, :result)
     end
   end
 end

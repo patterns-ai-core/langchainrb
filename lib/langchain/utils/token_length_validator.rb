@@ -34,23 +34,50 @@ module Langchain
         "ada" => 2049
       }.freeze
 
+      # GOOGLE_PALM_TOKEN_LIMITS = {
+      #   "chat-bison-001" => {
+      #     "inputTokenLimit"=>4096,
+      #     "outputTokenLimit"=>1024
+      #   },
+      #   "text-bison-001" => {
+      #     "inputTokenLimit"=>8196,
+      #     "outputTokenLimit"=>1024
+      #   },
+      #   "embedding-gecko-001" => {
+      #     "inputTokenLimit"=>1024
+      #   }
+      # }.freeze
+
       #
-      # Validate the length of the text passed in to OpenAI's API
+      # Calculate the `max_tokens:` parameter to be set by calculating the context length of the text minus the prompt length
       #
       # @param text [String] The text to validate
       # @param model_name [String] The model name to validate against
-      # @return [Boolean] Whether the text is valid or not
+      # @return [Integer] Whether the text is valid or not
       # @raise [TokenLimitExceeded] If the text is too long
       #
-      def self.validate!(text, model_name)
-        encoder = Tiktoken.encoding_for_model(model_name)
-        token_length = encoder.encode(text).length
+      def self.validate_max_tokens!(text, model_name)
+        text_token_length = token_length(text, model_name)
+        max_tokens = TOKEN_LIMITS[model_name] - text_token_length
 
-        if token_length > TOKEN_LIMITS[model_name]
-          raise TokenLimitExceeded, "This model's maximum context length is #{TOKEN_LIMITS[model_name]} tokens, but the given text is #{token_length} tokens long."
+        # Raise an error even if whole prompt is equal to the model's token limit (max_tokens == 0) since not response will be returned
+        if max_tokens <= 0
+          raise TokenLimitExceeded, "This model's maximum context length is #{TOKEN_LIMITS[model_name]} tokens, but the given text is #{text_token_length} tokens long."
         end
 
-        true
+        max_tokens
+      end
+
+      #
+      # Calculate token length for a given text and model name
+      #
+      # @param text [String] The text to validate
+      # @param model_name [String] The model name to validate against
+      # @return [Integer] The token length of the text
+      #
+      def self.token_length(text, model_name)
+        encoder = Tiktoken.encoding_for_model(model_name)
+        encoder.encode(text).length
       end
     end
   end
