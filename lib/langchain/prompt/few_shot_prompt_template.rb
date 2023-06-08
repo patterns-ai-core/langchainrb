@@ -42,6 +42,7 @@ module Langchain::Prompt
   #     prompt.prefix # "Write antonyms for the following words."
   #
   # Loading a new prompt template using a YAML file:
+  #
   #     prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.yaml")
   #     prompt.input_variables #=> ["adjective", "content"]
   #
