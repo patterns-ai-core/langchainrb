@@ -1,4 +1,5 @@
 require "langchain"
+require "weaviate"
 
 # gem install weaviate-ruby
 # or add `gem "weaviate-ruby"` to your Gemfile
