@@ -281,8 +281,7 @@ Add `gem "sequel"` to your Gemfile
 ```ruby
 database = Langchain::Tool::Database.new(connection_string: "postgres://user:password@localhost:5432/db_name")
 
-agent = Langchain::Agent::SQLQueryAgent.new(llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]), tools: [database])
-
+agent = Langchain::Agent::SQLQueryAgent.new(llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]), db: database)
 ```
 ```ruby
 agent.run(question: "How many users have a name with length greater than 5 in the users table?")

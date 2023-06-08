@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.5.2] - 2023-06-07
+- 🗣️ LLMs
+  - Auto-calculate the max_tokens: setting to be passed on to OpenAI
+
 ## [0.5.1] - 2023-06-06
 - 🛠️ Tools
   - Modified Tool usage. Agents now accept Tools instances instead of Tool strings.

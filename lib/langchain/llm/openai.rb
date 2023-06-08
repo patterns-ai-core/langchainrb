@@ -35,7 +35,7 @@ module Langchain::LLM
     def embed(text:, **params)
       parameters = {model: DEFAULTS[:embeddings_model_name], input: text}
 
-      Langchain::Utils::TokenLengthValidator.validate!(text, parameters[:model])
+      Langchain::Utils::TokenLengthValidator.validate_max_tokens!(text, parameters[:model])
 
       response = client.embeddings(parameters: parameters.merge(params))
       response.dig("data").first.dig("embedding")
@@ -50,9 +50,8 @@ module Langchain::LLM
     def complete(prompt:, **params)
       parameters = compose_parameters DEFAULTS[:completion_model_name], params
 
-      Langchain::Utils::TokenLengthValidator.validate!(prompt, parameters[:model])
-
       parameters[:prompt] = prompt
+      parameters[:max_tokens] = Langchain::Utils::TokenLengthValidator.validate_max_tokens!(prompt, parameters[:model])
 
       response = client.completions(parameters: parameters)
       response.dig("choices", 0, "text")
@@ -67,9 +66,8 @@ module Langchain::LLM
     def chat(prompt:, **params)
       parameters = compose_parameters DEFAULTS[:chat_completion_model_name], params
 
-      Langchain::Utils::TokenLengthValidator.validate!(prompt, parameters[:model])
-
       parameters[:messages] = [{role: "user", content: prompt}]
+      parameters[:max_tokens] = Langchain::Utils::TokenLengthValidator.validate_max_tokens!(prompt, parameters[:model])
 
       response = client.chat(parameters: parameters)
       response.dig("choices", 0, "message", "content")
@@ -87,12 +85,7 @@ module Langchain::LLM
       )
       prompt = prompt_template.format(text: text)
 
-      complete(
-        prompt: prompt,
-        temperature: DEFAULTS[:temperature],
-        # Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
-        max_tokens: 2048
-      )
+      complete(prompt: prompt, temperature: DEFAULTS[:temperature])
     end
 
     private
