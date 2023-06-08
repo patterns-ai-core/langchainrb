@@ -1,7 +1,14 @@
-require "openai"
-require "weaviate"
+# frozen_string_literal: true
 
-RSpec.describe "Weaviate with OpenAI" do
+# execute with command:
+#   INTEGRATION=true bundle exec rspec spec/integration/weaviate_with_openai_integration_spec.rb
+#
+# requires the following environment variables:
+#   OPENAI_API_KEY
+#   WEAVIATE_URL
+#   WEAVIATE_API_KEY
+
+RSpec.describe "Weaviate with OpenAI", type: :integration do
   it "should return a reasonable result" do
     weaviate = Langchain::Vectorsearch::Weaviate.new(
       url: ENV["WEAVIATE_URL"],
@@ -24,9 +31,11 @@ RSpec.describe "Weaviate with OpenAI" do
     )
 
     # Query your data
-    weaviate.similarity_search(
+    result = weaviate.similarity_search(
       query: "chicken",
       k: 1
-    )
+    ).to_s
+
+    expect(result).to include("Heat oven to 190C")
   end
 end

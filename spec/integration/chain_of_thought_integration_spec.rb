@@ -1,25 +1,30 @@
 # frozen_string_literal: true
 
+# execute with command:
+#   INTEGRATION=true bundle exec rspec spec/integration/chain_of_thought_integration_spec.rb
+#
+# requires the following environment variables:
+#   SERPAPI_API_KEY
+#   OPENAI_API_KEY
+
 require "openai"
-require "eqn"
 require "google_search_results"
 
-RSpec.describe "Running Chain of Thought" do
-  describe "Multistep distance calculation" do
-    xit "should return a reasonable result" do
-      search_tool = Langchain::Tool::SerpApi.new(api_key: ENV["SERPAPI_API_KEY"])
-      calculator = Langchain::Tool::Calculator.new
+RSpec.describe "Chain of Thought integration with tools", type: :integration do
+  it "Should run with search and calculator" do
+    question = "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?"
 
-      openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+    search_tool = Langchain::Tool::SerpApi.new(api_key: ENV["SERPAPI_API_KEY"])
+    calculator = Langchain::Tool::Calculator.new
 
-      agent = Langchain::Agent::ChainOfThoughtAgent.new(
-        llm: openai,
-        tools: [search_tool, calculator]
-      )
+    openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 
-      result = agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
-      # TODO: This is a bad test, but it's a start
-      expect(result).to start_with("Approximately")
-    end
+    agent = Langchain::Agent::ChainOfThoughtAgent.new(
+      llm: openai,
+      tools: [search_tool, calculator]
+    )
+    result = agent.run(question:)
+
+    expect(result).to include("distance between NYC and DC")
   end
 end
