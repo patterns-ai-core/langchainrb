@@ -2,6 +2,7 @@
 
 module Langchain::Tool
   class Calculator < Base
+    attr_reader :llm
     #
     # A calculator tool that falls back to the Google calculator widget
     #
@@ -18,27 +19,50 @@ module Langchain::Tool
       The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.
     DESC
 
-    def initialize
+    def initialize(llm: nil)
       depends_on "eqn"
       require "eqn"
+
+      @llm = llm
     end
 
     # Evaluates a pure math expression or if equation contains non-math characters (e.g.: "12F in Celsius") then
-    # it uses the google search calculator to evaluate the expression
+    # it uses the llm to generate a math expression from the input and then evaluates it.
     # @param input [String] math expression
     # @return [String] Answer
-    def execute(input:)
+    def execute(input:, count: 0)
+      raise "Too many attempts" if count > 5
       Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing \"#{input}\"")
 
       Eqn::Calculator.calc(input)
-    rescue Eqn::ParseError, Eqn::NoVariableValueError
-      # Sometimes the input is not a pure math expression, e.g: "12F in Celsius"
-      # We can use the google answer box to evaluate this expression
-      # TODO: Figure out to find a better way to evaluate these language expressions.
-      hash_results = Langchain::Tool::SerpApi
-        .new(api_key: ENV["SERPAPI_API_KEY"])
-        .execute_search(input: input)
-      hash_results.dig(:answer_box, :to)
+    rescue Eqn::ParseError, Eqn::NoVariableValueError => e
+      if llm
+        output = llm.complete(
+          prompt: PROMPT_TEMPLATE % {question: input}
+        )
+        expression = output.strip.match(/```text(.*)```/m)[1].strip
+        execute(input: expression, count: count + 1)
+      else
+        raise e
+      end
     end
   end
 end
+
+PROMPT_TEMPLATE = "" "Translate a math problem into a expression that can be executed using Ruby's Eqn library. Use the output of running this code to answer the question.
+
+Question: ${{Question with math problem.}}
+```text
+${{single line mathematical expression that solves the problem}}
+```
+
+Begin.
+
+Question: What is 37593 * 67?
+
+```text
+37593 * 67
+```
+
+Question: %{question}
+" ""

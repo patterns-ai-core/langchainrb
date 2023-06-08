@@ -3,19 +3,21 @@
 require "eqn"
 
 RSpec.describe Langchain::Tool::Calculator do
+  subject {
+    llm = Langchain::LLM::OpenAI.new(api_key: "123")
+    described_class.new(llm: llm)
+  }
+
   describe "#execute" do
     it "calculates the result" do
       expect(subject.execute(input: "2+2")).to eq(4)
     end
 
-    it "calls Serp API when eqn throws an error" do
-      allow(Eqn::Calculator).to receive(:calc).and_raise(Eqn::ParseError)
+    it "calls the llm when eqn throws an error" do
+      allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete)
+          .and_return("```text\n2+2```")
 
-      allow_any_instance_of(Langchain::Tool::SerpApi).to receive(:execute_search)
-        .with(input: "2+2")
-        .and_return({answer_box: {to: 4}})
-
-      subject.execute(input: "2+2")
+      subject.execute(input: "what is 2+2?")
     end
   end
 
