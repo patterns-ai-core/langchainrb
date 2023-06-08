@@ -39,11 +39,8 @@ module Langchain::Agent
 
       loop do
         Langchain.logger.info("[#{self.class.name}]".red + ": Sending the prompt to the #{llm.class} LLM")
-        response = llm.complete(
-          prompt: prompt,
-          stop_sequences: ["Observation:"],
-          max_tokens: 500
-        )
+
+        response = llm.complete(prompt: prompt, stop_sequences: ["Observation:"])
 
         # Append the response to the prompt
         prompt += response

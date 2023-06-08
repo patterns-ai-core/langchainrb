@@ -94,7 +94,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with default parameters" do
       let(:parameters) do
-        {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0}}
+        {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0, max_tokens: 4095}}
       end
 
       it "returns a completion" do
@@ -104,7 +104,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {model: "text-curie-001", prompt: "Hello World", temperature: 1.0}}
+        {parameters: {model: "text-curie-001", prompt: "Hello World", temperature: 1.0, max_tokens: 2047}}
       end
 
       it "returns a completion" do
@@ -150,7 +150,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with default parameters" do
       let(:parameters) do
-        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo", temperature: 0.0}}
+        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo", temperature: 0.0, max_tokens: 4090}}
       end
 
       it "returns a chat message" do
@@ -160,7 +160,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo-0301", temperature: 0.75}}
+        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo-0301", temperature: 0.75, max_tokens: 4090}}
       end
 
       it "returns a chat message" do
