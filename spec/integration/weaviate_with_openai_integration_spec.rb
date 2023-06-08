@@ -9,7 +9,7 @@
 #   WEAVIATE_API_KEY
 
 RSpec.describe "Weaviate with OpenAI", type: :integration do
-  it "should return a reasonable result" do
+  it "Should run as expected" do
     weaviate = Langchain::Vectorsearch::Weaviate.new(
       url: ENV["WEAVIATE_URL"],
       api_key: ENV["WEAVIATE_API_KEY"],

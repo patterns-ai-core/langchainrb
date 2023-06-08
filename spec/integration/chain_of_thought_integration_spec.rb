@@ -7,10 +7,7 @@
 #   SERPAPI_API_KEY
 #   OPENAI_API_KEY
 
-require "openai"
-require "google_search_results"
-
-RSpec.describe "Chain of Thought integration with tools", type: :integration do
+RSpec.describe "Chain of Thought integration with other components", type: :integration do
   it "Should run with search and calculator" do
     question = "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?"
 
@@ -23,7 +20,7 @@ RSpec.describe "Chain of Thought integration with tools", type: :integration do
       llm: openai,
       tools: [search_tool, calculator]
     )
-    result = agent.run(question:)
+    result = agent.run(question: question)
 
     expect(result).to include("distance between NYC and DC")
   end
