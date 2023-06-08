@@ -3,6 +3,7 @@
 require "forwardable"
 
 module Langchain::Vectorsearch
+  # Vector database is a type of database that stores data as high-dimensional vectors, which are mathematical representations of features or attributes. Each vector has a certain number of dimensions, which can range from tens to thousands, depending on the complexity and granularity of the data.
   class Base
     include Langchain::DependencyHelper
     extend Forwardable
