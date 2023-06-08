@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 module Langchain::LLM
+  # LLM interface for OpenAI APIs: https://platform.openai.com/overview
+  #
+  # Gem requirements:
+  #    gem "ruby-openai", "~> 4.0.0"
+  #
+  # Usage:
+  #    openai = Langchain::LLM::OpenAI.new(api_key:, llm_options: {})
+  #
   class OpenAI < Base
-    #
-    # Wrapper around OpenAI APIs.
-    #
-    # Gem requirements: gem "ruby-openai", "~> 4.0.0"
-    #
-    # Usage:
-    # openai = Langchain::LLM::OpenAI.new(api_key:, llm_options: {})
-    #
 
     DEFAULTS = {
       temperature: 0.0,
@@ -30,6 +30,7 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
+    # @param params extra parameters passed to OpenAI::Client#embeddings
     # @return [Array] The embedding
     #
     def embed(text:, **params)
@@ -45,6 +46,7 @@ module Langchain::LLM
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
+    # @param params  extra parameters passed to OpenAI::Client#complete
     # @return [String] The completion
     #
     def complete(prompt:, **params)
@@ -61,6 +63,7 @@ module Langchain::LLM
     # Generate a chat completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a chat completion for
+    # @param params extra parameters passed to OpenAI::Client#chat
     # @return [String] The chat completion
     #
     def chat(prompt:, **params)

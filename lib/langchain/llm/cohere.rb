@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 module Langchain::LLM
+  #
+  # Wrapper around the Cohere API.
+  #
+  # Gem requirements:
+  #     gem "cohere-ruby", "~> 0.9.4"
+  #
+  # Usage:
+  #     cohere = Langchain::LLM::Cohere.new(api_key: "YOUR_API_KEY")
+  #
   class Cohere < Base
-    #
-    # Wrapper around the Cohere API.
-    #
-    # Gem requirements: gem "cohere-ruby", "~> 0.9.4"
-    #
-    # Usage:
-    # cohere = Langchain::LLM::Cohere.new(api_key: "YOUR_API_KEY")
-    #
-
     DEFAULTS = {
       temperature: 0.0,
       completion_model_name: "base",
@@ -43,6 +43,7 @@ module Langchain::LLM
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
+    # @param params[:stop_sequences]
     # @return [Hash] The completion
     #
     def complete(prompt:, **params)

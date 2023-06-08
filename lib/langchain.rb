@@ -8,8 +8,10 @@ require_relative "./langchain/version"
 
 module Langchain
   class << self
+    # @return [Logger]
     attr_accessor :logger
 
+    # @return [Pathname]
     attr_reader :root
   end
 
@@ -36,6 +38,7 @@ module Langchain
     autoload :Database, "langchain/tool/database"
   end
 
+  # Processors load and parse/process various data types such as CSVs, PDFs, Word documents, HTML pages, and others.
   module Processors
     autoload :Base, "langchain/processors/base"
     autoload :CSV, "langchain/processors/csv"
@@ -52,6 +55,7 @@ module Langchain
     autoload :TokenLengthValidator, "langchain/utils/token_length_validator"
   end
 
+  # Vector database is a type of database that stores data as high-dimensional vectors, which are mathematical representations of features or attributes. Each vector has a certain number of dimensions, which can range from tens to thousands, depending on the complexity and granularity of the data.
   module Vectorsearch
     autoload :Base, "langchain/vectorsearch/base"
     autoload :Chroma, "langchain/vectorsearch/chroma"
@@ -61,6 +65,7 @@ module Langchain
     autoload :Qdrant, "langchain/vectorsearch/qdrant"
     autoload :Weaviate, "langchain/vectorsearch/weaviate"
   end
+
 
   module LLM
     autoload :AI21, "langchain/llm/ai21"
@@ -72,6 +77,7 @@ module Langchain
     autoload :Replicate, "langchain/llm/replicate"
   end
 
+  # Prompts are structured inputs to the LLMs. Prompts provide instructions, context and other user input that LLMs use to generate responses.
   module Prompt
     require_relative "langchain/prompt/loading"
 

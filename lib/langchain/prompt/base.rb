@@ -5,15 +5,20 @@ require "json"
 require "yaml"
 
 module Langchain::Prompt
+  # Prompts are structured inputs to the LLMs. Prompts provide instructions, context and other user input that LLMs use to generate responses.
+  #
+  # @abstract
   class Base
     def format(**kwargs)
       raise NotImplementedError
     end
 
+    # @return [String] the type of the prompt
     def prompt_type
       raise NotImplementedError
     end
 
+    # @return [Hash] a hash representation of the prompt
     def to_h
       raise NotImplementedError
     end

@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
 module Langchain::LLM
+  #
+  # Wrapper around AI21 Studio APIs.
+  #
+  # Gem requirements: gem "ai21", "~> 0.2.0"
+  #
+  # Usage:
+  #     ai21 = Langchain::LLM::AI21.new(api_key:)
+  #
   class AI21 < Base
-    #
-    # Wrapper around AI21 Studio APIs.
-    #
-    # Gem requirements: gem "ai21", "~> 0.2.0"
-    #
-    # Usage:
-    # ai21 = Langchain::LLM::AI21.new(api_key:)
-    #
-
     def initialize(api_key:)
       depends_on "ai21"
       require "ai21"
