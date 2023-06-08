@@ -135,13 +135,13 @@ cohere.complete(prompt: "What is the meaning of life?")
 #### HuggingFace
 Add `gem "hugging-face", "~> 0.3.2"` to your Gemfile.
 ```ruby
-cohere = Langchain::LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
+hugging_face = Langchain::LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
 ```
 
 #### Replicate
 Add `gem "replicate-ruby", "~> 0.2.2"` to your Gemfile.
 ```ruby
-cohere = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
+replicate = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
 ```
 
 #### Google PaLM (Pathways Language Model)
