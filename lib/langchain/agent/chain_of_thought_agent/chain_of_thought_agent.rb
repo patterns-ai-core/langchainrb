@@ -1,6 +1,20 @@
 # frozen_string_literal: true
 
 module Langchain::Agent
+  # = Chain of Thought Agent
+  #
+  #     llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]) # or your choice of Langchain::LLM::Base implementation
+  #
+  #     agent = Langchain::Agent::ChainOfThoughtAgent.new(
+  #       llm: llm,
+  #       tools: ["search", "calculator", "wikipedia"]
+  #     )
+  #
+  #     agent.tools
+  #     # => ["search", "calculator", "wikipedia"]
+  #
+  #     agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
+  #     #=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
   class ChainOfThoughtAgent < Base
     attr_reader :llm, :tools
 
