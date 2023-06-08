@@ -41,6 +41,10 @@ module Langchain::Prompt
   #     prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/few_shot_prompt_template.json")
   #     prompt.prefix # "Write antonyms for the following words."
   #
+  # Loading a new prompt template using a YAML file:
+  #     prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.yaml")
+  #     prompt.input_variables #=> ["adjective", "content"]
+  #
   class FewShotPromptTemplate < Base
     attr_reader :examples, :example_prompt, :input_variables, :prefix, :suffix, :example_separator
 
