@@ -4,7 +4,8 @@ module Langchain::LLM
   #
   # Wrapper around AI21 Studio APIs.
   #
-  # Gem requirements: gem "ai21", "~> 0.2.0"
+  # Gem requirements:
+  #   gem "ai21", "~> 0.2.0"
   #
   # Usage:
   #     ai21 = Langchain::LLM::AI21.new(api_key:)
