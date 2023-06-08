@@ -27,6 +27,11 @@ module Langchain::Prompt
   #
   #     prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.json")
   #     prompt.input_variables # ["adjective", "content"]
+  #
+  # Loading a new prompt template using a YAML file:
+  #     prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.yaml")
+  #     prompt.input_variables #=> ["adjective", "content"]
+  #
   class PromptTemplate < Base
     attr_reader :template, :input_variables, :validate_template
 
