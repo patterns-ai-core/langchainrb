@@ -55,6 +55,7 @@ module Langchain
   module Vectorsearch
     autoload :Base, "langchain/vectorsearch/base"
     autoload :Chroma, "langchain/vectorsearch/chroma"
+    autoload :Hnswlib, "langchain/vectorsearch/hnswlib"
     autoload :Milvus, "langchain/vectorsearch/milvus"
     autoload :Pinecone, "langchain/vectorsearch/pinecone"
     autoload :Pgvector, "langchain/vectorsearch/pgvector"
