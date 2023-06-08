@@ -24,23 +24,24 @@ module Langchain::Vectorsearch
       depends_on "hnswlib"
       require "hnswlib"
 
-      @index = Hnswlib::HierarchicalNSW.new(space: DEFAULT_METRIC, dim: default_dimension)
-
       super(llm: llm)
+
+      @index = ::Hnswlib::HierarchicalNSW.new(space: DEFAULT_METRIC, dim: default_dimension)
+      @index.init_index(max_elements: 100_000)
     end
 
     #
     # Add a list of texts and corresponding IDs to the index
     #
     # @param texts [Array] The list of texts to add
-    # @param ids [Array] The list of corresponding IDs to the texts
+    # @param ids [Array] The list of corresponding IDs (integers) to the texts
     # @return [Boolean] The response from the HNSW library
     #
     def add_texts(texts:, ids:)
       Array(texts).each_with_index do |text, i|
         embedding = llm.embed(text: text)
 
-        index.add_point(embedding, ids: ids[i])
+        index.add_point(embedding, ids[i])
       end
     end
 
