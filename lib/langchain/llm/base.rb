@@ -4,7 +4,7 @@ module Langchain::LLM
   # A LLM is a language model consisting of a neural network with many parameters (typically billions of weights or more), trained on large quantities of unlabeled text using self-supervised learning or semi-supervised learning.
   #
   # Langchain.rb provides a common interface to interact with all supported LLMs:
-  # 
+  #
   # - {Langchain::LLM::AI21}
   # - {Langchain::LLM::Cohere}
   # - {Langchain::LLM::GooglePalm}

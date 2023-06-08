@@ -18,7 +18,6 @@ module Langchain::LLM
   #     )
   #
   class Replicate < Base
-
     DEFAULTS = {
       # TODO: Figure out how to send the temperature to the API
       temperature: 0.01, # Minimum accepted value

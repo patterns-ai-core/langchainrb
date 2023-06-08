@@ -2,7 +2,7 @@
 
 module Langchain::Prompt
   # = Few Shot Prompt Templates
-  # 
+  #
   # Create a prompt with a few shot examples:
   #
   #     prompt = Langchain::Prompt::FewShotPromptTemplate.new(
@@ -18,9 +18,9 @@ module Langchain::Prompt
   #       ],
   #        input_variables: ["adjective"]
   #     )
-  #     
+  #
   #     prompt.format(adjective: "good")
-  #     
+  #
   #     # Write antonyms for the following words.
   #     #
   #     # Input: happy
@@ -31,11 +31,11 @@ module Langchain::Prompt
   #     #
   #     # Input: good
   #     # Output:
-  # 
+  #
   # Save prompt template to JSON file:
   #
   #     prompt.save(file_path: "spec/fixtures/prompt/few_shot_prompt_template.json")
-  # 
+  #
   # Loading a new prompt template using a JSON file:
   #
   #     prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/few_shot_prompt_template.json")

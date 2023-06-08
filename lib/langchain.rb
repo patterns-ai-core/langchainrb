@@ -66,7 +66,6 @@ module Langchain
     autoload :Weaviate, "langchain/vectorsearch/weaviate"
   end
 
-
   module LLM
     autoload :AI21, "langchain/llm/ai21"
     autoload :Base, "langchain/llm/base"

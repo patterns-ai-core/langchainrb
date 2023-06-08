@@ -11,7 +11,6 @@ module Langchain::LLM
   #     google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")
   #
   class GooglePalm < Base
-
     DEFAULTS = {
       temperature: 0.0,
       dimension: 768 # This is what the `embedding-gecko-001` model generates

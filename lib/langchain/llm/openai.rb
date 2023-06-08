@@ -10,7 +10,6 @@ module Langchain::LLM
   #    openai = Langchain::LLM::OpenAI.new(api_key:, llm_options: {})
   #
   class OpenAI < Base
-
     DEFAULTS = {
       temperature: 0.0,
       completion_model_name: "text-davinci-003",
