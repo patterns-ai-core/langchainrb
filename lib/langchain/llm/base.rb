@@ -24,48 +24,36 @@ module Langchain::LLM
     end
 
     #
-    # Generate a chat completion for a given prompt
+    # Generate a chat completion for a given prompt. Parameters will depend on the LLM
     #
-    # @param prompt [String] The prompt to generate a chat completion for
-    # @param params parameters LLM-specific parameters (if any) for chat
-    # @return [String] The chat completion
     # @raise NotImplementedError if not supported by the LLM
-    #
-    def chat(prompt:, **params)
+    def chat(...)
       raise NotImplementedError, "#{self.class.name} does not support chat"
     end
 
     #
-    # Generate a completion for a given prompt
+    # Generate a completion for a given prompt. Parameters will depend on the LLM.
     #
-    # @param prompt [String] The prompt to generate a completion for
-    # @param params parameters LLM-specific parameters (if any) for complete
-    # @return [String] The completion
     # @raise NotImplementedError if not supported by the LLM
-    #
-    def complete(prompt:, **params)
+    def complete(...)
       raise NotImplementedError, "#{self.class.name} does not support completion"
     end
 
     #
-    # Generate an embedding for a given text
+    # Generate an embedding for a given text. Parameters depends on the LLM.
     #
-    # @param text [String] The text to generate an embedding for
-    # @param params parameters LLM-specific parameters (if any) for embed
     # @raise NotImplementedError if not supported by the LLM
     #
-    def embed(text:, **params)
+    def embed(...)
       raise NotImplementedError, "#{self.class.name} does not support generating embeddings"
     end
 
     #
-    # Generate a summary for a given text
+    # Generate a summary for a given text. Parameters depends on the LLM.
     #
-    # @param text [String] The text to generate a summary for
-    # @return [String] The summary
     # @raise NotImplementedError if not supported by the LLM
     #
-    def summarize(text:)
+    def summarize(...)
       raise NotImplementedError, "#{self.class.name} does not support summarization"
     end
   end
