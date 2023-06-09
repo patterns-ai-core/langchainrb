@@ -94,7 +94,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with default parameters" do
       let(:parameters) do
-        {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0, max_tokens: 4093}}
+        {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0, max_tokens: 4095}}
       end
 
       it "returns a completion" do
@@ -104,7 +104,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {model: "text-curie-001", prompt: "Hello World", temperature: 1.0, max_tokens: 2045}}
+        {parameters: {model: "text-curie-001", prompt: "Hello World", temperature: 1.0, max_tokens: 2047}}
       end
 
       it "returns a completion" do
