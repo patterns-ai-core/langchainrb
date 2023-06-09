@@ -61,13 +61,17 @@ module Langchain::LLM
     # Generate a chat completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a chat completion for
+    # @param messages [Array] The messages that have been sent in the conversation
     # @return [String] The chat completion
     #
-    def chat(prompt:, **params)
-      parameters = compose_parameters DEFAULTS[:chat_completion_model_name], params
+    def chat(prompt: "", messages: [], **params)
+      return if prompt.empty? && messages.empty?
 
-      parameters[:messages] = [{role: "user", content: prompt}]
-      parameters[:max_tokens] = Langchain::Utils::TokenLengthValidator.validate_max_tokens!(prompt, parameters[:model])
+      messages << {role: "user", content: prompt} if !prompt.empty?
+
+      parameters = compose_parameters DEFAULTS[:chat_completion_model_name], params
+      parameters[:messages] = messages
+      parameters[:max_tokens] = validate_max_tokens(messages, parameters[:model])
 
       response = client.chat(parameters: parameters)
       response.dig("choices", 0, "message", "content")
@@ -96,6 +100,10 @@ module Langchain::LLM
       default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
 
       default_params.merge(params)
+    end
+
+    def validate_max_tokens(messages, model)
+      Langchain::Utils::TokenLengthValidator.validate_max_tokens!(messages.map { |m| m[:content] }, model)
     end
   end
 end
