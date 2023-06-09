@@ -1,4 +1,4 @@
-🦜️🔗 LangChain.rb
+💎🔗 LangChain.rb
 ---
 ⚡ Building applications with LLMs through composability ⚡
 
@@ -6,7 +6,10 @@
 
 :warning: UNDER ACTIVE AND RAPID DEVELOPMENT (MAY BE BUGGY AND UNTESTED)
 
-![Tests status](https://github.com/andreibondarev/langchainrb/actions/workflows/ci.yml/badge.svg) [![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
+![Tests status](https://github.com/andreibondarev/langchainrb/actions/workflows/ci.yml/badge.svg)
+[![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
+[![Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/gems/langchainrb)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/andreibondarev/langchainrb/blob/main/LICENSE.txt)
 
 Langchain.rb is a library that's an abstraction layer on top many emergent AI, ML and other DS tools. The goal is to abstract complexity and difficult concepts to make building AI/ML-supercharged applications approachable for traditional software engineers.
 
