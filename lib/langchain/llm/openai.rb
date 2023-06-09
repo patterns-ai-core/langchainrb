@@ -65,7 +65,7 @@ module Langchain::LLM
     # @return [String] The chat completion
     #
     def chat(prompt: "", messages: [], **params)
-      return if prompt.empty? && messages.empty?
+      raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
 
       messages << {role: "user", content: prompt} if !prompt.empty?
 
