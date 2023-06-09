@@ -1,4 +1,4 @@
-🦜️🔗 LangChain.rb
+💎🔗 LangChain.rb
 ---
 ⚡ Building applications with LLMs through composability ⚡
 
@@ -6,7 +6,10 @@
 
 :warning: UNDER ACTIVE AND RAPID DEVELOPMENT (MAY BE BUGGY AND UNTESTED)
 
-![Tests status](https://github.com/andreibondarev/langchainrb/actions/workflows/ci.yml/badge.svg) [![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
+![Tests status](https://github.com/andreibondarev/langchainrb/actions/workflows/ci.yml/badge.svg)
+[![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
+[![Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/gems/langchainrb)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/andreibondarev/langchainrb/blob/main/LICENSE.txt)
 
 Langchain.rb is a library that's an abstraction layer on top many emergent AI, ML and other DS tools. The goal is to abstract complexity and difficult concepts to make building AI/ML-supercharged applications approachable for traditional software engineers.
 
@@ -33,6 +36,7 @@ require "langchain"
 | [Chroma](https://trychroma.com/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 | [Milvus](https://milvus.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 | [Pinecone](https://www.pinecone.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Pgvector](https://github.com/pgvector/pgvector) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 | [Qdrant](https://qdrant.tech/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 | [Weaviate](https://weaviate.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 
@@ -47,6 +51,7 @@ Pick the vector search database you'll be using and instantiate the client:
 client = Langchain::Vectorsearch::Weaviate.new(
     url: ENV["WEAVIATE_URL"],
     api_key: ENV["WEAVIATE_API_KEY"],
+    index: "",
     llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
@@ -55,6 +60,7 @@ client = Langchain::Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.0"`
 client = Langchain::Vectorsearch::Qdrant.new(...) # `gem"qdrant-ruby", "~> 0.9.0"`
 client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
 client = Langchain::Vectorsearch::Chroma.new(...) # `gem "chroma-db", "~> 0.3.0"`
+client = Langchain::Vectorsearch::Pgvector.new(...) # `gem "pgvector", "~> 0.2"`
 ```
 
 ```ruby
@@ -135,13 +141,13 @@ cohere.complete(prompt: "What is the meaning of life?")
 #### HuggingFace
 Add `gem "hugging-face", "~> 0.3.2"` to your Gemfile.
 ```ruby
-cohere = Langchain::LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
+hugging_face = Langchain::LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
 ```
 
 #### Replicate
 Add `gem "replicate-ruby", "~> 0.2.2"` to your Gemfile.
 ```ruby
-cohere = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
+replicate = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
 ```
 
 #### Google PaLM (Pathways Language Model)
