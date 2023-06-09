@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # execute with command:
-#   INTEGRATION=true bundle exec rspec spec/integration/chain_of_thought_integration_spec.rb
+#   INTEGRATION_TESTS_ENABLED=true bundle exec rspec spec/integration/chain_of_thought_integration_spec.rb
 #
 # requires the following environment variables:
 #   SERPAPI_API_KEY
