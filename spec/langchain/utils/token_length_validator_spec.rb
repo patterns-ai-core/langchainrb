@@ -30,7 +30,7 @@ RSpec.describe Langchain::Utils::TokenLengthValidator do
       end
     end
 
-    context 'with array argument' do
+    context "with array argument" do
       let(:content) { ["lorem ipsum" * 100, "lorem ipsum" * 100] }
       let(:model) { "gpt-4" }
 

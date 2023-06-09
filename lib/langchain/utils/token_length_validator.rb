@@ -51,7 +51,7 @@ module Langchain
       #
       # Calculate the `max_tokens:` parameter to be set by calculating the context length of the text minus the prompt length
       #
-      # @param text [String] The text to validate
+      # @param content [String | Array<String>] The text or array of texts to validate
       # @param model_name [String] The model name to validate against
       # @return [Integer] Whether the text is valid or not
       # @raise [TokenLimitExceeded] If the text is too long
