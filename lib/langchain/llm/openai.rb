@@ -103,7 +103,7 @@ module Langchain::LLM
     end
 
     def validate_max_tokens(messages, model)
-      Langchain::Utils::TokenLengthValidator.validate_max_tokens!(messages.map { |m| m[:content] }, model)
+      Langchain::Utils::TokenLengthValidator.validate_max_tokens!(messages, model)
     end
   end
 end

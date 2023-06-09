@@ -94,7 +94,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with default parameters" do
       let(:parameters) do
-        {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0, max_tokens: 4095}}
+        {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0, max_tokens: 4093}}
       end
 
       it "returns a completion" do
@@ -104,7 +104,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {model: "text-curie-001", prompt: "Hello World", temperature: 1.0, max_tokens: 2047}}
+        {parameters: {model: "text-curie-001", prompt: "Hello World", temperature: 1.0, max_tokens: 2045}}
       end
 
       it "returns a completion" do
@@ -151,7 +151,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with default parameters" do
       let(:parameters) do
-        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo", temperature: 0.0, max_tokens: 4090}}
+        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo", temperature: 0.0, max_tokens: 4082}}
       end
 
       it "sends prompt as message and returns a response message" do
@@ -161,7 +161,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo-0301", temperature: 0.75, max_tokens: 4090}}
+        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo-0301", temperature: 0.75, max_tokens: 4082}}
       end
 
       it "sends prompt as message and additional params and returns a response message" do
@@ -181,7 +181,7 @@ RSpec.describe Langchain::LLM::OpenAI do
             ],
             model: "gpt-3.5-turbo",
             temperature: 0.0,
-            max_tokens: 4077
+            max_tokens: 4045
           }
         }
       end

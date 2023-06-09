@@ -57,7 +57,7 @@ module Langchain
       # @raise [TokenLimitExceeded] If the text is too long
       #
       def self.validate_max_tokens!(content, model_name)
-        text_token_length = Array(content).sum { |text| token_length(text, model_name) }
+        text_token_length = Array(content).sum { |item| token_length(item.to_json, model_name) }
 
         max_tokens = TOKEN_LIMITS[model_name] - text_token_length
 

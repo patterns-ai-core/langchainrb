@@ -12,7 +12,7 @@ RSpec.describe Langchain::Utils::TokenLengthValidator do
         it "raises an error" do
           expect {
             subject
-          }.to raise_error(Langchain::Utils::TokenLimitExceeded, "This model's maximum context length is 4097 tokens, but the given text is 45000 tokens long.")
+          }.to raise_error(Langchain::Utils::TokenLimitExceeded, "This model's maximum context length is 4097 tokens, but the given text is 45002 tokens long.")
         end
       end
 
@@ -25,7 +25,7 @@ RSpec.describe Langchain::Utils::TokenLengthValidator do
         end
 
         it "returns the correct max_tokens" do
-          expect(described_class.validate_max_tokens!("lorem ipsum" * 100, "gpt-4")).to eq(7892)
+          expect(described_class.validate_max_tokens!("lorem ipsum" * 100, "gpt-4")).to eq(7890)
         end
       end
     end
@@ -36,7 +36,7 @@ RSpec.describe Langchain::Utils::TokenLengthValidator do
 
       context "when the text is not too long" do
         it "returns the correct max_tokens" do
-          expect(subject).to eq(7592)
+          expect(subject).to eq(7588)
         end
       end
     end
