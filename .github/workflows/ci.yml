@@ -61,4 +61,4 @@ jobs:
           bundler: default
           bundler-cache: true
       - name: Build docs
-        run: bundle exec rake yard
+        run: bundle exec yardoc
