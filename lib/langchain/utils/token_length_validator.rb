@@ -51,13 +51,18 @@ module Langchain
       #
       # Calculate the `max_tokens:` parameter to be set by calculating the context length of the text minus the prompt length
       #
-      # @param text [String] The text to validate
+      # @param content [String | Array<String>] The text or array of texts to validate
       # @param model_name [String] The model name to validate against
       # @return [Integer] Whether the text is valid or not
       # @raise [TokenLimitExceeded] If the text is too long
       #
-      def self.validate_max_tokens!(text, model_name)
-        text_token_length = token_length(text, model_name)
+      def self.validate_max_tokens!(content, model_name)
+        text_token_length = if content.is_a?(Array)
+          content.sum { |item| token_length(item.to_json, model_name) }
+        else
+          token_length(content, model_name)
+        end
+
         max_tokens = TOKEN_LIMITS[model_name] - text_token_length
 
         # Raise an error even if whole prompt is equal to the model's token limit (max_tokens == 0) since not response will be returned

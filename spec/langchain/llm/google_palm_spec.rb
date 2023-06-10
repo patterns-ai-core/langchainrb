@@ -31,22 +31,45 @@ RSpec.describe Langchain::LLM::GooglePalm do
     end
 
     it "returns a completion" do
-      expect(subject.complete(prompt: "Hello world")).to eq("A man walks into a library and asks for books about paranoia. The librarian whispers, \"They're right behind you!\"")
+      expect(subject.complete(prompt: completion)).to eq("A man walks into a library and asks for books about paranoia. The librarian whispers, \"They're right behind you!\"")
     end
   end
 
   describe "#chat" do
     let(:completion) { "Hey there! How are you?" }
-    let(:fixture) { File.read("spec/fixtures/llm/google_palm/chat.json") }
 
-    before do
-      allow(subject.client).to receive(:generate_chat_message).and_return(
-        JSON.parse(fixture)
-      )
+    context "when prompt is passed in" do
+      let(:fixture) { File.read("spec/fixtures/llm/google_palm/chat.json") }
+
+      before do
+        allow(subject.client).to receive(:generate_chat_message).and_return(
+          JSON.parse(fixture)
+        )
+      end
+
+      it "returns a message" do
+        expect(subject.chat(prompt: completion)).to eq("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?")
+      end
     end
 
-    it "returns a message" do
-      expect(subject.chat(prompt: "Hey there! How are you?")).to eq("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?")
+    context "when messages are passed in" do
+      let(:fixture) { File.read("spec/fixtures/llm/google_palm/chat_2.json") }
+
+      before do
+        allow(subject.client).to receive(:generate_chat_message).and_return(
+          JSON.parse(fixture)
+        )
+      end
+
+      it "returns a message" do
+        expect(
+          subject.chat(messages: [
+            {author: "0", content: completion},
+            {author: "1", content: "I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?"},
+            {author: "0", content: "I'm doing great. What are you up to?"}
+          ])
+        ).to eq("I am currently working on a project to help people with their tasks. I am also learning more about the world and how to interact with people. I am excited to be able to help people and to learn more about the world.\r\n\r\nWhat are you up to today?")
+      end
     end
   end
 

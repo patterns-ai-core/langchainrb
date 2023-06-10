@@ -1,22 +1,23 @@
 # frozen_string_literal: true
 
 module Langchain::LLM
+  #
+  # Wrapper around Replicate.com LLM provider
+  #
+  # Gem requirements:
+  #     gem "replicate-ruby", "~> 0.2.2"
+  #
+  # Use it directly:
+  #     replicate = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
+  #
+  # Or pass it to be used by a vector search DB:
+  #     chroma = Langchain::Vectorsearch::Chroma.new(
+  #       url: ENV["CHROMA_URL"],
+  #       index_name: "...",
+  #       llm: replicate
+  #     )
+  #
   class Replicate < Base
-    #
-    # Wrapper around Replicate.com LLM provider
-    #
-    # Gem requirements: gem "replicate-ruby", "~> 0.2.2"
-    #
-    # Use it directly:
-    # replicate = LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
-    #
-    # Or pass it to be instantiated by a vector search DB:
-    # chroma = Vectorsearch::Chroma.new(
-    #   url: ENV["CHROMA_URL"],
-    #   index_name: "...",
-    #   llm: Langchain::LLM::Replicate(api_key: ENV["REPLICATE_API_KEY"])
-    # )
-
     DEFAULTS = {
       # TODO: Figure out how to send the temperature to the API
       temperature: 0.01, # Minimum accepted value
