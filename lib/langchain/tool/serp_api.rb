@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 module Langchain::Tool
-  class SerpApi < Base
+  class Search < Base
     #
-    # Wrapper around SerpAPI
+    # Wrapper around Google Serp SPI
     #
     # Gem requirements: gem "google_search_results", "~> 2.0.0"
     #
     # Usage:
-    # search = Langchain::Tool::SerpApi.new(api_key: "YOUR_API_KEY")
+    # search = Langchain::Tool::Search.new(api_key: "YOUR_API_KEY")
     # search.execute(input: "What is the capital of France?")
     #
 
@@ -26,10 +26,10 @@ module Langchain::Tool
     attr_reader :api_key
 
     #
-    # Initializes the SerpAPI tool
+    # Initializes the Google Search tool
     #
-    # @param api_key [String] SerpAPI API key
-    # @return [Langchain::Tool::SerpApi] SerpAPI tool
+    # @param api_key [String] Search API key
+    # @return [Langchain::Tool::Search] Google search tool
     #
     def initialize(api_key:)
       depends_on "google_search_results"

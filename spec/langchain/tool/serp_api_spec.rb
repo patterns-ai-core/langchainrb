@@ -2,7 +2,7 @@
 
 require "google_search_results"
 
-RSpec.describe Langchain::Tool::SerpApi do
+RSpec.describe Langchain::Tool::Search do
   subject {
     described_class.new(api_key: "123")
   }
