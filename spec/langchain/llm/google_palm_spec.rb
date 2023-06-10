@@ -42,6 +42,10 @@ RSpec.describe Langchain::LLM::GooglePalm do
       let(:fixture) { File.read("spec/fixtures/llm/google_palm/chat.json") }
 
       before do
+        allow(subject.client).to receive(:count_message_tokens).and_return(
+          {"tokenCount" => 27}
+        )
+
         allow(subject.client).to receive(:generate_chat_message).and_return(
           JSON.parse(fixture)
         )
@@ -56,6 +60,18 @@ RSpec.describe Langchain::LLM::GooglePalm do
       let(:fixture) { File.read("spec/fixtures/llm/google_palm/chat_2.json") }
 
       before do
+        allow(subject.client).to receive(:count_message_tokens).and_return(
+          {"tokenCount" => 27}
+        )
+
+        allow(subject.client).to receive(:count_message_tokens).and_return(
+          {"tokenCount" => 56}
+        )
+
+        allow(subject.client).to receive(:count_message_tokens).and_return(
+          {"tokenCount" => 32}
+        )
+
         allow(subject.client).to receive(:generate_chat_message).and_return(
           JSON.parse(fixture)
         )
