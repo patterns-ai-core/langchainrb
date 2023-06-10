@@ -90,7 +90,7 @@ module Langchain::LLM
         examples: compose_examples(examples)
       }
 
-      Langchain::Utils::TokenLength::GooglePalmValidator.validate_max_tokens!(self, messages, "chat-bison-001")
+      Langchain::Utils::TokenLength::GooglePalmValidator.validate_max_tokens!(self, default_params[:messages], "chat-bison-001")
 
       if options[:stop_sequences]
         default_params[:stop] = options.delete(:stop_sequences)
