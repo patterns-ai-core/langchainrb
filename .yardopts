@@ -1,1 +1,0 @@
---fail-on-warning lib/**/*.rb - **/*.md examples/**/*.rb LICENSE.txt
