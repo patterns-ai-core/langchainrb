@@ -120,6 +120,7 @@ RSpec.describe Langchain::LLM::OpenAI do
   end
 
   describe "#chat" do
+    let(:prompt) { "Hello! How are you?" }
     let(:response) do
       {
         "id" => "chatcmpl-7Hcl1sXOtsaUBKJGGhNujEIwhauaD",
@@ -150,21 +151,69 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with default parameters" do
       let(:parameters) do
-        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo", temperature: 0.0, max_tokens: 4090}}
+        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo", temperature: 0.0, max_tokens: 4082}}
       end
 
-      it "returns a chat message" do
-        expect(subject.chat(prompt: "Hello! How are you?")).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+      it "sends prompt as message and returns a response message" do
+        expect(subject.chat(prompt: prompt)).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
       end
     end
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo-0301", temperature: 0.75, max_tokens: 4090}}
+        {parameters: {messages: [{content: "Hello! How are you?", role: "user"}], model: "gpt-3.5-turbo-0301", temperature: 0.75, max_tokens: 4082}}
       end
 
-      it "returns a chat message" do
-        expect(subject.chat(prompt: "Hello! How are you?", model: "gpt-3.5-turbo-0301", temperature: 0.75)).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+      it "sends prompt as message and additional params and returns a response message" do
+        expect(subject.chat(prompt: prompt, model: "gpt-3.5-turbo-0301", temperature: 0.75)).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+      end
+    end
+
+    context "with message history" do
+      let(:parameters) do
+        {
+          parameters: {
+            messages: [
+              {role: "system", content: "You are a chatbot"},
+              {role: "user", content: "Hello"},
+              {role: "assistant", content: "Hi. How can I assist you today?"},
+              {role: "user", content: "How are you?"}
+            ],
+            model: "gpt-3.5-turbo",
+            temperature: 0.0,
+            max_tokens: 4045
+          }
+        }
+      end
+
+      context "with prompt and messages" do
+        let(:prompt) { "How are you?" }
+        let(:messages) do
+          [
+            {role: "system", content: "You are a chatbot"},
+            {role: "user", content: "Hello"},
+            {role: "assistant", content: "Hi. How can I assist you today?"}
+          ]
+        end
+
+        it "combines prompt and messages and returns a response message" do
+          expect(subject.chat(prompt: prompt, messages: messages)).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+        end
+      end
+
+      context "with messages" do
+        let(:messages) do
+          [
+            {role: "system", content: "You are a chatbot"},
+            {role: "user", content: "Hello"},
+            {role: "assistant", content: "Hi. How can I assist you today?"},
+            {role: "user", content: "How are you?"}
+          ]
+        end
+
+        it "sends messages and returns a response message" do
+          expect(subject.chat(messages: messages)).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+        end
       end
     end
   end
