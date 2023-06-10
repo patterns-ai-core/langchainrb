@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.5.3)
+    langchainrb (0.5.4)
       colorize (~> 0.8.1)
       tiktoken_ruby (~> 0.0.5)
 
@@ -135,6 +135,7 @@ GEM
       activesupport (>= 3.0)
       graphql
     hashery (2.1.2)
+    hnswlib (0.8.1)
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
@@ -312,6 +313,7 @@ DEPENDENCIES
   eqn (~> 1.6.5)
   google_palm_api (~> 0.1.1)
   google_search_results (~> 2.0.0)
+  hnswlib (~> 0.8.1)
   hugging-face (~> 0.3.4)
   langchainrb!
   milvus (~> 0.9.0)
