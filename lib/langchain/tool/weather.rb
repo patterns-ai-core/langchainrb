@@ -41,22 +41,25 @@ module Langchain::Tool
     def execute(input:)
       Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing for \"#{input}\"")
 
+      city = input.split(", ").first
       if input.count(",") > 1
-        units = input.split(", ").last
         type = input.split(", ")[0..-2][1]
+        units = input.split(", ").last
       else
         type = input.split(", ").last
       end
 
       if type === "current"
-        data = client.current_weather(city: input.split(", ").first, units: units)
+        data = client.current_weather(city: city, units: units)
         weather = data.main.map { |key, value| "#{key} #{value}" }.join(", ")
         "The current weather in #{data.name} is #{weather}"
       elsif type === "forecast"
         # TODO: data = client.one_call(lat: 33.441792, lon: -94.037689) # => OpenWeather::Models::OneCall::Weather
+        Langchain.logger.warn("[#{self.class.name}]".light_blue + ": TODO: Implement forecast")
         "forecasts coming soon from this tool"
       else
-        # TODO: Do we support this? It's only available for paid OpenWeather accounts.
+        # TODO: Do we support 'historical'? It's only available for paid OpenWeather accounts.
+        Langchain.logger.info("[#{self.class.name}]".light_blue + ": #{type} not yet implemented by this tool")
         "#{type} not yet implemented by this tool"
       end
     end
