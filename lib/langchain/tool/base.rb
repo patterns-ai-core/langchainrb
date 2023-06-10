@@ -58,6 +58,15 @@ module Langchain::Tool
     end
 
     #
+    # Returns the DESCRIPTION constant of the tool
+    #
+    # @return [String] tool description
+    #
+    def tool_description
+      self.class.const_get(:DESCRIPTION)
+    end
+
+    #
     # Sets the DESCRIPTION constant of the tool
     #
     # @param value [String] tool description
