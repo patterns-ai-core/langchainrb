@@ -66,6 +66,7 @@ module Langchain::LLM
     # Generate a chat completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a chat completion for
+    # @param messages [Array] The messages that have been sent in the conversation
     # @return [String] The chat completion
     #
     def chat(prompt: "", messages: [], **params)
