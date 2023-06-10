@@ -63,7 +63,8 @@ module Langchain::Tool
         Langchain.logger.warn("[#{self.class.name}]".light_blue + ": TODO: Implement forecast")
         "forecasts coming soon from this tool"
       else
-        # TODO: Do we support 'historical' input type here? It is only available for paid OpenWeather accounts.
+        # TODO: Do we support 'historical' input type here? It is only available for paid OpenWeather accounts:
+        #       data = client.one_call(lat: 33.441792, lon: -94.037689, dt: Time.now - 24 * 60 * 60)
         Langchain.logger.info("[#{self.class.name}]".light_blue + ": #{type} not yet implemented by this tool")
         "#{type} not yet implemented by this tool"
       end
