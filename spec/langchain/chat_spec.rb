@@ -16,8 +16,8 @@ RSpec.describe Langchain::Chat do
   end
 
   describe "#add_examples" do
-    let(:examples1) { [{role: "user", content: "Hello"}, {role: "assistant", content: "Hi"}] }
-    let(:examples2) { [{role: "user", content: "How are you doing?"}, {role: "assistant", content: "I'm doing well. How about you?"}] }
+    let(:examples1) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
+    let(:examples2) { [{role: "user", content: "How are you doing?"}, {role: "ai", content: "I'm doing well. How about you?"}] }
 
     it "adds examples" do
       subject.add_examples(examples1)
@@ -31,15 +31,17 @@ RSpec.describe Langchain::Chat do
 
   describe "#message" do
     let(:context) { "You are a chatbot" }
-    let(:examples) { [{role: "user", content: "Hello"}, {role: "assistant", content: "Hi"}] }
+    let(:examples) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
     let(:prompt) { "How are you doing?" }
     let(:response) { "I'm doing well. How about you?" }
 
     context "with simple prompt" do
       it "messages the model and returns the response" do
-        expect(llm).to receive(:chat).with(messages: [
-          {role: "user", content: prompt}
-        ]).and_return(response)
+        expect(llm).to receive(:chat).with(
+          context: nil,
+          examples: [],
+          messages: [{role: "user", content: prompt}]
+        ).and_return(response)
 
         expect(subject.message(prompt)).to eq(response)
       end
@@ -51,10 +53,11 @@ RSpec.describe Langchain::Chat do
       end
 
       it "messages the model and returns the response" do
-        expect(llm).to receive(:chat).with(messages: [
-          {role: "system", content: context},
-          {role: "user", content: prompt}
-        ]).and_return(response)
+        expect(llm).to receive(:chat).with(
+          context: context,
+          examples: [],
+          messages: [{role: "user", content: prompt}]
+        ).and_return(response)
 
         expect(subject.message(prompt)).to eq(response)
       end
@@ -67,12 +70,16 @@ RSpec.describe Langchain::Chat do
       end
 
       it "messages the model and returns the response" do
-        expect(llm).to receive(:chat).with(messages: [
-          {role: "system", content: context},
-          {role: "user", content: "Hello"},
-          {role: "assistant", content: "Hi"},
-          {role: "user", content: prompt}
-        ]).and_return(response)
+        expect(llm).to receive(:chat).with(
+          context: context,
+          examples: [
+            {role: "user", content: "Hello"},
+            {role: "ai", content: "Hi"}
+          ],
+          messages: [
+            {role: "user", content: prompt}
+          ]
+        ).and_return(response)
 
         expect(subject.message(prompt)).to eq(response)
       end
