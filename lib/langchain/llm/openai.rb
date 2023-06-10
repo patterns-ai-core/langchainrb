@@ -35,7 +35,7 @@ module Langchain::LLM
     def embed(text:, **params)
       parameters = {model: DEFAULTS[:embeddings_model_name], input: text}
 
-      Langchain::Utils::TokenLengthValidator.validate_max_tokens!(text, parameters[:model])
+      Langchain::Utils::TokenLength::OpenAIValidator.validate_max_tokens!(text, parameters[:model])
 
       response = client.embeddings(parameters: parameters.merge(params))
       response.dig("data").first.dig("embedding")
@@ -52,7 +52,7 @@ module Langchain::LLM
       parameters = compose_parameters DEFAULTS[:completion_model_name], params
 
       parameters[:prompt] = prompt
-      parameters[:max_tokens] = Langchain::Utils::TokenLengthValidator.validate_max_tokens!(prompt, parameters[:model])
+      parameters[:max_tokens] = Langchain::Utils::TokenLength::OpenAIValidator.validate_max_tokens!(prompt, parameters[:model])
 
       response = client.completions(parameters: parameters)
       response.dig("choices", 0, "text")
@@ -105,7 +105,7 @@ module Langchain::LLM
     end
 
     def validate_max_tokens(messages, model)
-      Langchain::Utils::TokenLengthValidator.validate_max_tokens!(messages, model)
+      Langchain::Utils::TokenLength::OpenAIValidator.validate_max_tokens!(messages, model)
     end
   end
 end
