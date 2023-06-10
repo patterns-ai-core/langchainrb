@@ -103,6 +103,8 @@ module Langchain::LLM
       default_params.merge!(options)
 
       response = client.generate_chat_message(**default_params)
+      raise "GooglePalm API returned an error: #{response}" if response.dig("error")
+
       response.dig("candidates", 0, "content")
     end
 
@@ -145,8 +147,8 @@ module Langchain::LLM
     def compose_examples(examples)
       examples.each_slice(2).map do |example|
         {
-          input: { content: example[0] },
-          output: { content: example[1] },
+          input: { content: example.first[:content] },
+          output: { content: example.last[:content] },
         }
       end
     end
