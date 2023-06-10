@@ -27,34 +27,24 @@ module Langchain
     # @param message [String] The prompt to message the model with
     # @return [String] The response from the model
     def message(message)
-      build_history if @messages.empty?
       append_user_message(message)
-      response = llm_response
+      response = llm_response(message)
       append_ai_message(response)
       response
     end
 
     private
 
-    def llm_response
-      @llm.chat(messages: @messages)
-    end
-
-    def build_history
-      set_system_message(@context) if !!@context
-      @messages.concat @examples
+    def llm_response(prompt)
+      @llm.chat(messages: @messages, context: @context, examples: @examples)
     end
 
     def append_ai_message(message)
-      @messages << {role: "assistant", content: message}
+      @messages << {role: "ai", content: message}
     end
 
     def append_user_message(message)
       @messages << {role: "user", content: message}
-    end
-
-    def set_system_message(message)
-      @messages << {role: "system", content: message}
     end
   end
 end

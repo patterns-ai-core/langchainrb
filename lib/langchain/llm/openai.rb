@@ -63,19 +63,22 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a chat completion for
     # @param messages [Array] The messages that have been sent in the conversation
-    # @param params extra parameters passed to OpenAI::Client#chat
+    # @param context [String] The context of the conversation
+    # @param examples [Array] Examples of messages provide model with
+    # @param options extra parameters passed to OpenAI::Client#chat
     # @return [String] The chat completion
     #
-    def chat(prompt: "", messages: [], **params)
+    def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
 
-      messages << {role: "user", content: prompt} if !prompt.empty?
-
-      parameters = compose_parameters DEFAULTS[:chat_completion_model_name], params
-      parameters[:messages] = messages
-      parameters[:max_tokens] = validate_max_tokens(messages, parameters[:model])
+      parameters = compose_parameters DEFAULTS[:chat_completion_model_name], options
+      parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
+      parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
 
       response = client.chat(parameters: parameters)
+
+      raise "Chat completion failed: #{response}" if response.dig("error")
+
       response.dig("choices", 0, "message", "content")
     end
 
@@ -102,6 +105,38 @@ module Langchain::LLM
       default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
 
       default_params.merge(params)
+    end
+
+    def compose_chat_messages(prompt:, messages:, context:, examples:)
+      history = []
+
+      history.concat transform_messages(examples) unless examples.empty?
+
+      history.concat transform_messages(messages) unless messages.empty?
+
+      unless context.nil? || context.empty?
+        history.reject! { |message| message[:role] == "system" }
+        history.prepend({role: "system", content: context})
+      end
+
+      unless prompt.empty?
+        if history.last && history.last[:role] == "user"
+          history.last[:content] += "\n#{prompt}"
+        else
+          history.append({role: "user", content: prompt})
+        end
+      end
+
+      history
+    end
+
+    def transform_messages(messages)
+      messages.map do |message|
+        {
+          content: message[:content],
+          role: (message[:role] == "ai") ? "assistant" : message[:role]
+        }
+      end
     end
 
     def validate_max_tokens(messages, model)
