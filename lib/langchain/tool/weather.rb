@@ -54,7 +54,7 @@ module Langchain::Tool
         "The current weather in #{data.name} is #{weather}"
       elsif type === "forecast"
         # TODO: data = client.one_call(lat: 33.441792, lon: -94.037689) # => OpenWeather::Models::OneCall::Weather
-        "forcasts coming soon from this tool"
+        "forecasts coming soon from this tool"
       else
         # TODO: Do we support this? It's only available for paid OpenWeather accounts.
         "#{type} not yet implemented by this tool"

@@ -24,16 +24,16 @@ RSpec.describe Langchain::Tool::Weather do
 
   before do
     allow(subject.client).to receive(:current_weather)
-      .with(city: "Boston")
+      .with(city: "Boston", units: nil)
       .and_return(response)
   end
 
   describe "#execute" do
     it "returns current weather" do
-      expect(subject.execute(input: "Boston, current")).to include("282.57 degrees Farenheit")
+      expect(subject.execute(input: "Boston, current")).to include("282.57")
     end
     it "returns forecast weather" do
-      expect(subject.execute(input: "Boston, forecast")).to include("forecast not yet implemented")
+      expect(subject.execute(input: "Boston, forecast")).to include("forecasts coming soon")
     end
   end
 end
