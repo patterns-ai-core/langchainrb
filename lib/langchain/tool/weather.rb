@@ -9,6 +9,10 @@ module Langchain::Tool
     #   gem "open-weather-ruby-client", "~> 0.3.0"
     #   api_key: https://home.openweathermap.org/api_keys
     #
+    # Usage:
+    # weather = Langchain::Tool::Weather.new(api_key: "YOUR_API_KEY")
+    # weather.execute(input: "Boston, current, imperial")
+    #
 
     NAME = "weather"
 
@@ -36,7 +40,7 @@ module Langchain::Tool
     end
 
     # Returns weather for a city
-    # @param input [String] city + ',' + type of weather (current, forecast or historical) + unit (optional: imperial, metric, or standard)
+    # @param input [String] comma separated city, type of weather (current, forecast or historical), and unit (optional: imperial, metric, or standard)
     # @return [String] Answer
     def execute(input:)
       Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing for \"#{input}\"")
@@ -54,11 +58,12 @@ module Langchain::Tool
         weather = data.main.map { |key, value| "#{key} #{value}" }.join(", ")
         "The current weather in #{data.name} is #{weather}"
       elsif type === "forecast"
-        # TODO: data = client.one_call(lat: 33.441792, lon: -94.037689) # => OpenWeather::Models::OneCall::Weather
+        # TODO: Get city lat/lon from city name in order to get forecast using following example code:
+        #       data = client.one_call(lat: 33.441792, lon: -94.037689) # => OpenWeather::Models::OneCall::Weather
         Langchain.logger.warn("[#{self.class.name}]".light_blue + ": TODO: Implement forecast")
         "forecasts coming soon from this tool"
       else
-        # TODO: Do we support 'historical'? It's only available for paid OpenWeather accounts.
+        # TODO: Do we support 'historical' input type here? It is only available for paid OpenWeather accounts.
         Langchain.logger.info("[#{self.class.name}]".light_blue + ": #{type} not yet implemented by this tool")
         "#{type} not yet implemented by this tool"
       end
