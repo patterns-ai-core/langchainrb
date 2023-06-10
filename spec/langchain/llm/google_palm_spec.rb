@@ -38,6 +38,26 @@ RSpec.describe Langchain::LLM::GooglePalm do
   describe "#chat" do
     let(:completion) { "Hey there! How are you?" }
 
+    context "when prompt is too long" do
+      let(:fixture) { File.read("spec/fixtures/llm/google_palm/chat.json") }
+
+      before do
+        allow(subject.client).to receive(:count_message_tokens).and_return(
+          {"tokenCount" => 4000}
+        )
+
+        allow(subject.client).to receive(:generate_chat_message).and_return(
+          JSON.parse(fixture)
+        )
+      end
+
+      it "returns a message" do
+        expect {
+          subject.chat(prompt: completion)
+        }.to raise_error(Langchain::Utils::TokenLength::TokenLimitExceeded, "This model's maximum context length is 4000 tokens, but the given text is 4000 tokens long.")
+      end
+    end
+
     context "when prompt is passed in" do
       let(:fixture) { File.read("spec/fixtures/llm/google_palm/chat.json") }
 
