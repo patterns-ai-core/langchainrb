@@ -3,8 +3,6 @@
 module Langchain
   module Utils
     module TokenLength
-      class TokenLimitExceeded < StandardError; end
-
       #
       # This class is meant to validate the length of the text passed in to Google Palm's API.
       # It is used to validate the token length before the API call is made
