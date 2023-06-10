@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.5.4] - 2023-06-10
+- 🔍 Vectorsearch
+  - Introducing support for HNSWlib
+- Improved and new `Langchain::Chat` interface that persists chat history in memory
+
 ## [0.5.3] - 2023-06-09
 - 🗣️ LLMs
   - Chat message history support for Langchain::LLM::GooglePalm and Langchain::LLM::OpenAI
