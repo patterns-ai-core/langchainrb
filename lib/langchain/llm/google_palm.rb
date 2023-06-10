@@ -11,6 +11,15 @@ module Langchain::LLM
   #     google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")
   #
   class GooglePalm < Base
+    #
+    # Wrapper around the Google PaLM (Pathways Language Model) APIs.
+    #
+    # Gem requirements: gem "google_palm_api", "~> 0.1.1"
+    #
+    # Usage:
+    # google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")
+    #
+
     DEFAULTS = {
       temperature: 0.0,
       dimension: 768 # This is what the `embedding-gecko-001` model generates
@@ -67,14 +76,19 @@ module Langchain::LLM
     # Generate a chat completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a chat completion for
+    # @param messages [Array] The messages that have been sent in the conversation
     # @param params extra parameters passed to GooglePalmAPI::Client#generate_chat_message
     # @return [String] The chat completion
     #
-    def chat(prompt:, **params)
+    def chat(prompt: "", messages: [], **params)
+      raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
+
+      messages << {author: "0", content: prompt} if !prompt.empty?
+
       # TODO: Figure out how to introduce persisted conversations
       default_params = {
-        prompt: prompt,
-        temperature: DEFAULTS[:temperature]
+        temperature: DEFAULTS[:temperature],
+        messages: messages
       }
 
       if params[:stop_sequences]

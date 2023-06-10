@@ -151,7 +151,7 @@ replicate = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
 ```
 
 #### Google PaLM (Pathways Language Model)
-Add `"google_palm_api", "~> 0.1.0"` to your Gemfile.
+Add `"google_palm_api", "~> 0.1.1"` to your Gemfile.
 ```ruby
 google_palm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
 ```

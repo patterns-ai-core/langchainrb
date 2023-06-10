@@ -122,7 +122,7 @@ GEM
     faraday-retry (1.0.3)
     faraday_middleware (1.2.0)
       faraday (~> 1.0)
-    google_palm_api (0.1.0)
+    google_palm_api (0.1.1)
       faraday (>= 1.0.0)
       faraday_middleware (>= 1.0.0)
     google_search_results (2.0.1)
@@ -310,7 +310,7 @@ DEPENDENCIES
   docx (~> 0.8.0)
   dotenv-rails (~> 2.7.6)
   eqn (~> 1.6.5)
-  google_palm_api (~> 0.1.0)
+  google_palm_api (~> 0.1.1)
   google_search_results (~> 2.0.0)
   hugging-face (~> 0.3.4)
   langchainrb!
