@@ -64,9 +64,9 @@ RSpec.describe Langchain::LLM::GooglePalm do
       it "returns a message" do
         expect(
           subject.chat(messages: [
-            { author: "0", content: completion },
-            { author: "1", content: "I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?" },
-            { author: "0", content: "I'm doing great. What are you up to?" }
+            {author: "0", content: completion},
+            {author: "1", content: "I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?"},
+            {author: "0", content: "I'm doing great. What are you up to?"}
           ])
         ).to eq("I am currently working on a project to help people with their tasks. I am also learning more about the world and how to interact with people. I am excited to be able to help people and to learn more about the world.\r\n\r\nWhat are you up to today?")
       end
