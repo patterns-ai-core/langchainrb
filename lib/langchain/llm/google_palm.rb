@@ -80,28 +80,27 @@ module Langchain::LLM
     # @param params extra parameters passed to GooglePalmAPI::Client#generate_chat_message
     # @return [String] The chat completion
     #
-    def chat(prompt: "", messages: [], **params)
+    def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
 
-      messages << {author: "0", content: prompt} if !prompt.empty?
+      default_params = {
+        temperature: DEFAULTS[:temperature],
+        context: context,
+        messages: compose_chat_messages(prompt: prompt, messages: messages),
+        examples: compose_examples(examples)
+      }
 
       Langchain::Utils::TokenLength::GooglePalmValidator.validate_max_tokens!(self, messages, "chat-bison-001")
 
-      # TODO: Figure out how to introduce persisted conversations
-      default_params = {
-        temperature: DEFAULTS[:temperature],
-        messages: messages
-      }
-
-      if params[:stop_sequences]
-        default_params[:stop] = params.delete(:stop_sequences)
+      if options[:stop_sequences]
+        default_params[:stop] = options.delete(:stop_sequences)
       end
 
-      if params[:max_tokens]
-        default_params[:max_output_tokens] = params.delete(:max_tokens)
+      if options[:max_tokens]
+        default_params[:max_output_tokens] = options.delete(:max_tokens)
       end
 
-      default_params.merge!(params)
+      default_params.merge!(options)
 
       response = client.generate_chat_message(**default_params)
       response.dig("candidates", 0, "content")
@@ -125,6 +124,40 @@ module Langchain::LLM
         # Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
         max_tokens: 2048
       )
+    end
+
+    private
+
+    def compose_chat_messages(prompt:, messages:)
+      history = []
+      history.concat transform_messages(messages) unless messages.empty?
+
+      unless prompt.empty?
+        if history.last && history.last[:role] == "user"
+          history.last[:content] += "\n#{prompt}"
+        else
+          history.append({role: "user", content: prompt})
+        end
+      end
+      history
+    end
+
+    def compose_examples(examples)
+      examples.each_slice(2).map do |example|
+        {
+          input: { content: example[0] },
+          output: { content: example[1] },
+        }
+      end
+    end
+
+    def transform_messages(messages)
+      messages.map do |message|
+        {
+          author: message[:role],
+          content: message[:content]
+        }
+      end
     end
   end
 end
