@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.5.3] - 2023-06-09
+- 🗣️ LLMs
+  - Chat message history support for Langchain::LLM::GooglePalm and Langchain::LLM::OpenAI
+
 ## [0.5.2] - 2023-06-07
 - 🗣️ LLMs
   - Auto-calculate the max_tokens: setting to be passed on to OpenAI
