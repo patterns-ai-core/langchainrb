@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 module Langchain::LLM
+  #
+  # Wrapper around the Google PaLM (Pathways Language Model) APIs: https://ai.google/build/machine-learning/
+  #
+  # Gem requirements:
+  #     gem "google_palm_api", "~> 0.1.0"
+  #
+  # Usage:
+  #     google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")
+  #
   class GooglePalm < Base
     #
     # Wrapper around the Google PaLM (Pathways Language Model) APIs.
@@ -40,6 +49,7 @@ module Langchain::LLM
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
+    # @param params extra parameters passed to GooglePalmAPI::Client#generate_text
     # @return [String] The completion
     #
     def complete(prompt:, **params)
@@ -67,6 +77,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a chat completion for
     # @param messages [Array] The messages that have been sent in the conversation
+    # @param params extra parameters passed to GooglePalmAPI::Client#generate_chat_message
     # @return [String] The chat completion
     #
     def chat(prompt: "", messages: [], **params)

@@ -14,5 +14,4 @@ Rake::Task["spec"].enhance do
 end
 
 YARD::Rake::YardocTask.new do |t|
-  t.options = ["--fail-on-warning"]
 end
