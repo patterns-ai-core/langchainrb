@@ -85,6 +85,8 @@ module Langchain::LLM
 
       messages << {author: "0", content: prompt} if !prompt.empty?
 
+      Langchain::Utils::TokenLength::GooglePalmValidator.validate_max_tokens!(self, messages, "chat-bison-001")
+
       # TODO: Figure out how to introduce persisted conversations
       default_params = {
         temperature: DEFAULTS[:temperature],

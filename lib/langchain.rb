@@ -62,6 +62,7 @@ module Langchain
 
   autoload :Loader, "langchain/loader"
   autoload :Data, "langchain/data"
+  autoload :Chat, "langchain/chat"
   autoload :DependencyHelper, "langchain/dependency_helper"
 
   module Agent
@@ -92,7 +93,10 @@ module Langchain
   end
 
   module Utils
-    autoload :TokenLengthValidator, "langchain/utils/token_length_validator"
+    module TokenLength
+      autoload :OpenAIValidator, "langchain/utils/token_length/openai_validator"
+      autoload :GooglePalmValidator, "langchain/utils/token_length/google_palm_validator"
+    end
   end
 
   module Vectorsearch

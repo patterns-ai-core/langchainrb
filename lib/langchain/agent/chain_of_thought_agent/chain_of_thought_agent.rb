@@ -101,7 +101,7 @@ module Langchain::Agent
         tool_names: "[#{tool_list.join(", ")}]",
         tools: tools.map do |tool|
           tool_name = tool.tool_name
-          tool_description = tool.class.const_get(:DESCRIPTION)
+          tool_description = tool.tool_description
           "#{tool_name}: #{tool_description}"
         end.join("\n")
       )
