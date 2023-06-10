@@ -138,7 +138,7 @@ module Langchain::LLM
         if history.last && history.last[:role] == "user"
           history.last[:content] += "\n#{prompt}"
         else
-          history.append({role: "user", content: prompt})
+          history.append({author: "user", content: prompt})
         end
       end
       history
