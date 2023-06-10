@@ -45,13 +45,8 @@ module Langchain::Tool
     def execute(input:)
       Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing for \"#{input}\"")
 
-      city = input.split(", ").first
-      if input.count(",") > 1
-        type = input.split(", ")[0..-2][1]
-        units = input.split(", ").last
-      else
-        type = input.split(", ").last
-      end
+      input_array = input.split(",")
+      city, type, units = *input_array.map(&:strip)
 
       if type === "current"
         data = client.current_weather(city: city, units: units)
