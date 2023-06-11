@@ -16,19 +16,21 @@ module Langchain::Agent
   #     agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
   #     #=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
   class ChainOfThoughtAgent < Base
-    attr_reader :llm, :tools
+    attr_reader :llm, :tools, :max_iterations
 
     # Initializes the Agent
     #
     # @param llm [Object] The LLM client to use
     # @param tools [Array] The tools to use
+    # @param max_iterations [Integer] The maximum number of iterations to run
     # @return [ChainOfThoughtAgent] The Agent::ChainOfThoughtAgent instance
-    def initialize(llm:, tools: [])
+    def initialize(llm:, tools: [], max_iterations: 10)
       Langchain::Tool::Base.validate_tools!(tools: tools)
 
       @tools = tools
 
       @llm = llm
+      @max_iterations = max_iterations
     end
 
     # Validate tools when they're re-assigned
