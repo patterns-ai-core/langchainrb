@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Chat do
+RSpec.describe Langchain::Conversation do
   let(:llm) { double("Langchain::LLM::OpenaAI") }
 
   subject { described_class.new(llm: llm) }
