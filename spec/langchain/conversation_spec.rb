@@ -89,7 +89,7 @@ RSpec.describe Langchain::Conversation do
       subject { described_class.new(llm: llm, temperature: 0.7) }
 
       it "messages the model with passed options" do
-         expect(llm).to receive(:chat).with(
+        expect(llm).to receive(:chat).with(
           context: nil,
           examples: [],
           messages: [{role: "user", content: prompt}],
