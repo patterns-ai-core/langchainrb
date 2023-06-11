@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/andreibondarev/langchainrb"
   spec.metadata["changelog_uri"] = "https://github.com/andreibondarev/langchainrb/CHANGELOG.md"
+  spec.metadata["documentation_uri"] = "https://rubydoc.info/gems/langchainrb"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -48,6 +49,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "eqn", "~> 1.6.5"
   spec.add_development_dependency "google_palm_api", "~> 0.1.1"
   spec.add_development_dependency "google_search_results", "~> 2.0.0"
+  spec.add_development_dependency "hnswlib", "~> 0.8.1"
   spec.add_development_dependency "hugging-face", "~> 0.3.4"
   spec.add_development_dependency "milvus", "~> 0.9.0"
   spec.add_development_dependency "nokogiri", "~> 1.13"
