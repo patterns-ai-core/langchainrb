@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Langchain
-  class Chat
+  class Conversation
     attr_reader :context
 
     def initialize(llm:, **options)
