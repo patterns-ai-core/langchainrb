@@ -9,12 +9,12 @@ module Langchain::Tool
     # Forecast and historical data require registration with credit card, so not supported yet.
     #
     # Gem requirements:
-    #   gem "open-weather-ruby-client", "~> 0.3.0"
-    #   api_key: https://home.openweathermap.org/api_keys
+    #     gem "open-weather-ruby-client", "~> 0.3.0"
+    #     api_key: https://home.openweathermap.org/api_keys
     #
     # Usage:
-    # weather = Langchain::Tool::Weather.new(api_key: "YOUR_API_KEY")
-    # weather.execute(input: "Boston, imperial")
+    #     weather = Langchain::Tool::Weather.new(api_key: "YOUR_API_KEY")
+    #     weather.execute(input: "Boston, MA; imperial")
     #
 
     NAME = "weather"
@@ -22,10 +22,12 @@ module Langchain::Tool
     description <<~DESC
       Useful for getting current weather data
     
-      The input to this tool should be a city name followed optionally by the units (imperial, metric, or standard)
-      Example usage:
-        Action Input: Boston, imperial
-        Weather: The current weather in Boston is temp 52.47, feels_like 51.78, temp_min 48.56, temp_max 55.22, pressure 1006, humidity 93
+      The input to this tool should be a city name followed by the units (imperial, metric, or standard)
+      Usage:
+        Action Input: St Louis, Missouri; metric
+        Action Input: Boston, Massachusetts; imperial
+        Action Input: Dubai, AE; imperial
+        Action Input: Kiev, Ukraine; metric
     DESC
 
     attr_reader :client, :units
@@ -54,7 +56,7 @@ module Langchain::Tool
     def execute(input:)
       Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing for \"#{input}\"")
 
-      input_array = input.split(",")
+      input_array = input.split(";")
       city, units = *input_array.map(&:strip)
 
       data = client.current_weather(city: city, units: units)
