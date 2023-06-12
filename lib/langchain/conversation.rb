@@ -12,7 +12,7 @@ module Langchain
   #     chat.message("Tell me about future technologies")
   #
   # To stream the chat response:
-  #     chat = Langchain::Conversation.new(llm: llm, stream: true) do |chunk|
+  #     chat = Langchain::Conversation.new(llm: llm) do |chunk|
   #       print(chunk)
   #     end
   #
