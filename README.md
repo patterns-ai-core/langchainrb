@@ -309,7 +309,7 @@ agent.run(question: "How many users have a name with length greater than 5 in th
 | "database"   | Useful for querying a SQL database |                                                               | `gem "sequel", "~> 5.68.0"`                   |
 | "ruby_code_interpreter" | Interprets Ruby expressions             |                                                               | `gem "safe_ruby", "~> 1.0.4"`             |
 | "search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |
-| "weather"  | Calls Open Weather API to retrieve the current, forecast, and historical weather        |      `ENV["OPEN_WEATHER_API_KEY]` (https://home.openweathermap.org/api_keys)               | `gem "open-weather-ruby-client", "~> 0.3.0""`     |
+| "weather"  | Calls Open Weather API to retrieve the current, forecast, and historical weather        |      `ENV["OPEN_WEATHER_API_KEY]` (https://home.openweathermap.org/api_keys)               | `gem "open-weather-ruby-client", "~> 0.3.0" gem "geocoder", "~> 1.8.1"`    |
 | "wikipedia"  | Calls Wikipedia API to retrieve the summary        |                                                               | `gem "wikipedia-client", "~> 1.17.0"`     |
 
 #### Loaders 🚚
