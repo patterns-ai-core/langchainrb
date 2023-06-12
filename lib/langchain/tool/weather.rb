@@ -83,10 +83,11 @@ module Langchain::Tool
 
       elsif type === "forecast"
         results = Geocoder.search(city)
-        data = client.one_call(lat: results[0], lon: results[1], units: units, exclude: ["minutely", "hourly"])
+        data = client.one_call(lat: results[0].data["lat"], lon: results[0].data["lon"], units: units, exclude: ["minutely", "hourly"])
         temp = data.daily.first.temp.day
         weather_desc = data.daily.first.weather.first.description
         "The forecast weather for is temperature #{temp} #{weather_desc}"
+
       else
         Langchain.logger.info("[#{self.class.name}]".light_blue + ": #{type} not yet implemented by this tool")
         "#{type} not yet implemented by this tool"
