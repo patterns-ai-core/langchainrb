@@ -1,17 +1,18 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
-  subject {
-    described_class.new(
-      llm: Langchain::LLM::OpenAI.new(api_key: "123"),
-      tools: ["calculator", "search"]
-    )
-  }
+  let(:calculator) { Langchain::Tool::Calculator.new }
+  let(:search) { Langchain::Tool::SerpApi.new(api_key: "123") }
+  let(:wikipedia) { Langchain::Tool::Wikipedia.new }
+
+  let(:openai) { Langchain::LLM::OpenAI.new(api_key: "123") }
+
+  subject { described_class.new(llm: openai, tools: [calculator, search]) }
 
   describe "#tools" do
     it "sets new tools" do
       expect(subject.tools.count).to eq(2)
-      subject.tools = ["calculator"]
+      subject.tools = [wikipedia]
       expect(subject.tools.count).to eq(1)
     end
   end
@@ -19,50 +20,61 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
   describe "#run" do
     let(:question) { "What is the square root of the average temperature in Miami, Florida in May?" }
 
-    let(:original_prompt) {
+    let(:first_prompt) {
       subject.send(:create_prompt,
         question: question,
         tools: subject.tools)
     }
-    let(:updated_prompt) { original_prompt + llm_first_response + "\nObservation: #{search_tool_response}\nThought:" }
-    let(:final_prompt) { updated_prompt + llm_second_response + "\nObservation: #{calculator_tool_response}\nThought:" }
+    let(:second_prompt) { first_prompt + first_response + "\nObservation: #{search_response}\nThought:" }
+    let(:third_prompt) { second_prompt + second_response + "\nObservation: #{calculator_response}\nThought:" }
+    let(:final_prompt) { third_prompt + third_response + "\nObservation: #{calculator_response_2}\nThought:" }
 
-    let(:llm_first_response) { " I need to find the average temperature first\nAction: search\nAction Input: \"average temperature in Miami, FL in May\"\n" }
-    let(:search_tool_response) { "May Weather in Miami Florida, United States. Daily high temperatures increase by 3°F, from 83°F to 86°F, rarely falling below 79°F or exceeding 90°F." }
-    let(:llm_second_response) { " I need to calculate the square root of the average temperature\nAction: calculator\nAction Input: sqrt(83+86)/2\n\n" }
-    let(:calculator_tool_response) { 8.6 }
-    let(:llm_final_response) { " I now know the final answer\nFinal Answer: 8.6" }
+    let(:first_response) { " I need to find the average temperature in Miami, Florida in May and then calculate the square root of that number.\nAction: search\nAction Input: average temperature in Miami, Florida in May" }
+    let(:search_response) { "May Weather in Miami Florida, United States. Daily high temperatures increase by 3°F, from 83°F to 86°F, rarely falling below 79°F or exceeding 90° ..." }
+    let(:second_response) { " I need to calculate the average temperature\nAction: calculator\nAction Input: (83+86+79+90)/4\n\n" }
+    let(:calculator_response) { "84.5" }
+    let(:third_response) { " I now have the average temperature and can calculate the square root\nAction: calculator\nAction Input: sqrt(84.5)\n\n" }
+    let(:calculator_response_2) { "9.192388155425117" }
+
+    let(:final_answer) { "9.2" }
+    let(:final_response) { " I now know the final answer\nFinal Answer: #{final_answer}" }
 
     before do
-      allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
-        prompt: original_prompt,
-        stop_sequences: ["Observation:"],
-        max_tokens: 500
-      ).and_return(llm_first_response)
+      allow(subject.llm).to receive(:complete).with(
+        prompt: first_prompt,
+        stop_sequences: ["Observation:"]
+      ).and_return(first_response)
 
-      allow(Langchain::Tool::SerpApi).to receive(:execute).with(
-        input: "average temperature in Miami, FL in May\""
-      ).and_return(search_tool_response)
+      allow(subject.tools[1]).to receive(:execute).with(
+        input: "average temperature in Miami, Florida in May"
+      ).and_return(search_response)
 
-      allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
-        prompt: updated_prompt,
-        stop_sequences: ["Observation:"],
-        max_tokens: 500
-      ).and_return(llm_second_response)
+      allow(subject.llm).to receive(:complete).with(
+        prompt: second_prompt,
+        stop_sequences: ["Observation:"]
+      ).and_return(second_response)
 
-      allow(Langchain::Tool::Calculator).to receive(:execute).with(
-        input: "sqrt(83+86)/2"
-      ).and_return(calculator_tool_response)
+      allow(subject.tools[0]).to receive(:execute).with(
+        input: "(83+86+79+90)/4"
+      ).and_return(calculator_response)
 
-      allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).with(
+      allow(subject.llm).to receive(:complete).with(
+        prompt: third_prompt,
+        stop_sequences: ["Observation:"]
+      ).and_return(third_response)
+
+      allow(subject.tools[0]).to receive(:execute).with(
+        input: "sqrt(84.5)"
+      ).and_return(calculator_response_2)
+
+      allow(subject.llm).to receive(:complete).with(
         prompt: final_prompt,
-        stop_sequences: ["Observation:"],
-        max_tokens: 500
-      ).and_return(llm_final_response)
+        stop_sequences: ["Observation:"]
+      ).and_return(final_response)
     end
 
     it "runs the agent" do
-      subject.run(question: question)
+      expect(subject.run(question: question)).to eq(final_answer)
     end
   end
 

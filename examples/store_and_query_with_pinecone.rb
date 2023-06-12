@@ -4,7 +4,7 @@ require "langchain"
 # or add `gem "pinecone"` to your Gemfile
 
 # Instantiate the Qdrant client
-pinecone = Vectorsearch::Pinecone.new(
+pinecone = Langchain::Vectorsearch::Pinecone.new(
   environment: ENV["PINECONE_ENVIRONMENT"],
   api_key: ENV["PINECONE_API_KEY"],
   index_name: "recipes",
@@ -37,7 +37,7 @@ pinecone.ask(
 )
 
 # Generate your an embedding and search by it
-openai = LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 embedding = openai.embed(text: "veggie")
 
 pinecone.similarity_search_by_vector(

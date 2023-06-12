@@ -3,6 +3,10 @@
 require "google_search_results"
 
 RSpec.describe Langchain::Tool::SerpApi do
+  subject {
+    described_class.new(api_key: "123")
+  }
+
   let(:response) do
     {
       answer_box: {

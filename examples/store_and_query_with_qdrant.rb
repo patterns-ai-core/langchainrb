@@ -4,7 +4,7 @@ require "langchain"
 # or add `gem "qdrant-ruby"` to your Gemfile
 
 # Instantiate the Qdrant client
-qdrant = Vectorsearch::Qdrant.new(
+qdrant = Langchain::Vectorsearch::Qdrant.new(
   url: ENV["QDRANT_URL"],
   api_key: ENV["QDRANT_API_KEY"],
   index_name: "recipes",

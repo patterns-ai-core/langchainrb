@@ -2,17 +2,23 @@
 
 require "strscan"
 require "json"
+require "yaml"
 
 module Langchain::Prompt
+  # Prompts are structured inputs to the LLMs. Prompts provide instructions, context and other user input that LLMs use to generate responses.
+  #
+  # @abstract
   class Base
     def format(**kwargs)
       raise NotImplementedError
     end
 
+    # @return [String] the type of the prompt
     def prompt_type
       raise NotImplementedError
     end
 
+    # @return [Hash] a hash representation of the prompt
     def to_h
       raise NotImplementedError
     end
@@ -52,10 +58,13 @@ module Langchain::Prompt
       directory_path = save_path.dirname
       FileUtils.mkdir_p(directory_path) unless directory_path.directory?
 
-      if save_path.extname == ".json"
+      case save_path.extname
+      when ".json"
         File.write(file_path, to_h.to_json)
+      when ".yaml", ".yml"
+        File.write(file_path, to_h.to_yaml)
       else
-        raise ArgumentError, "#{file_path} must be json"
+        raise ArgumentError, "#{file_path} must be json or yaml file"
       end
     end
 

@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/andreibondarev/langchainrb"
   spec.metadata["changelog_uri"] = "https://github.com/andreibondarev/langchainrb/CHANGELOG.md"
+  spec.metadata["documentation_uri"] = "https://rubydoc.info/gems/langchainrb"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -46,17 +47,20 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "cohere-ruby", "~> 0.9.4"
   spec.add_development_dependency "docx", "~> 0.8.0"
   spec.add_development_dependency "eqn", "~> 1.6.5"
-  spec.add_development_dependency "google_palm_api", "~> 0.1.0"
+  spec.add_development_dependency "google_palm_api", "~> 0.1.1"
   spec.add_development_dependency "google_search_results", "~> 2.0.0"
+  spec.add_development_dependency "hnswlib", "~> 0.8.1"
   spec.add_development_dependency "hugging-face", "~> 0.3.4"
   spec.add_development_dependency "milvus", "~> 0.9.0"
   spec.add_development_dependency "nokogiri", "~> 1.13"
+  spec.add_development_dependency "open-weather-ruby-client", "~> 0.3.0"
   spec.add_development_dependency "pg", "~> 1.5"
   spec.add_development_dependency "pgvector", "~> 0.2"
   spec.add_development_dependency "pdf-reader", "~> 1.4"
   spec.add_development_dependency "pinecone", "~> 0.1.6"
   spec.add_development_dependency "replicate-ruby", "~> 0.2.2"
   spec.add_development_dependency "qdrant-ruby", "~> 0.9.0"
+  spec.add_development_dependency "roo", "~> 2.10.0"
   spec.add_development_dependency "ruby-openai", "~> 4.0.0"
   spec.add_development_dependency "safe_ruby", "~> 1.0.4"
   spec.add_development_dependency "sequel", "~> 5.68.0"
