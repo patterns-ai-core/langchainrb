@@ -11,6 +11,7 @@ module Langchain
   #     chat.set_context("You are a chatbot from the future")
   #     chat.message("Tell me about future technologies")
   #
+  # To stream the chat response:
   #     chat = Langchain::Conversation.new(llm: llm, stream: true) do |chunk|
   #       print(chunk)
   #     end
