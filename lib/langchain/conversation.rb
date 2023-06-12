@@ -11,6 +11,10 @@ module Langchain
   #     chat.set_context("You are a chatbot from the future")
   #     chat.message("Tell me about future technologies")
   #
+  #     chat = Langchain::Conversation.new(llm: llm, stream: true) do |chunk|
+  #       print(chunk)
+  #     end
+  #
   class Conversation
     attr_reader :context, :examples, :messages
 
@@ -19,12 +23,13 @@ module Langchain
     # @param llm [Object] The LLM to use for the conversation
     # @param options [Hash] Options to pass to the LLM, like temperature, top_k, etc.
     # @return [Langchain::Conversation] The Langchain::Conversation instance
-    def initialize(llm:, **options)
+    def initialize(llm:, **options, &block)
       @llm = llm
       @options = options
       @context = nil
       @examples = []
       @messages = []
+      @block = block
     end
 
     # Set the context of the conversation. Usually used to set the model's persona.
@@ -52,7 +57,7 @@ module Langchain
     private
 
     def llm_response(prompt)
-      @llm.chat(messages: @messages, context: @context, examples: @examples, **@options)
+      @llm.chat(messages: @messages, context: @context, examples: @examples, **@options, &@block)
     end
 
     def append_ai_message(message)
