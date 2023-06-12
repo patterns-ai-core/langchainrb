@@ -62,7 +62,7 @@ module Langchain
 
   autoload :Loader, "langchain/loader"
   autoload :Data, "langchain/data"
-  autoload :Chat, "langchain/chat"
+  autoload :Conversation, "langchain/conversation"
   autoload :DependencyHelper, "langchain/dependency_helper"
 
   module Agent

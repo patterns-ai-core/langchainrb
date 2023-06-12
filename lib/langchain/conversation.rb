@@ -1,11 +1,27 @@
 # frozen_string_literal: true
 
 module Langchain
-  class Chat
-    attr_reader :context
+  #
+  # A high-level API for running a conversation with an LLM.
+  # Currently supports: OpenAI and Google PaLM LLMs.
+  #
+  # Usage:
+  #     llm = Langchain::LLM::OpenAI.new(api_key: "YOUR_API_KEY")
+  #     chat = Langchain::Conversation.new(llm: llm)
+  #     chat.set_context("You are a chatbot from the future")
+  #     chat.message("Tell me about future technologies")
+  #
+  class Conversation
+    attr_reader :context, :examples
 
+    # Intialize Conversation with a LLM
+    #
+    # @param llm [Object] The LLM to use for the conversation
+    # @param options [Hash] Options to pass to the LLM, like temperature, top_k, etc.
+    # @return [Langchain::Conversation] The Langchain::Conversation instance
     def initialize(llm:, **options)
       @llm = llm
+      @options = options
       @context = nil
       @examples = []
       @messages = []
@@ -36,7 +52,7 @@ module Langchain
     private
 
     def llm_response(prompt)
-      @llm.chat(messages: @messages, context: @context, examples: @examples)
+      @llm.chat(messages: @messages, context: @context, examples: @examples, **@options)
     end
 
     def append_ai_message(message)
