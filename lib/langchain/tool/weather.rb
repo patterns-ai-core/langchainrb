@@ -3,7 +3,7 @@
 module Langchain::Tool
   class Weather < Base
     #
-    # A weather tool that gets current or forecast weather data
+    # A weather tool that gets current weather data
     #
     # Current weather data is free for 1000 calls per day (https://home.openweathermap.org/api_keys)
     # Forecast and historical data require registration with credit card, so not supported yet.
@@ -14,13 +14,13 @@ module Langchain::Tool
     #
     # Usage:
     # weather = Langchain::Tool::Weather.new(api_key: "YOUR_API_KEY")
-    # weather.execute(input: "Boston, current, imperial")
+    # weather.execute(input: "Boston, imperial")
     #
 
     NAME = "weather"
 
     description <<~DESC
-      Useful for getting current or forecast weather data
+      Useful for getting current weather data
     
       The input to this tool should be a city name followed optionally by the units (imperial, metric, or standard)
       Example usage:
