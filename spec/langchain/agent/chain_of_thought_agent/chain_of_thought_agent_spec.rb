@@ -76,6 +76,12 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
     it "runs the agent" do
       expect(subject.run(question: question)).to eq(final_answer)
     end
+
+    it "raises an error after max_iterations" do
+      allow(subject).to receive(:max_iterations).and_return(1)
+
+      expect { subject.run(question: question) }.to raise_error(Langchain::Agent::ChainOfThoughtAgent::MaxIterationsReachedError)
+    end
   end
 
   describe "#create_prompt" do

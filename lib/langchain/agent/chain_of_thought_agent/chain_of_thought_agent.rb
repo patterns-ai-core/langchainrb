@@ -50,14 +50,11 @@ module Langchain::Agent
       question = question.strip
       prompt = create_prompt(
         question: question,
-        tools: tools
+        tools: tools,
       )
 
-      max_iterations.times do |i|
-        if (i + 1) > max_iterations
-          break "Agent stopped after #{i} iterations"
-        end
-
+      final_response = nil
+      max_iterations.times do
         Langchain.logger.info("[#{self.class.name}]".red + ": Sending the prompt to the #{llm.class} LLM")
 
         response = llm.complete(prompt: prompt, stop_sequences: ["Observation:"])
@@ -81,15 +78,21 @@ module Langchain::Agent
 
           # Append the Observation to the prompt
           prompt += if prompt.end_with?("Observation:")
-            " #{result}\nThought:"
-          else
-            "\nObservation: #{result}\nThought:"
-          end
+              " #{result}\nThought:"
+            else
+              "\nObservation: #{result}\nThought:"
+            end
         else
           # Return the final answer
-          break response.match(/Final Answer: (.*)/)&.send(:[], -1)
+          final_response = response.match(/Final Answer: (.*)/)&.send(:[], -1)
+          break
         end
       end
+
+      if final_response.nil?
+        raise MaxIterationsReachedError.new(max_iterations)
+      end
+      final_response
     end
 
     private
@@ -109,7 +112,7 @@ module Langchain::Agent
           tool_name = tool.tool_name
           tool_description = tool.tool_description
           "#{tool_name}: #{tool_description}"
-        end.join("\n")
+        end.join("\n"),
       )
     end
 
@@ -117,8 +120,14 @@ module Langchain::Agent
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template
       @template ||= Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/agent/chain_of_thought_agent/chain_of_thought_agent_prompt.json")
+        file_path: Langchain.root.join("langchain/agent/chain_of_thought_agent/chain_of_thought_agent_prompt.json"),
       )
+    end
+
+    class MaxIterationsReachedError < Langchain::Errors::BaseError
+      def initialize(max_iterations)
+        super("Agent stopped after #{max_iterations} iterations")
+      end
     end
   end
 end

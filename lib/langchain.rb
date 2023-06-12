@@ -129,4 +129,8 @@ module Langchain
     autoload :PromptTemplate, "langchain/prompt/prompt_template"
     autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"
   end
+
+  module Errors
+    class BaseError < StandardError; end
+  end
 end
