@@ -12,7 +12,7 @@ module Langchain
   #     chat.message("Tell me about future technologies")
   #
   class Conversation
-    attr_reader :context, :examples
+    attr_reader :context, :examples, :messages
 
     # Intialize Conversation with a LLM
     #
