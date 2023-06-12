@@ -50,7 +50,7 @@ module Langchain::Agent
       question = question.strip
       prompt = create_prompt(
         question: question,
-        tools: tools,
+        tools: tools
       )
 
       final_response = nil
@@ -78,10 +78,10 @@ module Langchain::Agent
 
           # Append the Observation to the prompt
           prompt += if prompt.end_with?("Observation:")
-              " #{result}\nThought:"
-            else
-              "\nObservation: #{result}\nThought:"
-            end
+            " #{result}\nThought:"
+          else
+            "\nObservation: #{result}\nThought:"
+          end
         else
           # Return the final answer
           final_response = response.match(/Final Answer: (.*)/)&.send(:[], -1)
@@ -112,7 +112,7 @@ module Langchain::Agent
           tool_name = tool.tool_name
           tool_description = tool.tool_description
           "#{tool_name}: #{tool_description}"
-        end.join("\n"),
+        end.join("\n")
       )
     end
 
@@ -120,7 +120,7 @@ module Langchain::Agent
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template
       @template ||= Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/agent/chain_of_thought_agent/chain_of_thought_agent_prompt.json"),
+        file_path: Langchain.root.join("langchain/agent/chain_of_thought_agent/chain_of_thought_agent_prompt.json")
       )
     end
 
