@@ -77,10 +77,10 @@ module Langchain::LLM
 
       if stream && block_given?
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk.dig('choices', 0, 'delta', 'content')
+          yield chunk.dig("choices", 0, "delta", "content")
         end
       end
-      
+
       response = client.chat(parameters: parameters)
 
       raise "Chat completion failed: #{response}" if response.dig("error")
