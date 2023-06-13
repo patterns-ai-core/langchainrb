@@ -62,7 +62,7 @@ module Langchain
 
   autoload :Loader, "langchain/loader"
   autoload :Data, "langchain/data"
-  autoload :Chat, "langchain/chat"
+  autoload :Conversation, "langchain/conversation"
   autoload :DependencyHelper, "langchain/dependency_helper"
 
   module Agent
@@ -76,6 +76,7 @@ module Langchain
     autoload :Calculator, "langchain/tool/calculator"
     autoload :RubyCodeInterpreter, "langchain/tool/ruby_code_interpreter"
     autoload :Search, "langchain/tool/search"
+    autoload :Weather, "langchain/tool/weather"
     autoload :Wikipedia, "langchain/tool/wikipedia"
     autoload :Database, "langchain/tool/database"
   end
@@ -128,5 +129,9 @@ module Langchain
     autoload :Base, "langchain/prompt/base"
     autoload :PromptTemplate, "langchain/prompt/prompt_template"
     autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"
+  end
+
+  module Errors
+    class BaseError < StandardError; end
   end
 end
