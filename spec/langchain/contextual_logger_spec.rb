@@ -53,7 +53,7 @@ RSpec.describe Langchain::ContextualLogger do
       subject.warn("Hello World", for: Langchain::Vectorsearch::Pgvector)
     end
 
-    fit "doesn't have an issue with objects that don't have .logger_options" do
+    it "doesn't have an issue with objects that don't have .logger_options" do
       expect(logger).to receive(:warn).with(
         <<~LINE.strip
           #{"[LangChain.rb]".yellow} [Object]: #{"Hello World".colorize(color: :yellow, mode: :bold)}
