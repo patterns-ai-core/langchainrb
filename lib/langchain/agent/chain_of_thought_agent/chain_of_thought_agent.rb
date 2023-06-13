@@ -89,10 +89,7 @@ module Langchain::Agent
         end
       end
 
-      if final_response.nil?
-        raise MaxIterationsReachedError.new(max_iterations)
-      end
-      final_response
+      final_response || raise(MaxIterationsReachedError.new(max_iterations))
     end
 
     private
