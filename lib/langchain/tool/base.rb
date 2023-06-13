@@ -9,7 +9,7 @@ module Langchain::Tool
   #
   # - {Langchain::Tool::Calculator}: Calculate the result of a math expression
   # - {Langchain::Tool::RubyCodeInterpretor}: Runs ruby code
-  # - {Langchain::Tool::Search}: search on Google (via SerpAPI)
+  # - {Langchain::Tool::GoogleSearch}: search on Google (via SerpAPI)
   # - {Langchain::Tool::Wikipedia}: search on Wikipedia
   #
   # == Usage

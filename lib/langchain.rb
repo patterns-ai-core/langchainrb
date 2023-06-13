@@ -75,7 +75,7 @@ module Langchain
     autoload :Base, "langchain/tool/base"
     autoload :Calculator, "langchain/tool/calculator"
     autoload :RubyCodeInterpreter, "langchain/tool/ruby_code_interpreter"
-    autoload :Search, "langchain/tool/search"
+    autoload :GoogleSearch, "langchain/tool/google_search"
     autoload :Weather, "langchain/tool/weather"
     autoload :Wikipedia, "langchain/tool/wikipedia"
     autoload :Database, "langchain/tool/database"

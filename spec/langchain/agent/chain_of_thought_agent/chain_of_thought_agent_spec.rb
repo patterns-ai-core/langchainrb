@@ -2,7 +2,7 @@
 
 RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
   let(:calculator) { Langchain::Tool::Calculator.new }
-  let(:search) { Langchain::Tool::Search.new(api_key: "123") }
+  let(:search) { Langchain::Tool::GoogleSearch.new(api_key: "123") }
   let(:wikipedia) { Langchain::Tool::Wikipedia.new }
 
   let(:openai) { Langchain::LLM::OpenAI.new(api_key: "123") }
