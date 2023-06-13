@@ -29,7 +29,7 @@ RSpec.describe Langchain::ContextualLogger do
     it "#info handles line without context" do
       expect(logger).to receive(:info).with(
         <<~LINE.strip
-          #{"[LangChain.rb]".yellow} #{"[Langchain::Vectorsearch::Pgvector]:".blue} #{"Hello World".white}
+          #{"[LangChain.rb]".yellow} #{"[Langchain::Vectorsearch::Pgvector]".blue}: #{"Hello World".white}
         LINE
       )
       subject.info("Hello World", for: Langchain::Vectorsearch::Pgvector)
@@ -38,7 +38,7 @@ RSpec.describe Langchain::ContextualLogger do
     it "#warn handles line without context" do
       expect(logger).to receive(:warn).with(
         <<~LINE.strip
-          #{"[LangChain.rb]".yellow} #{"[Langchain::Vectorsearch::Pgvector]:".blue} #{"Hello World".colorize(color: :yellow, mode: :bold)}
+          #{"[LangChain.rb]".yellow} #{"[Langchain::Vectorsearch::Pgvector]".blue}: #{"Hello World".colorize(color: :yellow, mode: :bold)}
         LINE
       )
       subject.warn("Hello World", for: Langchain::Vectorsearch::Pgvector)
