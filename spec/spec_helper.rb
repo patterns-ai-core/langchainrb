@@ -16,4 +16,7 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.filter_run focus: !(ENV.fetch("CI", "false") == "true")
+  config.run_all_when_everything_filtered = true
 end

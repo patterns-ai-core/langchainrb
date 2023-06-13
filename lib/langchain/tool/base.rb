@@ -57,6 +57,12 @@ module Langchain::Tool
       self.class.const_get(:NAME)
     end
 
+    def self.logger_options
+      {
+        color: :light_blue
+      }
+    end
+
     #
     # Returns the DESCRIPTION constant of the tool
     #

@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 module Langchain::Agent
+  def self.logger_options
+    {
+      color: :red
+    }
+  end
+
   # = Chain of Thought Agent
   #
   #     llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]) # or your choice of Langchain::LLM::Base implementation
@@ -52,7 +58,7 @@ module Langchain::Agent
       )
 
       loop do
-        Langchain.logger.info("[#{self.class.name}]".red + ": Sending the prompt to the #{llm.class} LLM")
+        Langchain.logger.info("Sending the prompt to the #{llm.class} LLM", for: self.class)
 
         response = llm.complete(prompt: prompt, stop_sequences: ["Observation:"])
 
@@ -68,7 +74,7 @@ module Langchain::Agent
 
           # Find the Tool and call `execute`` with action_input as the input
           tool = tools.find { |tool| tool.tool_name == action.strip }
-          Langchain.logger.info("[#{self.class.name}]".red + ": Invoking \"#{tool.class}\" Tool with \"#{action_input}\"")
+          Langchain.logger.info("Invoking \"#{tool.class}\" Tool with \"#{action_input}\"", for: self.class)
 
           # Call `execute` with action_input as the input
           result = tool.execute(input: action_input)
