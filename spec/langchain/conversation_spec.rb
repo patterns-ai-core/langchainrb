@@ -35,6 +35,22 @@ RSpec.describe Langchain::Conversation do
     let(:prompt) { "How are you doing?" }
     let(:response) { "I'm doing well. How about you?" }
 
+    context "with stream: true option and block passed in" do
+      let(:block) { proc { |chunk| print(chunk) } }
+      let(:conversation) { described_class.new(llm: llm, &block) }
+
+      it "messages the model and yields the response" do
+        expect(llm).to receive(:chat).with(
+          context: nil,
+          examples: [],
+          messages: [{role: "user", content: prompt}],
+          &block
+        ).and_return(response)
+
+        expect(conversation.message(prompt)).to eq(response)
+      end
+    end
+
     context "with simple prompt" do
       it "messages the model and returns the response" do
         expect(llm).to receive(:chat).with(
