@@ -62,7 +62,7 @@ module Langchain
 
   autoload :Loader, "langchain/loader"
   autoload :Data, "langchain/data"
-  autoload :Chat, "langchain/chat"
+  autoload :Conversation, "langchain/conversation"
   autoload :DependencyHelper, "langchain/dependency_helper"
 
   module Agent
@@ -76,6 +76,7 @@ module Langchain
     autoload :Calculator, "langchain/tool/calculator"
     autoload :RubyCodeInterpreter, "langchain/tool/ruby_code_interpreter"
     autoload :SerpApi, "langchain/tool/serp_api"
+    autoload :Weather, "langchain/tool/weather"
     autoload :Wikipedia, "langchain/tool/wikipedia"
     autoload :Database, "langchain/tool/database"
   end
