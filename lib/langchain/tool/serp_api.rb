@@ -54,7 +54,7 @@ module Langchain::Tool
     # @return [String] Answer
     #
     def execute(input:)
-      Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing \"#{input}\"")
+      Langchain.logger.info("Executing \"#{input}\"", for: self.class)
 
       hash_results = execute_search(input: input)
 
