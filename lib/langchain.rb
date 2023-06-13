@@ -46,24 +46,31 @@ require_relative "./langchain/version"
 #
 # LangChain.rb uses standard logging mechanisms and defaults to :debug level. Most messages are at info level, but we will add debug or warn statements as needed. To show all log messages:
 #
-#     Langchain.logger.level = :info
+# Langchain.logger.level = :info
 module Langchain
+  autoload :Loader, "langchain/loader"
+  autoload :Data, "langchain/data"
+  autoload :Conversation, "langchain/conversation"
+  autoload :DependencyHelper, "langchain/dependency_helper"
+  autoload :ContextualLogger, "langchain/contextual_logger"
+
   class << self
-    # @return [Logger]
-    attr_accessor :logger
+    # @return [ContextualLogger]
+    attr_reader :logger
+
+    # @param logger [Logger]
+    # @return [ContextualLogger]
+    def logger=(logger)
+      @logger = ContextualLogger.new(logger)
+    end
 
     # @return [Pathname]
     attr_reader :root
   end
 
-  @logger ||= ::Logger.new($stdout, level: :warn, formatter: ->(severity, datetime, progname, msg) { "[LangChain.rb]".yellow + " #{msg}\n" })
+  self.logger ||= ::Logger.new($stdout, level: :warn)
 
   @root = Pathname.new(__dir__)
-
-  autoload :Loader, "langchain/loader"
-  autoload :Data, "langchain/data"
-  autoload :Conversation, "langchain/conversation"
-  autoload :DependencyHelper, "langchain/dependency_helper"
 
   module Agent
     autoload :Base, "langchain/agent/base"
