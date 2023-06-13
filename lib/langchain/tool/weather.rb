@@ -21,7 +21,7 @@ module Langchain::Tool
 
     description <<~DESC
       Useful for getting current weather data
-    
+
       The input to this tool should be a city name followed by the units (imperial, metric, or standard)
       Usage:
         Action Input: St Louis, Missouri; metric
@@ -54,7 +54,7 @@ module Langchain::Tool
     # @param input [String] comma separated city and unit (optional: imperial, metric, or standard)
     # @return [String] Answer
     def execute(input:)
-      Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing for \"#{input}\"")
+      Langchain.logger.info("Executing for \"#{input}\"", for: self.class)
 
       input_array = input.split(";")
       city, units = *input_array.map(&:strip)
