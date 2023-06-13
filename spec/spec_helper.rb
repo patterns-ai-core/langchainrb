@@ -17,6 +17,10 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.filter_run focus: !(ENV.fetch("CI", "false") == "true")
+  config.filter_run focus: should_focus_specs # this allows focusing a spec via `fit`, `fcontext`, `fdescribe`, or focus: true
   config.run_all_when_everything_filtered = true
+end
+
+def should_focus_specs
+  !(ENV["CI"] == "true")
 end
