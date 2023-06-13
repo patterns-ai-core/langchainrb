@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 module Langchain::Agent
-  def self.logger_options
-    {
-      color: :red
-    }
-  end
-
   # = Chain of Thought Agent
   #
   #     llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]) # or your choice of Langchain::LLM::Base implementation
