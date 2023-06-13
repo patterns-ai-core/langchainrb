@@ -30,13 +30,13 @@ module Langchain::Tool
   #     agent = Langchain::Agent::ChainOfThoughtAgent.new(
   #       llm: :openai, # or :cohere, :hugging_face, :google_palm or :replicate
   #       llm_api_key: ENV["OPENAI_API_KEY"],
-  #       tools: ["search", "calculator", "wikipedia"]
+  #       tools: ["google_search", "calculator", "wikipedia"]
   #     )
   #
   # 4. Confirm that the Agent is using the Tools you passed in:
   #
   #     agent.tools
-  #     # => ["search", "calculator", "wikipedia"]
+  #     # => ["google_search", "calculator", "wikipedia"]
   #
   # == Adding Tools
   #

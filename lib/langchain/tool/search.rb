@@ -12,7 +12,7 @@ module Langchain::Tool
     # search.execute(input: "What is the capital of France?")
     #
 
-    NAME = "search"
+    NAME = "google_search"
 
     description <<~DESC
       A wrapper around Google Search.

@@ -7,11 +7,11 @@ module Langchain::Agent
   #
   #     agent = Langchain::Agent::ChainOfThoughtAgent.new(
   #       llm: llm,
-  #       tools: ["search", "calculator", "wikipedia"]
+  #       tools: ["google_search", "calculator", "wikipedia"]
   #     )
   #
   #     agent.tools
-  #     # => ["search", "calculator", "wikipedia"]
+  #     # => ["google_search", "calculator", "wikipedia"]
   #
   #     agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
   #     #=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
