@@ -72,7 +72,7 @@ module Langchain::Tool
     # @return [Hash] hash_results JSON
     #
     def execute_search(input:)
-      GoogleSearch
+      ::GoogleSearch
         .new(q: input, serp_api_key: api_key)
         .get_hash
     end
