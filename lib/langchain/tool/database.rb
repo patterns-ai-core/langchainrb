@@ -30,7 +30,6 @@ module Langchain::Tool
       raise StandardError, "connection_string parameter cannot be blank" if connection_string.empty?
 
       @db = Sequel.connect(connection_string)
-      @db.extension :schema_dumper
     end
 
     #
@@ -39,9 +38,9 @@ module Langchain::Tool
     # @return [String] schema
     #
     def schema
+      # TODO: Take out next line. Needed not to break tests.
       return if db.adapter_scheme == :mock
       Langchain.logger.info("Dumping schema", for: self.class)
-
       schema = ""
       db.tables.each do |table|
         schema << "CREATE TABLE #{table}(\n"

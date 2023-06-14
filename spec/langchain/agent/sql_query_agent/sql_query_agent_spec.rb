@@ -35,6 +35,10 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
         input: sql_string
       ).and_return(database_tool_response)
 
+      # allow(subject.db).to receive(:schema).and_return("xyz")
+      # allow(subject.db).to receive(:tables).and_return([])
+      # allow_any_instance_of(Sequel::Mock::Database).to receive(:tables).and_return("xyz")
+
       allow(subject.llm).to receive(:complete).with(
         prompt: "Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:\nQuestion: What is the longest length name in the users table?\nThe SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);\nResult of the SQLQuery: []\nFinal answer: Final answer here"
       ).and_return(llm_final_response)
