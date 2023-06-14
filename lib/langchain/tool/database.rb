@@ -38,9 +38,7 @@ module Langchain::Tool
     # @return [String] schema
     #
     def schema
-      # TODO: Take out next line. Needed not to break tests.
-      return if db.adapter_scheme == :mock
-      Langchain.logger.info("Dumping schema", for: self.class)
+      Langchain.logger.info("Dumping schema tables and keys", for: self.class)
       schema = ""
       db.tables.each do |table|
         schema << "CREATE TABLE #{table}(\n"
