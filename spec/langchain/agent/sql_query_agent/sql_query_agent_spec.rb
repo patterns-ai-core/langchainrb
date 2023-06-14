@@ -24,7 +24,8 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
         sql_query: sql_string,
         results: database_tool_response)
     }
-    let(:llm_final_response) { "The longest length name is Alessandro at 10 characters." }
+    let(:final_answer) { "The longest length name is Alessandro at 10 characters." }
+    let(:llm_final_response) { "Final Answer: #{final_answer}" }
 
     before do
       allow(subject.llm).to receive(:complete).with(
@@ -36,12 +37,12 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
       ).and_return(database_tool_response)
 
       allow(subject.llm).to receive(:complete).with(
-        prompt: "Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:\n\nQuestion: What is the longest length name in the users table?\n\nThe SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);\n\nResult of the SQLQuery: []\n\nFinal answer: Final answer here\n"
+        prompt: "Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:\n\nQuestion: What is the longest length name in the users table?\n\nThe SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);\n\nResult of the SQLQuery: []\n\nUse the following format:\nFinal Answer: the final answer to the question\n\nQuestion: What is the longest length name in the users table?\n"
       ).and_return(llm_final_response)
     end
 
     it "runs the agent" do
-      expect(subject.run(question: question)).to eq(llm_final_response)
+      expect(subject.run(question: question)).to eq(final_answer)
     end
   end
 
@@ -56,12 +57,15 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
         Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:
 
         Question: What is count of users in the users table?
-    
+
         The SQL query: SELECT * FROM users;
-    
+
         Result of the SQLQuery: count: 10
-    
-        Final answer: Final answer here
+
+        Use the following format:
+        Final Answer: the final answer to the question
+
+        Question: What is count of users in the users table?
       PROMPT
     end
   end

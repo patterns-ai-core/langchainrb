@@ -9,8 +9,7 @@ template: |
 
   Only use the tables listed below.
   {schema}
-
-  Use the following format:
+  
   Question: {question}
   
   SQLQuery:
