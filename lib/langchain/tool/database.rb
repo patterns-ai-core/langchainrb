@@ -40,7 +40,7 @@ module Langchain::Tool
     #
     def schema
       return if db.adapter_scheme == :mock
-      Langchain.logger.info("[#{self.class.name}]".light_blue + ": Dumping schema")
+      Langchain.logger.info("Dumping schema", for: self.class)
 
       schema = ""
       db.tables.each do |table|
@@ -66,11 +66,11 @@ module Langchain::Tool
     # @return [Array] results
     #
     def execute(input:)
-      Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing \"#{input}\"")
+      Langchain.logger.info("Executing \"#{input}\"", for: self.class)
 
       db[input].to_a
     rescue Sequel::DatabaseError => e
-      Langchain.logger.error("[#{self.class.name}]".light_red + ": #{e.message}")
+      Langchain.logger.error(e.message, for: self.class)
     end
   end
 end

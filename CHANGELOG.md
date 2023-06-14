@@ -1,5 +1,23 @@
 ## [Unreleased]
 
+## [0.5.5] - 2023-06-12
+- [BREAKING] Rename `Langchain::Chat` to `Langchain::Conversation`
+- 🛠️ Tools
+  - Introducing `Langchain::Tool::Weather`, a tool that calls Open Weather API to retrieve the current weather
+
+## [0.5.4] - 2023-06-10
+- 🔍 Vectorsearch
+  - Introducing support for HNSWlib
+- Improved and new `Langchain::Chat` interface that persists chat history in memory
+
+## [0.5.3] - 2023-06-09
+- 🗣️ LLMs
+  - Chat message history support for Langchain::LLM::GooglePalm and Langchain::LLM::OpenAI
+
+## [0.5.2] - 2023-06-07
+- 🗣️ LLMs
+  - Auto-calculate the max_tokens: setting to be passed on to OpenAI
+
 ## [0.5.1] - 2023-06-06
 - 🛠️ Tools
   - Modified Tool usage. Agents now accept Tools instances instead of Tool strings.

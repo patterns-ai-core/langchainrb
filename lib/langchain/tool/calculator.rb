@@ -28,17 +28,18 @@ module Langchain::Tool
     # @param input [String] math expression
     # @return [String] Answer
     def execute(input:)
-      Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing \"#{input}\"")
+      Langchain.logger.info("Executing \"#{input}\"", for: self.class)
 
       Eqn::Calculator.calc(input)
     rescue Eqn::ParseError, Eqn::NoVariableValueError
       # Sometimes the input is not a pure math expression, e.g: "12F in Celsius"
       # We can use the google answer box to evaluate this expression
       # TODO: Figure out to find a better way to evaluate these language expressions.
-      hash_results = Langchain::Tool::SerpApi
+      hash_results = Langchain::Tool::GoogleSearch
         .new(api_key: ENV["SERPAPI_API_KEY"])
         .execute_search(input: input)
-      hash_results.dig(:answer_box, :to)
+      hash_results.dig(:answer_box, :to) ||
+        hash_results.dig(:answer_box, :result)
     end
   end
 end

@@ -1,20 +1,36 @@
 # frozen_string_literal: true
 
 module Langchain::Agent
+  # = Chain of Thought Agent
+  #
+  #     llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]) # or your choice of Langchain::LLM::Base implementation
+  #
+  #     agent = Langchain::Agent::ChainOfThoughtAgent.new(
+  #       llm: llm,
+  #       tools: ["google_search", "calculator", "wikipedia"]
+  #     )
+  #
+  #     agent.tools
+  #     # => ["google_search", "calculator", "wikipedia"]
+  #
+  #     agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
+  #     #=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
   class ChainOfThoughtAgent < Base
-    attr_reader :llm, :tools
+    attr_reader :llm, :tools, :max_iterations
 
     # Initializes the Agent
     #
     # @param llm [Object] The LLM client to use
     # @param tools [Array] The tools to use
+    # @param max_iterations [Integer] The maximum number of iterations to run
     # @return [ChainOfThoughtAgent] The Agent::ChainOfThoughtAgent instance
-    def initialize(llm:, tools: [])
+    def initialize(llm:, tools: [], max_iterations: 10)
       Langchain::Tool::Base.validate_tools!(tools: tools)
 
       @tools = tools
 
       @llm = llm
+      @max_iterations = max_iterations
     end
 
     # Validate tools when they're re-assigned
@@ -37,13 +53,11 @@ module Langchain::Agent
         tools: tools
       )
 
-      loop do
-        Langchain.logger.info("[#{self.class.name}]".red + ": Sending the prompt to the #{llm.class} LLM")
-        response = llm.complete(
-          prompt: prompt,
-          stop_sequences: ["Observation:"],
-          max_tokens: 500
-        )
+      final_response = nil
+      max_iterations.times do
+        Langchain.logger.info("Sending the prompt to the #{llm.class} LLM", for: self.class)
+
+        response = llm.complete(prompt: prompt, stop_sequences: ["Observation:"])
 
         # Append the response to the prompt
         prompt += response
@@ -57,7 +71,7 @@ module Langchain::Agent
 
           # Find the Tool and call `execute`` with action_input as the input
           tool = tools.find { |tool| tool.tool_name == action.strip }
-          Langchain.logger.info("[#{self.class.name}]".red + ": Invoking \"#{tool.class}\" Tool with \"#{action_input}\"")
+          Langchain.logger.info("Invoking \"#{tool.class}\" Tool with \"#{action_input}\"", for: self.class)
 
           # Call `execute` with action_input as the input
           result = tool.execute(input: action_input)
@@ -70,9 +84,12 @@ module Langchain::Agent
           end
         else
           # Return the final answer
-          break response.match(/Final Answer: (.*)/)&.send(:[], -1)
+          final_response = response.match(/Final Answer: (.*)/)&.send(:[], -1)
+          break
         end
       end
+
+      final_response || raise(MaxIterationsReachedError.new(max_iterations))
     end
 
     private
@@ -90,7 +107,7 @@ module Langchain::Agent
         tool_names: "[#{tool_list.join(", ")}]",
         tools: tools.map do |tool|
           tool_name = tool.tool_name
-          tool_description = tool.class.const_get(:DESCRIPTION)
+          tool_description = tool.tool_description
           "#{tool_name}: #{tool_description}"
         end.join("\n")
       )
@@ -102,6 +119,12 @@ module Langchain::Agent
       @template ||= Langchain::Prompt.load_from_path(
         file_path: Langchain.root.join("langchain/agent/chain_of_thought_agent/chain_of_thought_agent_prompt.json")
       )
+    end
+
+    class MaxIterationsReachedError < Langchain::Errors::BaseError
+      def initialize(max_iterations)
+        super("Agent stopped after #{max_iterations} iterations")
+      end
     end
   end
 end
