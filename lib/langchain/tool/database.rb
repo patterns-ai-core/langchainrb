@@ -37,7 +37,7 @@ module Langchain::Tool
     #
     # @return [String] schema
     #
-    def schema
+    def dump_schema
       Langchain.logger.info("Dumping schema tables and keys", for: self.class)
       schema = ""
       db.tables.each do |table|
