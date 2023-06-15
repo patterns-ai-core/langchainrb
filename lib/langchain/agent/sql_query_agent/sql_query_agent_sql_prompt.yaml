@@ -13,6 +13,7 @@ template: |
   Question: {question}
   
   SQLQuery:
+  Thought:
 input_variables:
   - dialect
   - schema
