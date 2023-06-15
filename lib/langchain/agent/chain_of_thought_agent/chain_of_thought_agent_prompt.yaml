@@ -18,6 +18,7 @@ template: |
   Begin!
 
   Question: {question}
+  Thought:
 input_variables:
   - date
   - question
