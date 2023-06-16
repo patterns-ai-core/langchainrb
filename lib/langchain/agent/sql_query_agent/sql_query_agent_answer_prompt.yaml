@@ -9,9 +9,9 @@ template: |
   Result of the SQLQuery: {results}
 
   Use the following format:
-  Final Answer: the final answer to the question
 
   Question: {question}
+  Final Answer:
 input_variables:
   - question
   - sql_query

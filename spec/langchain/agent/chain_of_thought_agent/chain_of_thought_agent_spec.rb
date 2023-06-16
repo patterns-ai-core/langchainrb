@@ -96,7 +96,7 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
           tools: subject.tools)
       ).to eq <<~PROMPT
         Today is May 12, 2023 and you can use tools to get new information. Answer the following questions as best you can using the following tools:
-
+ 
         calculator: Useful for getting the result of a math expression.  The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.
         google_search: A wrapper around Google Search.  Useful for when you need to answer questions about current events. Always one of the first options when you need to find information on internet.  Input should be a search query.
     
@@ -110,10 +110,10 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
         ... (this Thought/Action/Action Input/Observation can repeat N times)
         Thought: I now know the final answer
         Final Answer: the final answer to the original input question
-    
         Begin!
     
         Question: What is the meaning of life?
+        Thought:
       PROMPT
     end
   end

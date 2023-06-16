@@ -37,12 +37,48 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
       ).and_return(database_tool_response)
 
       allow(subject.llm).to receive(:complete).with(
-        prompt: "Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:\n\nQuestion: What is the longest length name in the users table?\n\nThe SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);\n\nResult of the SQLQuery: []\n\nUse the following format:\nFinal Answer: the final answer to the question\n\nQuestion: What is the longest length name in the users table?\n"
+        prompt: <<~PROMPT
+          Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:
+
+          Question: What is the longest length name in the users table?
+
+          The SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);
+
+          Result of the SQLQuery: []
+
+          Use the following format:
+
+          Question: What is the longest length name in the users table?
+          Final Answer:
+        PROMPT
       ).and_return(llm_final_response)
     end
 
     it "runs the agent" do
       expect(subject.run(question: question)).to eq(final_answer)
+    end
+  end
+
+  describe "#create_prompt_for_sql" do
+    it "creates a prompt" do
+      expect(
+        subject.send(:create_prompt_for_sql,
+          question: "What is the meaning of life?")
+      ).to eq <<~PROMPT
+        Given an input question, create a syntactically correct standard SQL query to run, then return the query in valid SQL.
+        Never query for all the columns from a specific table, only ask for a the few relevant columns given the question.
+        Pay attention to use only the column names that you can see in the schema description.
+        Be careful to not query for columns that do not exist.
+        Pay attention to which column is in which table.
+        Also, qualify column names with the table name when needed.
+
+        Only use the tables listed below.
+
+
+        Question: What is the meaning of life?
+
+        SQLQuery:
+      PROMPT
     end
   end
 
@@ -57,15 +93,15 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
         Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:
 
         Question: What is count of users in the users table?
-
+    
         The SQL query: SELECT * FROM users;
-
+    
         Result of the SQLQuery: count: 10
-
+    
         Use the following format:
-        Final Answer: the final answer to the question
-
+    
         Question: What is count of users in the users table?
+        Final Answer:
       PROMPT
     end
   end
