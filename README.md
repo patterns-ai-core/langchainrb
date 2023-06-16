@@ -364,8 +364,8 @@ Langchain.logger.level = :info
 4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
 5. Optionally, install lefthook git hooks for pre-commit to auto lint: `gem install lefthook && lefthook install -f`
 
-## Community
-Join us in the [Ruby AI Builders](https://discord.gg/SBmjAnKT) Discord community in #langchainrb
+## Discord
+Join us in the [Langchain.rb](https://discord.gg/hXutDWGDd) Discord server.
 
 ## Core Contributors
 [<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://github.com/andreibondarev)
