@@ -56,7 +56,7 @@ module Langchain
 
           # Raise an error even if whole prompt is equal to the model's token limit (max_tokens == 0) since not response will be returned
           if max_tokens <= 0
-            raise TokenLimitExceeded, "This model's maximum context length is #{TOKEN_LIMITS[model_name]} tokens, but the given text is #{text_token_length} tokens long."
+            raise limit_exceeded_exception(TOKEN_LIMITS[model_name], text_token_length)
           end
 
           max_tokens
@@ -72,6 +72,10 @@ module Langchain
         def self.token_length(text, model_name)
           encoder = Tiktoken.encoding_for_model(model_name)
           encoder.encode(text).length
+        end
+
+        def self.limit_exceeded_exception(limit, length)
+          TokenLimitExceeded.new("This model's maximum context length is #{limit} tokens, but the given text is #{length} tokens long.", length - limit)
         end
       end
     end
