@@ -107,9 +107,15 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
     end
   end
 
-  describe "#prompt_template" do
-    it "returns a prompt template instance" do
+  describe "#prompt_template_answer" do
+    it "returns a prompt template instance for answer" do
       expect(subject.send(:prompt_template_answer)).to be_a(Langchain::Prompt::PromptTemplate)
+    end
+  end
+
+  describe "#prompt_template_sql" do
+    it "returns a prompt template instance for sql" do
+      expect(subject.send(:prompt_template_sql)).to be_a(Langchain::Prompt::PromptTemplate)
     end
   end
 end
