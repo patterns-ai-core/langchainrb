@@ -75,6 +75,8 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
         Only use the tables listed below.
 
 
+        Use the following format:
+
         Question: What is the meaning of life?
 
         SQLQuery:
