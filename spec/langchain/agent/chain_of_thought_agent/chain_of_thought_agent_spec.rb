@@ -110,6 +110,7 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
         ... (this Thought/Action/Action Input/Observation can repeat N times)
         Thought: I now know the final answer
         Final Answer: the final answer to the original input question
+
         Begin!
     
         Question: What is the meaning of life?

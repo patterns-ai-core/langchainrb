@@ -38,17 +38,10 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
       allow(subject.llm).to receive(:complete).with(
         prompt: <<~PROMPT
           Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:
-
           Question: What is the longest length name in the users table?
-
           The SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);
-
           Result of the SQLQuery: []
-
-          Use the following format:
-
-          Question: What is the longest length name in the users table?
-          Final Answer:
+          Final answer: Final answer here
         PROMPT
       ).and_return(final_answer)
     end
@@ -92,17 +85,10 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
           results: "count: 10")
       ).to eq <<~PROMPT
         Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:
-
         Question: What is count of users in the users table?
-    
         The SQL query: SELECT * FROM users;
-    
         Result of the SQLQuery: count: 10
-    
-        Use the following format:
-    
-        Question: What is count of users in the users table?
-        Final Answer:
+        Final answer: Final answer here
       PROMPT
     end
   end
