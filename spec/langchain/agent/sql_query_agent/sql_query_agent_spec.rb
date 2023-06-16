@@ -25,7 +25,6 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
         results: database_tool_response)
     }
     let(:final_answer) { "The longest length name is Alessandro at 10 characters." }
-    let(:llm_final_response) { "Final Answer: #{final_answer}" }
 
     before do
       allow(subject.llm).to receive(:complete).with(
@@ -51,7 +50,7 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
           Question: What is the longest length name in the users table?
           Final Answer:
         PROMPT
-      ).and_return(llm_final_response)
+      ).and_return(final_answer)
     end
 
     it "runs the agent" do
