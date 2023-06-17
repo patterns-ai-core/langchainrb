@@ -76,6 +76,7 @@ module Langchain
     autoload :Base, "langchain/agent/base"
     autoload :ChainOfThoughtAgent, "langchain/agent/chain_of_thought_agent/chain_of_thought_agent.rb"
     autoload :SQLQueryAgent, "langchain/agent/sql_query_agent/sql_query_agent.rb"
+    autoload :SequentialAgent, "langchain/agent/sequential_agent/sequential_agent.rb"
   end
 
   module Tool
