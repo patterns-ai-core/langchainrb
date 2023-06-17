@@ -1,7 +1,13 @@
 PATH
+  remote: ../baran
+  specs:
+    baran (0.1.6)
+
+PATH
   remote: .
   specs:
     langchainrb (0.5.5)
+      baran
       colorize (~> 0.8.1)
       tiktoken_ruby (~> 0.0.5)
 
@@ -312,6 +318,7 @@ PLATFORMS
 
 DEPENDENCIES
   ai21 (~> 0.2.0)
+  baran!
   chroma-db (~> 0.3.0)
   cohere-ruby (~> 0.9.4)
   docx (~> 0.8.0)

@@ -78,6 +78,11 @@ module Langchain
     autoload :SQLQueryAgent, "langchain/agent/sql_query_agent/sql_query_agent.rb"
   end
 
+  module Chunker
+    autoload :Base, "langchain/chunker/base"
+    autoload :Text, "langchain/chunker/text"
+  end
+
   module Tool
     autoload :Base, "langchain/tool/base"
     autoload :Calculator, "langchain/tool/calculator"
