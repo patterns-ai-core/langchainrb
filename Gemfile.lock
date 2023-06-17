@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     langchainrb (0.5.5)
-      baran
+      baran (~> 0.1.6)
       colorize (~> 0.8.1)
       tiktoken_ruby (~> 0.0.5)
 
