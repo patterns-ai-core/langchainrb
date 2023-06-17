@@ -128,7 +128,7 @@ RSpec.describe Langchain::Conversation do
         allow(client).to receive(:chat).and_return(response)
       end
 
-      context "a single pormpt that exceeds the token limit" do
+      context "a single prompt that exceeds the token limit" do
         let(:prompt) { "Lorem " * 4096 }
 
         it "raises an error" do
