@@ -72,22 +72,12 @@ module Langchain::LLM
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
 
-      parameters = compose_parameters DEFAULTS[:chat_completion_model_name], options
-      parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
-      parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
+      parameters = compose_chat_parameters(DEFAULTS[:chat_completion_model_name], prompt: prompt, messages: messages, context: context, examples: examples, **options)
 
-      if (streaming = block_given?)
-        parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk.dig("choices", 0, "delta", "content")
-        end
-      end
-
-      response = client.chat(parameters: parameters)
-
-      raise "Chat completion failed: #{response}" if !response.empty? && response.dig("error")
-
-      unless streaming
-        response.dig("choices", 0, "message", "content")
+      if block_given?
+        stream_response(parameters) { |chunk| yield chunk.dig("choices", 0, "delta", "content") }
+      else
+        complete_response(parameters)
       end
     end
 
@@ -107,6 +97,26 @@ module Langchain::LLM
     end
 
     private
+
+    def compose_chat_parameters(model, prompt:, messages:, context:, examples:, **options)
+      parameters = compose_parameters(model, options)
+      parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
+      parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
+      parameters
+    end
+
+    def stream_response(parameters)
+      client.chat(parameters: parameters) do |chunk, _bytesize|
+        yield chunk.dig("choices", 0, "delta", "content")
+      end
+    end
+
+    def complete_response(parameters)
+      response = client.chat(parameters: parameters)
+      raise "Chat completion failed: #{response}" if !response.empty? && response.dig("error")
+
+      response.dig("choices", 0, "message", "content")
+    end
 
     def compose_parameters(model, params)
       default_params = {model: model, temperature: DEFAULTS[:temperature]}
