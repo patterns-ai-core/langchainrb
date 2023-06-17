@@ -10,7 +10,7 @@
 [![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
 [![Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/gems/langchainrb)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/andreibondarev/langchainrb/blob/main/LICENSE.txt)
-[![](https://dcbadge.vercel.app/api/server/hXutDWGDd?compact=true&style=flat)](https://discord.gg/hXutDWGDd)
+[![](https://dcbadge.vercel.app/api/server/WWqjwxMv?compact=true&style=flat)](https://discord.gg/WWqjwxMv)
 
 
 Langchain.rb is a library that's an abstraction layer on top many emergent AI, ML and other DS tools. The goal is to abstract complexity and difficult concepts to make building AI/ML-supercharged applications approachable for traditional software engineers.
