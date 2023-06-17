@@ -47,7 +47,7 @@ module Langchain::Agent
     def create_prompt_for_sql(question:)
       prompt_template_sql.format(
         dialect: "standard SQL",
-        schema: @schema,
+        schema: schema,
         question: question
       )
     end

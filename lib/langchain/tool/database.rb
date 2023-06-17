@@ -14,15 +14,18 @@ module Langchain::Tool
       The input to this tool should be valid SQL.
     DESC
 
-    attr_reader :db
+    attr_reader :db, :requested_tables, :except_tables
 
     #
     # Establish a database connection
     #
     # @param connection_string [String] Database connection info, e.g. 'postgres://user:password@localhost:5432/db_name'
+    # @param tables [Array<Symbol>] The tables to use. Will use all if empty.
+    # @param except_tables [Array<Symbol>] The tables to exclude. Will exclude none if empty.
+
     # @return [Database] Database object
     #
-    def initialize(connection_string:)
+    def initialize(connection_string:, tables: [], except_tables: [])
       depends_on "sequel"
       require "sequel"
       require "sequel/extensions/schema_dumper"
@@ -30,6 +33,8 @@ module Langchain::Tool
       raise StandardError, "connection_string parameter cannot be blank" if connection_string.empty?
 
       @db = Sequel.connect(connection_string)
+      @requested_tables = tables
+      @except_tables = except_tables
     end
 
     #
@@ -41,6 +46,9 @@ module Langchain::Tool
       Langchain.logger.info("Dumping schema tables and keys", for: self.class)
       schema = ""
       db.tables.each do |table|
+        next if except_tables.include?(table)
+        next unless requested_tables.empty? || requested_tables.include?(table)
+
         schema << "CREATE TABLE #{table}(\n"
         db.schema(table).each do |column|
           schema << "#{column[0]} #{column[1][:type]}"
