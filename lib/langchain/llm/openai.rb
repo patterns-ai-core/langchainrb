@@ -129,24 +129,38 @@ module Langchain::LLM
     def compose_chat_messages(prompt:, messages:, context:, examples:)
       history = []
 
-      history.concat transform_messages(examples) unless examples.empty?
-
-      history.concat transform_messages(messages) unless messages.empty?
-
-      unless context.nil? || context.empty?
-        history.reject! { |message| message[:role] == "system" }
-        history.prepend({role: "system", content: context})
-      end
-
-      unless prompt.empty?
-        if history.last && history.last[:role] == "user"
-          history.last[:content] += "\n#{prompt}"
-        else
-          history.append({role: "user", content: prompt})
-        end
-      end
+      add_examples_to_history(examples, history)
+      add_messages_to_history(messages, history)
+      add_context_to_history(context, history)
+      add_prompt_to_history(prompt, history)
 
       history
+    end
+
+    def add_examples_to_history(examples, history)
+      history.concat(transform_messages(examples)) unless examples.empty?
+    end
+
+    def add_messages_to_history(messages, history)
+      history.concat(transform_messages(messages)) unless messages.empty?
+    end
+
+    def add_context_to_history(context, history)
+      return if context.nil? || context.empty?
+
+      history.reject! { |message| message[:role] == "system" }
+      history.prepend({role: "system", content: context})
+    end
+
+    def add_prompt_to_history(prompt, history)
+      return if prompt.empty?
+
+      last_user_message = history.last && history.last[:role] == "user"
+      if last_user_message
+        history.last[:content] += "\n#{prompt}"
+      else
+        history.append({role: "user", content: prompt})
+      end
     end
 
     def transform_messages(messages)
