@@ -16,15 +16,15 @@ RSpec.describe Langchain::Agent::SequentialAgent do
 
   before do
     allow(subject.tools[0]).to receive(:execute).with(
-      input: question,
+      input: question
     ).and_return(calculator_response)
 
     allow(subject.tools[1]).to receive(:execute).with(
-      input: calculator_response,
+      input: calculator_response
     ).and_return(search_response)
 
     allow(subject.tools[2]).to receive(:execute).with(
-      input: search_response,
+      input: search_response
     ).and_return(final_answer)
   end
 
