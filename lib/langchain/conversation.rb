@@ -19,6 +19,9 @@ module Langchain
   class Conversation
     attr_reader :context, :examples, :messages
 
+    # The least number of tokens we want to be under the limit by
+    TOKEN_LEEWAY = 20
+
     # Intialize Conversation with a LLM
     #
     # @param llm [Object] The LLM to use for the conversation
@@ -26,10 +29,10 @@ module Langchain
     # @return [Langchain::Conversation] The Langchain::Conversation instance
     def initialize(llm:, **options, &block)
       @llm = llm
-      @options = options
       @context = nil
       @examples = []
-      @messages = []
+      @messages = options.delete(:messages) || []
+      @options = options
       @block = block
     end
 
@@ -58,7 +61,23 @@ module Langchain
     private
 
     def llm_response(prompt)
-      @llm.chat(messages: @messages, context: @context, examples: @examples, **@options, &@block)
+      begin
+        @llm.chat(messages: @messages, context: @context, examples: @examples, **@options, &@block)
+      rescue Langchain::Utils::TokenLength::TokenLimitExceeded => exception
+        raise exception if @messages.size == 1
+
+        reduce_messages(exception.token_overflow)
+        retry
+      end
+    end
+
+    def reduce_messages(token_overflow)
+      @messages = @messages.drop_while do |message|
+        proceed = token_overflow > -TOKEN_LEEWAY
+        token_overflow -= Langchain::Utils::TokenLength::OpenAIValidator.token_length(message[:content], model_name)
+
+        proceed
+      end
     end
 
     def append_ai_message(message)
@@ -67,6 +86,10 @@ module Langchain
 
     def append_user_message(message)
       @messages << {role: "user", content: message}
+    end
+
+    def model_name
+      @options[:model] || @llm.class::DEFAULTS[:chat_completion_model_name]
     end
   end
 end
