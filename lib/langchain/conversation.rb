@@ -61,14 +61,12 @@ module Langchain
     private
 
     def llm_response(prompt)
-      begin
-        @llm.chat(messages: @messages, context: @context, examples: @examples, **@options, &@block)
-      rescue Langchain::Utils::TokenLength::TokenLimitExceeded => exception
-        raise exception if @messages.size == 1
+      @llm.chat(messages: @messages, context: @context, examples: @examples, **@options, &@block)
+    rescue Langchain::Utils::TokenLength::TokenLimitExceeded => exception
+      raise exception if @messages.size == 1
 
-        reduce_messages(exception.token_overflow)
-        retry
-      end
+      reduce_messages(exception.token_overflow)
+      retry
     end
 
     def reduce_messages(token_overflow)

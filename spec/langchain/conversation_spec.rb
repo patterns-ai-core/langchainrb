@@ -117,7 +117,7 @@ RSpec.describe Langchain::Conversation do
     end
 
     context "with length limit exceeded" do
-      let(:llm) { Langchain::LLM::OpenAI.new api_key: 'TEST' }
+      let(:llm) { Langchain::LLM::OpenAI.new api_key: "TEST" }
       let(:client) { double("OpenAI::Client") }
       let(:messages) { [] }
 
@@ -131,39 +131,38 @@ RSpec.describe Langchain::Conversation do
       context "a single pormpt that exceeds the token limit" do
         let(:prompt) { "Lorem " * 4096 }
 
-        it 'raises an error' do
-          expect{subject.message(prompt)}.to raise_error(Langchain::Utils::TokenLength::TokenLimitExceeded)
+        it "raises an error" do
+          expect { subject.message(prompt) }.to raise_error(Langchain::Utils::TokenLength::TokenLimitExceeded)
         end
       end
 
       context "message history exceeds the token limit" do
         let(:prompt) { "Lorem " * 2048 }
         let(:response) do
-          { "choices" => [{ "message" => { "content" => "I'm doing well. How about you?" } }] }
+          {"choices" => [{"message" => {"content" => "I'm doing well. How about you?"}}]}
         end
         let(:messages) do
           [
             {role: "user", content: "Lorem " * 512},
             {role: "ai", content: "Ipsum " * 512},
             {role: "user", content: "Dolor " * 512},
-            {role: "ai", content: "Sit " * 512},
+            {role: "ai", content: "Sit " * 512}
           ]
         end
 
-        it 'should drop 2 first messages and call an API' do
+        it "should drop 2 first messages and call an API" do
           expect(client).to receive(:chat).with(
             parameters: {
               max_tokens: 488,
               messages: [
                 {role: "user", content: messages[2][:content]},
-                {role: "assistant",content:  messages[3][:content]},
+                {role: "assistant", content: messages[3][:content]},
                 {role: "user", content: prompt}
               ],
               model: "gpt-3.5-turbo",
-              temperature:0.0
+              temperature: 0.0
             }
           ).and_return(response)
-
 
           expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
         end
