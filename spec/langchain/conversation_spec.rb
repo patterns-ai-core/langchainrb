@@ -141,6 +141,8 @@ RSpec.describe Langchain::Conversation do
         let(:response) do
           {"choices" => [{"message" => {"content" => "I'm doing well. How about you?"}}]}
         end
+        let(:context) { "You are a chatbot" }
+        let(:examples) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
         let(:messages) do
           [
             {role: "user", content: "Lorem " * 512},
@@ -150,11 +152,19 @@ RSpec.describe Langchain::Conversation do
           ]
         end
 
+        before do
+          subject.set_context(context)
+          subject.add_examples(examples)
+        end
+
         it "should drop 2 first messages and call an API" do
           expect(client).to receive(:chat).with(
             parameters: {
-              max_tokens: 488,
+              max_tokens: 457,
               messages: [
+                {role: "system", content: "You are a chatbot"},
+                {role: "user", content: "Hello"},
+                {role: "assistant", content: "Hi"},
                 {role: "user", content: messages[2][:content]},
                 {role: "assistant", content: messages[3][:content]},
                 {role: "user", content: prompt}

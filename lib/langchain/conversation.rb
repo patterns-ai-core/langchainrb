@@ -72,7 +72,7 @@ module Langchain
     def reduce_messages(token_overflow)
       @messages = @messages.drop_while do |message|
         proceed = token_overflow > -TOKEN_LEEWAY
-        token_overflow -= Langchain::Utils::TokenLength::OpenAIValidator.token_length(message[:content], model_name)
+        token_overflow -= Langchain::Utils::TokenLength::OpenAIValidator.token_length(message.to_json, model_name)
 
         proceed
       end
