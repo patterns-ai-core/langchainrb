@@ -7,7 +7,7 @@ module Langchain
       # This class is meant to validate the length of the text passed in to Google Palm's API.
       # It is used to validate the token length before the API call is made
       #
-      class GooglePalmValidator
+      class GooglePalmValidator < BaseValidator
         TOKEN_LIMITS = {
           # Source:
           # This data can be pulled when `list_models()` method is called: https://github.com/andreibondarev/google_palm_api#usage
@@ -27,41 +27,21 @@ module Langchain
         }.freeze
 
         #
-        # Validate the context length of the text
-        #
-        # @param content [String | Array<String>] The text or array of texts to validate
-        # @param model_name [String] The model name to validate against
-        # @return [Integer] Whether the text is valid or not
-        # @raise [TokenLimitExceeded] If the text is too long
-        #
-        def self.validate_max_tokens!(google_palm_llm, content, model_name)
-          text_token_length = if content.is_a?(Array)
-            content.sum { |item| token_length(google_palm_llm, item.to_json, model_name) }
-          else
-            token_length(google_palm_llm, content, model_name)
-          end
-
-          leftover_tokens = TOKEN_LIMITS.dig(model_name, "input_token_limit") - text_token_length
-
-          # Raise an error even if whole prompt is equal to the model's token limit (leftover_tokens == 0)
-          if leftover_tokens <= 0
-            raise TokenLimitExceeded, "This model's maximum context length is #{TOKEN_LIMITS.dig(model_name, "input_token_limit")} tokens, but the given text is #{text_token_length} tokens long."
-          end
-
-          leftover_tokens
-        end
-
-        #
         # Calculate token length for a given text and model name
         #
-        # @param llm [Langchain::LLM:GooglePalm] The Langchain::LLM:GooglePalm instance
         # @param text [String] The text to calculate the token length for
         # @param model_name [String] The model name to validate against
+        # @param options [Hash] the options to create a message with
+        # @option options [Langchain::LLM:GooglePalm] :llm The Langchain::LLM:GooglePalm instance
         # @return [Integer] The token length of the text
         #
-        def self.token_length(llm, text, model_name = "chat-bison-001")
-          response = llm.client.count_message_tokens(model: model_name, prompt: text)
+        def self.token_length(text, model_name = "chat-bison-001", options)
+          response = options[:llm].client.count_message_tokens(model: model_name, prompt: text)
           response.dig("tokenCount")
+        end
+
+        def self.token_limit(model_name)
+          TOKEN_LIMITS.dig(model_name, "input_token_limit")
         end
       end
     end
