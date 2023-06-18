@@ -32,7 +32,7 @@ module Langchain::LLM
     # @return [String] The completion
     #
     def complete(prompt:, **params)
-      parameters = complete_parameters @defaults[:model], params
+      parameters = complete_parameters params
 
       response = client.complete(prompt, parameters)
       response.dig(:completions, 0, :data, :text)
@@ -52,10 +52,8 @@ module Langchain::LLM
 
     private
 
-    def complete_parameters(model, params)
-      default_params = {model: model, temperature: @defaults[:temperature]}
-
-      default_params.merge(params)
+    def complete_parameters(params)
+      @defaults.dup.merge(params)
     end
   end
 end
