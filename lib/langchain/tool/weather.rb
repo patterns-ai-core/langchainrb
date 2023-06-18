@@ -30,15 +30,13 @@ module Langchain::Tool
         Action Input: Kiev, Ukraine; metric
     DESC
 
-    attr_reader :client, :units
-
     #
     # Initializes the Weather tool
     #
     # @param api_key [String] Open Weather API key
     # @return [Langchain::Tool::Weather] Weather tool
     #
-    def initialize(api_key:, units: "metric")
+    def initialize(api_key:)
       depends_on "open-weather-ruby-client"
       require "open-weather-ruby-client"
 
@@ -51,17 +49,28 @@ module Langchain::Tool
     end
 
     # Returns current weather for a city
-    # @param input [String] comma separated city and unit (optional: imperial, metric, or standard)
+    # @param input [String] semicolon separated city and unit (optional: imperial, metric, or standard)
     # @return [String] Answer
     def execute(input:)
       Langchain.logger.info("Executing for \"#{input}\"", for: self.class)
 
       input_array = input.split(";")
       city, units = *input_array.map(&:strip)
+      units = "standard" if units.nil?
 
-      data = client.current_weather(city: city, units: units)
+      begin
+        data = @client.current_weather(city: city, units: units)
+      rescue Faraday::ResourceNotFound
+        input_array = city.split(",")
+        city, state, country = *input_array.map(&:strip)
+        country = "US" if country.nil?
+
+        # Note: units not supported for this call, country is required
+        data = @client.current_city(city, state, country)
+      end
+
       weather = data.main.map { |key, value| "#{key} #{value}" }.join(", ")
-      "The current weather in #{data.name} is #{weather}"
+      "The current weather in #{units} units in #{data.name} is #{weather}"
     end
   end
 end
