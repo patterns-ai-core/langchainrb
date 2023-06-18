@@ -91,12 +91,13 @@ module Langchain::LLM
 
       default_params = {
         temperature: @defaults[:temperature],
-        completion_model_name: @defaults[:completion_model_name],
+        chat_completion_model_name: @defaults[:chat_completion_model_name],
         context: context,
         messages: compose_chat_messages(prompt: prompt, messages: messages),
         examples: compose_examples(examples)
       }
 
+      # chat-bison-001 is the only model that currently supports countMessageTokens functions
       LENGTH_VALIDATOR.validate_max_tokens!(default_params[:messages], "chat-bison-001", llm: self)
 
       if options[:stop_sequences]

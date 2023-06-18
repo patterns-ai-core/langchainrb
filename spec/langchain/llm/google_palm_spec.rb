@@ -99,14 +99,14 @@ RSpec.describe Langchain::LLM::GooglePalm do
         let(:subject) {
           described_class.new(
             api_key: "123",
-            default_options: {completion_model_name: "chat-bison-foo"}
+            default_options: {chat_completion_model_name: "chat-bison-foo"}
           )
         }
 
         it "passes correct options to the completions method" do
           expect(subject.client).to receive(:generate_chat_message).with(
             {
-              completion_model_name: "chat-bison-foo",
+              chat_completion_model_name: "chat-bison-foo",
               context: "",
               examples: [],
               messages: [{author: "user", content: "Hey there! How are you?"}],
