@@ -64,8 +64,9 @@ module Langchain::Tool
         input_array = city.split(",")
         city, state, country = *input_array.map(&:strip)
         country = "US" if country.nil?
+        units = "standard"
 
-        # Note: passing units for this call currently errors and country is required
+        # Note: only standard units are currently supported by this method and country is required
         data = @client.current_city(city, state, country)
       end
 
