@@ -117,8 +117,6 @@ RSpec.describe Langchain::Conversation do
     end
 
     context "with length limit exceeded" do
-      let(:llm) { Langchain::LLM::OpenAI.new api_key: "TEST" }
-      let(:client) { double("OpenAI::Client") }
       let(:messages) { [] }
 
       subject { described_class.new(llm: llm, messages: messages) }
@@ -128,53 +126,118 @@ RSpec.describe Langchain::Conversation do
         allow(client).to receive(:chat).and_return(response)
       end
 
-      context "a single prompt that exceeds the token limit" do
-        let(:prompt) { "Lorem " * 4096 }
+      context "with OpenAI LLM" do
+        let(:llm) { Langchain::LLM::OpenAI.new api_key: "TEST" }
+        let(:client) { double("OpenAI::Client") }
 
-        it "raises an error" do
-          expect { subject.message(prompt) }.to raise_error(Langchain::Utils::TokenLength::TokenLimitExceeded)
+        context "a single prompt that exceeds the token limit" do
+          let(:prompt) { "Lorem " * 4096 }
+
+          it "raises an error" do
+            expect { subject.message(prompt) }.to raise_error(Langchain::Utils::TokenLength::TokenLimitExceeded)
+          end
+        end
+
+        context "message history exceeds the token limit" do
+          let(:prompt) { "Lorem " * 2048 }
+          let(:response) do
+            {"choices" => [{"message" => {"content" => "I'm doing well. How about you?"}}]}
+          end
+          let(:context) { "You are a chatbot" }
+          let(:examples) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
+          let(:messages) do
+            [
+              {role: "user", content: "Lorem " * 512},
+              {role: "ai", content: "Ipsum " * 512},
+              {role: "user", content: "Dolor " * 512},
+              {role: "ai", content: "Sit " * 512}
+            ]
+          end
+
+          before do
+            subject.set_context(context)
+            subject.add_examples(examples)
+          end
+
+          it "should drop 2 first messages and call an API" do
+            expect(client).to receive(:chat).with(
+              parameters: {
+                max_tokens: 457,
+                messages: [
+                  {role: "system", content: "You are a chatbot"},
+                  {role: "user", content: "Hello"},
+                  {role: "assistant", content: "Hi"},
+                  {role: "user", content: messages[2][:content]},
+                  {role: "assistant", content: messages[3][:content]},
+                  {role: "user", content: prompt}
+                ],
+                model: "gpt-3.5-turbo",
+                temperature: 0.0
+              }
+            ).and_return(response)
+
+            expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
+          end
         end
       end
 
-      context "message history exceeds the token limit" do
-        let(:prompt) { "Lorem " * 2048 }
-        let(:response) do
-          {"choices" => [{"message" => {"content" => "I'm doing well. How about you?"}}]}
-        end
-        let(:context) { "You are a chatbot" }
-        let(:examples) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
-        let(:messages) do
-          [
-            {role: "user", content: "Lorem " * 512},
-            {role: "ai", content: "Ipsum " * 512},
-            {role: "user", content: "Dolor " * 512},
-            {role: "ai", content: "Sit " * 512}
-          ]
-        end
+      context "with PaLM2 LLM" do
+        let(:llm) { Langchain::LLM::GooglePalm.new api_key: "TEST" }
+        let(:client) { double("GooglePalmApi::Client") }
 
         before do
-          subject.set_context(context)
-          subject.add_examples(examples)
+          allow(client).to receive(:generate_chat_message).and_return(response)
+          allow(client).to receive(:count_message_tokens) do |value|
+            {"tokenCount" => value[:prompt].count(" ")}
+          end
         end
 
-        it "should drop 2 first messages and call an API" do
-          expect(client).to receive(:chat).with(
-            parameters: {
-              max_tokens: 457,
-              messages: [
-                {role: "system", content: "You are a chatbot"},
-                {role: "user", content: "Hello"},
-                {role: "assistant", content: "Hi"},
-                {role: "user", content: messages[2][:content]},
-                {role: "assistant", content: messages[3][:content]},
-                {role: "user", content: prompt}
-              ],
-              model: "gpt-3.5-turbo",
-              temperature: 0.0
-            }
-          ).and_return(response)
+        context "a single prompt that exceeds the token limit" do
+          let(:prompt) { "Lorem " * 4096 }
 
-          expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
+          it "raises an error" do
+            expect { subject.message(prompt) }.to raise_error(Langchain::Utils::TokenLength::TokenLimitExceeded)
+          end
+        end
+
+        context "message history exceeds the token limit" do
+          let(:prompt) { "Lorem " * 2048 }
+          let(:response) do
+            {"candidates" => [{"content" => "I'm doing well. How about you?"}]}
+          end
+          let(:context) { "You are a chatbot" }
+          let(:examples) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
+          let(:messages) do
+            [
+              {role: "user", content: "Lorem " * 512},
+              {role: "ai", content: "Ipsum " * 512},
+              {role: "user", content: "Dolor " * 512},
+              {role: "ai", content: "Sit " * 512}
+            ]
+          end
+
+          before do
+            subject.set_context(context)
+            subject.add_examples(examples)
+          end
+
+          it "should drop 2 first messages and call an API" do
+            expect(client).to receive(:generate_chat_message).with(
+              context: "You are a chatbot",
+              examples: [
+                {input: {content: "Hello"}, output: {content: "Hi"}}
+              ],
+              messages: [
+                {author: "ai", content: messages[1][:content]},
+                {author: "user", content: messages[2][:content]},
+                {author: "ai", content: messages[3][:content]},
+                {author: "user", content: prompt}
+              ],
+              temperature: 0.0
+            ).and_return(response)
+
+            expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
+          end
         end
       end
     end
