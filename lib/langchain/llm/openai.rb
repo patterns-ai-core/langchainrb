@@ -18,11 +18,12 @@ module Langchain::LLM
       dimension: 1536
     }.freeze
 
-    def initialize(api_key:, llm_options: {})
+    def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai"
       require "openai"
 
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
+      @defaults = DEFAULTS.merge(default_options)
     end
 
     #
@@ -33,7 +34,7 @@ module Langchain::LLM
     # @return [Array] The embedding
     #
     def embed(text:, **params)
-      parameters = {model: DEFAULTS[:embeddings_model_name], input: text}
+      parameters = {model: @defaults[:embeddings_model_name], input: text}
 
       Langchain::Utils::TokenLength::OpenAIValidator.validate_max_tokens!(text, parameters[:model])
 
@@ -49,7 +50,7 @@ module Langchain::LLM
     # @return [String] The completion
     #
     def complete(prompt:, **params)
-      parameters = compose_parameters DEFAULTS[:completion_model_name], params
+      parameters = compose_parameters @defaults[:completion_model_name], params
 
       parameters[:prompt] = prompt
       parameters[:max_tokens] = Langchain::Utils::TokenLength::OpenAIValidator.validate_max_tokens!(prompt, parameters[:model])
@@ -72,7 +73,7 @@ module Langchain::LLM
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
 
-      parameters = compose_parameters DEFAULTS[:chat_completion_model_name], options
+      parameters = compose_parameters @defaults[:chat_completion_model_name], options
       parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
       parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
 
@@ -103,13 +104,13 @@ module Langchain::LLM
       )
       prompt = prompt_template.format(text: text)
 
-      complete(prompt: prompt, temperature: DEFAULTS[:temperature])
+      complete(prompt: prompt, temperature: @defaults[:temperature])
     end
 
     private
 
     def compose_parameters(model, params)
-      default_params = {model: model, temperature: DEFAULTS[:temperature]}
+      default_params = {model: model, temperature: @defaults[:temperature]}
 
       default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
 

@@ -41,6 +41,26 @@ RSpec.describe Langchain::LLM::Cohere do
     it "returns a completion" do
       expect(subject.complete(prompt: "Hello World")).to eq("\nWhat is the meaning of life? What is the meaning of life?\nWhat is the meaning")
     end
+
+    context "with custom default_options" do
+      let(:subject) {
+        described_class.new(
+          api_key: "123",
+          default_options: {completion_model_name: "base-light"}
+        )
+      }
+
+      it "passes correct options to the completions method" do
+        expect(subject.client).to receive(:generate).with(
+          {
+            model: "base-light",
+            prompt: "Hello World",
+            temperature: 0.0
+          }
+        )
+        subject.complete(prompt: "Hello World")
+      end
+    end
   end
 
   describe "#default_dimension" do

@@ -11,11 +11,17 @@ module Langchain::LLM
   #     ai21 = Langchain::LLM::AI21.new(api_key:)
   #
   class AI21 < Base
-    def initialize(api_key:)
+    DEFAULTS = {
+      temperature: 0.0,
+      model: "j2-large"
+    }.freeze
+
+    def initialize(api_key:, default_options: {})
       depends_on "ai21"
       require "ai21"
 
       @client = ::AI21::Client.new(api_key)
+      @defaults = DEFAULTS.merge(default_options)
     end
 
     #
@@ -26,7 +32,9 @@ module Langchain::LLM
     # @return [String] The completion
     #
     def complete(prompt:, **params)
-      response = client.complete(prompt, params)
+      parameters = complete_parameters @defaults[:model], params
+
+      response = client.complete(prompt, parameters)
       response.dig(:completions, 0, :data, :text)
     end
 
@@ -40,6 +48,14 @@ module Langchain::LLM
     def summarize(text:, **params)
       response = client.summarize(text, "TEXT", params)
       response.dig(:summary)
+    end
+
+    private
+
+    def complete_parameters(model, params)
+      default_params = {model: model, temperature: @defaults[:temperature]}
+
+      default_params.merge(params)
     end
   end
 end
