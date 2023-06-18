@@ -17,6 +17,7 @@ module Langchain::LLM
       embeddings_model_name: "text-embedding-ada-002",
       dimension: 1536
     }.freeze
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
 
     def initialize(api_key:, llm_options: {})
       depends_on "ruby-openai"
@@ -149,7 +150,7 @@ module Langchain::LLM
     end
 
     def validate_max_tokens(messages, model)
-      Langchain::Utils::TokenLength::OpenAIValidator.validate_max_tokens!(messages, model)
+      LENGTH_VALIDATOR.validate_max_tokens!(messages, model)
     end
   end
 end
