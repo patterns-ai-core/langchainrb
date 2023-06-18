@@ -12,5 +12,9 @@ module Langchain
     def value
       @data
     end
+
+    def chunks(opts = {})
+      Langchain::Chunker::Text.new(@data, **opts).chunks
+    end
   end
 end
