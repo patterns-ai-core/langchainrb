@@ -64,10 +64,13 @@ module Langchain::LLM
     #
     # == Examples
     #
+    #     # simplest case, just give a prompt
     #     openai.chat prompt: "When was Ruby first released?"
     #
+    #     # prompt plus some context about how to respond
     #     openai.chat context: "You are RubyGPT, a helpful chat bot for helping people learn Ruby", prompt: "Does Ruby have a REPL like IPython?"
     #
+    #     # full control over messages that get sent, equivilent to the above
     #     openai.chat messages: [
     #       {
     #         role: "system",
@@ -78,6 +81,19 @@ module Langchain::LLM
     #         content: "When was Ruby first released?"
     #       }
     #     ]
+    #
+    #     # few-short prompting with examples
+    #     openai.chat prompt: "When was factory_bot released?",
+    #       examples: [
+    #         {
+    #           role: "user",
+    #           content: "When was Ruby on Rails released?"
+    #         }
+    #         {
+    #           role: "assistant",
+    #           content: "2004"
+    #         },
+    #       ]
     #
     # @param prompt [String] The prompt to generate a chat completion for
     # @param messages [Array<Hash>] The messages that have been sent in the conversation
