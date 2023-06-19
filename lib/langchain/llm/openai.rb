@@ -61,14 +61,53 @@ module Langchain::LLM
     end
 
     #
-    # Generate a chat completion for a given prompt
+    # Generate a chat completion for a given prompt or messages.
+    #
+    # == Examples
+    #
+    #     # simplest case, just give a prompt
+    #     openai.chat prompt: "When was Ruby first released?"
+    #
+    #     # prompt plus some context about how to respond
+    #     openai.chat context: "You are RubyGPT, a helpful chat bot for helping people learn Ruby", prompt: "Does Ruby have a REPL like IPython?"
+    #
+    #     # full control over messages that get sent, equivilent to the above
+    #     openai.chat messages: [
+    #       {
+    #         role: "system",
+    #         content: "You are RubyGPT, a helpful chat bot for helping people learn Ruby", prompt: "Does Ruby have a REPL like IPython?"
+    #       },
+    #       {
+    #         role: "user",
+    #         content: "When was Ruby first released?"
+    #       }
+    #     ]
+    #
+    #     # few-short prompting with examples
+    #     openai.chat prompt: "When was factory_bot released?",
+    #       examples: [
+    #         {
+    #           role: "user",
+    #           content: "When was Ruby on Rails released?"
+    #         }
+    #         {
+    #           role: "assistant",
+    #           content: "2004"
+    #         },
+    #       ]
     #
     # @param prompt [String] The prompt to generate a chat completion for
-    # @param messages [Array] The messages that have been sent in the conversation
-    # @param context [String] The context of the conversation
-    # @param examples [Array] Examples of messages provide model with
-    # @param options extra parameters passed to OpenAI::Client#chat
-    # @param block [Block] Pass the block to stream the response
+    # @param messages [Array<Hash>] The messages that have been sent in the conversation
+    #   Each message should be a Hash with the following keys:
+    #   - :content [String] The content of the message
+    #   - :role [String] The role of the sender (system, user, assistant, or function)
+    # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
+    # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    #   Each message should be a Hash with the following keys:
+    #   - :content [String] The content of the message
+    #   - :role [String] The role of the sender (system, user, assistant, or function)
+    # @param options <Hash> extra parameters passed to OpenAI::Client#chat
+    # @yield [String] Stream responses back one String at a time
     # @return [String] The chat completion
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
