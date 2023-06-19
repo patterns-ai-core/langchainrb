@@ -17,6 +17,7 @@ module Langchain::LLM
       embeddings_model_name: "text-embedding-ada-002",
       dimension: 1536
     }.freeze
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
 
     def initialize(api_key:, llm_options: {})
       depends_on "ruby-openai"
@@ -35,7 +36,7 @@ module Langchain::LLM
     def embed(text:, **params)
       parameters = {model: DEFAULTS[:embeddings_model_name], input: text}
 
-      Langchain::Utils::TokenLength::OpenAIValidator.validate_max_tokens!(text, parameters[:model])
+      validate_max_tokens(text, parameters[:model])
 
       response = client.embeddings(parameters: parameters.merge(params))
       response.dig("data").first.dig("embedding")
@@ -52,21 +53,60 @@ module Langchain::LLM
       parameters = compose_parameters DEFAULTS[:completion_model_name], params
 
       parameters[:prompt] = prompt
-      parameters[:max_tokens] = Langchain::Utils::TokenLength::OpenAIValidator.validate_max_tokens!(prompt, parameters[:model])
+      parameters[:max_tokens] = validate_max_tokens(prompt, parameters[:model])
 
       response = client.completions(parameters: parameters)
       response.dig("choices", 0, "text")
     end
 
     #
-    # Generate a chat completion for a given prompt
+    # Generate a chat completion for a given prompt or messages.
+    #
+    # == Examples
+    #
+    #     # simplest case, just give a prompt
+    #     openai.chat prompt: "When was Ruby first released?"
+    #
+    #     # prompt plus some context about how to respond
+    #     openai.chat context: "You are RubyGPT, a helpful chat bot for helping people learn Ruby", prompt: "Does Ruby have a REPL like IPython?"
+    #
+    #     # full control over messages that get sent, equivilent to the above
+    #     openai.chat messages: [
+    #       {
+    #         role: "system",
+    #         content: "You are RubyGPT, a helpful chat bot for helping people learn Ruby", prompt: "Does Ruby have a REPL like IPython?"
+    #       },
+    #       {
+    #         role: "user",
+    #         content: "When was Ruby first released?"
+    #       }
+    #     ]
+    #
+    #     # few-short prompting with examples
+    #     openai.chat prompt: "When was factory_bot released?",
+    #       examples: [
+    #         {
+    #           role: "user",
+    #           content: "When was Ruby on Rails released?"
+    #         }
+    #         {
+    #           role: "assistant",
+    #           content: "2004"
+    #         },
+    #       ]
     #
     # @param prompt [String] The prompt to generate a chat completion for
-    # @param messages [Array] The messages that have been sent in the conversation
-    # @param context [String] The context of the conversation
-    # @param examples [Array] Examples of messages provide model with
-    # @param options extra parameters passed to OpenAI::Client#chat
-    # @param block [Block] Pass the block to stream the response
+    # @param messages [Array<Hash>] The messages that have been sent in the conversation
+    #   Each message should be a Hash with the following keys:
+    #   - :content [String] The content of the message
+    #   - :role [String] The role of the sender (system, user, assistant, or function)
+    # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
+    # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    #   Each message should be a Hash with the following keys:
+    #   - :content [String] The content of the message
+    #   - :role [String] The role of the sender (system, user, assistant, or function)
+    # @param options <Hash> extra parameters passed to OpenAI::Client#chat
+    # @yield [String] Stream responses back one String at a time
     # @return [String] The chat completion
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
@@ -149,7 +189,7 @@ module Langchain::LLM
     end
 
     def validate_max_tokens(messages, model)
-      Langchain::Utils::TokenLength::OpenAIValidator.validate_max_tokens!(messages, model)
+      LENGTH_VALIDATOR.validate_max_tokens!(messages, model)
     end
   end
 end

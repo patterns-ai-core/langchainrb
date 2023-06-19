@@ -24,6 +24,7 @@ module Langchain::LLM
       temperature: 0.0,
       dimension: 768 # This is what the `embedding-gecko-001` model generates
     }.freeze
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidator
 
     def initialize(api_key:)
       depends_on "google_palm_api"
@@ -90,7 +91,7 @@ module Langchain::LLM
         examples: compose_examples(examples)
       }
 
-      Langchain::Utils::TokenLength::GooglePalmValidator.validate_max_tokens!(self, default_params[:messages], "chat-bison-001")
+      LENGTH_VALIDATOR.validate_max_tokens!(default_params[:messages], "chat-bison-001", llm: self)
 
       if options[:stop_sequences]
         default_params[:stop] = options.delete(:stop_sequences)
