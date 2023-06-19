@@ -11,7 +11,7 @@ RSpec.describe Langchain::Utils::TokenLength::GooglePalmValidator do
   end
 
   describe "#validate_max_tokens!" do
-    subject { described_class.validate_max_tokens!(llm, content, model) }
+    subject { described_class.validate_max_tokens!(content, model, llm: llm) }
 
     context "with text argument" do
       context "when the text is too long" do
