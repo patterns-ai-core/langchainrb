@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Agent::SQLQueryAgent do
-  let(:db) { Langchain::Tool::Database.new(connection_string: "mock:///") }
+  let(:db) { Langchain::Tool::Database.new(connection_string: "mock://postgres") }
   let(:openai) { Langchain::LLM::OpenAI.new(api_key: "123") }
 
   subject { described_class.new(llm: openai, db: db) }

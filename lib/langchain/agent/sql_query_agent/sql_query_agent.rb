@@ -13,7 +13,7 @@ module Langchain::Agent
     def initialize(llm:, db:)
       @llm = llm
       @db = db
-      @schema = @db.schema
+      @schema = @db.dump_schema
     end
 
     #
