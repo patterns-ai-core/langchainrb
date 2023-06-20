@@ -22,7 +22,9 @@ RSpec.describe Langchain::LLM::AI21 do
 
     context "with no additional parameters" do
       before do
-        allow(subject.client).to receive(:complete).with("Hello World", {}).and_return(response)
+        allow(subject.client).to receive(:complete)
+          .with("Hello World", {model: "j2-large", temperature: 0.0})
+          .and_return(response)
       end
 
       it "returns a completion" do
@@ -41,6 +43,27 @@ RSpec.describe Langchain::LLM::AI21 do
         expect(subject.complete(prompt: "Hello World", model: "j2-jumbo", temperature: 0.7)).to eq(
           "\nWhat is the meaning of life? What is the meaning of life?\nWhat is the meaning"
         )
+      end
+    end
+
+    context "with custom default_options" do
+      let(:subject) {
+        described_class.new(
+          api_key: "123",
+          default_options: {model: "j2-mid"}
+        )
+      }
+
+      it "passes correct options to the client's complete method" do
+        expect(subject.client).to receive(:complete).with(
+          "Hello World",
+          {
+            model: "j2-mid",
+            temperature: 0.0
+          }
+        ).and_return(response)
+
+        subject.complete(prompt: "Hello World")
       end
     end
   end

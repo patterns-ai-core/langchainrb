@@ -102,6 +102,33 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
     end
 
+    context "with custom default_options" do
+      let(:subject) {
+        described_class.new(
+          api_key: "123",
+          default_options: {completion_model_name: "gpt-3.5-turbo-16k"}
+        )
+      }
+
+      let(:parameters) do
+        {parameters:
+          {model: "text-davinci-003",
+           prompt: "Hello World",
+           temperature: 0.0,
+           max_tokens: 4095}}
+      end
+
+      it "passes correct options to the completions method" do
+        expect(subject.client).to receive(:completions).with(
+          {parameters: {max_tokens: 16382,
+                        model: "gpt-3.5-turbo-16k",
+                        prompt: "Hello World",
+                        temperature: 0.0}}
+        ).and_return(response)
+        subject.complete(prompt: "Hello World")
+      end
+    end
+
     context "with prompt and parameters" do
       let(:parameters) do
         {parameters: {model: "text-curie-001", prompt: "Hello World", temperature: 1.0, max_tokens: 2047}}

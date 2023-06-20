@@ -22,15 +22,19 @@ module Langchain::LLM
 
     DEFAULTS = {
       temperature: 0.0,
-      dimension: 768 # This is what the `embedding-gecko-001` model generates
+      dimension: 768, # This is what the `embedding-gecko-001` model generates
+      completion_model_name: "text-bison-001",
+      chat_completion_model_name: "chat-bison-001",
+      embeddings_model_name: "embedding-gecko-001"
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidator
 
-    def initialize(api_key:)
+    def initialize(api_key:, default_options: {})
       depends_on "google_palm_api"
       require "google_palm_api"
 
       @client = ::GooglePalmApi::Client.new(api_key: api_key)
+      @defaults = DEFAULTS.merge(default_options)
     end
 
     #
@@ -56,7 +60,8 @@ module Langchain::LLM
     def complete(prompt:, **params)
       default_params = {
         prompt: prompt,
-        temperature: DEFAULTS[:temperature]
+        temperature: @defaults[:temperature],
+        completion_model_name: @defaults[:completion_model_name]
       }
 
       if params[:stop_sequences]
@@ -85,12 +90,14 @@ module Langchain::LLM
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
 
       default_params = {
-        temperature: DEFAULTS[:temperature],
+        temperature: @defaults[:temperature],
+        chat_completion_model_name: @defaults[:chat_completion_model_name],
         context: context,
         messages: compose_chat_messages(prompt: prompt, messages: messages),
         examples: compose_examples(examples)
       }
 
+      # chat-bison-001 is the only model that currently supports countMessageTokens functions
       LENGTH_VALIDATOR.validate_max_tokens!(default_params[:messages], "chat-bison-001", llm: self)
 
       if options[:stop_sequences]
@@ -123,7 +130,7 @@ module Langchain::LLM
 
       complete(
         prompt: prompt,
-        temperature: DEFAULTS[:temperature],
+        temperature: @defaults[:temperature],
         # Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
         max_tokens: 2048
       )
