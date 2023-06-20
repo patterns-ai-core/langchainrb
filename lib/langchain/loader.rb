@@ -20,6 +20,12 @@ module Langchain
     #     # load a file
     #     data = Langchain::Loader.load("README.md")
     #
+    #    # Load data using a custom processor
+    #    data = Langchain::Loader.load("README.md") do |raw_data, options|
+    #      # your processing code goes here
+    #      # return data at the end here 
+    #    end
+    #
     # @param path [String | Pathname] path to file or URL
     # @param options [Hash] options passed to the processor class used to process the data
     # @return [Data] data loaded from path
@@ -46,6 +52,16 @@ module Langchain
     end
 
     # Load data from a file or URL
+    #
+    #    loader = Langchain::Loader.new("README.md")
+    #    # Load data using default processor for the file
+    #    loader.load
+    #
+    #    # Load data using a custom processor
+    #    loader.load do |raw_data, options|
+    #      # your processing code goes here
+    #      # return data at the end here 
+    #    end
     #
     # @yield [String, Hash] handle parsing raw output into string directly
     # @yieldparam [String] raw_data from the loaded URL or file
