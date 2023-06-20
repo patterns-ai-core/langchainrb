@@ -50,7 +50,8 @@ module Langchain::LLM
       default_params = {
         prompt: prompt,
         temperature: DEFAULTS[:temperature],
-        model: DEFAULTS[:completion_model_name]
+        model: DEFAULTS[:completion_model_name],
+        truncate: "START"
       }
 
       if params[:stop_sequences]
@@ -58,6 +59,8 @@ module Langchain::LLM
       end
 
       default_params.merge!(params)
+
+      default_params[:max_tokens] = Langchain::Utils::TokenLength::CohereValidator.validate_max_tokens!(prompt, default_params[:model], client)
 
       response = client.generate(**default_params)
       response.dig("generations").first.dig("text")
