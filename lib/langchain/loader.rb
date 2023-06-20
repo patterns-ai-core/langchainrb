@@ -23,7 +23,7 @@ module Langchain
     #    # Load data using a custom processor
     #    data = Langchain::Loader.load("README.md") do |raw_data, options|
     #      # your processing code goes here
-    #      # return data at the end here 
+    #      # return data at the end here
     #    end
     #
     # @param path [String | Pathname] path to file or URL
@@ -60,7 +60,7 @@ module Langchain
     #    # Load data using a custom processor
     #    loader.load do |raw_data, options|
     #      # your processing code goes here
-    #      # return data at the end here 
+    #      # return data at the end here
     #    end
     #
     # @yield [String, Hash] handle parsing raw output into string directly

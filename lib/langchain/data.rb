@@ -14,13 +14,13 @@ module Langchain
       @data = data
     end
 
-    # @return [String] 
+    # @return [String]
     def value
       @data
     end
 
     # @param opts [Hash] options passed to the chunker
-    # @return [Array<String>] 
+    # @return [Array<String>]
     def chunks(opts = {})
       Langchain::Chunker::Text.new(@data, **opts).chunks
     end
