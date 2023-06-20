@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.5.7] - 2023-06-19
+- Developer can modify models used when initiliazing `Langchain::LLM::*` clients
+- Improvements to the `SQLQueryAgent` and the database tool
+
 ## [0.5.6] - 2023-06-18
 - If used with OpenAI, Langchain::Conversation responses can now be streamed.
 - Improved logging
