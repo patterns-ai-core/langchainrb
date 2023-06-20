@@ -41,7 +41,7 @@ GEM
       dry-monads (~> 1.6)
       ruby-next-core (>= 0.15.0)
     coderay (1.1.3)
-    cohere-ruby (0.9.4)
+    cohere-ruby (0.9.5)
       faraday (>= 1.0.0)
       faraday_middleware (>= 1.0.0)
     colorize (0.8.1)
@@ -315,7 +315,7 @@ PLATFORMS
 DEPENDENCIES
   ai21 (~> 0.2.0)
   chroma-db (~> 0.3.0)
-  cohere-ruby (~> 0.9.4)
+  cohere-ruby (~> 0.9.5)
   docx (~> 0.8.0)
   dotenv-rails (~> 2.7.6)
   eqn (~> 1.6.5)
