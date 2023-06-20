@@ -111,6 +111,7 @@ module Langchain
       autoload :TokenLimitExceeded, "langchain/utils/token_length/token_limit_exceeded"
       autoload :OpenAIValidator, "langchain/utils/token_length/openai_validator"
       autoload :GooglePalmValidator, "langchain/utils/token_length/google_palm_validator"
+      autoload :CohereValidator, "langchain/utils/token_length/cohere_validator"
     end
   end
 
