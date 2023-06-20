@@ -33,6 +33,26 @@ RSpec.describe Langchain::LLM::GooglePalm do
     it "returns a completion" do
       expect(subject.complete(prompt: completion)).to eq("A man walks into a library and asks for books about paranoia. The librarian whispers, \"They're right behind you!\"")
     end
+
+    context "with custom default_options" do
+      let(:subject) {
+        described_class.new(
+          api_key: "123",
+          default_options: {completion_model_name: "text-bison-foo"}
+        )
+      }
+
+      it "passes correct options to the completions method" do
+        expect(subject.client).to receive(:generate_text).with(
+          {
+            completion_model_name: "text-bison-foo",
+            prompt: "Hello World",
+            temperature: 0.0
+          }
+        ).and_return(response)
+        subject.complete(prompt: "Hello World")
+      end
+    end
   end
 
   describe "#chat" do
@@ -73,6 +93,28 @@ RSpec.describe Langchain::LLM::GooglePalm do
 
       it "returns a message" do
         expect(subject.chat(prompt: completion)).to eq("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?")
+      end
+
+      context "with custom default_options" do
+        let(:subject) {
+          described_class.new(
+            api_key: "123",
+            default_options: {chat_completion_model_name: "chat-bison-foo"}
+          )
+        }
+
+        it "passes correct options to the completions method" do
+          expect(subject.client).to receive(:generate_chat_message).with(
+            {
+              chat_completion_model_name: "chat-bison-foo",
+              context: "",
+              examples: [],
+              messages: [{author: "user", content: "Hey there! How are you?"}],
+              temperature: 0.0
+            }
+          )
+          subject.chat(prompt: completion)
+        end
       end
     end
 

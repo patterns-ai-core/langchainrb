@@ -18,11 +18,12 @@ module Langchain::LLM
       dimension: 1024
     }.freeze
 
-    def initialize(api_key:)
+    def initialize(api_key:, default_options: {})
       depends_on "cohere-ruby"
       require "cohere"
 
       @client = ::Cohere::Client.new(api_key: api_key)
+      @defaults = DEFAULTS.merge(default_options)
     end
 
     #
@@ -34,7 +35,7 @@ module Langchain::LLM
     def embed(text:)
       response = client.embed(
         texts: [text],
-        model: DEFAULTS[:embeddings_model_name]
+        model: @defaults[:embeddings_model_name]
       )
       response.dig("embeddings").first
     end
@@ -49,9 +50,8 @@ module Langchain::LLM
     def complete(prompt:, **params)
       default_params = {
         prompt: prompt,
-        temperature: DEFAULTS[:temperature],
-        model: DEFAULTS[:completion_model_name],
-        truncate: "START"
+        temperature: @defaults[:temperature],
+        model: @defaults[:completion_model_name]
       }
 
       if params[:stop_sequences]

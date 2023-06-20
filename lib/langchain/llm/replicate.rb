@@ -32,7 +32,7 @@ module Langchain::LLM
     #
     # @param api_key [String] The API key to use
     #
-    def initialize(api_key:)
+    def initialize(api_key:, default_options: {})
       depends_on "replicate-ruby"
       require "replicate"
 
@@ -41,6 +41,7 @@ module Langchain::LLM
       end
 
       @client = ::Replicate.client
+      @defaults = DEFAULTS.merge(default_options)
     end
 
     #
@@ -100,7 +101,7 @@ module Langchain::LLM
 
       complete(
         prompt: prompt,
-        temperature: DEFAULTS[:temperature],
+        temperature: @defaults[:temperature],
         # Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
         max_tokens: 2048
       )
@@ -111,11 +112,11 @@ module Langchain::LLM
     private
 
     def completion_model
-      @completion_model ||= client.retrieve_model(DEFAULTS[:completion_model_name]).latest_version
+      @completion_model ||= client.retrieve_model(@defaults[:completion_model_name]).latest_version
     end
 
     def embeddings_model
-      @embeddings_model ||= client.retrieve_model(DEFAULTS[:embeddings_model_name]).latest_version
+      @embeddings_model ||= client.retrieve_model(@defaults[:embeddings_model_name]).latest_version
     end
   end
 end
