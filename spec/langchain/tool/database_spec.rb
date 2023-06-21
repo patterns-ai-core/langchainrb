@@ -39,7 +39,7 @@ RSpec.describe Langchain::Tool::Database do
     end
 
     it "returns the schema" do
-      expect(subject.dump_schema).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string\n);\nALTER TABLE users ADD FOREIGN KEY (job) REFERENCES jobs(job);\n")
+      expect(subject.dump_schema).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs(job));\n")
     end
   end
 end
