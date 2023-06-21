@@ -36,6 +36,13 @@ module Langchain::OutputParsers
       new(schema: schema)
     end
 
+    #
+    # Returns a string containing instructions for how the output of a language model should be formatted
+    # according to the @schema.
+    #
+    # @return [String] Instructions for how the output of a language model should be formatted
+    # according to the @schema.
+    #
     def get_format_instructions
       <<~INSTRUCTIONS
         You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
@@ -55,6 +62,13 @@ module Langchain::OutputParsers
       INSTRUCTIONS
     end
 
+    #
+    # Parse the output of an LLM call extracting an object that abides by the @schema
+    #
+    # @param text [String] Text output from the LLM call
+    #
+    # @return [Object] object that abides by the @schema
+    #
     def parse(text)
       json = text.include?("```") ? text.strip.split(/```(?:json)?/)[1] : text.strip
       parsed = JSON.parse(json)
