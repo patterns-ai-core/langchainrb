@@ -143,6 +143,11 @@ module Langchain
     autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"
   end
 
+  module OutputParsers
+    autoload :Base, "langchain/output_parsers/base"
+    autoload :StructuredOutputParser, "langchain/output_parsers/structured"
+  end
+
   module Errors
     class BaseError < StandardError; end
   end

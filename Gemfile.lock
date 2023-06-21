@@ -4,6 +4,7 @@ PATH
     langchainrb (0.5.7)
       baran (~> 0.1.6)
       colorize (~> 0.8.1)
+      json-schema (~> 4.0.0)
       tiktoken_ruby (~> 0.0.5)
 
 GEM
@@ -148,6 +149,8 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     json (2.6.3)
+    json-schema (4.0.0)
+      addressable (>= 2.8)
     language_server-protocol (3.17.0.3)
     lint_roller (1.0.0)
     loofah (2.21.1)
@@ -219,7 +222,7 @@ GEM
       zeitwerk (~> 2.5)
     rainbow (3.1.1)
     rake (13.0.6)
-    rb_sys (0.9.78)
+    rb_sys (0.9.79)
     rdiscount (2.2.7)
     regexp_parser (2.8.0)
     replicate-ruby (0.2.2)
