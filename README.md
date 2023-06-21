@@ -261,7 +261,7 @@ prompt.input_variables #=> ["adjective", "content"]
 ### Using Agents 🤖
 Agents are semi-autonomous bots that can respond to user questions and use available to them Tools to provide informed replies. They break down problems into series of steps and define Actions (and Action Inputs) along the way that are executed and fed back to them as additional information. Once an Agent decides that it has the Final Answer it responds with it.
 
-#### Chain-of-Thought Agent
+#### ReAct Agent
 
 Add `gem "ruby-openai"`, `gem "eqn"`, and `gem "google_search_results"` to your Gemfile
 
@@ -271,7 +271,7 @@ calculator = Langchain::Tool::Calculator.new
 
 openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 
-agent = Langchain::Agent::ChainOfThoughtAgent.new(
+agent = Langchain::Agent::ReActAgent.new(
   llm: openai,
   tools: [search_tool, calculator]
 )

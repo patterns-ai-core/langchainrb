@@ -5,7 +5,7 @@ module Langchain::Agent
   #
   #     llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]) # or your choice of Langchain::LLM::Base implementation
   #
-  #     agent = Langchain::Agent::ChainOfThoughtAgent.new(
+  #     agent = Langchain::Agent::ReActAgent.new(
   #       llm: llm,
   #       tools: ["google_search", "calculator", "wikipedia"]
   #     )
@@ -15,7 +15,7 @@ module Langchain::Agent
   #
   #     agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
   #     #=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
-  class ChainOfThoughtAgent < Base
+  class ReActAgent < Base
     attr_reader :llm, :tools, :max_iterations
 
     # Initializes the Agent
@@ -23,7 +23,7 @@ module Langchain::Agent
     # @param llm [Object] The LLM client to use
     # @param tools [Array] The tools to use
     # @param max_iterations [Integer] The maximum number of iterations to run
-    # @return [ChainOfThoughtAgent] The Agent::ChainOfThoughtAgent instance
+    # @return [ReActAgent] The Agent::ReActAgent instance
     def initialize(llm:, tools: [], max_iterations: 10)
       Langchain::Tool::Base.validate_tools!(tools: tools)
 
@@ -117,7 +117,7 @@ module Langchain::Agent
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template
       @template ||= Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/agent/chain_of_thought_agent/chain_of_thought_agent_prompt.yaml")
+        file_path: Langchain.root.join("langchain/agent/re_act_agent/re_act_agent_prompt.yaml")
       )
     end
 
