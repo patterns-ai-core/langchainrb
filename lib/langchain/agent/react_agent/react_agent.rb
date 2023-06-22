@@ -117,7 +117,7 @@ module Langchain::Agent
     # @return [PromptTemplate] PromptTemplate instance
     def prompt_template
       @template ||= Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/agent/re_act_agent/re_act_agent_prompt.yaml")
+        file_path: Langchain.root.join("langchain/agent/react_agent/react_agent_prompt.yaml")
       )
     end
 
