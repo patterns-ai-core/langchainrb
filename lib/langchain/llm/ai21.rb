@@ -16,6 +16,8 @@ module Langchain::LLM
       model: "j2-large"
     }.freeze
 
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::AI21Validator
+
     def initialize(api_key:, default_options: {})
       depends_on "ai21"
       require "ai21"
@@ -33,6 +35,8 @@ module Langchain::LLM
     #
     def complete(prompt:, **params)
       parameters = complete_parameters params
+
+      parameters[:maxTokens] = LENGTH_VALIDATOR.validate_max_tokens!(prompt, parameters[:model], client)
 
       response = client.complete(prompt, parameters)
       response.dig(:completions, 0, :data, :text)

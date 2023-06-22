@@ -108,10 +108,11 @@ module Langchain
   module Utils
     module TokenLength
       autoload :BaseValidator, "langchain/utils/token_length/base_validator"
-      autoload :TokenLimitExceeded, "langchain/utils/token_length/token_limit_exceeded"
-      autoload :OpenAIValidator, "langchain/utils/token_length/openai_validator"
-      autoload :GooglePalmValidator, "langchain/utils/token_length/google_palm_validator"
+      autoload :AI21Validator, "langchain/utils/token_length/ai21_validator"
       autoload :CohereValidator, "langchain/utils/token_length/cohere_validator"
+      autoload :GooglePalmValidator, "langchain/utils/token_length/google_palm_validator"
+      autoload :OpenAIValidator, "langchain/utils/token_length/openai_validator"
+      autoload :TokenLimitExceeded, "langchain/utils/token_length/token_limit_exceeded"
     end
   end
 
