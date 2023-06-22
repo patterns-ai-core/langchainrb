@@ -14,7 +14,7 @@ module Langchain::Vectorsearch
     # Initialize the Weaviate adapter
     # @param url [String] The URL of the Weaviate instance
     # @param api_key [String] The API key to use
-    # @param index_name [String] The name of the index to use
+    # @param index_name [String] The capitalized name of the index to use
     # @param llm [Object] The LLM client to use
     def initialize(url:, api_key:, index_name:, llm:)
       depends_on "weaviate-ruby"
@@ -24,6 +24,8 @@ module Langchain::Vectorsearch
         url: url,
         api_key: api_key
       )
+
+      # Weaviate requires the class name to be Capitalized: https://weaviate.io/developers/weaviate/configuration/schema-configuration#create-a-class
       @index_name = index_name
 
       super(llm: llm)

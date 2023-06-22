@@ -145,6 +145,10 @@ module Langchain
     autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"
   end
 
+  module ActiveRecord
+    autoload :Hooks, "langchain/active_record/hooks"
+  end
+
   module Errors
     class BaseError < StandardError; end
   end
