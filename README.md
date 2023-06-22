@@ -161,7 +161,7 @@ google_palm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"]
 ```
 
 #### AI21
-Add `gem "ai21", "~> 0.2.0"` to your Gemfile.
+Add `gem "ai21", "~> 0.2.1"` to your Gemfile.
 ```ruby
 ai21 = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
 ```
