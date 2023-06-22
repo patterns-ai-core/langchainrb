@@ -36,6 +36,26 @@ RSpec.describe Langchain::LLM::Cohere do
           "meta" => {"api_version" => {"version" => "1"}}
         }
       )
+
+      allow(subject.client).to receive(:tokenize).and_return(
+        {
+          "tokens" => [
+            33555,
+            1114,
+            34
+          ],
+          "token_strings" => [
+            "hello",
+            " world",
+            "!"
+          ],
+          "meta" => {
+            "api_version" => {
+              "version" => "1"
+            }
+          }
+        }
+      )
     end
 
     it "returns a completion" do
@@ -53,9 +73,11 @@ RSpec.describe Langchain::LLM::Cohere do
       it "passes correct options to the completions method" do
         expect(subject.client).to receive(:generate).with(
           {
+            max_tokens: 2045,
             model: "base-light",
             prompt: "Hello World",
-            temperature: 0.0
+            temperature: 0.0,
+            truncate: "START"
           }
         )
         subject.complete(prompt: "Hello World")
