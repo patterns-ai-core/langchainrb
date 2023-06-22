@@ -24,7 +24,7 @@ module Langchain
         #
         def self.token_length(text, model_name, client)
           res = client.tokenize(text)
-          res["tokens"].length
+          res.dig(:tokens).length
         end
 
         def self.token_limit(model_name)

@@ -5,7 +5,7 @@ module Langchain::LLM
   # Wrapper around AI21 Studio APIs.
   #
   # Gem requirements:
-  #   gem "ai21", "~> 0.2.0"
+  #   gem "ai21", "~> 0.2.1"
   #
   # Usage:
   #     ai21 = Langchain::LLM::AI21.new(api_key:)
@@ -13,7 +13,7 @@ module Langchain::LLM
   class AI21 < Base
     DEFAULTS = {
       temperature: 0.0,
-      model: "j2-large"
+      model: "j2-ultra"
     }.freeze
 
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::AI21Validator
