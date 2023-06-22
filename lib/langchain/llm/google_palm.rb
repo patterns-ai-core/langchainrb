@@ -52,7 +52,7 @@ module Langchain::LLM
       default_params = {
         prompt: prompt,
         temperature: @defaults[:temperature],
-        completion_model_name: @defaults[:completion_model_name]
+        model: @defaults[:completion_model_name]
       }
 
       if params[:stop_sequences]
@@ -82,7 +82,7 @@ module Langchain::LLM
 
       default_params = {
         temperature: @defaults[:temperature],
-        chat_completion_model_name: @defaults[:chat_completion_model_name],
+        model: @defaults[:chat_completion_model_name],
         context: context,
         messages: compose_chat_messages(prompt: prompt, messages: messages),
         examples: compose_examples(examples)
