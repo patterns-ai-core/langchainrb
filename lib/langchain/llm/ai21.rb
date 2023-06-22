@@ -5,7 +5,7 @@ module Langchain::LLM
   # Wrapper around AI21 Studio APIs.
   #
   # Gem requirements:
-  #   gem "ai21", "~> 0.2.0"
+  #   gem "ai21", "~> 0.2.1"
   #
   # Usage:
   #     ai21 = Langchain::LLM::AI21.new(api_key:)
@@ -13,8 +13,10 @@ module Langchain::LLM
   class AI21 < Base
     DEFAULTS = {
       temperature: 0.0,
-      model: "j2-large"
+      model: "j2-ultra"
     }.freeze
+
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::AI21Validator
 
     def initialize(api_key:, default_options: {})
       depends_on "ai21"
@@ -33,6 +35,8 @@ module Langchain::LLM
     #
     def complete(prompt:, **params)
       parameters = complete_parameters params
+
+      parameters[:maxTokens] = LENGTH_VALIDATOR.validate_max_tokens!(prompt, parameters[:model], client)
 
       response = client.complete(prompt, parameters)
       response.dig(:completions, 0, :data, :text)

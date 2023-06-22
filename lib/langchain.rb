@@ -74,7 +74,7 @@ module Langchain
 
   module Agent
     autoload :Base, "langchain/agent/base"
-    autoload :ChainOfThoughtAgent, "langchain/agent/chain_of_thought_agent/chain_of_thought_agent.rb"
+    autoload :ReActAgent, "langchain/agent/react_agent/react_agent.rb"
     autoload :SQLQueryAgent, "langchain/agent/sql_query_agent/sql_query_agent.rb"
   end
 
@@ -108,10 +108,11 @@ module Langchain
   module Utils
     module TokenLength
       autoload :BaseValidator, "langchain/utils/token_length/base_validator"
-      autoload :TokenLimitExceeded, "langchain/utils/token_length/token_limit_exceeded"
-      autoload :OpenAIValidator, "langchain/utils/token_length/openai_validator"
-      autoload :GooglePalmValidator, "langchain/utils/token_length/google_palm_validator"
+      autoload :AI21Validator, "langchain/utils/token_length/ai21_validator"
       autoload :CohereValidator, "langchain/utils/token_length/cohere_validator"
+      autoload :GooglePalmValidator, "langchain/utils/token_length/google_palm_validator"
+      autoload :OpenAIValidator, "langchain/utils/token_length/openai_validator"
+      autoload :TokenLimitExceeded, "langchain/utils/token_length/token_limit_exceeded"
     end
   end
 
