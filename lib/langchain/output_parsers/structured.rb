@@ -21,7 +21,7 @@ module Langchain::OutputParsers
     def to_h
       {
         _type: "StructuredOutputParser",
-        schema: @schema.to_json
+        schema: schema.to_json
       }
     end
 
@@ -57,7 +57,7 @@ module Langchain::OutputParsers
 
         Here is the JSON Schema instance your output must adhere to. Include the enclosing markdown codeblock:
         ```json
-        #{@schema.to_json}
+        #{schema.to_json}
         ```
       INSTRUCTIONS
     end
@@ -72,7 +72,7 @@ module Langchain::OutputParsers
     def parse(text)
       json = text.include?("```") ? text.strip.split(/```(?:json)?/)[1] : text.strip
       parsed = JSON.parse(json)
-      JSON::Validator.validate!(@schema, parsed)
+      JSON::Validator.validate!(schema, parsed)
       parsed
     rescue => e
       raise OutputParserException.new("Failed to parse. Text: \"#{text}\". Error: #{e}", text)
