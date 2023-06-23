@@ -10,13 +10,11 @@ module Langchain
     #
     # Usage:
     #     class Product < ActiveRecord::Base
-    #       include Langchain::ActiveRecord::Hooks
-    #
-    #       vectorize provider: Langchain::Vectorsearch::Weaviate.new(
-    #                   api_key: ENV["WEAVIATE_API_KEY"],
-    #                   url: ENV["WEAVIATE_URL"],
-    #                   index_name: "Recipes",
-    #                   llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+    #       vectorsearch provider: Langchain::Vectorsearch::Weaviate.new(
+    #                    api_key: ENV["WEAVIATE_API_KEY"],
+    #                    url: ENV["WEAVIATE_URL"],
+    #                    index_name: "Recipes",
+    #                    llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
     #                 )
     #
     #       after_create :index_to_vectorsearch
