@@ -31,36 +31,38 @@ module Langchain::Vectorsearch
       super(llm: llm)
     end
 
-    # Add a text to the index
-    # @param text [String] The text to add
-    # @param id [String] The ID of the text to add
-    # @return [Hash] The response from the server
-    def add_text(text:, id:)
-      client.objects.create(
-        class_name: index_name,
-        properties: {
-          __id: id.to_s,
-          content: text
-        },
-        vector: llm.embed(text: text)
-      )
-    end
-
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
-    def add_texts(texts:)
-      objects = Array(texts).map do |text|
-        {
-          class: index_name,
-          properties: {content: text},
-          vector: llm.embed(text: text)
-        }
+    def add_texts(texts:, ids:)
+      client.objects.batch_create(
+        objects: weaviate_objects(texts, ids)
+      )
+    end
+
+    def update_texts(texts:, ids:)
+      uuids = []
+
+      Array(texts).map.with_index do |text, i|
+        record = client.query.get(
+          class_name: index_name,
+          fields: "_additional { id }",
+          where: "{ path: [\"__id\"], operator: Equal, valueText: \"#{ids[i].to_s}\" }"
+        )
+        uuids.push record[0].dig("_additional", "id")
       end
 
-      client.objects.batch_create(
-        objects: objects
-      )
+      texts.each_with_index do |text, i|
+        client.objects.update(
+          class_name: index_name,
+          id: uuids[i],
+          properties: {
+            __id: ids[i].to_s,
+            content: text
+          },
+          vector: llm.embed(text: text)
+        )
+      end
     end
 
     # Create default schema
@@ -114,6 +116,25 @@ module Langchain::Vectorsearch
       prompt = generate_prompt(question: question, context: context)
 
       llm.chat(prompt: prompt)
+    end
+
+    private
+
+    def weaviate_objects(texts, ids)
+      Array(texts).map.with_index do |text, i|
+        weaviate_object(text, ids[i])
+      end
+    end
+
+    def weaviate_object(text, id)
+      {
+        class: index_name,
+        properties: {
+          __id: id.to_s,
+          content: text
+        },
+        vector: llm.embed(text: text)
+      }
     end
   end
 end

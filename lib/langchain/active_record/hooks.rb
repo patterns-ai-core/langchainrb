@@ -49,9 +49,17 @@ module Langchain
       # @return [Boolean] true
       # @raise [Error] Indexing to vector search DB failed
       def index_to_vectorsearch
-        self.class.class_variable_get(:@@provider).add_text(text: as_vector, id: id)
-
-        true
+        if previously_new_record?
+          self.class.class_variable_get(:@@provider).add_texts(
+            texts: [as_vector],
+            ids: [id]
+          )
+        else
+          self.class.class_variable_get(:@@provider).update_texts(
+            texts: [as_vector],
+            ids: [id]
+          )
+        end
       end
 
       # Used to serialize the DB record to an indexable vector text

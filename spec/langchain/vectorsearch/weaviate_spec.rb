@@ -34,7 +34,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
         .with(
           objects: [{
             class: "products",
-            properties: {content: "Hello World"},
+            properties: {__id: "1", content: "Hello World"},
             vector: [-0.0018150936, 0.0017554426, -0.022715086]
           }]
         )
@@ -56,7 +56,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     end
 
     it "adds texts" do
-      expect(subject.add_texts(texts: ["Hello World"])).to eq(fixture)
+      expect(subject.add_texts(texts: ["Hello World"], ids: [1])).to eq(fixture)
     end
   end
 
