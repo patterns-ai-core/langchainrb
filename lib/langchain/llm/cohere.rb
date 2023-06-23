@@ -13,7 +13,7 @@ module Langchain::LLM
   class Cohere < Base
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "base",
+      completion_model_name: "command",
       embeddings_model_name: "small",
       dimension: 1024,
       truncate: "START"
