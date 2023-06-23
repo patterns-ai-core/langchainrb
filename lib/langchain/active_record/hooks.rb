@@ -34,7 +34,7 @@ module Langchain
       end
 
       def index_to_vectorsearch
-        self.class.class_variable_get(:@@provider).add_texts(texts: self.to_json)
+        self.class.class_variable_get(:@@provider).add_texts(texts: to_json)
 
         true
       end
