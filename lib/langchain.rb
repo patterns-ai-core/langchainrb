@@ -148,6 +148,7 @@ module Langchain
   module OutputParsers
     autoload :Base, "langchain/output_parsers/base"
     autoload :StructuredOutputParser, "langchain/output_parsers/structured"
+    autoload :OutputFixingParser, "langchain/output_parsers/fix"
   end
 
   module Errors

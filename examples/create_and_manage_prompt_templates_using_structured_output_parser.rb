@@ -58,6 +58,14 @@ prompt.format(description: "Korean chemistry student", format_instructions: pars
 
 # Character description: Korean chemistry student
 
+llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+# llm_response = llm.chat(prompt: prompt_text)
+
+fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
+  llm: llm,
+  parser: parser
+)
+
 # LLM example response:
 llm_example_response = <<~RESPONSE
   Here is your character:
@@ -83,22 +91,45 @@ llm_example_response = <<~RESPONSE
   ```
 RESPONSE
 
-parser.parse(llm_example_response)
-# {
-#   "name" => "Kim Ji-hyun",
-#   "age" => 22,
-#   "interests" => [
-#     {
-#       "interest" => "Organic Chemistry",
-#       "levelOfInterest" => 85
-#     },
-#     {
-#       "interest" => "Biochemistry",
-#       "levelOfInterest" => 70
-#     },
-#     {
-#       "interest" => "Analytical Chemistry",
-#       "levelOfInterest" => 60
-#     }
-#   ]
-# }
+begin
+  parser.parse(llm_example_response)
+  # {
+  #   "name" => "Kim Ji-hyun",
+  #   "age" => 22,
+  #   "interests" => [
+  #     {
+  #       "interest" => "Organic Chemistry",
+  #       "levelOfInterest" => 85
+  #     },
+  #     {
+  #       "interest" => "Biochemistry",
+  #       "levelOfInterest" => 70
+  #     },
+  #     {
+  #       "interest" => "Analytical Chemistry",
+  #       "levelOfInterest" => 60
+  #     }
+  #   ]
+  # }
+rescue
+  # alternatively, if the StructuredOutputParser fails, try the OutputFixParser
+  fix_parser.parse("Whoops I don't understand your prompt!")
+  # {
+  #   "name" => "Kim Ji-hyun",
+  #   "age" => 22,
+  #   "interests" => [
+  #     {
+  #       "interest" => "Organic Chemistry",
+  #       "levelOfInterest" => 85
+  #     },
+  #     {
+  #       "interest" => "Biochemistry",
+  #       "levelOfInterest" => 70
+  #     },
+  #     {
+  #       "interest" => "Analytical Chemistry",
+  #       "levelOfInterest" => 60
+  #     }
+  #   ]
+  # }
+end
