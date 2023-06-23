@@ -9,7 +9,7 @@ module Langchain
     # * `index_to_vectorsearch` instance method to index the text to the provider
     #
     # Usage:
-    #     class Product < ActiveRecord::Base
+    #     class Recipe < ActiveRecord::Base
     #       vectorsearch provider: Langchain::Vectorsearch::Weaviate.new(
     #                    api_key: ENV["WEAVIATE_API_KEY"],
     #                    url: ENV["WEAVIATE_URL"],
@@ -18,6 +18,17 @@ module Langchain
     #                 )
     #
     #       after_save :index_to_vectorsearch
+    #
+    #       # Overwriting how the model is serialized before it's indexed
+    #       def as_vector
+    #         [
+    #           "Title: #{title}",
+    #           "Description: #{description}",
+    #           ...
+    #         ]
+    #         .compact
+    #         .join("\n")
+    #       end
     #     end
     #
     # Create the default schema
@@ -32,10 +43,23 @@ module Langchain
         base.extend ClassMethods
       end
 
+      # Index the text to the vector search provider
+      # You'd typically call this method in an ActiveRecord callback
+      #
+      # @return [Boolean] true
+      # @raise [Error] Indexing to vector search DB failed
       def index_to_vectorsearch
-        self.class.class_variable_get(:@@provider).add_texts(texts: to_json)
+        self.class.class_variable_get(:@@provider).add_texts(texts: as_vector)
 
         true
+      end
+
+      # Used to serialize the DB record to an indexable vector text
+      # Overwrite this method in your model to customize
+      #
+      # @return [String] the text representation of the model
+      def as_vector
+        to_json
       end
 
       module ClassMethods
