@@ -71,7 +71,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
           class_name: "products",
           near_vector: "{ vector: [-0.0018150936, 0.0017554426, -0.022715086] }",
           limit: "4",
-          fields: "content _additional { id }"
+          fields: "__id content _additional { id }"
         )
         .and_return(fixture)
 
@@ -106,7 +106,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
           class_name: "products",
           near_vector: "{ vector: [0.1, 0.2, 0.3] }",
           limit: "4",
-          fields: "content _additional { id }"
+          fields: "__id content _additional { id }"
         )
         .and_return(fixture)
     end

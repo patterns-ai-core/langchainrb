@@ -31,6 +31,21 @@ module Langchain::Vectorsearch
       super(llm: llm)
     end
 
+    # Add a text to the index
+    # @param text [String] The text to add
+    # @param id [String] The ID of the text to add
+    # @return [Hash] The response from the server
+    def add_text(text:, id:)
+      client.objects.create(
+        class_name: index_name,
+        properties: {
+          __id: id.to_s,
+          content: text
+        },
+        vector: llm.embed(text: text)
+      )
+    end
+
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
@@ -54,11 +69,8 @@ module Langchain::Vectorsearch
         class_name: index_name,
         vectorizer: "none",
         properties: [
-          # TODO: Allow passing in your own IDs
-          {
-            dataType: ["text"],
-            name: "content"
-          }
+          {dataType: ["string"], name: "__id"}, # '_id' is a reserved property name (single underscore)
+          {dataType: ["text"], name: "content"}
         ]
       )
     end
@@ -84,7 +96,7 @@ module Langchain::Vectorsearch
         class_name: index_name,
         near_vector: near_vector,
         limit: k.to_s,
-        fields: "content _additional { id }"
+        fields: "__id content _additional { id }"
       )
     end
 

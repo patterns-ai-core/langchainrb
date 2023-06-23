@@ -49,7 +49,7 @@ module Langchain
       # @return [Boolean] true
       # @raise [Error] Indexing to vector search DB failed
       def index_to_vectorsearch
-        self.class.class_variable_get(:@@provider).add_texts(texts: as_vector)
+        self.class.class_variable_get(:@@provider).add_text(text: as_vector, id: id)
 
         true
       end
@@ -68,10 +68,12 @@ module Langchain
         end
 
         def similarity_search(query, k: nil)
-          class_variable_get(:@@provider).similarity_search(
+          records = class_variable_get(:@@provider).similarity_search(
             query: query,
             k: k
           )
+          ids = records.map { |record| record.dig("__id") }
+          where(id: ids)
         end
       end
     end
