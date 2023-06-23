@@ -149,6 +149,11 @@ module Langchain
     autoload :Hooks, "langchain/active_record/hooks"
   end
 
+  module OutputParsers
+    autoload :Base, "langchain/output_parsers/base"
+    autoload :StructuredOutputParser, "langchain/output_parsers/structured"
+  end
+
   module Errors
     class BaseError < StandardError; end
   end
