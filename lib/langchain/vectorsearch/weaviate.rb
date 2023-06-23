@@ -47,7 +47,7 @@ module Langchain::Vectorsearch
         record = client.query.get(
           class_name: index_name,
           fields: "_additional { id }",
-          where: "{ path: [\"__id\"], operator: Equal, valueText: \"#{ids[i].to_s}\" }"
+          where: "{ path: [\"__id\"], operator: Equal, valueText: \"#{ids[i]}\" }"
         )
         uuids.push record[0].dig("_additional", "id")
       end
