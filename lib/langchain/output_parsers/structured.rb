@@ -15,7 +15,7 @@ module Langchain::OutputParsers
     # @param schema [JSON::Schema] The json schema
     #
     def initialize(schema:)
-      @schema = validate_schema(schema)
+      @schema = validate_schema!(schema)
     end
 
     def to_h
@@ -80,7 +80,7 @@ module Langchain::OutputParsers
 
     private
 
-    def validate_schema(schema)
+    def validate_schema!(schema)
       errors = JSON::Validator.fully_validate_schema(schema)
       unless errors.empty?
         raise ArgumentError, "Invalid schema: \n#{errors.join("\n")}"
