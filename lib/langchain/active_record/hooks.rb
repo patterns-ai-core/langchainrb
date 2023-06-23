@@ -17,8 +17,7 @@ module Langchain
     #                    llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
     #                 )
     #
-    #       after_create :index_to_vectorsearch
-    #       after_update :index_to_vectorsearch
+    #       after_save :index_to_vectorsearch
     #     end
     #
     # Create the default schema
