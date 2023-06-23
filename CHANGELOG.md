@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.6.0] - 2023-06-22
+- [BREAKING] Rename `ChainOfThoughtAgent` to `ReActAgent`
+- Implement A21 token validator
+- Add `Langchain::OutputParsers`
+
 ## [0.5.7] - 2023-06-19
 - Developer can modify models used when initiliazing `Langchain::LLM::*` clients
 - Improvements to the `SQLQueryAgent` and the database tool
