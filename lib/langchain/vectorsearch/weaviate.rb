@@ -64,11 +64,23 @@ module Langchain::Vectorsearch
     # Return documents similar to the query
     # @param query [String] The query to search for
     # @param k [Integer|String] The number of results to return
+    # @param distance [Integer|String] The maximum distance to search for
     # @return [Hash] The search results
-    def similarity_search(query:, k: 4)
-      embedding = llm.embed(text: query)
+    def similarity_search(query:, k: 4, distance: nil)
+      if distance
+        near_text = "{ concepts: \"#{query}\" distance: #{distance} }"
 
-      similarity_search_by_vector(embedding: embedding, k: k)
+        client.query.get(
+          class_name: index_name,
+          near_text: near_text,
+          limit: k.to_s,
+          fields: "content _additional { id distance}"
+        )
+      else
+        embedding = llm.embed(text: query)
+
+        similarity_search_by_vector(embedding: embedding, k: k)
+      end
     end
 
     # Return documents similar to the vector
