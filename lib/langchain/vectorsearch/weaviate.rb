@@ -26,6 +26,7 @@ module Langchain::Vectorsearch
       )
 
       # Weaviate requires the class name to be Capitalized: https://weaviate.io/developers/weaviate/configuration/schema-configuration#create-a-class
+      # TODO: Capitalize index_name
       @index_name = index_name
 
       super(llm: llm)
@@ -47,12 +48,12 @@ module Langchain::Vectorsearch
         record = client.query.get(
           class_name: index_name,
           fields: "_additional { id }",
-          where: "{ path: [\"__id\"], operator: Equal, valueText: \"#{ids[i]}\" }"
+          where: "{ path: [\"__id\"], operator: Equal, valueString: \"#{ids[i]}\" }"
         )
         uuids.push record[0].dig("_additional", "id")
       end
 
-      texts.each_with_index do |text, i|
+      texts.map.with_index do |text, i|
         client.objects.update(
           class_name: index_name,
           id: uuids[i],
@@ -71,6 +72,7 @@ module Langchain::Vectorsearch
         class_name: index_name,
         vectorizer: "none",
         properties: [
+          # __id to be used a pointer to the original document
           {dataType: ["string"], name: "__id"}, # '_id' is a reserved property name (single underscore)
           {dataType: ["text"], name: "content"}
         ]

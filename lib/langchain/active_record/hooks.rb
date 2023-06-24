@@ -2,11 +2,10 @@
 
 module Langchain
   module ActiveRecord
-    #
     # This module adds the following functionality to your ActiveRecord models:
-    # * `vectorsearch` class method to set the provider
+    # * `vectorsearch` class method to set the vector search provider
     # * `similarity_search` class method to search for similar texts
-    # * `index_to_vectorsearch` instance method to index the text to the provider
+    # * `upsert_to_vectorsearch` instance method to upsert the record to the vector search provider
     #
     # Usage:
     #     class Recipe < ActiveRecord::Base
@@ -17,7 +16,7 @@ module Langchain
     #                    llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
     #                 )
     #
-    #       after_save :index_to_vectorsearch
+    #       after_save :upsert_to_vectorsearch
     #
     #       # Overwriting how the model is serialized before it's indexed
     #       def as_vector
@@ -48,7 +47,7 @@ module Langchain
       #
       # @return [Boolean] true
       # @raise [Error] Indexing to vector search DB failed
-      def index_to_vectorsearch
+      def upsert_to_vectorsearch
         if previously_new_record?
           self.class.class_variable_get(:@@provider).add_texts(
             texts: [as_vector],
@@ -71,11 +70,19 @@ module Langchain
       end
 
       module ClassMethods
+        # Set the vector search provider
+        #
+        # @param provider [Object] The `Langchain::Vectorsearch::*` instance
         def vectorsearch(provider:)
           class_variable_set(:@@provider, provider)
         end
 
-        def similarity_search(query, k: nil)
+        # Search for similar texts
+        #
+        # @param query [String] The query to search for
+        # @param k [Integer] The number of results to return
+        # @return [ActiveRecord::Relation] The ActiveRecord relation
+        def similarity_search(query, k: 1)
           records = class_variable_get(:@@provider).similarity_search(
             query: query,
             k: k
