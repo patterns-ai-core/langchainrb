@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.6.1] - 2023-06-24
+- Adding support to hook vectorsearch into ActiveRecord models
+
 ## [0.6.0] - 2023-06-22
 - [BREAKING] Rename `ChainOfThoughtAgent` to `ReActAgent`
 - Implement A21 token validator
