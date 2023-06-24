@@ -41,9 +41,13 @@ module Langchain::Vectorsearch
       )
     end
 
+    # Update a list of texts in the index
+    # @param texts [Array] The list of texts to update
+    # @return [Hash] The response from the server
     def update_texts(texts:, ids:)
       uuids = []
 
+      # Retrieve the UUIDs of the objects to update
       Array(texts).map.with_index do |text, i|
         record = client.query.get(
           class_name: index_name,
@@ -53,6 +57,7 @@ module Langchain::Vectorsearch
         uuids.push record[0].dig("_additional", "id")
       end
 
+      # Update the objects
       texts.map.with_index do |text, i|
         client.objects.update(
           class_name: index_name,
