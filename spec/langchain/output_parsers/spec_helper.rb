@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# spec_helper.rb
-
 def schema_example
   {
     type: "object",
