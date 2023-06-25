@@ -27,14 +27,14 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
   describe "#add_texts" do
     let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_add_texts.json")) }
 
-    before do
+    def stub(id)
       allow_any_instance_of(
         Weaviate::Objects
       ).to receive(:batch_create)
         .with(
           objects: [{
             class: "products",
-            properties: {__id: "1", content: "Hello World"},
+            properties: {__id: id.to_s, content: "Hello World"},
             vector: [-0.0018150936, 0.0017554426, -0.022715086]
           }]
         )
@@ -47,8 +47,24 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
       ])
     end
 
-    it "adds texts" do
-      expect(subject.add_texts(texts: ["Hello World"], ids: [1])).to eq(fixture)
+    context "with ids" do
+      before do
+        stub(1)
+      end
+
+      it "adds texts" do
+        expect(subject.add_texts(texts: ["Hello World"], ids: [1])).to eq(fixture)
+      end
+    end
+
+    context "without ids" do
+      before do
+        stub(nil)
+      end
+
+      it "adds texts" do
+        expect(subject.add_texts(texts: ["Hello World"])).to eq(fixture)
+      end
     end
   end
 

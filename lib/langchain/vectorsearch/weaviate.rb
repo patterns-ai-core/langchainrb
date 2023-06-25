@@ -35,7 +35,7 @@ module Langchain::Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
-    def add_texts(texts:, ids:)
+    def add_texts(texts:, ids: [])
       client.objects.batch_create(
         objects: weaviate_objects(texts, ids)
       )
@@ -127,13 +127,13 @@ module Langchain::Vectorsearch
 
     private
 
-    def weaviate_objects(texts, ids)
+    def weaviate_objects(texts, ids = [])
       Array(texts).map.with_index do |text, i|
         weaviate_object(text, ids[i])
       end
     end
 
-    def weaviate_object(text, id)
+    def weaviate_object(text, id = nil)
       {
         class: index_name,
         properties: {
