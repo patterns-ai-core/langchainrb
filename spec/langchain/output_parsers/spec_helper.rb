@@ -40,3 +40,36 @@ def schema_example
     additionalProperties: false
   }
 end
+
+def json_response
+  {
+    "name" => "Hayes Weir",
+    "age" => 2,
+    "interests" => [
+      {
+        "interest" => "Dinosaurs",
+        "levelOfInterest" => 90
+      },
+      {
+        "interest" => "Sugar",
+        "levelOfInterest" => 95
+      }
+    ]
+  }
+end
+
+def json_text_response
+  json_response.to_json
+end
+
+def invalid_schema_json_response
+  {
+    name: "Elon",
+    age: 51,
+    interests: []
+  }
+end
+
+def invalid_schema_json_text_response
+  invalid_schema_json_response.to_json
+end

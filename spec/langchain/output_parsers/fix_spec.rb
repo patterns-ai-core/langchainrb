@@ -18,6 +18,37 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
     )
   end
 
+  let!(:fix_prompt_template_example) do
+    Langchain::Prompt::PromptTemplate.from_template(
+      <<~INSTRUCTIONS
+        Custom Instructions:
+        --------------
+        {instructions}
+        --------------
+        Completion:
+        --------------
+        {completion}
+        --------------
+        
+        Above, the Completion did not satisfy the constraints given in the Instructions.
+        Error:
+        --------------
+        {error}
+        --------------
+        
+        Please try again. Please only respond with an answer that satisfies the constraints laid out in the Instructions:
+      INSTRUCTIONS
+    )
+  end
+
+  let!(:fix_prompt_matcher_example) do
+    /Custom Instructions:.+Completion:.+Whoops I don't understand.+Failed to parse\. Text: "Whoops I don't understand"/m
+  end
+
+  let!(:naive_fix_prompt_matcher_example) do
+    /Instructions:.+Completion:.+Whoops I don't understand.+Failed to parse\. Text: "Whoops I don't understand"/m
+  end
+
   let!(:kwargs_example) do
     {
       llm: llm_example,
@@ -44,53 +75,6 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
         expect { described_class.new(**kwargs) }.to raise_error(ArgumentError, /#{expect_class}/)
       end
     end
-  end
-
-  describe "#to_h" do
-    it "returns Hash representation of output fixing parser" do
-      parser = described_class.new(**kwargs_example)
-      expect(parser.to_h).to eq({
-        _type: "OutputFixingParser",
-        parser: kwargs_example[:parser].to_h,
-        prompt: kwargs_example[:prompt].to_h
-      })
-    end
-  end
-
-  describe "#get_format_instructions" do
-    it "returns format instructions for the input parser" do
-      parser = described_class.new(**kwargs_example)
-      expect(parser.get_format_instructions).to eq(kwargs_example[:parser].get_format_instructions)
-    end
-  end
-
-  describe "#parse" do
-    it "parses response text against the current @schema" do
-      parser = described_class.from_json_schema(schema_example)
-      expect(parser.parse(json_text_response)).to eq(json_response)
-    end
-
-    # it "fails to parse response text if its borked" do
-    #   parser = described_class.from_json_schema(schema_example)
-    #   expect {
-    #     parser.parse("Sorry, I'm just a large language model blah blah..")
-    #   }.to raise_error(Langchain::OutputParsers::OutputParserException)
-    # end
-
-    # it "fails to parse response text if the json does not conform to the schema" do
-    #   parser = described_class.from_json_schema(schema_example)
-    #   expect {
-    #     parser.parse(
-    #       <<~RESPONSE
-    #         {
-    #           "name": "Elon",
-    #           "age": 51,
-    #           "interests": []
-    #         }
-    #       RESPONSE
-    #     )
-    #   }.to raise_error(Langchain::OutputParsers::OutputParserException, /'#\/interests' did not contain a minimum number of items/)
-    # end
   end
 
   describe ".from_llm" do
@@ -136,6 +120,67 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
         kwargs = kwargs_example.merge(data.reject { |key| [:named, :expect_class].include?(key) })
         expect { described_class.from_llm(**kwargs) }.to raise_error(ArgumentError, /#{expect_class}/)
       end
+    end
+  end
+
+  describe "#to_h" do
+    it "returns Hash representation of output fixing parser" do
+      parser = described_class.new(**kwargs_example)
+      expect(parser.to_h).to eq({
+        _type: "OutputFixingParser",
+        parser: kwargs_example[:parser].to_h,
+        prompt: kwargs_example[:prompt].to_h
+      })
+    end
+  end
+
+  describe "#get_format_instructions" do
+    it "returns format instructions for the input parser" do
+      parser = described_class.new(**kwargs_example)
+      expect(parser.get_format_instructions).to eq(kwargs_example[:parser].get_format_instructions)
+    end
+  end
+
+  describe "#parse" do
+    it "parses without need for fixing when completion text is already valid" do
+      parser = described_class.new(**kwargs_example)
+      expect(parser.parse(json_text_response)).to eq(json_response)
+    end
+
+    it "when completion text is invalid, sends fix prompt to llm and parses fixing response" do
+      parser = described_class.new(**kwargs_example.merge(prompt: fix_prompt_template_example))
+      allow(parser.llm).to receive(:chat).with(
+        prompt: match(fix_prompt_matcher_example)
+      ).and_return(json_text_response)
+      expect(parser.parse("Whoops I don't understand")).to eq(json_response)
+      expect(parser.llm).to have_received(:chat).once
+    end
+
+    it "if fixing prompt is not provided, uses the naive fix prompt by default" do
+      parser = described_class.from_llm(llm: kwargs_example[:llm], parser: kwargs_example[:parser])
+      allow(parser.llm).to receive(:chat).with(
+        prompt: match(naive_fix_prompt_matcher_example)
+      ).and_return(json_text_response)
+      expect(parser.parse("Whoops I don't understand")).to eq(json_response)
+      expect(parser.llm).to have_received(:chat).once
+    end
+
+    it "fails to parse llm fixing response if its borked" do
+      parser = described_class.new(**kwargs_example.merge(prompt: fix_prompt_template_example))
+      allow(parser.llm).to receive(:chat).with(
+        prompt: match(fix_prompt_matcher_example)
+      ).and_return("I still don't understand, I'm only a large language model :)")
+      expect { parser.parse("Whoops I don't understand") }.to raise_error(Langchain::OutputParsers::OutputParserException)
+      expect(parser.llm).to have_received(:chat).once
+    end
+
+    it "fails to parse llm fixing response if the json does not conform to the schema" do
+      parser = described_class.new(**kwargs_example.merge(prompt: fix_prompt_template_example))
+      allow(parser.llm).to receive(:chat).with(
+        prompt: match(fix_prompt_matcher_example)
+      ).and_return(invalid_schema_json_text_response)
+      expect { parser.parse("Whoops I don't understand") }.to raise_error(Langchain::OutputParsers::OutputParserException)
+      expect(parser.llm).to have_received(:chat).once
     end
   end
 end

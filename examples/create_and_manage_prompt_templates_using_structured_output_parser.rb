@@ -59,12 +59,9 @@ prompt.format(description: "Korean chemistry student", format_instructions: pars
 # Character description: Korean chemistry student
 
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-# llm_response = llm.chat(prompt: prompt_text)
-
-fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
-  llm: llm,
-  parser: parser
-)
+# llm_response = llm.chat(
+#   prompt: prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)
+# )
 
 # LLM example response:
 llm_example_response = <<~RESPONSE
@@ -91,45 +88,29 @@ llm_example_response = <<~RESPONSE
   ```
 RESPONSE
 
-begin
-  parser.parse(llm_example_response)
-  # {
-  #   "name" => "Kim Ji-hyun",
-  #   "age" => 22,
-  #   "interests" => [
-  #     {
-  #       "interest" => "Organic Chemistry",
-  #       "levelOfInterest" => 85
-  #     },
-  #     {
-  #       "interest" => "Biochemistry",
-  #       "levelOfInterest" => 70
-  #     },
-  #     {
-  #       "interest" => "Analytical Chemistry",
-  #       "levelOfInterest" => 60
-  #     }
-  #   ]
-  # }
-rescue
-  # alternatively, if the StructuredOutputParser fails, try the OutputFixParser
-  fix_parser.parse("Whoops I don't understand your prompt!")
-  # {
-  #   "name" => "Kim Ji-hyun",
-  #   "age" => 22,
-  #   "interests" => [
-  #     {
-  #       "interest" => "Organic Chemistry",
-  #       "levelOfInterest" => 85
-  #     },
-  #     {
-  #       "interest" => "Biochemistry",
-  #       "levelOfInterest" => 70
-  #     },
-  #     {
-  #       "interest" => "Analytical Chemistry",
-  #       "levelOfInterest" => 60
-  #     }
-  #   ]
-  # }
-end
+fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
+  llm: llm,
+  parser: parser
+)
+# The OutputFixingParser wraps the StructuredOutputParser such that if initial
+# LLM response does not conform to the schema, will call out the LLM to fix
+# the error
+fix_parser.parse(llm_example_response)
+# {
+#   "name" => "Kim Ji-hyun",
+#   "age" => 22,
+#   "interests" => [
+#     {
+#       "interest" => "Organic Chemistry",
+#       "levelOfInterest" => 85
+#     },
+#     {
+#       "interest" => "Biochemistry",
+#       "levelOfInterest" => 70
+#     },
+#     {
+#       "interest" => "Analytical Chemistry",
+#       "levelOfInterest" => 60
+#     }
+#   ]
+# }

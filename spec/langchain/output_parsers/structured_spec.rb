@@ -3,27 +3,6 @@
 require_relative "spec_helper"
 
 RSpec.describe Langchain::OutputParsers::StructuredOutputParser do
-  let!(:json_response) do
-    {
-      "name" => "Hayes Weir",
-      "age" => 2,
-      "interests" => [
-        {
-          "interest" => "Dinosaurs",
-          "levelOfInterest" => 90
-        },
-        {
-          "interest" => "Sugar",
-          "levelOfInterest" => 95
-        }
-      ]
-    }
-  end
-
-  let!(:json_text_response) do
-    json_response.to_json
-  end
-
   let!(:json_with_backticks_text_response) do
     <<~RESPONSE
       I'm responding with a narrative even though you asked for only json response:
@@ -115,16 +94,11 @@ RSpec.describe Langchain::OutputParsers::StructuredOutputParser do
     it "fails to parse response text if the json does not conform to the schema" do
       parser = described_class.from_json_schema(schema_example)
       expect {
-        parser.parse(
-          <<~RESPONSE
-            {
-              "name": "Elon",
-              "age": 51,
-              "interests": []
-            }
-          RESPONSE
-        )
-      }.to raise_error(Langchain::OutputParsers::OutputParserException, /'#\/interests' did not contain a minimum number of items/)
+        parser.parse(invalid_schema_json_text_response)
+      }.to raise_error(
+        Langchain::OutputParsers::OutputParserException,
+        /'#\/interests' did not contain a minimum number of items/
+      )
     end
   end
 
