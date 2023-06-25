@@ -145,6 +145,10 @@ module Langchain
     autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"
   end
 
+  module ActiveRecord
+    autoload :Hooks, "langchain/active_record/hooks"
+  end
+
   module OutputParsers
     autoload :Base, "langchain/output_parsers/base"
     autoload :StructuredOutputParser, "langchain/output_parsers/structured"
@@ -155,3 +159,5 @@ module Langchain
     class BaseError < StandardError; end
   end
 end
+
+require "langchain/railtie" if defined?(Rails)

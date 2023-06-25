@@ -12,23 +12,14 @@
       "removals": null
     }
   },
-  "moduleConfig": {
-    "text2vec-openai": {
-      "model": "ada",
-      "modelVersion": "002",
-      "type": "text",
-      "vectorizeClassName": true
-    }
-  },
   "properties": [
     {
+      "dataType": ["string"],
+      "name": "__id",
+      "tokenization": "word"
+    },
+    {
       "dataType": ["text"],
-      "moduleConfig": {
-        "text2vec-openai": {
-          "skip": false,
-          "vectorizePropertyName": false
-        }
-      },
       "name": "content",
       "tokenization": "word"
     }
@@ -70,5 +61,5 @@
     }
   },
   "vectorIndexType": "hnsw",
-  "vectorizer": "text2vec-openai"
+  "vectorizer": "none"
 }

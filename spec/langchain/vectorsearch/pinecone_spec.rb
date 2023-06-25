@@ -133,6 +133,53 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         expect(subject.add_texts(texts: [text], metadata: metadata)).to eq(true)
       end
     end
+
+    describe "with ids" do
+      let!(:vectors) do
+        [
+          {
+            id: "456",
+            metadata: {content: text},
+            values: embedding
+          }
+        ]
+      end
+
+      before(:each) do
+        allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
+          vectors: vectors, namespace: ""
+        ).and_return(true)
+      end
+
+      it "adds texts" do
+        expect(subject.add_texts(texts: [text], ids: [456])).to eq(true)
+      end
+    end
+  end
+
+  describe "#update_texts" do
+    let(:vectors) do
+      [
+        {
+          id: "123",
+          metadata: {content: text},
+          values: embedding
+        }
+      ]
+    end
+
+    before do
+      vector = double(Pinecone::Vector)
+      allow(subject.llm).to receive(:embed).with(text: text).and_return(embedding)
+      allow(subject.client).to receive(:index).with(index_name).and_return(vector)
+      allow(vector).to receive(:update).with(
+        values: embedding, id: "123", namespace: "", set_metadata: nil
+      ).and_return(true)
+    end
+
+    it "updates texts" do
+      expect(subject.update_texts(texts: [text], ids: [123])).to eq([true])
+    end
   end
 
   describe "#similarity_search_by_vector" do

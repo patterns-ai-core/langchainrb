@@ -27,36 +27,68 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
   describe "#add_texts" do
     let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_add_texts.json")) }
 
-    before do
+    def stub(id)
       allow_any_instance_of(
         Weaviate::Objects
       ).to receive(:batch_create)
         .with(
           objects: [{
             class: "products",
-            properties: {content: "Hello World"},
+            properties: {__id: id.to_s, content: "Hello World"},
             vector: [-0.0018150936, 0.0017554426, -0.022715086]
           }]
         )
         .and_return(fixture)
 
-      allow_any_instance_of(
-        ::OpenAI::Client
-      ).to receive(:embeddings).and_return({
-        "data" => [
-          {
-            "embedding" => [
-              -0.0018150936,
-              0.0017554426,
-              -0.022715086
-            ]
-          }
-        ]
-      })
+      allow(subject.llm).to receive(:embed).and_return([
+        -0.0018150936,
+        0.0017554426,
+        -0.022715086
+      ])
     end
 
-    it "adds texts" do
-      expect(subject.add_texts(texts: ["Hello World"])).to eq(fixture)
+    context "with ids" do
+      before do
+        stub(1)
+      end
+
+      it "adds texts" do
+        expect(subject.add_texts(texts: ["Hello World"], ids: [1])).to eq(fixture)
+      end
+    end
+
+    context "without ids" do
+      before do
+        stub(nil)
+      end
+
+      it "adds texts" do
+        expect(subject.add_texts(texts: ["Hello World"])).to eq(fixture)
+      end
+    end
+  end
+
+  describe "#update_texts" do
+    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_add_texts.json")) }
+
+    let(:record) {
+      [{"_additional" => {"id" => "372ba500-01af-4448-aa03-21f3dd25a456"}}]
+    }
+
+    before do
+      allow(subject.client.query).to receive(:get).and_return(record)
+
+      allow(subject.llm).to receive(:embed).and_return([
+        -0.0018150936,
+        0.0017554426,
+        -0.022715086
+      ])
+
+      allow(subject.client.objects).to receive(:update).and_return(fixture.first)
+    end
+
+    it "updates texts" do
+      expect(subject.update_texts(texts: ["Hello World"], ids: [1])).to eq(fixture)
     end
   end
 
@@ -71,23 +103,15 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
           class_name: "products",
           near_vector: "{ vector: [-0.0018150936, 0.0017554426, -0.022715086] }",
           limit: "4",
-          fields: "content _additional { id }"
+          fields: "__id content _additional { id }"
         )
         .and_return(fixture)
 
-      allow_any_instance_of(
-        ::OpenAI::Client
-      ).to receive(:embeddings).and_return({
-        "data" => [
-          {
-            "embedding" => [
-              -0.0018150936,
-              0.0017554426,
-              -0.022715086
-            ]
-          }
-        ]
-      })
+      allow(subject.llm).to receive(:embed).and_return([
+        -0.0018150936,
+        0.0017554426,
+        -0.022715086
+      ])
     end
 
     it "searches for similar texts" do
@@ -106,7 +130,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
           class_name: "products",
           near_vector: "{ vector: [0.1, 0.2, 0.3] }",
           limit: "4",
-          fields: "content _additional { id }"
+          fields: "__id content _additional { id }"
         )
         .and_return(fixture)
     end
