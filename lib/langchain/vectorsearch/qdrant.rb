@@ -87,7 +87,8 @@ module Langchain::Vectorsearch
         collection_name: index_name,
         limit: k,
         vector: embedding,
-        with_payload: true
+        with_payload: true,
+        with_vector: true
       )
     end
 
