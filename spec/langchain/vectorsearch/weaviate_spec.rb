@@ -103,17 +103,11 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
       ).to receive(:get)
         .with(
           class_name: "products",
-          near_vector: "{ vector: [-0.0018150936, 0.0017554426, -0.022715086] }",
+          near_text: "{ concepts: \"earth\" }",
           limit: "4",
           fields: "__id content _additional { id }"
         )
         .and_return(fixture)
-
-      allow(subject.llm).to receive(:embed).and_return([
-        -0.0018150936,
-        0.0017554426,
-        -0.022715086
-      ])
     end
 
     it "searches for similar texts" do
