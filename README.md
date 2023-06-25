@@ -35,13 +35,13 @@ require "langchain"
 
 | Database | Querying           | Storage | Schema Management | Backups | Rails Integration |
 | -------- |:------------------:| -------:| -----------------:| -------:| -----------------:|
-| [Chroma](https://trychroma.com/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Chroma](https://trychroma.com/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
 | [Hnswlib](https://github.com/nmslib/hnswlib/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 | [Milvus](https://milvus.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
-| [Pinecone](https://www.pinecone.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Pinecone](https://www.pinecone.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
 | [Pgvector](https://github.com/pgvector/pgvector) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 | [Qdrant](https://qdrant.tech/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
-| [Weaviate](https://weaviate.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Weaviate](https://weaviate.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
 
 ### Using Vector Search Databases 🔍
 

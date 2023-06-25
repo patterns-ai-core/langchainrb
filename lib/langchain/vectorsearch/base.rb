@@ -108,6 +108,11 @@ module Langchain::Vectorsearch
       raise NotImplementedError, "#{self.class.name} does not support adding texts"
     end
 
+    # Method supported by Vectorsearch DB to update a list of texts to the index
+    def update_texts(...)
+      raise NotImplementedError, "#{self.class.name} does not support updating texts"
+    end
+
     # Method supported by Vectorsearch DB to search for similar texts in the index
     def similarity_search(...)
       raise NotImplementedError, "#{self.class.name} does not support similarity search"
