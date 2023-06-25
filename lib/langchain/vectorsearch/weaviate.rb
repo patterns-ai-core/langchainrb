@@ -16,13 +16,18 @@ module Langchain::Vectorsearch
     # @param api_key [String] The API key to use
     # @param index_name [String] The capitalized name of the index to use
     # @param llm [Object] The LLM client to use
-    def initialize(url:, api_key:, index_name:, llm:)
+    # @param model_service [Symbol] The LLM service to use (e.g. :openai)
+    # @param model_api_key [String] The LLM API key to use to vectorize the texts
+    def initialize(url:, api_key:, index_name:, llm:, model_service:, model_api_key:)
       depends_on "weaviate-ruby"
       require "weaviate"
 
+      @model_service = model_service
       @client = ::Weaviate::Client.new(
         url: url,
-        api_key: api_key
+        api_key: api_key,
+        model_service: model_service,
+        model_service_api_key: model_api_key
       )
 
       # Weaviate requires the class name to be Capitalized: https://weaviate.io/developers/weaviate/configuration/schema-configuration#create-a-class
@@ -72,10 +77,24 @@ module Langchain::Vectorsearch
     end
 
     # Create default schema
+    # To use a vectorizer other than "none" you need to set ENABLE_MODULES on the Weaviate server
     def create_default_schema
+      # TODO: Make this a hash lookup
+      vectorizer = if @model_service == :openai
+        "text2vec-openai"
+      elsif @model_service == :azure_openai
+        "text2vec-openai"
+      elsif @model_service == :cohere
+        "text2vec-cohere"
+      elsif @model_service == :huggingface
+        "text2vec-huggingface"
+      else
+        "none"
+      end
+
       client.schema.create(
         class_name: index_name,
-        vectorizer: "none",
+        vectorizer: vectorizer,
         properties: [
           # __id to be used a pointer to the original document
           {dataType: ["string"], name: "__id"}, # '_id' is a reserved property name (single underscore)

@@ -17,7 +17,9 @@ weaviate = Langchain::Vectorsearch::Weaviate.new(
   url: ENV["WEAVIATE_URL"],
   api_key: ENV["WEAVIATE_API_KEY"],
   index_name: "",
-  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]),
+  model_service: :openai,
+  model_api_key: ENV["OPENAI_API_KEY"]
 )
 
 qdrant = Langchain::Vectorsearch::Qdrant.new(

@@ -8,7 +8,9 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
       url: "http://localhost:8080",
       api_key: "123",
       index_name: "products",
-      llm: Langchain::LLM::OpenAI.new(api_key: "123")
+      llm: Langchain::LLM::OpenAI.new(api_key: "123"),
+      model_service: :openai,
+      model_api_key: "123"
     )
   }
 
