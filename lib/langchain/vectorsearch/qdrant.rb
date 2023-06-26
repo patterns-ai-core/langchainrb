@@ -51,6 +51,12 @@ module Langchain::Vectorsearch
       add_texts(texts: texts, ids: ids)
     end
 
+    # Deletes the default schema
+    # @return [Hash] The response from the server
+    def destroy_default_schema
+      client.collections.delete(collection_name: index_name)
+    end
+
     # Create the index with the default schema
     # @return [Hash] The response from the server
     def create_default_schema

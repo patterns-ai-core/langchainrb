@@ -72,6 +72,7 @@ module Langchain::Vectorsearch
     end
 
     # Create default schema
+    # @return [Hash] The response from the server
     def create_default_schema
       client.schema.create(
         class_name: index_name,
@@ -82,6 +83,12 @@ module Langchain::Vectorsearch
           {dataType: ["text"], name: "content"}
         ]
       )
+    end
+
+    # Delete the index
+    # @return [Boolean] Whether the index was deleted
+    def destroy_default_schema
+      client.schema.delete(class_name: index_name)
     end
 
     # Return documents similar to the query

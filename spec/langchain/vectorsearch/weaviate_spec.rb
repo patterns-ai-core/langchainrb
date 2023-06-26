@@ -16,7 +16,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_create_default_schema.json")) }
 
     before do
-      allow_any_instance_of(Weaviate::Client).to receive_message_chain(:schema, :create).and_return(fixture)
+      allow(subject.client).to receive_message_chain(:schema, :create).and_return(fixture)
     end
 
     it "creates the default schema" do
@@ -24,12 +24,22 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     end
   end
 
+  describe "#create_default_schema" do
+    before do
+      allow(subject.client).to receive_message_chain(:schema, :delete).and_return(true)
+    end
+
+    it "creates the default schema" do
+      expect(subject.destroy_default_schema).to eq(true)
+    end
+  end  
+
   describe "#add_texts" do
     let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_add_texts.json")) }
 
     def stub(id)
-      allow_any_instance_of(
-        Weaviate::Objects
+      allow(
+        subject.client.objects
       ).to receive(:batch_create)
         .with(
           objects: [{
@@ -96,8 +106,8 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_search.json")) }
 
     before do
-      allow_any_instance_of(
-        Weaviate::Query
+      allow(
+        subject.client.query
       ).to receive(:get)
         .with(
           class_name: "products",
@@ -123,8 +133,8 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_search.json")) }
 
     before do
-      allow_any_instance_of(
-        Weaviate::Query
+      allow(
+        subject.client.query
       ).to receive(:get)
         .with(
           class_name: "products",

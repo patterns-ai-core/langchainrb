@@ -69,6 +69,8 @@ module Langchain::Vectorsearch
       )
     end
 
+    # TODO: Add destroy_default_schema method
+
     # Search for similar texts in the index
     # @param query [String] The text to search for
     # @param k [Integer] The number of top results to return

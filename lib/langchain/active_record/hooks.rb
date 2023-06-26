@@ -35,7 +35,7 @@ module Langchain
     # Query the vector search provider
     #     Recipe.similarity_search("carnivore dish")
     # Delete the default schema to start over
-    #     Recipe.class_variable_get(:@@provider).client.schema.delete class_name: "Recipes"
+    #     Recipe.class_variable_get(:@@provider).destroy_default_schema
     #
     module Hooks
       def self.included(base)

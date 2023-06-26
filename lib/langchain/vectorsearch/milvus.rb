@@ -39,6 +39,8 @@ module Langchain::Vectorsearch
       )
     end
 
+    # TODO: Add update_texts method
+
     # Create default schema
     # @return [Hash] The response from the server
     def create_default_schema
@@ -76,6 +78,8 @@ module Langchain::Vectorsearch
         ]
       )
     end
+
+    # TODO: Add destroy_default_schema method
 
     def similarity_search(query:, k: 4)
       embedding = llm.embed(text: query)
