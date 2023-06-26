@@ -5,24 +5,32 @@ require "pinecone"
 RSpec.describe Langchain::Vectorsearch::Pinecone do
   let(:index_name) { "documents" }
   let(:namespace) { "namespaced" }
+  let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
 
   subject {
     described_class.new(
       environment: "test",
       api_key: "secret",
       index_name: index_name,
-      llm: Langchain::LLM::OpenAI.new(api_key: "123")
+      llm: llm
     )
   }
 
   describe "#create_default_schema" do
     it "returns true" do
-      allow_any_instance_of(Pinecone::Client).to receive(:create_index).with(
+      allow(subject.client).to receive(:create_index).with(
         metric: described_class::DEFAULT_METRIC,
         name: index_name,
         dimension: subject.default_dimension
       ).and_return(true)
       expect(subject.create_default_schema).to eq(true)
+    end
+  end
+
+  describe "#destroy_default_schema" do
+    it "returns true" do
+      allow(subject.client).to receive(:delete_index).with(index_name).and_return(true)
+      expect(subject.destroy_default_schema).to eq(true)
     end
   end
 

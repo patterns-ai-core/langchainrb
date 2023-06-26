@@ -67,6 +67,11 @@ module Langchain::Vectorsearch
       ::Chroma::Resources::Collection.create(index_name)
     end
 
+    # TODO: Uncomment and add the spec
+    # def destroy_default_schema
+    #   ::Chroma::Resources::Collection.delete(index_name)
+    # end
+
     # Search for similar texts
     # @param query [String] The text to search for
     # @param k [Integer] The number of results to return

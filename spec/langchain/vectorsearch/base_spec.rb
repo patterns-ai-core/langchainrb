@@ -17,9 +17,21 @@ RSpec.describe Langchain::Vectorsearch::Base do
     end
   end
 
+  describe "#destroy_default_schema" do
+    it "raises an error" do
+      expect { subject.destroy_default_schema }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe "#add_texts" do
     it "raises an error" do
       expect { subject.add_texts }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe "#update_texts" do
+    it "raises an error" do
+      expect { subject.update_texts }.to raise_error(NotImplementedError)
     end
   end
 

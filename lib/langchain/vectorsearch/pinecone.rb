@@ -79,6 +79,12 @@ module Langchain::Vectorsearch
       )
     end
 
+    # Delete the index
+    # @return [Hash] The response from the server
+    def destroy_default_schema
+      client.delete_index(index_name)
+    end
+
     # Search for similar texts
     # @param query [String] The text to search for
     # @param k [Integer] The number of results to return
