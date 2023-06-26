@@ -105,7 +105,7 @@ module Langchain::Vectorsearch
         class_name: index_name,
         vectorizer: @vectorizer,
         module_config: {
-          text2vecPalm: {
+          "text2vec-palm" => {
             projectId: @project_id
           }
         },
