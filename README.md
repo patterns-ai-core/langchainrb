@@ -409,7 +409,6 @@ Join us in the [Langchain.rb](https://discord.gg/WDARp7J2n8) Discord server.
 [<img style="border-radius:50%" alt="Maël H." src="https://avatars.githubusercontent.com/u/61985678?v=4" width="80" height="80" class="avatar">](https://github.com/mael-ha)
 [<img style="border-radius:50%" alt="Chris O. Adebiyi" src="https://avatars.githubusercontent.com/u/62605573?v=4" width="80" height="80" class="avatar">](https://github.com/oluvvafemi)
 [<img style="border-radius:50%" alt="Aaron Breckenridge" src="https://avatars.githubusercontent.com/u/201360?v=4" width="80" height="80" class="avatar">](https://github.com/breckenedge)
-[<img style="border-radius:50%" alt="Aaron Breckenridge" src="https://avatars.githubusercontent.com/u/201360?v=4" width="80" height="80" class="avatar">](https://github.com/breckenedge)
 
 ## Star History
 
