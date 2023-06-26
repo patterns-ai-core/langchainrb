@@ -32,7 +32,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     it "creates the default schema" do
       expect(subject.destroy_default_schema).to eq(true)
     end
-  end  
+  end
 
   describe "#add_texts" do
     let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_add_texts.json")) }

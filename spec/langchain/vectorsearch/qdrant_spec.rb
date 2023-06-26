@@ -25,7 +25,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
   end
 
   describe "#destroy_default_schema" do
-    let(:fixture) { {"result"=>true, "status"=>"ok", "time"=>0.001313625} }
+    let(:fixture) { {"result" => true, "status" => "ok", "time" => 0.001313625} }
 
     before do
       allow(subject.client).to receive_message_chain(:collections, :delete).and_return(fixture)
@@ -34,7 +34,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     it "returns true" do
       expect(subject.destroy_default_schema).to eq(fixture)
     end
-  end  
+  end
 
   let(:text) { "Hello World" }
   let(:embedding) { [0.1, 0.2, 0.3] }
