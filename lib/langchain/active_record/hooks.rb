@@ -87,7 +87,9 @@ module Langchain
             query: query,
             k: k
           )
-          ids = records.map { |record| record.dig("__id") }
+
+          # We use "__id" when Weaviate is the provider
+          ids = records.map { |record| record.dig("id") || record.dig("__id") }
           where(id: ids)
         end
       end
