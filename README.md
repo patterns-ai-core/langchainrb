@@ -47,7 +47,7 @@ require "langchain"
 
 Choose the LLM provider you'll be using (OpenAI or Cohere) and retrieve the API key.
 
-Add `gem "weaviate-ruby", "~> 0.8.0"`  to your Gemfile.
+Add `gem "weaviate-ruby", "~> 0.8.3"`  to your Gemfile.
 
 Pick the vector search database you'll be using and instantiate the client:
 ```ruby
