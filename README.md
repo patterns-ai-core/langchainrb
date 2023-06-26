@@ -110,6 +110,22 @@ client.ask(
 )
 ```
 
+## Integrating Vector Search into ActiveRecord models
+```ruby
+class Product < ActiveRecord::Base
+  vectorsearch provider: Langchain::Vectorsearch::Qdrant.new(
+                 api_key: ENV["QDRANT_API_KEY"],
+                 url: ENV["QDRANT_URL"],
+                 index_name: "Products",
+                 llm: Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
+               )
+
+  after_save :upsert_to_vectorsearch
+end
+```
+
+Additional info [here](https://github.com/andreibondarev/langchainrb/blob/main/lib/langchain/active_record/hooks.rb#L10-L38).
+
 ### Using Standalone LLMs 🗣️
 
 Add `gem "ruby-openai", "~> 4.0.0"` to your Gemfile.
@@ -370,15 +386,33 @@ Langchain.logger.level = :info
 Join us in the [Langchain.rb](https://discord.gg/WDARp7J2n8) Discord server.
 
 ## Core Contributors
-[<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://github.com/andreibondarev)
+[<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://twitter.com/rushing_andrei)
 
-## Honorary Contributors
-[<img style="border-radius:50%" alt="Andrei Bondarev" src="https://avatars.githubusercontent.com/u/541665?v=4" width="80" height="80" class="avatar">](https://github.com/andreibondarev)
-[<img style="border-radius:50%" alt="Rafael Figueiredo" src="https://avatars.githubusercontent.com/u/35845775?v=4" width="80" height="80" class="avatar">](https://github.com/rafaelqfigueiredo)
-[<img style="border-radius:50%" alt="Ricky Chilcott" src="https://avatars.githubusercontent.com/u/445759?v=4" width="80" height="80" class="avatar">](https://github.com/rickychilcott)
+## Contributors
 [<img style="border-radius:50%" alt="Alex Chaplinsky" src="https://avatars.githubusercontent.com/u/695947?v=4" width="80" height="80" class="avatar">](https://github.com/alchaplinsky)
+[<img style="border-radius:50%" alt="Josh Nichols" src="https://avatars.githubusercontent.com/u/159?v=4" width="80" height="80" class="avatar">](https://github.com/technicalpickles)
+[<img style="border-radius:50%" alt="Matt Lindsey" src="https://avatars.githubusercontent.com/u/5638339?v=4" width="80" height="80" class="avatar">](https://github.com/mattlindsey)
+[<img style="border-radius:50%" alt="Ricky Chilcott" src="https://avatars.githubusercontent.com/u/445759?v=4" width="80" height="80" class="avatar">](https://github.com/rickychilcott)
+[<img style="border-radius:50%" alt="Moeki Kawakami" src="https://avatars.githubusercontent.com/u/72325947?v=4" width="80" height="80" class="avatar">](https://github.com/moekidev)
+[<img style="border-radius:50%" alt="Jens Stmrs" src="https://avatars.githubusercontent.com/u/3492669?v=4" width="80" height="80" class="avatar">](https://github.com/faustus7)
+[<img style="border-radius:50%" alt="Rafael Figueiredo" src="https://avatars.githubusercontent.com/u/35845775?v=4" width="80" height="80" class="avatar">](https://github.com/rafaelqfigueiredo)
+[<img style="border-radius:50%" alt="Piero Dotti" src="https://avatars.githubusercontent.com/u/5167659?v=4" width="80" height="80" class="avatar">](https://github.com/ProGM)
+[<img style="border-radius:50%" alt="Michał Ciemięga" src="https://avatars.githubusercontent.com/u/389828?v=4" width="80" height="80" class="avatar">](https://github.com/zewelor)
+[<img style="border-radius:50%" alt="Bruno Bornsztein" src="https://avatars.githubusercontent.com/u/3760?v=4" width="80" height="80" class="avatar">](https://github.com/bborn)
+[<img style="border-radius:50%" alt="Tim Williams" src="https://avatars.githubusercontent.com/u/1192351?v=4" width="80" height="80" class="avatar">](https://github.com/timrwilliams)
+[<img style="border-radius:50%" alt="Zhenhang Tung" src="https://avatars.githubusercontent.com/u/8170159?v=4" width="80" height="80" class="avatar">](https://github.com/ZhenhangTung)
+[<img style="border-radius:50%" alt="Hama" src="https://avatars.githubusercontent.com/u/38002468?v=4" width="80" height="80" class="avatar">](https://github.com/akmhmgc)
+[<img style="border-radius:50%" alt="Josh Weir" src="https://avatars.githubusercontent.com/u/10720337?v=4" width="80" height="80" class="avatar">](https://github.com/joshweir)
+[<img style="border-radius:50%" alt="Arthur Hess" src="https://avatars.githubusercontent.com/u/446035?v=4" width="80" height="80" class="avatar">](https://github.com/arthurhess)
+[<img style="border-radius:50%" alt="Jin Shen" src="https://avatars.githubusercontent.com/u/54917718?v=4" width="80" height="80" class="avatar">](https://github.com/jacshen-ebay)
+[<img style="border-radius:50%" alt="Earle Bunao" src="https://avatars.githubusercontent.com/u/4653624?v=4" width="80" height="80" class="avatar">](https://github.com/erbunao)
+[<img style="border-radius:50%" alt="Maël H." src="https://avatars.githubusercontent.com/u/61985678?v=4" width="80" height="80" class="avatar">](https://github.com/mael-ha)
+[<img style="border-radius:50%" alt="Chris O. Adebiyi" src="https://avatars.githubusercontent.com/u/62605573?v=4" width="80" height="80" class="avatar">](https://github.com/oluvvafemi)
+[<img style="border-radius:50%" alt="Aaron Breckenridge" src="https://avatars.githubusercontent.com/u/201360?v=4" width="80" height="80" class="avatar">](https://github.com/breckenedge)
 
-(Criteria for becoming an Honorary Contributor or Core Contributor is pending...)
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=andreibondarev/langchainrb&type=Date)](https://star-history.com/#andreibondarev/langchainrb&Date)
 
 ## Contributing
 
