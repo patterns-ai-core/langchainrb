@@ -60,13 +60,17 @@ module Langchain::Vectorsearch
     # Create the index with the default schema
     # @return [Hash] The response from the server
     def create_default_schema
-      client.collections.create(
-        collection_name: index_name,
-        vectors: {
-          distance: DEFAULT_METRIC.capitalize,
-          size: default_dimension
-        }
-      )
+      if client.collections.list['result']['collections'].any? { |h| h['name'] == index_name }
+        Langchain.logger.info("Index ´#{index_name}` already exists, skipping creation", for: self.class)
+      else
+        client.collections.create(
+          collection_name: index_name,
+          vectors: {
+            distance: DEFAULT_METRIC.capitalize,
+            size: default_dimension
+          }
+        )
+      end
     end
 
     # Search for similar texts
