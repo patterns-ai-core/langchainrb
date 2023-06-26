@@ -16,7 +16,7 @@ module Langchain::LLM
       dimension: 768, # This is what the `embedding-gecko-001` model generates
       completion_model_name: "text-bison-001",
       chat_completion_model_name: "chat-bison-001",
-      embeddings_model_name: "embedding-gecko-001"
+      embeddings_model_name: "textembedding-gecko" # "embedding-gecko-001"
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidator
 

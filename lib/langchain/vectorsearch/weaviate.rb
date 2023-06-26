@@ -19,7 +19,7 @@ module Langchain::Vectorsearch
       cohere: "text2vec-cohere",
       google_palm: "text2vec-palm"
     }.freeze
-    DEFAULT_VECTORIZER = :none
+    DEFAULT_VECTORIZER = "none"
 
     # Initialize the Weaviate adapter
     # @param url [String] The URL of the Weaviate instance
@@ -28,7 +28,7 @@ module Langchain::Vectorsearch
     # @param llm [Object] The LLM client to use
     # @param model_service [Symbol] The LLM service to use (e.g. :openai)
     # @param model_api_key [String] The LLM API key to use to vectorize the texts
-    def initialize(url:, api_key:, index_name:, llm:, model_service:, model_api_key:)
+    def initialize(url:, api_key:, index_name:, llm:, model_service:, model_api_key:, project_id: "")
       depends_on "weaviate-ruby"
       require "weaviate"
 
@@ -43,6 +43,7 @@ module Langchain::Vectorsearch
       # TODO: Capitalize index_name
       @index_name = index_name
       @vectorizer = VECTORIZERS[model_service] || DEFAULT_VECTORIZER
+      @project_id = project_id
 
       super(llm: llm)
     end
@@ -91,6 +92,23 @@ module Langchain::Vectorsearch
       client.schema.create(
         class_name: index_name,
         vectorizer: @vectorizer,
+        properties: [
+          # __id to be used a pointer to the original document
+          {dataType: ["string"], name: "__id"}, # '_id' is a reserved property name (single underscore)
+          {dataType: ["text"], name: "content"}
+        ]
+      )
+    end
+
+    def create_default_schema_palm
+      client.schema.create(
+        class_name: index_name,
+        vectorizer: @vectorizer,
+        module_config: {
+          text2vecPalm: {
+            projectId: @project_id
+          }
+        },
         properties: [
           # __id to be used a pointer to the original document
           {dataType: ["string"], name: "__id"}, # '_id' is a reserved property name (single underscore)
