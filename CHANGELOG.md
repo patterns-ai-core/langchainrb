@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.6.2] - 2023-06-25
+- Qdrant, Chroma, and Pinecone are supported by ActiveRecord hooks
+
 ## [0.6.1] - 2023-06-24
 - Adding support to hook vectorsearch into ActiveRecord models
 
