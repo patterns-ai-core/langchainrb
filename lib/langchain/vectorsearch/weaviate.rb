@@ -16,7 +16,8 @@ module Langchain::Vectorsearch
       openai: "text2vec-openai",
       azure_openai: "text2vec-openai",
       huggingface: "text2vec-hugingface",
-      cohere: "text2vec-cohere"
+      cohere: "text2vec-cohere",
+      google_palm: "text2vec-palm"
     }.freeze
     DEFAULT_VECTORIZER = :none
 
