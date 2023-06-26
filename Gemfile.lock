@@ -133,7 +133,7 @@ GEM
       faraday (>= 1.0)
       faraday_middleware
       graphql-client
-    graphql (2.0.21)
+    graphql (2.0.23)
     graphql-client (0.18.0)
       activesupport (>= 3.0)
       graphql
@@ -298,7 +298,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
-    weaviate-ruby (0.8.1)
+    weaviate-ruby (0.8.3)
       faraday (~> 1)
       faraday_middleware (~> 1)
       graphlient (~> 0.6.0)
@@ -346,7 +346,7 @@ DEPENDENCIES
   safe_ruby (~> 1.0.4)
   sequel (~> 5.68.0)
   standardrb
-  weaviate-ruby (~> 0.8.0)
+  weaviate-ruby (~> 0.8.3)
   wikipedia-client (~> 1.17.0)
   yard
 

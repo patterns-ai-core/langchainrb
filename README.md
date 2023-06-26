@@ -35,10 +35,10 @@ require "langchain"
 
 | Database | Querying           | Storage | Schema Management | Backups | Rails Integration |
 | -------- |:------------------:| -------:| -----------------:| -------:| -----------------:|
-| [Chroma](https://trychroma.com/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Chroma](https://trychroma.com/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
 | [Hnswlib](https://github.com/nmslib/hnswlib/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 | [Milvus](https://milvus.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
-| [Pinecone](https://www.pinecone.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Pinecone](https://www.pinecone.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
 | [Pgvector](https://github.com/pgvector/pgvector) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 | [Qdrant](https://qdrant.tech/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
 | [Weaviate](https://weaviate.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
@@ -47,7 +47,7 @@ require "langchain"
 
 Choose the LLM provider you'll be using (OpenAI or Cohere) and retrieve the API key.
 
-Add `gem "weaviate-ruby", "~> 0.8.0"`  to your Gemfile.
+Add `gem "weaviate-ruby", "~> 0.8.3"`  to your Gemfile.
 
 Pick the vector search database you'll be using and instantiate the client:
 ```ruby
