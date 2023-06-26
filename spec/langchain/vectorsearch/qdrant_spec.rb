@@ -24,6 +24,18 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     end
   end
 
+  describe "#destroy_default_schema" do
+    let(:fixture) { {"result" => true, "status" => "ok", "time" => 0.001313625} }
+
+    before do
+      allow(subject.client).to receive_message_chain(:collections, :delete).and_return(fixture)
+    end
+
+    it "returns true" do
+      expect(subject.destroy_default_schema).to eq(fixture)
+    end
+  end
+
   let(:text) { "Hello World" }
   let(:embedding) { [0.1, 0.2, 0.3] }
   let(:count) { 1 }
@@ -36,17 +48,26 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     end
 
     it "adds texts" do
-      expect(subject.add_texts(texts: [text])).to eq(true)
+      expect(subject.add_texts(texts: [text], ids: [1])).to eq(true)
+    end
+  end
+
+  describe "updates_texts" do
+    it "adds texts" do
+      expect(subject).to receive(:add_texts).with(texts: [text], ids: [1]).and_return(true)
+      subject.update_texts(texts: [text], ids: [1])
     end
   end
 
   describe "#similarity_search_by_vector" do
     before do
-      allow(subject.client).to receive_message_chain(:points, :search).and_return(true)
+      allow(subject.client).to receive_message_chain(:points, :search).and_return(
+        {"result" => [{}]}
+      )
     end
 
     it "searches for similar texts" do
-      expect(subject.similarity_search_by_vector(embedding: embedding)).to eq(true)
+      expect(subject.similarity_search_by_vector(embedding: embedding)).to eq([{}])
     end
   end
 

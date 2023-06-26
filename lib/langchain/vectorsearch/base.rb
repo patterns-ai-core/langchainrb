@@ -103,6 +103,11 @@ module Langchain::Vectorsearch
       raise NotImplementedError, "#{self.class.name} does not support creating a default schema"
     end
 
+    # Method supported by Vectorsearch DB to delete the default schema
+    def destroy_default_schema
+      raise NotImplementedError, "#{self.class.name} does not support deleting a default schema"
+    end
+
     # Method supported by Vectorsearch DB to add a list of texts to the index
     def add_texts(...)
       raise NotImplementedError, "#{self.class.name} does not support adding texts"

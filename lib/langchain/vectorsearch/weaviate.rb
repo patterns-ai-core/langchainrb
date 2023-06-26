@@ -5,7 +5,7 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Weaviate
     #
-    # Gem requirements: gem "weaviate-ruby", "~> 0.8.0"
+    # Gem requirements: gem "weaviate-ruby", "~> 0.8.3"
     #
     # Usage:
     # weaviate = Langchain::Vectorsearch::Weaviate.new(url:, api_key:, index_name:, llm:, llm_api_key:)
@@ -72,6 +72,7 @@ module Langchain::Vectorsearch
     end
 
     # Create default schema
+    # @return [Hash] The response from the server
     def create_default_schema
       client.schema.create(
         class_name: index_name,
@@ -82,6 +83,12 @@ module Langchain::Vectorsearch
           {dataType: ["text"], name: "content"}
         ]
       )
+    end
+
+    # Delete the index
+    # @return [Boolean] Whether the index was deleted
+    def destroy_default_schema
+      client.schema.delete(class_name: index_name)
     end
 
     # Return documents similar to the query
