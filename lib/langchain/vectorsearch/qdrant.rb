@@ -32,11 +32,12 @@ module Langchain::Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
-    def add_texts(texts:, ids:)
+    def add_texts(texts:, ids: [])
       batch = {ids: [], vectors: [], payloads: []}
 
       Array(texts).each_with_index do |text, i|
-        batch[:ids].push(ids[i] || SecureRandom.uuid)
+        id = ids[i] || SecureRandom.uuid
+        batch[:ids].push(id)
         batch[:vectors].push(llm.embed(text: text))
         batch[:payloads].push({content: text})
       end
@@ -109,7 +110,7 @@ module Langchain::Vectorsearch
     def ask(question:)
       search_results = similarity_search(query: question)
 
-      context = search_results.dig("result").map do |result|
+      context = search_results.map do |result|
         result.dig("payload").to_s
       end
       context = context.join("\n---\n")
