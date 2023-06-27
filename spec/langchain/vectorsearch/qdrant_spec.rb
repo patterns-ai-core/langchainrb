@@ -89,7 +89,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     let(:answer) { "5 times" }
 
     before do
-      allow(subject).to receive(:similarity_search).with(query: question).and_return({"result" => [{"payload" => text}]})
+      allow(subject).to receive(:similarity_search).with(query: question).and_return([{"payload" => text}])
       allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
     end
 
