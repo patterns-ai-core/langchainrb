@@ -51,6 +51,13 @@ module Langchain
       !!(@path =~ URI_REGEX)
     end
 
+    # Is the path a directory
+    #
+    # @return [Boolean] true if path is a directory
+    def directory?
+      File.directory?(@path)
+    end
+
     # Load data from a file or URL
     #
     #    loader = Langchain::Loader.new("README.md")
@@ -69,15 +76,10 @@ module Langchain
     #
     # @return [Data] data that was loaded
     def load(&block)
-      @raw_data = url? ? load_from_url : load_from_path
+      return process_data(load_from_url, &block) if url?
+      return load_from_directory(&block) if directory?
 
-      data = if block
-        yield @raw_data.read, @options
-      else
-        processor_klass.new(@options).parse(@raw_data)
-      end
-
-      Langchain::Data.new(data, source: @path)
+      process_data(load_from_path, &block)
     end
 
     private
@@ -90,6 +92,27 @@ module Langchain
       raise FileNotFound unless File.exist?(@path)
 
       File.open(@path)
+    end
+
+    def load_from_directory(&block)
+      Dir.glob(File.join(@path, "**/*")).map do |file|
+        # Only load and add to result files with supported extensions
+        Langchain::Loader.new(file, @options).load(&block)
+      rescue
+        UnknownFormatError nil
+      end.flatten.compact
+    end
+
+    def process_data(data, &block)
+      @raw_data = data
+
+      result = if block
+        yield @raw_data.read, @options
+      else
+        processor_klass.new(@options).parse(@raw_data)
+      end
+
+      Langchain::Data.new(result)
     end
 
     def processor_klass
