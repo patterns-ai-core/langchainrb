@@ -76,25 +76,8 @@ module Langchain::OutputParsers
     private
 
     private_class_method def self.naive_fix_prompt
-      Langchain::Prompt::PromptTemplate.from_template(
-        <<~INSTRUCTIONS.chomp
-          Instructions:
-          --------------
-          {instructions}
-          --------------
-          Completion:
-          --------------
-          {completion}
-          --------------
-          
-          Above, the Completion did not satisfy the constraints given in the Instructions.
-          Error:
-          --------------
-          {error}
-          --------------
-          
-          Please try again. Please only respond with an answer that satisfies the constraints laid out in the Instructions:
-        INSTRUCTIONS
+      Langchain::Prompt.load_from_path(
+        file_path: Langchain.root.join("langchain/output_parsers/prompts/naive_fix_prompt.yaml")
       )
     end
   end
