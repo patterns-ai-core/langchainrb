@@ -22,10 +22,10 @@ RSpec.describe Langchain::Conversation do
     it "adds examples" do
       subject.add_examples(examples1)
 
-      expect(subject.instance_variable_get(:@examples)).to eq(examples1)
+      expect(subject.examples).to eq(examples1)
 
       subject.add_examples(examples2)
-      expect(subject.instance_variable_get(:@examples)).to eq(examples1 | examples2)
+      expect(subject.examples).to eq(examples1 | examples2)
     end
   end
 
