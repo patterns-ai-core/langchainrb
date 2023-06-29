@@ -5,7 +5,7 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Weaviate
     #
-    # Gem requirements: gem "weaviate-ruby", "~> 0.8.0"
+    # Gem requirements: gem "weaviate-ruby", "~> 0.8.3"
     #
     # Usage:
     # weaviate = Langchain::Vectorsearch::Weaviate.new(url:, api_key:, index_name:, llm:, llm_api_key:)
@@ -14,7 +14,7 @@ module Langchain::Vectorsearch
     # Initialize the Weaviate adapter
     # @param url [String] The URL of the Weaviate instance
     # @param api_key [String] The API key to use
-    # @param index_name [String] The name of the index to use
+    # @param index_name [String] The capitalized name of the index to use
     # @param llm [Object] The LLM client to use
     def initialize(url:, api_key:, index_name:, llm:)
       depends_on "weaviate-ruby"
@@ -24,6 +24,9 @@ module Langchain::Vectorsearch
         url: url,
         api_key: api_key
       )
+
+      # Weaviate requires the class name to be Capitalized: https://weaviate.io/developers/weaviate/configuration/schema-configuration#create-a-class
+      # TODO: Capitalize index_name
       @index_name = index_name
 
       super(llm: llm)
@@ -32,33 +35,60 @@ module Langchain::Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
-    def add_texts(texts:)
-      objects = Array(texts).map do |text|
-        {
-          class: index_name,
-          properties: {content: text},
-          vector: llm.embed(text: text)
-        }
-      end
-
+    def add_texts(texts:, ids: [])
       client.objects.batch_create(
-        objects: objects
+        objects: weaviate_objects(texts, ids)
       )
     end
 
+    # Update a list of texts in the index
+    # @param texts [Array] The list of texts to update
+    # @return [Hash] The response from the server
+    def update_texts(texts:, ids:)
+      uuids = []
+
+      # Retrieve the UUIDs of the objects to update
+      Array(texts).map.with_index do |text, i|
+        record = client.query.get(
+          class_name: index_name,
+          fields: "_additional { id }",
+          where: "{ path: [\"__id\"], operator: Equal, valueString: \"#{ids[i]}\" }"
+        )
+        uuids.push record[0].dig("_additional", "id")
+      end
+
+      # Update the objects
+      texts.map.with_index do |text, i|
+        client.objects.update(
+          class_name: index_name,
+          id: uuids[i],
+          properties: {
+            __id: ids[i].to_s,
+            content: text
+          },
+          vector: llm.embed(text: text)
+        )
+      end
+    end
+
     # Create default schema
+    # @return [Hash] The response from the server
     def create_default_schema
       client.schema.create(
         class_name: index_name,
         vectorizer: "none",
         properties: [
-          # TODO: Allow passing in your own IDs
-          {
-            dataType: ["text"],
-            name: "content"
-          }
+          # __id to be used a pointer to the original document
+          {dataType: ["string"], name: "__id"}, # '_id' is a reserved property name (single underscore)
+          {dataType: ["text"], name: "content"}
         ]
       )
+    end
+
+    # Delete the index
+    # @return [Boolean] Whether the index was deleted
+    def destroy_default_schema
+      client.schema.delete(class_name: index_name)
     end
 
     # Return documents similar to the query
@@ -82,7 +112,7 @@ module Langchain::Vectorsearch
         class_name: index_name,
         near_vector: near_vector,
         limit: k.to_s,
-        fields: "content _additional { id }"
+        fields: "__id content _additional { id }"
       )
     end
 
@@ -100,6 +130,25 @@ module Langchain::Vectorsearch
       prompt = generate_prompt(question: question, context: context)
 
       llm.chat(prompt: prompt)
+    end
+
+    private
+
+    def weaviate_objects(texts, ids = [])
+      Array(texts).map.with_index do |text, i|
+        weaviate_object(text, ids[i])
+      end
+    end
+
+    def weaviate_object(text, id = nil)
+      {
+        class: index_name,
+        properties: {
+          __id: id.to_s,
+          content: text
+        },
+        vector: llm.embed(text: text)
+      }
     end
   end
 end

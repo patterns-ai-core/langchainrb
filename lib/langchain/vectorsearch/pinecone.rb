@@ -33,14 +33,14 @@ module Langchain::Vectorsearch
 
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
+    # @param ids [Array] The list of IDs to add
     # @param namespace [String] The namespace to add the texts to
     # @param metadata [Hash] The metadata to use for the texts
     # @return [Hash] The response from the server
-    def add_texts(texts:, namespace: "", metadata: nil)
-      vectors = texts.map do |text|
+    def add_texts(texts:, ids: [], namespace: "", metadata: nil)
+      vectors = texts.map.with_index do |text, i|
         {
-          # TODO: Allows passing in your own IDs
-          id: SecureRandom.uuid,
+          id: ids[i] ? ids[i].to_s : SecureRandom.uuid,
           metadata: metadata || {content: text},
           values: llm.embed(text: text)
         }
@@ -51,6 +51,24 @@ module Langchain::Vectorsearch
       index.upsert(vectors: vectors, namespace: namespace)
     end
 
+    # Update a list of texts in the index
+    # @param texts [Array] The list of texts to update
+    # @param ids [Array] The list of IDs to update
+    # @param namespace [String] The namespace to update the texts in
+    # @param metadata [Hash] The metadata to use for the texts
+    # @return [Array] The response from the server
+    def update_texts(texts:, ids:, namespace: "", metadata: nil)
+      texts.map.with_index do |text, i|
+        # Pinecone::Vector#update ignore args when it is empty
+        index.update(
+          namespace: namespace,
+          id: ids[i].to_s,
+          values: llm.embed(text: text),
+          set_metadata: metadata
+        )
+      end
+    end
+
     # Create the index with the default schema
     # @return [Hash] The response from the server
     def create_default_schema
@@ -59,6 +77,12 @@ module Langchain::Vectorsearch
         name: index_name,
         dimension: default_dimension
       )
+    end
+
+    # Delete the index
+    # @return [Hash] The response from the server
+    def destroy_default_schema
+      client.delete_index(index_name)
     end
 
     # Search for similar texts
@@ -121,6 +145,12 @@ module Langchain::Vectorsearch
       prompt = generate_prompt(question: question, context: context)
 
       llm.chat(prompt: prompt)
+    end
+
+    # Pinecone index
+    # @return [Object] The Pinecone index
+    private def index
+      client.index(index_name)
     end
   end
 end

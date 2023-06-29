@@ -5,21 +5,12 @@ module Langchain::LLM
   # Wrapper around the Google PaLM (Pathways Language Model) APIs: https://ai.google/build/machine-learning/
   #
   # Gem requirements:
-  #     gem "google_palm_api", "~> 0.1.0"
+  #     gem "google_palm_api", "~> 0.1.2"
   #
   # Usage:
   #     google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")
   #
   class GooglePalm < Base
-    #
-    # Wrapper around the Google PaLM (Pathways Language Model) APIs.
-    #
-    # Gem requirements: gem "google_palm_api", "~> 0.1.1"
-    #
-    # Usage:
-    # google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")
-    #
-
     DEFAULTS = {
       temperature: 0.0,
       dimension: 768, # This is what the `embedding-gecko-001` model generates
@@ -61,7 +52,7 @@ module Langchain::LLM
       default_params = {
         prompt: prompt,
         temperature: @defaults[:temperature],
-        completion_model_name: @defaults[:completion_model_name]
+        model: @defaults[:completion_model_name]
       }
 
       if params[:stop_sequences]
@@ -91,7 +82,7 @@ module Langchain::LLM
 
       default_params = {
         temperature: @defaults[:temperature],
-        chat_completion_model_name: @defaults[:chat_completion_model_name],
+        model: @defaults[:chat_completion_model_name],
         context: context,
         messages: compose_chat_messages(prompt: prompt, messages: messages),
         examples: compose_examples(examples)

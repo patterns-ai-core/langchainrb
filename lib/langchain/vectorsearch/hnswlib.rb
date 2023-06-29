@@ -53,6 +53,8 @@ module Langchain::Vectorsearch
       client.save_index(path_to_index)
     end
 
+    # TODO: Add update_texts method
+
     #
     # Search for similar texts
     #

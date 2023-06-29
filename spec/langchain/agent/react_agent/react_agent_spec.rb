@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
+RSpec.describe Langchain::Agent::ReActAgent do
   let(:calculator) { Langchain::Tool::Calculator.new }
   let(:search) { Langchain::Tool::GoogleSearch.new(api_key: "123") }
   let(:wikipedia) { Langchain::Tool::Wikipedia.new }
@@ -80,7 +80,7 @@ RSpec.describe Langchain::Agent::ChainOfThoughtAgent do
     it "raises an error after max_iterations" do
       allow(subject).to receive(:max_iterations).and_return(1)
 
-      expect { subject.run(question: question) }.to raise_error(Langchain::Agent::ChainOfThoughtAgent::MaxIterationsReachedError)
+      expect { subject.run(question: question) }.to raise_error(Langchain::Agent::ReActAgent::MaxIterationsReachedError)
     end
   end
 

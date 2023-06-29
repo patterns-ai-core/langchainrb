@@ -10,42 +10,76 @@ module Langchain
 
     URI_REGEX = %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}
 
-    # Load data from a file or url
-    # Equivalent to Langchain::Loader.new(path).load
-    # @param path [String | Pathname] path to file or url
-    # @return [String] file content
+    # Load data from a file or URL. Shorthand for  `Langchain::Loader.new(path).load`
+    #
+    # == Examples
+    #
+    #     # load a URL
+    #     data = Langchain::Loader.load("https://example.com/docs/README.md")
+    #
+    #     # load a file
+    #     data = Langchain::Loader.load("README.md")
+    #
+    #    # Load data using a custom processor
+    #    data = Langchain::Loader.load("README.md") do |raw_data, options|
+    #      # your processing code goes here
+    #      # return data at the end here
+    #    end
+    #
+    # @param path [String | Pathname] path to file or URL
+    # @param options [Hash] options passed to the processor class used to process the data
+    # @return [Data] data loaded from path
     def self.load(path, options = {}, &block)
       new(path, options).load(&block)
     end
 
     # Initialize Langchain::Loader
-    # @param path [String | Pathname] path to file or url
+    # @param path [String | Pathname] path to file or URL
+    # @param options [Hash] options passed to the processor class used to process the data
     # @return [Langchain::Loader] loader instance
     def initialize(path, options = {})
       @options = options
       @path = path
     end
 
-    # Check if path is url
-    # @return [Boolean] true if path is url
+    # Is the path a URL?
+    #
+    # @return [Boolean] true if path is URL
     def url?
       return false if @path.is_a?(Pathname)
 
       !!(@path =~ URI_REGEX)
     end
 
-    # Load data from a file or url
-    # @return [String] file content
+    # Is the path a directory
+    #
+    # @return [Boolean] true if path is a directory
+    def directory?
+      File.directory?(@path)
+    end
+
+    # Load data from a file or URL
+    #
+    #    loader = Langchain::Loader.new("README.md")
+    #    # Load data using default processor for the file
+    #    loader.load
+    #
+    #    # Load data using a custom processor
+    #    loader.load do |raw_data, options|
+    #      # your processing code goes here
+    #      # return data at the end here
+    #    end
+    #
+    # @yield [String, Hash] handle parsing raw output into string directly
+    # @yieldparam [String] raw_data from the loaded URL or file
+    # @yieldreturn [String] parsed data, as a String
+    #
+    # @return [Data] data that was loaded
     def load(&block)
-      @raw_data = url? ? load_from_url : load_from_path
+      return process_data(load_from_url, &block) if url?
+      return load_from_directory(&block) if directory?
 
-      data = if block
-        yield @raw_data.read, @options
-      else
-        processor_klass.new(@options).parse(@raw_data)
-      end
-
-      Langchain::Data.new(data, source: @path)
+      process_data(load_from_path, &block)
     end
 
     private
@@ -58,6 +92,27 @@ module Langchain
       raise FileNotFound unless File.exist?(@path)
 
       File.open(@path)
+    end
+
+    def load_from_directory(&block)
+      Dir.glob(File.join(@path, "**/*")).map do |file|
+        # Only load and add to result files with supported extensions
+        Langchain::Loader.new(file, @options).load(&block)
+      rescue
+        UnknownFormatError nil
+      end.flatten.compact
+    end
+
+    def process_data(data, &block)
+      @raw_data = data
+
+      result = if block
+        yield @raw_data.read, @options
+      else
+        processor_klass.new(@options).parse(@raw_data)
+      end
+
+      Langchain::Data.new(result)
     end
 
     def processor_klass

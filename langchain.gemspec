@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "baran", "~> 0.1.6"
   spec.add_dependency "colorize", "~> 0.8.1"
   spec.add_dependency "tiktoken_ruby", "~> 0.0.5"
+  spec.add_dependency "json-schema", "~> 4.0.0"
 
   # development dependencies
   spec.add_development_dependency "dotenv-rails", "~> 2.7.6"
@@ -43,12 +44,12 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rdiscount" # for github-flavored markdown in yard
 
   # optional dependencies
-  spec.add_development_dependency "ai21", "~> 0.2.0"
+  spec.add_development_dependency "ai21", "~> 0.2.1"
   spec.add_development_dependency "chroma-db", "~> 0.3.0"
-  spec.add_development_dependency "cohere-ruby", "~> 0.9.4"
+  spec.add_development_dependency "cohere-ruby", "~> 0.9.5"
   spec.add_development_dependency "docx", "~> 0.8.0"
   spec.add_development_dependency "eqn", "~> 1.6.5"
-  spec.add_development_dependency "google_palm_api", "~> 0.1.1"
+  spec.add_development_dependency "google_palm_api", "~> 0.1.2"
   spec.add_development_dependency "google_search_results", "~> 2.0.0"
   spec.add_development_dependency "hnswlib", "~> 0.8.1"
   spec.add_development_dependency "hugging-face", "~> 0.3.4"
@@ -65,6 +66,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "ruby-openai", "~> 4.0.0"
   spec.add_development_dependency "safe_ruby", "~> 1.0.4"
   spec.add_development_dependency "sequel", "~> 5.68.0"
-  spec.add_development_dependency "weaviate-ruby", "~> 0.8.0"
+  spec.add_development_dependency "weaviate-ruby", "~> 0.8.3"
   spec.add_development_dependency "wikipedia-client", "~> 1.17.0"
 end

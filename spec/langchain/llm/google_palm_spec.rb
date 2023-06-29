@@ -45,7 +45,7 @@ RSpec.describe Langchain::LLM::GooglePalm do
       it "passes correct options to the completions method" do
         expect(subject.client).to receive(:generate_text).with(
           {
-            completion_model_name: "text-bison-foo",
+            model: "text-bison-foo",
             prompt: "Hello World",
             temperature: 0.0
           }
@@ -106,7 +106,7 @@ RSpec.describe Langchain::LLM::GooglePalm do
         it "passes correct options to the completions method" do
           expect(subject.client).to receive(:generate_chat_message).with(
             {
-              chat_completion_model_name: "chat-bison-foo",
+              model: "chat-bison-foo",
               context: "",
               examples: [],
               messages: [{author: "user", content: "Hey there! How are you?"}],

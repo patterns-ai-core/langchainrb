@@ -48,6 +48,23 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
     it "adds texts" do
       expect(subject.add_texts(texts: [text])).to eq(true)
     end
+
+    context "when ids are provided" do
+      it "adds texts" do
+        expect(subject.add_texts(texts: [text], ids: ["123"])).to eq(true)
+      end
+    end
+  end
+
+  describe "update_texts" do
+    before do
+      allow(subject.llm).to receive(:embed).with(text: text).and_return([0.1, 0.2, 0.3])
+      allow_any_instance_of(Chroma::Resources::Collection).to receive(:update).and_return(true)
+    end
+
+    it "updates texts" do
+      expect(subject.update_texts(texts: [text], ids: [1])).to eq(true)
+    end
   end
 
   describe "#collection" do

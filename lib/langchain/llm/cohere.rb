@@ -13,9 +13,10 @@ module Langchain::LLM
   class Cohere < Base
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "base",
+      completion_model_name: "command",
       embeddings_model_name: "small",
-      dimension: 1024
+      dimension: 1024,
+      truncate: "START"
     }.freeze
 
     def initialize(api_key:, default_options: {})
@@ -51,7 +52,8 @@ module Langchain::LLM
       default_params = {
         prompt: prompt,
         temperature: @defaults[:temperature],
-        model: @defaults[:completion_model_name]
+        model: @defaults[:completion_model_name],
+        truncate: @defaults[:truncate]
       }
 
       if params[:stop_sequences]
@@ -59,6 +61,8 @@ module Langchain::LLM
       end
 
       default_params.merge!(params)
+
+      default_params[:max_tokens] = Langchain::Utils::TokenLength::CohereValidator.validate_max_tokens!(prompt, default_params[:model], client)
 
       response = client.generate(**default_params)
       response.dig("generations").first.dig("text")

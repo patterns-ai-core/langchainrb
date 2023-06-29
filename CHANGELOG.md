@@ -1,5 +1,19 @@
 ## [Unreleased]
 
+## [0.6.3] - 2023-06-25
+- Add #destroy_default_schema() to Langchain::Vectorsearch::* classes
+
+## [0.6.2] - 2023-06-25
+- Qdrant, Chroma, and Pinecone are supported by ActiveRecord hooks
+
+## [0.6.1] - 2023-06-24
+- Adding support to hook vectorsearch into ActiveRecord models
+
+## [0.6.0] - 2023-06-22
+- [BREAKING] Rename `ChainOfThoughtAgent` to `ReActAgent`
+- Implement A21 token validator
+- Add `Langchain::OutputParsers`
+
 ## [0.5.7] - 2023-06-19
 - Developer can modify models used when initiliazing `Langchain::LLM::*` clients
 - Improvements to the `SQLQueryAgent` and the database tool

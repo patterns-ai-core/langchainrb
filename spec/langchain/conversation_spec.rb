@@ -234,7 +234,7 @@ RSpec.describe Langchain::Conversation do
                 {author: "user", content: prompt}
               ],
               temperature: 0.0,
-              chat_completion_model_name: "chat-bison-001"
+              model: "chat-bison-001"
             ).and_return(response)
 
             expect(subject.message(prompt)).to eq("I'm doing well. How about you?")

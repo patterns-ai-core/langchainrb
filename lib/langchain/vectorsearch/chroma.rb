@@ -32,11 +32,10 @@ module Langchain::Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
-    def add_texts(texts:)
-      embeddings = Array(texts).map do |text|
+    def add_texts(texts:, ids: [])
+      embeddings = Array(texts).map.with_index do |text, i|
         ::Chroma::Resources::Embedding.new(
-          # TODO: Add support for passing your own IDs
-          id: SecureRandom.uuid,
+          id: ids[i] ? ids[i].to_s : SecureRandom.uuid,
           embedding: llm.embed(text: text),
           # TODO: Add support for passing metadata
           metadata: [], # metadatas[index],
@@ -48,11 +47,30 @@ module Langchain::Vectorsearch
       collection.add(embeddings)
     end
 
+    def update_texts(texts:, ids:)
+      embeddings = Array(texts).map.with_index do |text, i|
+        ::Chroma::Resources::Embedding.new(
+          id: ids[i].to_s,
+          embedding: llm.embed(text: text),
+          # TODO: Add support for passing metadata
+          metadata: [], # metadatas[index],
+          document: text # Do we actually need to store the whole original document?
+        )
+      end
+
+      collection.update(embeddings)
+    end
+
     # Create the collection with the default schema
     # @return [Hash] The response from the server
     def create_default_schema
       ::Chroma::Resources::Collection.create(index_name)
     end
+
+    # TODO: Uncomment and add the spec
+    # def destroy_default_schema
+    #   ::Chroma::Resources::Collection.delete(index_name)
+    # end
 
     # Search for similar texts
     # @param query [String] The text to search for
