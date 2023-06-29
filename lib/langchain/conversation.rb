@@ -28,12 +28,12 @@ module Langchain
       @llm = llm
       @context = nil
       @examples = []
-      @options = options
       @memory = ConversationMemory.new(
         llm: llm,
         messages: options.delete(:messages) || [],
-        model: options[:model]
+        strategy: options.delete(:memory_strategy)
       )
+      @options = options
       @block = block
     end
 
@@ -65,10 +65,14 @@ module Langchain
       @memory.messages
     end
 
+    # Context from conversation memory
+    # @return [String] Context from conversation memory
     def context
       @memory.context
     end
 
+    # Examples from conversation memory
+    # @return [Array<Hash>] Examples from the conversation memory
     def examples
       @memory.examples
     end

@@ -2,7 +2,7 @@
 
 module Langchain
   class ConversationMemory
-    attr_reader :context, :examples, :messages
+    attr_reader :examples, :messages
 
     # The least number of tokens we want to be under the limit by
     TOKEN_LEEWAY = 20
@@ -10,8 +10,10 @@ module Langchain
     def initialize(llm:, messages: [], **options)
       @llm = llm
       @context = nil
+      @summary = nil
       @examples = []
       @messages = messages
+      @strategy = options.delete(:strategy) || :truncate
       @options = options
     end
 
@@ -32,6 +34,25 @@ module Langchain
     end
 
     def reduce_messages(exception)
+      case @strategy
+      when :truncate
+        truncate_messages(exception)
+      when :summarize
+        summarize_messages
+      else
+        raise "Unknown strategy: #{@options[:strategy]}"
+      end
+    end
+
+    def context
+      return if @context.nil? && @summary.nil?
+
+      [@context, @summary].compact.join("\n")
+    end
+
+    private
+
+    def truncate_messages(exception)
       raise exception if @messages.size == 1
 
       token_overflow = exception.token_overflow
@@ -44,10 +65,20 @@ module Langchain
       end
     end
 
-    private
+    def summarize_messages
+      history = [@summary, @messages.to_json].compact.join("\n")
+      partitions = [history[0, history.size / 2], history[history.size / 2, history.size]]
+
+      @summary = partitions.map { |messages| @llm.summarize(text: messages.to_json) }.join("\n")
+
+      @messages = [@messages.last]
+    end
+
+    def partition_messages
+    end
 
     def model_name
-      @options[:model] || @llm.class::DEFAULTS[:chat_completion_model_name]
+      @llm.class::DEFAULTS[:chat_completion_model_name]
     end
 
     def token_length(content, model_name, options)
