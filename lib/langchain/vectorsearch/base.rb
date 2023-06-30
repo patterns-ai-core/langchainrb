@@ -98,6 +98,11 @@ module Langchain::Vectorsearch
       @llm = llm
     end
 
+    # Method supported by Vectorsearch DB to retrieve a default schema
+    def get_default_schema
+      raise NotImplementedError, "#{self.class.name} does not support retrieving a default schema"
+    end
+
     # Method supported by Vectorsearch DB to create a default schema
     def create_default_schema
       raise NotImplementedError, "#{self.class.name} does not support creating a default schema"

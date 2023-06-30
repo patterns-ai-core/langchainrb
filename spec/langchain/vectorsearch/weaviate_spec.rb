@@ -13,7 +13,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
   }
 
   describe "#create_default_schema" do
-    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_create_default_schema.json")) }
+    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/create_default_schema.json")) }
 
     before do
       allow(subject.client).to receive_message_chain(:schema, :create).and_return(fixture)
@@ -24,7 +24,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     end
   end
 
-  describe "#create_default_schema" do
+  describe "#destroy_default_schema" do
     before do
       allow(subject.client).to receive_message_chain(:schema, :delete).and_return(true)
     end
@@ -34,8 +34,20 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     end
   end
 
+  describe "#get_default_schema" do
+    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/get_default_schema.json")) }
+
+    before do
+      allow(subject.client).to receive_message_chain(:schema, :get).and_return(fixture)
+    end
+
+    it "creates the default schema" do
+      expect(subject.get_default_schema).to eq(fixture)
+    end
+  end
+
   describe "#add_texts" do
-    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_add_texts.json")) }
+    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/add_texts.json")) }
 
     def stub(id)
       allow(
@@ -79,7 +91,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
   end
 
   describe "#update_texts" do
-    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_add_texts.json")) }
+    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/add_texts.json")) }
 
     let(:record) {
       [{"_additional" => {"id" => "372ba500-01af-4448-aa03-21f3dd25a456"}}]
@@ -103,7 +115,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
   end
 
   describe "#similarity_search" do
-    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_search.json")) }
+    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/search.json")) }
 
     before do
       allow(
@@ -130,7 +142,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
   end
 
   describe "#similarity_search_by_vector" do
-    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_search.json")) }
+    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/search.json")) }
 
     before do
       allow(
@@ -151,7 +163,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
   end
 
   describe "#ask" do
-    let(:matches) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_search.json")) }
+    let(:matches) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/search.json")) }
     let(:prompt) { "Context:\n#{matches[0]["content"]}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:question) { "How many times is \"lorem\" mentioned in this text?" }
     let(:answer) { "5 times" }

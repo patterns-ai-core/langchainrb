@@ -10,8 +10,7 @@ module Langchain::Vectorsearch
     #     gem "hnswlib", "~> 0.8.1"
     #
     # Usage:
-    #     hnsw = Langchain::Vectorsearch::Hnswlib.new(llm:, url:, index_name:)
-    #
+    #     hnsw = Langchain::Vectorsearch::Hnswlib.new(llm:, path_to_index:)
 
     attr_reader :client, :path_to_index
 
