@@ -85,6 +85,12 @@ module Langchain::Vectorsearch
       )
     end
 
+    # Get default schema
+    # @return [Hash] The response from the server
+    def get_default_schema
+      client.schema.get(class_name: index_name)
+    end
+
     # Delete the index
     # @return [Boolean] Whether the index was deleted
     def destroy_default_schema

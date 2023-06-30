@@ -67,10 +67,17 @@ module Langchain::Vectorsearch
       ::Chroma::Resources::Collection.create(index_name)
     end
 
-    # TODO: Uncomment and add the spec
-    # def destroy_default_schema
-    #   ::Chroma::Resources::Collection.delete(index_name)
-    # end
+    # Get the default schema
+    # @return [Hash] The response from the server
+    def get_default_schema
+      ::Chroma::Resources::Collection.get(index_name)
+    end
+
+    # Delete the default schema
+    # @return [Hash] The response from the server
+    def destroy_default_schema
+      ::Chroma::Resources::Collection.delete(index_name)
+    end
 
     # Search for similar texts
     # @param query [String] The text to search for
