@@ -16,7 +16,7 @@ module Langchain::Vectorsearch
     # @param api_key [String] The API key to use
     # @param index_name [String] The name of the index to use
     # @param llm [Object] The LLM client to use
-    def initialize(url:, api_key:, index_name:, llm:)
+    def initialize(url:, api_key:, index_name:, llm:, **options )
       depends_on "qdrant-ruby"
       require "qdrant"
 
@@ -25,6 +25,7 @@ module Langchain::Vectorsearch
         api_key: api_key
       )
       @index_name = index_name
+      @options = options
 
       super(llm: llm)
     end
@@ -117,7 +118,7 @@ module Langchain::Vectorsearch
 
       prompt = generate_prompt(question: question, context: context)
 
-      llm.chat(prompt: prompt)
+      llm.chat(prompt: prompt, **@options)
     end
   end
 end
