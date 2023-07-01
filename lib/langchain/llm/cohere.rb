@@ -5,7 +5,7 @@ module Langchain::LLM
   # Wrapper around the Cohere API.
   #
   # Gem requirements:
-  #     gem "cohere-ruby", "~> 0.9.4"
+  #     gem "cohere-ruby", "~> 0.9.5"
   #
   # Usage:
   #     cohere = Langchain::LLM::Cohere.new(api_key: "YOUR_API_KEY")
