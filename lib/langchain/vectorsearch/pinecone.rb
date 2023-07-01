@@ -85,6 +85,12 @@ module Langchain::Vectorsearch
       client.delete_index(index_name)
     end
 
+    # Get the default schema
+    # @return [Pinecone::Vector] The default schema
+    def get_default_schema
+      index
+    end
+
     # Search for similar texts
     # @param query [String] The text to search for
     # @param k [Integer] The number of results to return

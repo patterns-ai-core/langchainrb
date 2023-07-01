@@ -51,6 +51,7 @@ module Langchain
   autoload :Loader, "langchain/loader"
   autoload :Data, "langchain/data"
   autoload :Conversation, "langchain/conversation"
+  autoload :ConversationMemory, "langchain/conversation_memory"
   autoload :DependencyHelper, "langchain/dependency_helper"
   autoload :ContextualLogger, "langchain/contextual_logger"
 

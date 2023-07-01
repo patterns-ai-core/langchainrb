@@ -24,6 +24,22 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
     end
   end
 
+  describe "#get_default_schema" do
+    let(:collection) { Chroma::Resources::Collection.new(name: "documents") }
+
+    it "returns the collection" do
+      allow(Chroma::Resources::Collection).to receive(:get).and_return(collection)
+      expect(subject.get_default_schema).to be_a(Chroma::Resources::Collection)
+    end
+  end
+
+  describe "#destroy_default_schema" do
+    it "returns true" do
+      allow(Chroma::Resources::Collection).to receive(:delete).and_return(true)
+      expect(subject.destroy_default_schema).to eq(true)
+    end
+  end
+
   let(:text) { "Hello World" }
   let(:collection) { Chroma::Resources::Collection.new(name: "documents") }
   let(:embedding) { [0.1, 0.2, 0.3] }

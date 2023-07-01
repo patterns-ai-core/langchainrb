@@ -11,6 +11,12 @@ RSpec.describe Langchain::Vectorsearch::Base do
     end
   end
 
+  describe "#get_default_schema" do
+    it "raises an error" do
+      expect { subject.get_default_schema }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe "#create_default_schema" do
     it "raises an error" do
       expect { subject.create_default_schema }.to raise_error(NotImplementedError)
