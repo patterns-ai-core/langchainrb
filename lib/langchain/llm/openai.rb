@@ -116,19 +116,21 @@ module Langchain::LLM
       parameters = compose_parameters @defaults[:chat_completion_model_name], options
       parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
       parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
-
+      complete_chunk = parameters.delete(:complete_chunk)
       if (streaming = block_given?)
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk.dig("choices", 0, "delta", "content")
+          yield chunk if complete_chunk
+          yield chunk.dig("choices", 0, "delta", "content") unless complete_chunk
         end
       end
 
+      parameters.delete(:max_tokens)
       response = client.chat(parameters: parameters)
-
       raise "Chat completion failed: #{response}" if !response.empty? && response.dig("error")
 
       unless streaming
-        response.dig("choices", 0, "message", "content")
+        response.dig("choices", 0, "message", "content") if !complete_chunk
+        response if complete_chunk
       end
     end
 
@@ -150,6 +152,7 @@ module Langchain::LLM
     private
 
     def compose_parameters(model, params)
+    
       default_params = {model: model, temperature: @defaults[:temperature]}
 
       default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
