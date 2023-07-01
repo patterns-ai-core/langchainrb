@@ -36,6 +36,18 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     end
   end
 
+  describe "#get_default_schema" do
+    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/qdrant/get_default_schema.json")) }
+
+    before do
+      allow(subject.client).to receive_message_chain(:collections, :get).and_return(fixture)
+    end
+
+    it "returns true" do
+      expect(subject.get_default_schema).to eq(fixture)
+    end
+  end
+
   let(:text) { "Hello World" }
   let(:embedding) { [0.1, 0.2, 0.3] }
   let(:count) { 1 }

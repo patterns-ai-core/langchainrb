@@ -34,6 +34,15 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     end
   end
 
+  describe "#get_default_schema" do
+    let(:index) { Pinecone::Index.new }
+
+    it "returns true" do
+      allow(subject.client).to receive(:index).with(index_name).and_return(index)
+      expect(subject.get_default_schema).to eq(index)
+    end
+  end
+
   let(:text) { "Hello World" }
   let(:embedding) { [0.1, 0.2, 0.3] }
   let(:query) { "Greetings Earth" }

@@ -79,7 +79,17 @@ module Langchain::Vectorsearch
       )
     end
 
-    # TODO: Add destroy_default_schema method
+    # Get the default schema
+    # @return [Hash] The response from the server
+    def get_default_schema
+      client.collections.get(collection_name: index_name)
+    end
+
+    # Delete default schema
+    # @return [Hash] The response from the server
+    def destroy_default_schema
+      client.collections.delete(collection_name: index_name)
+    end
 
     def similarity_search(query:, k: 4)
       embedding = llm.embed(text: query)
