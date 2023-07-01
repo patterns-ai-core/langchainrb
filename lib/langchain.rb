@@ -134,6 +134,7 @@ module Langchain
     autoload :Cohere, "langchain/llm/cohere"
     autoload :GooglePalm, "langchain/llm/google_palm"
     autoload :HuggingFace, "langchain/llm/hugging_face"
+    autoload :LlamaCpp, "langchain/llm/llama_cpp"
     autoload :OpenAI, "langchain/llm/openai"
     autoload :Replicate, "langchain/llm/replicate"
   end
