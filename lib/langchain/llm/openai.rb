@@ -127,10 +127,10 @@ module Langchain::LLM
       parameters.delete(:max_tokens) if parameters.key?(:functions)
       response = client.chat(parameters: parameters)
       raise "Chat completion failed: #{response}" if !response.empty? && response.dig("error")
-
+      
       unless streaming
-        response.dig("choices", 0, "message", "content") if !complete_chunk
-        response if complete_chunk
+        return response.dig("choices", 0, "message", "content") if !complete_chunk
+        return response if complete_chunk
       end
     end
 
