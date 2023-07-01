@@ -152,7 +152,6 @@ module Langchain::LLM
     private
 
     def compose_parameters(model, params)
-    
       default_params = {model: model, temperature: @defaults[:temperature]}
 
       default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
