@@ -37,6 +37,9 @@ module Langchain
         #
         def self.token_length(text, model_name = "chat-bison-001", options)
           response = options[:llm].client.count_message_tokens(model: model_name, prompt: text)
+
+          raise Langchain::LLM::ApiError.new(response["error"]["message"]) unless response["error"].nil?
+
           response.dig("tokenCount")
         end
 

@@ -314,6 +314,18 @@ RSpec.describe Langchain::LLM::OpenAI do
         expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
       end
     end
+
+    context "with failed API call" do
+      let(:response) do
+        {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
+      end
+
+      it "raises an error" do
+        expect {
+          subject.chat(prompt: prompt)
+        }.to raise_error(Langchain::LLM::ApiError, "Chat completion failed: User location is not supported for the API use.")
+      end
+    end
   end
 
   describe "#summarize" do
