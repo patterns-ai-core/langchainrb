@@ -2,24 +2,34 @@
 
 module Langchain::LLM
   class LlamaCpp < Base
-    attr_reader :model_path
+    attr_accessor :model_path, :n_gpu_layers, :n_ctx
+    attr_writer :n_threads
 
-    def initialize(model_path:)
+    def initialize(model_path:, n_gpu_layers: 1, n_ctx: 2048, n_threads: 1)
       depends_on "llama_cpp"
       require "llama_cpp"
 
       @model_path = model_path
+      @n_gpu_layers = n_gpu_layers
+      @n_ctx = n_ctx
+      @n_threads = n_threads
     end
 
-    def complete(prompt:, **params)
+    def n_threads
+      # Use the maximum number of CPU threads available, if not configured
+      @n_threads ||= `sysctl -n hw.ncpu`.strip.to_i
+    end
+
+    def complete(prompt:, n_predict: 128, n_seed: -1, **params)
       params = ::LLaMACpp::ContextParams.new
-      params.seed = 12
+      params.seed = n_seed
+      params.n_ctx = n_ctx
       params.n_gpu_layers = n_gpu_layers
 
       model = ::LLaMACpp::Model.new(model_path: model_path, params: params)
       context = ::LLaMACpp::Context.new(model: model)
 
-      ::LLaMACpp.generate(context, prompt, n_threads: n_threads)
+      ::LLaMACpp.generate(context, prompt, n_threads: n_threads, n_predict: n_predict)
     end
 
     def embed(text:)
@@ -38,22 +48,6 @@ module Langchain::LLM
       context.eval(tokens: embedding_input, n_past: 0, n_threads: n_threads)
 
       context.embeddings
-    end
-
-    private
-
-    # Use the maximum number of GPU layers available
-    def n_gpu_layers
-      `ioreg -l | grep gpu-core-count`
-        .split("=")
-        .last
-        .strip
-        .to_i
-    end
-
-    # Use the maximum number of CPU threads available
-    def n_threads
-      `sysctl -n hw.ncpu`.strip.to_i
     end
   end
 end
