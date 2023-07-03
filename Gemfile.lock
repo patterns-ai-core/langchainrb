@@ -328,7 +328,7 @@ DEPENDENCIES
   hnswlib (~> 0.8.1)
   hugging-face (~> 0.3.4)
   langchainrb!
-  llama_cpp (~> 0.3.0)
+  llama_cpp
   milvus (~> 0.9.0)
   nokogiri (~> 1.13)
   open-weather-ruby-client (~> 0.3.0)
