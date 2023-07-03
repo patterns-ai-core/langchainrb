@@ -18,7 +18,8 @@ module Langchain::LLM
 
     def embed(text:, n_threads: nil)
       # contexts are kinda stateful when it comes to embeddings, so allocate one each time
-      context = build_context_params(embeddings: true)
+      context = embedding_context
+
       embedding_input = context.tokenize(text: text, add_bos: true)
       return unless embedding_input.size.positive?
 
@@ -49,7 +50,7 @@ module Langchain::LLM
       context_params.seed = seed
       context_params.n_ctx = n_ctx
       context_params.n_gpu_layers = n_gpu_layers
-      context_params.embeddings = embeddings
+      context_params.embedding = embeddings
 
       context_params
     end
@@ -59,13 +60,20 @@ module Langchain::LLM
       @model = ::LLaMACpp::Model.new(model_path: model_path, params: build_context_params(embeddings: embeddings))
     end
 
-    def build_context
+    def build_completion_context
       ::LLaMACpp::Context.new(model: build_model)
     end
 
-    def completion_context
-      @completion_context ||= build_context
+    def build_embedding_context
+      ::LLaMACpp::Context.new(model: build_model(embeddings: true))
     end
 
+    def completion_context
+      @completion_context ||= build_completion_context
+    end
+
+    def embedding_context
+      @embedding_context ||= build_embedding_context
+    end
   end
 end
