@@ -125,7 +125,7 @@ module Langchain::LLM
 
       response = client.chat(parameters: parameters)
 
-      raise "Chat completion failed: #{response}" if !response.empty? && response.dig("error")
+      raise Langchain::LLM::ApiError.new "Chat completion failed: #{response.dig("error", "message")}" if !response.empty? && response.dig("error")
 
       unless streaming
         response.dig("choices", 0, "message", "content")
