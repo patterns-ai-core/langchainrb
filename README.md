@@ -274,6 +274,106 @@ prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/promp
 prompt.input_variables #=> ["adjective", "content"]
 ```
 
+### Using Output Parsers 
+
+Parse LLM text responses into structured output, such as JSON.
+
+#### Structured Output Parser
+
+You can use the `StructuredOutputParser` to generate a prompt that instructs the LLM to provide a JSON response adhering to a specific JSON schema:
+
+```ruby
+json_schema = {
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+      description: "Persons name"
+    },
+    age: {
+      type: "number",
+      description: "Persons age"
+    },
+    interests: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          interest: {
+            type: "string",
+            description: "A topic of interest"
+          },
+          levelOfInterest: {
+            type: "number",
+            description: "A value between 0 and 100 of how interested the person is in this interest"
+          }
+        },
+        required: ["interest", "levelOfInterest"],
+        additionalProperties: false
+      },
+      minItems: 1,
+      maxItems: 3,
+      description: "A list of the person's interests"
+    }
+  },
+  required: ["name", "age", "interests"],
+  additionalProperties: false
+}
+parser = Langchain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
+prompt = Langchain::Prompt::PromptTemplate.new(template: "Generate details of a fictional character.\n{format_instructions}\nCharacter description: {description}", input_variables: ["description", "format_instructions"])
+prompt_text = prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)
+# Generate details of a fictional character.
+# You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
+# ...
+```
+
+Then parse the llm response:
+
+```ruby
+llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+llm_response = llm.chat(prompt: prompt_text)
+parser.parse(llm_response)
+# {
+#   "name" => "Kim Ji-hyun",
+#   "age" => 22,
+#   "interests" => [
+#     {
+#       "interest" => "Organic Chemistry",
+#       "levelOfInterest" => 85
+#     },
+#     ...
+#   ]
+# }
+```
+
+If the parser fails to parse the LLM response, you can use the `OutputFixingParser`. It sends an error message, prior output, and the original prompt text to the LLM, asking for a "fixed" response:
+
+```ruby
+begin
+  parser.parse(llm_response)
+rescue Langchain::OutputParsers::OutputParserException => e
+  fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
+    llm: llm,
+    parser: parser
+  )
+  fix_parser.parse(llm_response)
+end
+```
+
+Alternatively, if you don't need to handle the `OutputParserException`, you can simplify the code:
+
+```ruby
+# we already have the `OutputFixingParser`:
+# parser = Langchain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
+fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
+  llm: llm,
+  parser: parser
+)
+fix_parser.parse(llm_response)
+```
+
+See [here](https://github.com/andreibondarev/langchainrb/tree/main/examples/create_and_manage_prompt_templates_using_structured_output_parser.rb) for a concrete example
+
 ### Using Agents 🤖
 Agents are semi-autonomous bots that can respond to user questions and use available to them Tools to provide informed replies. They break down problems into series of steps and define Actions (and Action Inputs) along the way that are executed and fed back to them as additional information. Once an Agent decides that it has the Final Answer it responds with it.
 
