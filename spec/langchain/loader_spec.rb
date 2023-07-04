@@ -13,6 +13,30 @@ RSpec.describe Langchain::Loader do
       allow(URI).to receive(:parse).and_return(double(open: response))
     end
 
+    context "Directory" do
+      let(:path) { "spec/fixtures/loaders/data" }
+      let(:result) do
+        [
+          [
+            ["Username", "Identifier", "First name", "Last name"],
+            ["booker12", "9012", "Rachel", "Booker"],
+            ["grey07", "2070", "Laura", "Grey"]
+          ],
+          [
+            {"name" => "Luke Skywalker", "height" => "172", "mass" => "77"},
+            {"name" => "C-3PO", "height" => "167", "mass" => "75"}
+          ],
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n"
+        ]
+      end
+
+      it "loads files from directory" do
+        expect(subject).to be_a(Array)
+
+        expect(subject.map(&:value)).to eq(result)
+      end
+    end
+
     context "Text" do
       context "from local file" do
         let(:path) { "spec/fixtures/loaders/example.txt" }

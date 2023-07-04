@@ -22,10 +22,10 @@ RSpec.describe Langchain::Conversation do
     it "adds examples" do
       subject.add_examples(examples1)
 
-      expect(subject.instance_variable_get(:@examples)).to eq(examples1)
+      expect(subject.examples).to eq(examples1)
 
       subject.add_examples(examples2)
-      expect(subject.instance_variable_get(:@examples)).to eq(examples1 | examples2)
+      expect(subject.examples).to eq(examples1 | examples2)
     end
   end
 
@@ -116,7 +116,7 @@ RSpec.describe Langchain::Conversation do
       end
     end
 
-    context "with length limit exceeded" do
+    context "with length limit exceeded and truncate strategy" do
       let(:messages) { [] }
 
       subject { described_class.new(llm: llm, messages: messages) }
@@ -240,6 +240,56 @@ RSpec.describe Langchain::Conversation do
             expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
           end
         end
+      end
+    end
+
+    context "with length limit exceeded and summarize strategy" do
+      let(:llm) { Langchain::LLM::OpenAI.new api_key: "TEST" }
+      let(:client) { double("OpenAI::Client") }
+      let(:prompt) { "Lorem " * 2048 }
+      let(:response) do
+        {"choices" => [{"message" => {"content" => "I'm doing well. How about you?"}}]}
+      end
+      let(:context) { "You are a chatbot" }
+      let(:summary1) { {"choices" => [{"text" => "Just chatting about life"}]} }
+      let(:summary2) { {"choices" => [{"text" => "Nothing interesting here"}]} }
+      let(:examples) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
+      let(:messages) do
+        [
+          {role: "user", content: "Lorem " * 512},
+          {role: "ai", content: "Ipsum " * 512},
+          {role: "user", content: "Dolor " * 512},
+          {role: "ai", content: "Sit " * 512}
+        ]
+      end
+
+      subject { described_class.new(llm: llm, messages: messages, memory_strategy: :summarize) }
+
+      before do
+        allow(llm).to receive(:client).and_return(client)
+        allow(client).to receive(:chat).and_return(response)
+        allow(client).to receive(:completions).and_return(summary1, summary2)
+
+        subject.set_context(context)
+        subject.add_examples(examples)
+      end
+
+      it "should summarize previous messages" do
+        expect(client).to receive(:chat).with(
+          parameters: {
+            max_tokens: 2000,
+            messages: [
+              {role: "system", content: "You are a chatbot\nJust chatting about life\nNothing interesting here"},
+              {role: "user", content: "Hello"},
+              {role: "assistant", content: "Hi"},
+              {role: "user", content: prompt}
+            ],
+            model: "gpt-3.5-turbo",
+            temperature: 0.0
+          }
+        ).and_return(response)
+
+        expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
       end
     end
   end
