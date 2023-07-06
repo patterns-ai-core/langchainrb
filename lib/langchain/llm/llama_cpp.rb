@@ -43,7 +43,6 @@ module Langchain::LLM
       @n_threads ||= `sysctl -n hw.ncpu`.strip.to_i
     end
 
-
     def build_context_params(embeddings: false)
       context_params = ::LLaMACpp::ContextParams.new
 
