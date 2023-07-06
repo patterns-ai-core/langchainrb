@@ -19,6 +19,8 @@ module Langchain::LLM
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
 
+    attr_accessor :functions, :complete_chunk
+
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai"
       require "openai"
@@ -116,21 +118,21 @@ module Langchain::LLM
       parameters = compose_parameters @defaults[:chat_completion_model_name], options
       parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
       parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
-      complete_chunk = parameters.delete(:complete_chunk)
+      parameters[:functions] = @functions unless @functions.nil?
       if (streaming = block_given?)
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk if complete_chunk
-          yield chunk.dig("choices", 0, "delta", "content") unless complete_chunk
+          yield chunk if @complete_chunk
+          yield chunk.dig("choices", 0, "delta", "content") unless @complete_chunk
         end
       end
 
-      parameters.delete(:max_tokens) if parameters.key?(:functions)
+      parameters.delete(:max_tokens) if @functions
       response = client.chat(parameters: parameters)
       raise "Chat completion failed: #{response}" if !response.empty? && response.dig("error")
-      
+
       unless streaming
-        return response.dig("choices", 0, "message", "content") if !complete_chunk
-        return response if complete_chunk
+        return response.dig("choices", 0, "message", "content") if !@complete_chunk
+        return response if @complete_chunk
       end
     end
 
