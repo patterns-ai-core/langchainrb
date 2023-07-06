@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.6.4] - 2023-07-01
+- Fix `Langchain::Vectorsearch::Qdrant#add_texts()`
+- Introduce `ConversationMemory`
+- Allow loading multiple files from a directory
+- Add `get_default_schema()`, `create_default_schema()`, `destroy_default_schema()` missing methods to `Langchain::Vectorsearch::*` classes
+
 ## [0.6.3] - 2023-06-25
 - Add #destroy_default_schema() to Langchain::Vectorsearch::* classes
 
