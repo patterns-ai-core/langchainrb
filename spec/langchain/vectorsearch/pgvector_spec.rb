@@ -52,6 +52,42 @@ if ENV["POSTGRES_URL"]
       end
     end
 
+    describe "#update_texts" do
+      let(:text_embedding_mapping) do
+        {
+          "Hello World" => 1536.times.map { rand },
+          "Hello World".reverse => 1536.times.map { rand },
+        }
+      end
+
+      before do
+        text_embedding_mapping.each do |input, embedding|
+          allow_any_instance_of(
+            OpenAI::Client
+          ).to receive(:embeddings)
+            .with(
+              parameters: {
+                model: "text-embedding-ada-002",
+                input: input
+              }
+            )
+            .and_return({
+              "data" => [
+                {"embedding" => embedding}
+              ]
+            })
+        end
+        subject.add_texts(texts: ["Hello World", "Hello World"])
+      end
+
+      it "updates texts" do
+        command = subject.update_texts(texts: ["Hello World", "Hello World".reverse])
+        expect(command).to be_a(::PG::Result)
+        expect(command.result_status).to eq(::PG::PGRES_COMMAND_OK)
+        expect(command.cmd_tuples).to eq(2)
+      end
+    end
+
     describe "#similarity_search" do
       let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate_search.json")) }
 

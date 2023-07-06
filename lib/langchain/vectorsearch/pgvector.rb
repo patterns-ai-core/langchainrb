@@ -40,18 +40,31 @@ module Langchain::Vectorsearch
       super(llm: llm)
     end
 
+    # Upsert a list of texts to the index
+    # @param texts [Array<String>] The texts to add to the index
+    # @param texts [Array<Integer>] The ids of the objects to add to the index
+    # @return [PG::Result] The response from the database
+    def upsert_texts(texts:, ids:)
+      data = (texts.zip(ids)).flat_map do |( text, id )|
+        [id, text, llm.embed(text: text)]
+      end
+      values = texts.length.times.map { |i| "($#{3 * i + 1}, $#{3 * i + 2}, $#{3 * i + 3})" }.join(",")
+      # see https://github.com/pgvector/pgvector#storing
+      client.exec_params(
+        "INSERT INTO #{quoted_table_name} (id, content, vectors) VALUES #{values} ON CONFLICT (id) DO UPDATE SET content = EXCLUDED.content, vectors = EXCLUDED.vectors;",
+        data
+      )
+    end
+
     # Add a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @return [PG::Result] The response from the database
-    def add_texts(texts:)
-      data = texts.flat_map do |text|
-        [text, llm.embed(text: text)]
-      end
-      values = texts.length.times.map { |i| "($#{2 * i + 1}, $#{2 * i + 2})" }.join(",")
-      client.exec_params(
-        "INSERT INTO #{quoted_table_name} (content, vectors) VALUES #{values};",
-        data
-      )
+    def add_texts(texts:, ids:)
+      upsert_texts(texts: texts, ids: ids)
+    end
+
+    def update_texts(texts:, ids:)
+      upsert_texts(texts: texts, ids: ids)
     end
 
     # Create default schema
