@@ -59,8 +59,8 @@ module Langchain
     private
 
     def validate_functions_parameter!
-      if functions.present? && !llm.is_a?(Langchain::LLM::OpenAI)
-        raise StandardError, "Functions are currently only supported by Langchain::LLM::OpenAI"
+      if functions.any? && !llm.is_a?(Langchain::LLM::OpenAI)
+        raise ArgumentError, "Functions are currently only supported by Langchain::LLM::OpenAI"
       end
     end
 
