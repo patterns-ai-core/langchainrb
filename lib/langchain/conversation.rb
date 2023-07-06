@@ -31,7 +31,6 @@ module Langchain
       @memory = ConversationMemory.new(
         llm: llm,
         messages: options.delete(:messages) || [],
-        functions: options.delete(:functions) || [],
         strategy: options.delete(:memory_strategy)
       )
       @options = options
