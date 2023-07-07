@@ -39,7 +39,7 @@ module Langchain
 
     def set_functions(functions)
       @llm.functions = functions
-      @llm.complete_chunk = true
+      @llm.complete_response = true
     end
 
     # Set the context of the conversation. Usually used to set the model's persona.
