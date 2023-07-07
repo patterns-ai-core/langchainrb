@@ -118,23 +118,23 @@ module Langchain::LLM
       parameters = compose_parameters @defaults[:chat_completion_model_name], options
       parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
       
-      unless @functions
+      unless functions
         parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
       end
 
-      parameters[:functions] = @functions unless @functions.nil?
+      parameters[:functions] = functions unless functions.nil?
       if (streaming = block_given?)
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk if @complete_response
-          yield chunk.dig("choices", 0, "delta", "content") unless @complete_response
+          yield chunk if complete_response
+          yield chunk.dig("choices", 0, "delta", "content") unless complete_response
         end
       end
 
       response = client.chat(parameters: parameters)
       raise Langchain::LLM::ApiError.new "Chat completion failed: #{response.dig("error", "message")}" if !response.empty? && response.dig("error")
       unless streaming
-        return response.dig("choices", 0, "message", "content") if !@complete_response
-        return response if @complete_response
+        return response.dig("choices", 0, "message", "content") if !complete_response
+        return response if complete_response
       end
     end
 
