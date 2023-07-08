@@ -33,7 +33,6 @@ client = Langchain::Vectorsearch::Qdrant.new(
   url: ENV["QDRANT_URL"],
   api_key: ENV["QDRANT_API_KEY"],
   index_name: ENV["QDRANT_INDEX"],
-  # environment: ENV['PINECONE_ENVIRONMENT'],
   llm: openai
 )
 
