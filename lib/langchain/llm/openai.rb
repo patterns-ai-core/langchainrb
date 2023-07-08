@@ -125,7 +125,7 @@ module Langchain::LLM
       unless functions.nil? || functions.empty?
         parameters[:functions] = functions 
       end
-      
+
       if (streaming = block_given?)
         parameters[:stream] = proc do |chunk, _bytesize|
           yield chunk if complete_response
