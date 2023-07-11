@@ -42,7 +42,7 @@ module Langchain::Vectorsearch
 
     # Upsert a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
-    # @param texts [Array<Integer>] The ids of the objects to add to the index
+    # @param ids [Array<Integer>] The ids of the objects to add to the index, in the same order as the texts
     # @return [PG::Result] The response from the database
     def upsert_texts(texts:, ids:)
       data = (texts.zip(ids)).flat_map do |( text, id )|
@@ -58,11 +58,16 @@ module Langchain::Vectorsearch
 
     # Add a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
+    # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
     # @return [PG::Result] The response from the database
     def add_texts(texts:, ids:)
       upsert_texts(texts: texts, ids: ids)
     end
 
+    # Update a list of ids and corresponding texts to the index
+    # @param texts [Array<String>] The texts to add to the index
+    # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
+    # @return [PG::Result] The response from the database
     def update_texts(texts:, ids:)
       upsert_texts(texts: texts, ids: ids)
     end
