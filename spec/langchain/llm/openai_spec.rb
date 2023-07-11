@@ -319,8 +319,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Hash
       end
 
-
-      context "functions" do 
+      context "functions" do
         let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, functions: [{foo: :bar}]}} }
 
         it "functions will be passed on options as accessor" do

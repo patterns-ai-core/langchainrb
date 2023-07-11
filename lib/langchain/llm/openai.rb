@@ -117,13 +117,13 @@ module Langchain::LLM
 
       parameters = compose_parameters @defaults[:chat_completion_model_name], options
       parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
-      
+
       unless functions
         parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
       end
 
       unless functions.nil? || functions.empty?
-        parameters[:functions] = functions 
+        parameters[:functions] = functions
       end
 
       if (streaming = block_given?)
