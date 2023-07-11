@@ -45,7 +45,7 @@ module Langchain::Vectorsearch
     # @param ids [Array<Integer>] The ids of the objects to add to the index, in the same order as the texts
     # @return [PG::Result] The response from the database
     def upsert_texts(texts:, ids:)
-      data = (texts.zip(ids)).flat_map do |( text, id )|
+      data = texts.zip(ids).flat_map do |(text, id)|
         [id, text, llm.embed(text: text)]
       end
       values = texts.length.times.map { |i| "($#{3 * i + 1}, $#{3 * i + 2}, $#{3 * i + 3})" }.join(",")

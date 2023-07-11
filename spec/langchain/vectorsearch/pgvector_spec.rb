@@ -56,7 +56,7 @@ if ENV["POSTGRES_URL"]
       let(:text_embedding_mapping) do
         {
           "Hello World" => 1536.times.map { rand },
-          "Hello World".reverse => 1536.times.map { rand },
+          "Hello World".reverse => 1536.times.map { rand }
         }
       end
 
