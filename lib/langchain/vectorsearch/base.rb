@@ -161,12 +161,16 @@ module Langchain::Vectorsearch
     end
 
     def add_data(paths:)
-      raise ArgumentError, "Paths must be provided" if paths.to_a.empty?
+      raise ArgumentError, "Paths must be provided" if Array(paths).empty?
 
       texts = Array(paths)
         .flatten
-        .map { |path| Langchain::Loader.new(path)&.load&.value }
-        .compact
+        .map do |path|
+          data = Langchain::Loader.new(path)&.load&.chunks
+          data.map { |chunk| chunk[:text] }
+        end
+
+      texts.flatten!
 
       add_texts(texts: texts)
     end
