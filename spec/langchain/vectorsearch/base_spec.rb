@@ -78,21 +78,13 @@ RSpec.describe Langchain::Vectorsearch::Base do
         Langchain.root.join("../spec/fixtures/loaders/example.txt")
       ]
 
-      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 3)) # not sure I love doing this
+      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14))
 
       subject.add_data(paths: paths)
     end
 
     it "requires paths" do
       expect { subject.add_data(paths: []) }.to raise_error(ArgumentError, /Paths must be provided/)
-    end
-
-    def array_with_strings_matcher(size:)
-      proc do |array|
-        array.is_a?(Array) &&
-          array.length == size &&
-          array.all? { |e| e.is_a?(String) }
-      end
     end
   end
 end
