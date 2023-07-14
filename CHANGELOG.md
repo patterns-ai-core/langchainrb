@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+## [0.6.6] - 2023-07-13
+- Langchain::Chunker::RecursiveText
+- Fixes
+
+## [0.6.5] - 2023-07-06
+- 🗣️ LLMs
+  - Introducing Llama.cpp support
+- Langchain::OutputParsers::OutputFixingParser to wrap a Langchain::OutputParser and handle invalid response
+
 ## [0.6.4] - 2023-07-01
 - Fix `Langchain::Vectorsearch::Qdrant#add_texts()`
 - Introduce `ConversationMemory`
