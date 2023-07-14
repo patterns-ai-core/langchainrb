@@ -2,7 +2,6 @@
 
 module Langchain::Vectorsearch
   class Pgvector < Base
-    require "openai"
     #
     # The PostgreSQL vector search adapter
     #
