@@ -42,10 +42,8 @@ if ENV["POSTGRES_URL"]
       end
 
       it "adds texts" do
-        command = subject.add_texts(texts: ["Hello World", "Hello World"])
-        expect(command).to be_a(::PG::Result)
-        expect(command.result_status).to eq(::PG::PGRES_TUPLES_OK)
-        expect(command.cmd_tuples).to eq(2)
+        result = subject.add_texts(texts: ["Hello World", "Hello World"])
+        expect(result.size).to eq(2)
       end
     end
 
@@ -77,12 +75,11 @@ if ENV["POSTGRES_URL"]
       end
 
       it "updates texts" do
-        add_result = subject.add_texts(texts: ["Hello World", "Hello World"])
-        ids = add_result.values.flatten
-        command = subject.update_texts(texts: ["Hello World", "Hello World".reverse], ids: ids)
-        expect(command).to be_a(::PG::Result)
-        expect(command.result_status).to eq(::PG::PGRES_TUPLES_OK)
-        expect(command.cmd_tuples).to eq(2)
+        values = subject.add_texts(texts: ["Hello World", "Hello World"])
+        ids = values.flatten
+        result = subject.update_texts(texts: ["Hello World", "Hello World".reverse], ids: ids)
+
+        expect(result.size).to eq(2)
       end
 
       it "adds texts with a namespace" do
@@ -118,11 +115,10 @@ if ENV["POSTGRES_URL"]
       end
 
       before {
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["something about earth", 1536.times.map { 0 }])
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
+        subject.documents_model.new(content: "something about earth", vectors: 1536.times.map { 0 }).save
+        4.times do |i|
+          subject.documents_model.new(content: "Hello World", vectors: 1536.times.map { rand }).save
+        end
       }
 
       it "searches for similar texts" do
@@ -133,7 +129,9 @@ if ENV["POSTGRES_URL"]
 
       it "searches for similar texts using a namespace" do
         namespace = "foo_namespace"
-        client.exec_params("INSERT INTO products (content, vectors, namespace) VALUES ($1, $2, $3);", ["a namespaced chunk of text", 1536.times.map { 0 }, namespace])
+
+        subject.documents_model.new(content: "a namespaced chunk of text", vectors: 1536.times.map { 0 }, namespace: namespace).save
+
         allow(subject).to receive(:namespace).and_return(namespace)
         result = subject.similarity_search(query: "earth")
         expect(result.first.content).to eq("a namespaced chunk of text")
@@ -142,11 +140,10 @@ if ENV["POSTGRES_URL"]
 
     describe "#similarity_search_by_vector" do
       before {
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Some valuable data", 1536.times.map { 0 }])
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", ["Hello World", 1536.times.map { rand }])
+        subject.documents_model.new(content: "Some valuable data", vectors: 1536.times.map { 0 }).save
+        4.times do |i|
+          subject.documents_model.new(content: "Hello World", vectors: 1536.times.map { rand }).save
+        end
       }
 
       it "searches for similar vectors" do
@@ -185,7 +182,7 @@ if ENV["POSTGRES_URL"]
       end
 
       before do
-        client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", [text, 1536.times.map { 0 }])
+        subject.documents_model.new(content: text, vectors: 1536.times.map { 0 }).save
       end
 
       before do

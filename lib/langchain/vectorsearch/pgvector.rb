@@ -2,6 +2,7 @@
 
 module Langchain::Vectorsearch
   class Pgvector < Base
+    require "openai"
     #
     # The PostgreSQL vector search adapter
     #
@@ -54,32 +55,28 @@ module Langchain::Vectorsearch
     # the added or updated texts.
     def upsert_texts(texts:, ids:)
       data = texts.zip(ids).flat_map do |(text, id)|
-        [id, text, llm.embed(text: text)]
+        {id: id, content: text, vectors: llm.embed(text: text).to_s, namespace: namespace}
       end
-      values = texts.length.times.map { |i| "($#{3 * i + 1}, $#{3 * i + 2}, $#{3 * i + 3})" }.join(",")
-      # see https://github.com/pgvector/pgvector#storing
-      client.exec_params(
-        "INSERT INTO #{quoted_table_name} (id, content, vectors) VALUES
-#{values} ON CONFLICT (id) DO UPDATE SET content = EXCLUDED.content, vectors = EXCLUDED.vectors RETURNING id;",
-        data
-      )
+      # @db[table_name.to_sym].multi_insert(data, return: :primary_key)
+      @db[table_name.to_sym]
+        .insert_conflict(
+          target: :id,
+          update: {content: Sequel[:excluded][:content], vectors: Sequel[:excluded][:vectors]}
+        )
+        .multi_insert(data, return: :primary_key)
     end
 
     # Add a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
-    # @return [PG::Result] The response from the database including the ids of
-    # the added texts.
+    # @return [Array<Integer>] The the ids of the added texts.
     def add_texts(texts:, ids: nil)
       if ids.nil? || ids.empty?
-        data = texts.flat_map do |text|
-          [text, llm.embed(text: text)]
+        data = texts.map do |text|
+          {content: text, vectors: llm.embed(text: text).to_s, namespace: namespace}
         end
-        values = texts.length.times.map { |i| "($#{2 * i + 1}, $#{2 * i + 2})" }.join(",")
-        client.exec_params(
-          "INSERT INTO #{quoted_table_name} (content, vectors) VALUES #{values} RETURNING id;",
-          data
-        )
+
+        @db[table_name.to_sym].multi_insert(data, return: :primary_key)
       else
         upsert_texts(texts: texts, ids: ids)
       end
@@ -88,8 +85,7 @@ module Langchain::Vectorsearch
     # Update a list of ids and corresponding texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
-    # @return [PG::Result] The response from the database including the ids of
-    # the updated texts.
+    # @return [Array<Integer>] The ids of the updated texts.
     def update_texts(texts:, ids:)
       upsert_texts(texts: texts, ids: ids)
     end
