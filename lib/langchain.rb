@@ -126,6 +126,7 @@ module Langchain
     autoload :Pgvector, "langchain/vectorsearch/pgvector"
     autoload :Qdrant, "langchain/vectorsearch/qdrant"
     autoload :Weaviate, "langchain/vectorsearch/weaviate"
+    autoload :Elasticsearch, "langchain/vectorsearch/elasticsearch"
   end
 
   module LLM

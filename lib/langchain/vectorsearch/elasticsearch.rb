@@ -17,6 +17,17 @@ module Langchain::Vectorsearch
       super(llm: llm)
     end
 
+    def add_texts(texts: [])
+      body = texts.map do |text|
+        [
+          { index: { _index: index_name } },
+          { title: text, embedding: llm.embed(text: text) }
+        ]
+      end.flatten
+
+      es_client.bulk(body: body)
+    end
+
     def create_default_schema
       es_client.indices.create(
         index: index_name,
