@@ -28,6 +28,17 @@ module Langchain::Vectorsearch
       es_client.bulk(body: body)
     end
 
+    def update_texts(texts: [], ids: [])
+      body = texts.map.with_index do |text, i|
+        [
+          { index: { _index: index_name, _id: ids[i] } },
+          { title: text, embedding: llm.embed(text: text) }
+        ]
+      end.flatten
+
+      es_client.bulk(body: body)
+    end
+
     def create_default_schema
       es_client.indices.create(
         index: index_name,
