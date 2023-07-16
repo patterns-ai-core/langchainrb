@@ -5,12 +5,12 @@ module Langchain::Vectorsearch
     attr_accessor :es_client, :index_name
 
     def initialize(url:, index_name:, llm:, api_key: nil)
-      require "elastisearch"
+      require "elasticsearch"
 
-      @es_client = Elasticsearch::Client.new(
+      @es_client = ::Elasticsearch::Client.new(
         url: url,
         request_timeout: 20,
-        log: false,
+        log: false
       )
       @index_name = index_name
 
@@ -18,7 +18,7 @@ module Langchain::Vectorsearch
     end
 
     def create_default_schema
-      es_client.client.indices.create(
+      es_client.indices.create(
         index: index_name,
         body: default_schema
       )
@@ -32,8 +32,7 @@ module Langchain::Vectorsearch
               type: "text"
             },
             embedding: {
-              type: "dense_vector",
-              dims: 384
+              type: "dense_vector"
             }
           }
         }
