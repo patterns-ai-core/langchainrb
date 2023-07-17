@@ -1,17 +1,18 @@
 # frozen_string_literal: true
-
 module Langchain::Vectorsearch
   class Elasticsearch < Base
     attr_accessor :es_client, :index_name
 
-    def initialize(url:, index_name:, llm:, api_key: nil)
+    def initialize(url:, index_name:, llm:, api_key: nil, es_options: {})
       require "elasticsearch"
 
-      @es_client = ::Elasticsearch::Client.new(
+      options = {
         url: url,
         request_timeout: 20,
         log: false
-      )
+      }.merge(es_options)
+
+      @es_client = ::Elasticsearch::Client.new(**options)
       @index_name = index_name
 
       super(llm: llm)
@@ -21,7 +22,7 @@ module Langchain::Vectorsearch
       body = texts.map do |text|
         [
           { index: { _index: index_name } },
-          { title: text, embedding: llm.embed(text: text) }
+          { title: text, title_vector: llm.embed(text: text) }
         ]
       end.flatten
 
@@ -32,7 +33,7 @@ module Langchain::Vectorsearch
       body = texts.map.with_index do |text, i|
         [
           { index: { _index: index_name, _id: ids[i] } },
-          { title: text, embedding: llm.embed(text: text) }
+          { title: text, title_vector: llm.embed(text: text) }
         ]
       end.flatten
 
@@ -46,6 +47,12 @@ module Langchain::Vectorsearch
       )
     end
 
+    def delete_default_schema
+      es_client.indices.delete(
+        index: index_name
+      )
+    end
+
     def default_schema
       {
         mappings: {
@@ -53,12 +60,30 @@ module Langchain::Vectorsearch
             title: {
               type: "text"
             },
-            embedding: {
+            title_vector: {
               type: "dense_vector"
             }
           }
         }
       }
+    end
+
+    def cosine_similarity(text:, query_filter: {})
+      query_vector = llm.embed(text: text)
+      
+      if query_filter.empty?
+        query_filter = { match_all: {} }
+      end
+
+      es_client.search(
+        query: {
+          script_score: { query: query_filter },
+          script: {
+            source: "cosineSimilarity(params.query_vector, 'title_vector') + 1.0",
+            params: { query_vector: query_vector }
+          }
+        }
+      )
     end
   end
 end
