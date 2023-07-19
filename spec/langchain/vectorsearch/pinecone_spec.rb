@@ -344,5 +344,26 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         expect(subject.ask(question: question, filter: filter)).to eq(answer)
       end
     end
+
+    describe "with block" do
+      let(:block) { proc { |chunk| puts "Received chunk: #{chunk}" } }
+
+      before do
+        allow(subject.llm).to receive(:chat) do |parameters|
+          if parameters[:prompt] == prompt && parameters[:stream].is_a?(Proc)
+            parameters[:stream].call("Received chunk from llm.chat")
+          end
+        end
+      end
+
+      it "asks a question and yields the chunk to the block" do
+        expect do
+          captured_output = capture(:stdout) do
+            subject.ask(question: question, &block)
+          end
+          expect(captured_output).to match(/Received chunk from llm.chat/)
+        end
+      end
+    end
   end
 end
