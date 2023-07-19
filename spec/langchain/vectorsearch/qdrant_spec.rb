@@ -10,7 +10,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
       url: "http://localhost:8000",
       index_name: index_name,
       api_key: "secret",
-      llm: Langchain::LLM::OpenAI.new(api_key: "123")
+      llm: Langchain::LLM::OpenAI.new(api_key: "123"),
     )
   }
 
@@ -25,7 +25,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
   end
 
   describe "#destroy_default_schema" do
-    let(:fixture) { {"result" => true, "status" => "ok", "time" => 0.001313625} }
+    let(:fixture) { { "result" => true, "status" => "ok", "time" => 0.001313625 } }
 
     before do
       allow(subject.client).to receive_message_chain(:collections, :delete).and_return(fixture)
@@ -74,7 +74,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
   describe "#similarity_search_by_vector" do
     before do
       allow(subject.client).to receive_message_chain(:points, :search).and_return(
-        {"result" => [{}]}
+        { "result" => [{}] }
       )
     end
 
@@ -97,7 +97,6 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
 
   describe "#ask" do
     let(:question) { "How many times is 'lorem' mentioned in this text?" }
-    let(:text) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." }
     let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:answer) { "5 times" }
 

@@ -12,3 +12,5 @@ gem "rspec", "~> 3.0"
 gem "standardrb"
 # Lets add rubocop explicitly here, we are using only standardrb rules in .rubocop.yml
 gem "rubocop"
+
+gem "ripper-tags", "~> 1.0"
