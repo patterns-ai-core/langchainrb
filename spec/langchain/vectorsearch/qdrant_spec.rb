@@ -97,16 +97,43 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
 
   describe "#ask" do
     let(:question) { "How many times is 'lorem' mentioned in this text?" }
+    let(:text) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." }
     let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:answer) { "5 times" }
 
     before do
-      allow(subject).to receive(:similarity_search).with(query: question).and_return([{"payload" => text}])
-      allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
+      allow(subject).to receive(:similarity_search).with(query: question).and_return([{ "payload" => text }])
     end
 
-    it "asks a question" do
-      expect(subject.ask(question: question)).to eq(answer)
+    context "without block" do
+      before do
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
+      end
+
+      it "asks a question and returns the answer" do
+        expect(subject.ask(question: question)).to eq(answer)
+      end
+    end
+
+    context "with block" do
+      let(:block) { Proc.new { |chunk| puts "Received chunk: #{chunk}" } }
+
+      before do
+        allow(subject.llm).to receive(:chat) do |parameters|
+          if parameters[:prompt] == prompt && parameters[:stream].is_a?(Proc)
+            parameters[:stream].call("Received chunk from llm.chat")
+          end
+        end
+      end
+
+      it "asks a question and yields the chunk to the block" do
+        expect do
+          captured_output = capture(:stdout) do
+            subject.ask(question: question, &block)
+          end
+          expect(captured_output).to match(/Received chunk from llm.chat/)
+        end
+      end
     end
   end
 end
