@@ -175,12 +175,35 @@ if ENV["POSTGRES_URL"]
         client.exec_params("INSERT INTO products (content, vectors) VALUES ($1, $2);", [text, 1536.times.map { 0 }])
       end
 
-      before do
-        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
+      context "without block" do
+        before do
+          allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
+        end
+
+        it "asks a question and returns the answer" do
+          expect(subject.ask(question: question)).to eq(answer)
+        end
       end
 
-      it "asks a question" do
-        expect(subject.ask(question: question)).to eq(answer)
+      context "with block" do
+        let(:block) { proc { |chunk| puts "Received chunk: #{chunk}" } }
+
+        before do
+          allow(subject.llm).to receive(:chat) do |parameters|
+            if parameters[:prompt] == prompt && parameters[:stream].is_a?(Proc)
+              parameters[:stream].call("Received chunk from llm.chat")
+            end
+          end
+        end
+
+        it "asks a question and yields the chunk to the block" do
+          expect do
+            captured_output = capture(:stdout) do
+              subject.ask(question: question, &block)
+            end
+            expect(captured_output).to match(/Received chunk from llm.chat/)
+          end
+        end
       end
     end
   end
