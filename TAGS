@@ -1,0 +1,877 @@
+
+lib/langchain.rb,1189
+module LangchainLangchain50,0
+    attr_reader :loggerlogger60,0
+    def logger=(logger)logger=64,0
+    attr_reader :rootroot69,0
+  module AgentAgent76,0
+  module AgentLangchain::Agent76,0
+  module ChunkerChunker82,0
+  module ChunkerLangchain::Chunker82,0
+  module ToolTool88,0
+  module ToolLangchain::Tool88,0
+  module ProcessorsProcessors98,0
+  module ProcessorsLangchain::Processors98,0
+  module UtilsUtils110,0
+  module UtilsLangchain::Utils110,0
+    module TokenLengthTokenLength111,0
+    module TokenLengthLangchain::Utils::TokenLength111,0
+  module VectorsearchVectorsearch121,0
+  module VectorsearchLangchain::Vectorsearch121,0
+  module LLMLLM132,0
+  module LLMLangchain::LLM132,0
+  module PromptPrompt143,0
+  module PromptLangchain::Prompt143,0
+  module ActiveRecordActiveRecord151,0
+  module ActiveRecordLangchain::ActiveRecord151,0
+  module OutputParsersOutputParsers155,0
+  module OutputParsersLangchain::OutputParsers155,0
+  module ErrorsErrors161,0
+  module ErrorsLangchain::Errors161,0
+    class BaseError < StandardError; endBaseError162,0
+    class BaseError < StandardError; endLangchain::Errors::BaseError162,0
+
+lib/langchain/railtie.rb,132
+module LangchainLangchain3,0
+  class Railtie < Rails::RailtieRailtie4,0
+  class Railtie < Rails::RailtieLangchain::Railtie4,0
+
+lib/langchain/data.rb,239
+module LangchainLangchain3,0
+  class DataData5,0
+  class DataLangchain::Data5,0
+    attr_reader :sourcesource8,0
+    def initialize(data, options = {})initialize12,0
+    def valuevalue18,0
+    def chunks(opts = {})chunks24,0
+
+lib/langchain/output_parsers/structured.rb,577
+module Langchain::OutputParsersOutputParsers6,0
+module Langchain::OutputParsersLangchain::OutputParsers6,0
+  class StructuredOutputParser < BaseStructuredOutputParser9,0
+  class StructuredOutputParser < BaseLangchain::OutputParsers::StructuredOutputParser9,0
+    attr_reader :schemaschema10,0
+    def initialize(schema:)initialize17,0
+    def to_hto_h21,0
+    def self.from_json_schema(schema)from_json_schema35,0
+    def get_format_instructionsget_format_instructions46,0
+    def parse(text)parse72,0
+    def validate_schema!(schema)validate_schema!83,0
+
+lib/langchain/output_parsers/base.rb,519
+module Langchain::OutputParsersOutputParsers3,0
+module Langchain::OutputParsersLangchain::OutputParsers3,0
+  class BaseBase7,0
+  class BaseLangchain::OutputParsers::Base7,0
+    def parse(text:)parse14,0
+    def get_format_instructionsget_format_instructions30,0
+  class OutputParserException < StandardErrorOutputParserException35,0
+  class OutputParserException < StandardErrorLangchain::OutputParsers::OutputParserException35,0
+    def initialize(message, text)initialize36,0
+    def to_sto_s41,0
+
+lib/langchain/output_parsers/fix.rb,715
+module Langchain::OutputParsersOutputParsers3,0
+module Langchain::OutputParsersLangchain::OutputParsers3,0
+  class OutputFixingParser < BaseOutputFixingParser6,0
+  class OutputFixingParser < BaseLangchain::OutputParsers::OutputFixingParser6,0
+    attr_reader :llm, :parser, :promptllm7,0
+    attr_reader :llm, :parser, :promptparser7,0
+    attr_reader :llm, :parser, :promptprompt7,0
+    def initialize(llm:, parser:, prompt:)initialize16,0
+    def to_hto_h25,0
+    def get_format_instructionsget_format_instructions39,0
+    def parse(completion)parse52,0
+    def self.from_llm(llm:, parser:, prompt: nil)from_llm72,0
+    private_class_method def self.naive_fix_promptnaive_fix_prompt78,0
+
+lib/langchain/chunker/base.rb,170
+module LangchainLangchain3,0
+  module ChunkerChunker4,0
+  module ChunkerLangchain::Chunker4,0
+    class BaseBase12,0
+    class BaseLangchain::Chunker::Base12,0
+
+lib/langchain/chunker/text.rb,633
+module LangchainLangchain5,0
+  module ChunkerChunker6,0
+  module ChunkerLangchain::Chunker6,0
+    class Text < BaseText13,0
+    class Text < BaseLangchain::Chunker::Text13,0
+      attr_reader :text, :chunk_size, :chunk_overlap, :separatortext14,0
+      attr_reader :text, :chunk_size, :chunk_overlap, :separatorchunk_size14,0
+      attr_reader :text, :chunk_size, :chunk_overlap, :separatorchunk_overlap14,0
+      attr_reader :text, :chunk_size, :chunk_overlap, :separatorseparator14,0
+      def initialize(text, chunk_size: 1000, chunk_overlap: 200, separator: "\n\n")initialize20,0
+      def chunkschunks28,0
+
+lib/langchain/chunker/recursive_text.rb,677
+module LangchainLangchain5,0
+  module ChunkerChunker6,0
+  module ChunkerLangchain::Chunker6,0
+    class RecursiveText < BaseRecursiveText13,0
+    class RecursiveText < BaseLangchain::Chunker::RecursiveText13,0
+      attr_reader :text, :chunk_size, :chunk_overlap, :separatorstext14,0
+      attr_reader :text, :chunk_size, :chunk_overlap, :separatorschunk_size14,0
+      attr_reader :text, :chunk_size, :chunk_overlap, :separatorschunk_overlap14,0
+      attr_reader :text, :chunk_size, :chunk_overlap, :separatorsseparators14,0
+      def initialize(text, chunk_size: 1000, chunk_overlap: 200, separators: ["\n\n"])initialize20,0
+      def chunkschunks28,0
+
+lib/langchain/contextual_logger.rb,480
+module LangchainLangchain3,0
+  class ContextualLoggerContextualLogger4,0
+  class ContextualLoggerLangchain::ContextualLogger4,0
+    MESSAGE_COLOR_OPTIONS = {MESSAGE_COLOR_OPTIONS5,0
+    MESSAGE_COLOR_OPTIONS = {Langchain::ContextualLogger::MESSAGE_COLOR_OPTIONS5,0
+    def initialize(logger)initialize29,0
+    def respond_to_missing?(method, include_private = false)respond_to_missing?34,0
+    def method_missing(method, *args, **kwargs, &block)method_missing38,0
+
+lib/langchain/prompt/base.rb,432
+module Langchain::PromptPrompt7,0
+module Langchain::PromptLangchain::Prompt7,0
+  class BaseBase11,0
+  class BaseLangchain::Prompt::Base11,0
+    def format(**kwargs)format12,0
+    def prompt_typeprompt_type17,0
+    def to_hto_h22,0
+    def validate(template:, input_variables:)validate36,0
+    def save(file_path:)save56,0
+    def self.extract_variables_from_template(template)extract_variables_from_template84,0
+
+lib/langchain/prompt/loading.rb,400
+module Langchain::PromptPrompt8,0
+module Langchain::PromptLangchain::Prompt8,0
+  TYPE_TO_LOADER = {TYPE_TO_LOADER9,0
+  TYPE_TO_LOADER = {Langchain::Prompt::TYPE_TO_LOADER9,0
+    def load_from_path(file_path:)load_from_path24,0
+    def load_prompt(config)load_prompt46,0
+    def load_few_shot_prompt(config)load_few_shot_prompt58,0
+    def load_from_config(config)load_from_config75,0
+
+lib/langchain/prompt/prompt_template.rb,694
+module Langchain::PromptPrompt3,0
+module Langchain::PromptLangchain::Prompt3,0
+  class PromptTemplate < BasePromptTemplate35,0
+  class PromptTemplate < BaseLangchain::Prompt::PromptTemplate35,0
+    attr_reader :template, :input_variables, :validate_templatetemplate36,0
+    attr_reader :template, :input_variables, :validate_templateinput_variables36,0
+    attr_reader :template, :input_variables, :validate_templatevalidate_template36,0
+    def initialize(template:, input_variables:, validate_template: true)initialize45,0
+    def format(**kwargs)format59,0
+    def prompt_typeprompt_type70,0
+    def to_hto_h74,0
+    def self.from_template(template)from_template89,0
+
+lib/langchain/prompt/few_shot_prompt_template.rb,1061
+module Langchain::PromptPrompt3,0
+module Langchain::PromptLangchain::Prompt3,0
+  class FewShotPromptTemplate < BaseFewShotPromptTemplate49,0
+  class FewShotPromptTemplate < BaseLangchain::Prompt::FewShotPromptTemplate49,0
+    attr_reader :examples, :example_prompt, :input_variables, :prefix, :suffix, :example_separatorexamples50,0
+    attr_reader :examples, :example_prompt, :input_variables, :prefix, :suffix, :example_separatorexample_prompt50,0
+    attr_reader :examples, :example_prompt, :input_variables, :prefix, :suffix, :example_separatorinput_variables50,0
+    attr_reader :examples, :example_prompt, :input_variables, :prefix, :suffix, :example_separatorprefix50,0
+    attr_reader :examples, :example_prompt, :input_variables, :prefix, :suffix, :example_separatorsuffix50,0
+    attr_reader :examples, :example_prompt, :input_variables, :prefix, :suffix, :example_separatorexample_separator50,0
+    def initialize(initialize63,0
+    def format(**kwargs)format89,0
+    def prompt_typeprompt_type103,0
+    def to_hto_h107,0
+
+lib/langchain/conversation_memory.rb,983
+module LangchainLangchain3,0
+  class ConversationMemoryConversationMemory4,0
+  class ConversationMemoryLangchain::ConversationMemory4,0
+    attr_reader :examples, :messagesexamples5,0
+    attr_reader :examples, :messagesmessages5,0
+    TOKEN_LEEWAY = 20TOKEN_LEEWAY8,0
+    TOKEN_LEEWAY = 20Langchain::ConversationMemory::TOKEN_LEEWAY8,0
+    def initialize(llm:, messages: [], **options)initialize10,0
+    def set_context(message)set_context20,0
+    def add_examples(examples)add_examples24,0
+    def append_ai_message(message)append_ai_message28,0
+    def append_user_message(message)append_user_message32,0
+    def reduce_messages(exception)reduce_messages36,0
+    def contextcontext47,0
+    def truncate_messages(exception)truncate_messages55,0
+    def summarize_messagessummarize_messages68,0
+    def partition_messagespartition_messages77,0
+    def model_namemodel_name80,0
+    def token_length(content, model_name, options)token_length84,0
+
+lib/langchain/llm/ai21.rb,660
+module Langchain::LLMLLM3,0
+module Langchain::LLMLangchain::LLM3,0
+  class AI21 < BaseAI2113,0
+  class AI21 < BaseLangchain::LLM::AI2113,0
+    DEFAULTS = {DEFAULTS14,0
+    DEFAULTS = {Langchain::LLM::AI21::DEFAULTS14,0
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::AI21ValidatorLENGTH_VALIDATOR19,0
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::AI21ValidatorLangchain::LLM::AI21::LENGTH_VALIDATOR19,0
+    def initialize(api_key:, default_options: {})initialize21,0
+    def complete(prompt:, **params)complete36,0
+    def summarize(text:, **params)summarize52,0
+    def complete_parameters(params)complete_parameters59,0
+
+lib/langchain/llm/replicate.rb,638
+module Langchain::LLMLLM3,0
+module Langchain::LLMLangchain::LLM3,0
+  class Replicate < BaseReplicate20,0
+  class Replicate < BaseLangchain::LLM::Replicate20,0
+    DEFAULTS = {DEFAULTS21,0
+    DEFAULTS = {Langchain::LLM::Replicate::DEFAULTS21,0
+    def initialize(api_key:, default_options: {})initialize35,0
+    def embed(text:)embed53,0
+    def complete(prompt:, **params)complete70,0
+    def chat(...)chat86,0
+    def summarize(text:)summarize96,0
+    alias_method :generate_embedding, :embedgenerate_embedding110,0
+    def completion_modelcompletion_model114,0
+    def embeddings_modelembeddings_model118,0
+
+lib/langchain/llm/google_palm.rb,955
+module Langchain::LLMLLM3,0
+module Langchain::LLMLangchain::LLM3,0
+  class GooglePalm < BaseGooglePalm13,0
+  class GooglePalm < BaseLangchain::LLM::GooglePalm13,0
+    DEFAULTS = {DEFAULTS14,0
+    DEFAULTS = {Langchain::LLM::GooglePalm::DEFAULTS14,0
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidatorLENGTH_VALIDATOR21,0
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidatorLangchain::LLM::GooglePalm::LENGTH_VALIDATOR21,0
+    def initialize(api_key:, default_options: {})initialize23,0
+    def embed(text:)embed37,0
+    def complete(prompt:, **params)complete51,0
+    def chat(prompt: "", messages: [], context: "", examples: [], **options)chat80,0
+    def summarize(text:)summarize116,0
+    def compose_chat_messages(prompt:, messages:)compose_chat_messages132,0
+    def compose_examples(examples)compose_examples146,0
+    def transform_messages(messages)transform_messages155,0
+
+lib/langchain/llm/base.rb,468
+module Langchain::LLMLLM3,0
+module Langchain::LLMLangchain::LLM3,0
+  class ApiError < StandardError; endApiError4,0
+  class ApiError < StandardError; endLangchain::LLM::ApiError4,0
+  class BaseBase19,0
+  class BaseLangchain::LLM::Base19,0
+    attr_reader :clientclient23,0
+    def default_dimensiondefault_dimension25,0
+    def chat(...)chat33,0
+    def complete(...)complete41,0
+    def embed(...)embed50,0
+    def summarize(...)summarize59,0
+
+lib/langchain/llm/hugging_face.rb,343
+module Langchain::LLMLLM3,0
+module Langchain::LLMLangchain::LLM3,0
+  class HuggingFace < BaseHuggingFace13,0
+  class HuggingFace < BaseLangchain::LLM::HuggingFace13,0
+    DEFAULTS = {DEFAULTS16,0
+    DEFAULTS = {Langchain::LLM::HuggingFace::DEFAULTS16,0
+    def initialize(api_key:)initialize27,0
+    def embed(text:)embed40,0
+
+lib/langchain/llm/llama_cpp.rb,1409
+module Langchain::LLMLLM3,0
+module Langchain::LLMLangchain::LLM3,0
+  class LlamaCpp < BaseLlamaCpp16,0
+  class LlamaCpp < BaseLangchain::LLM::LlamaCpp16,0
+    attr_accessor :model_path, :n_gpu_layers, :n_ctx, :seedmodel_path17,0
+    attr_accessor :model_path, :n_gpu_layers, :n_ctx, :seedmodel_path=17,0
+    attr_accessor :model_path, :n_gpu_layers, :n_ctx, :seedn_gpu_layers17,0
+    attr_accessor :model_path, :n_gpu_layers, :n_ctx, :seedn_gpu_layers=17,0
+    attr_accessor :model_path, :n_gpu_layers, :n_ctx, :seedn_ctx17,0
+    attr_accessor :model_path, :n_gpu_layers, :n_ctx, :seedn_ctx=17,0
+    attr_accessor :model_path, :n_gpu_layers, :n_ctx, :seedseed17,0
+    attr_accessor :model_path, :n_gpu_layers, :n_ctx, :seedseed=17,0
+    attr_writer :n_threadsn_threads=18,0
+    def initialize(model_path:, n_gpu_layers: 1, n_ctx: 2048, n_threads: 1, seed: -1)initialize25,0
+    def embed(text:, n_threads: nil)embed39,0
+    def complete(prompt:, n_predict: 128, n_threads: nil)complete56,0
+    def n_threadsn_threads65,0
+    def build_context_params(embeddings: false)build_context_params70,0
+    def build_model(embeddings: false)build_model81,0
+    def build_completion_contextbuild_completion_context86,0
+    def build_embedding_contextbuild_embedding_context90,0
+    def completion_contextcompletion_context94,0
+    def embedding_contextembedding_context98,0
+
+lib/langchain/llm/cohere.rb,457
+module Langchain::LLMLLM3,0
+module Langchain::LLMLangchain::LLM3,0
+  class Cohere < BaseCohere13,0
+  class Cohere < BaseLangchain::LLM::Cohere13,0
+    DEFAULTS = {DEFAULTS14,0
+    DEFAULTS = {Langchain::LLM::Cohere::DEFAULTS14,0
+    def initialize(api_key:, default_options: {})initialize22,0
+    def embed(text:)embed36,0
+    def complete(prompt:, **params)complete51,0
+    def chat(...)chat72,0
+    def summarize(text:)summarize82,0
+
+lib/langchain/llm/openai.rb,1326
+module Langchain::LLMLLM3,0
+module Langchain::LLMLangchain::LLM3,0
+  class OpenAI < BaseOpenAI12,0
+  class OpenAI < BaseLangchain::LLM::OpenAI12,0
+    DEFAULTS = {DEFAULTS13,0
+    DEFAULTS = {Langchain::LLM::OpenAI::DEFAULTS13,0
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidatorLENGTH_VALIDATOR20,0
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidatorLangchain::LLM::OpenAI::LENGTH_VALIDATOR20,0
+    attr_accessor :functions, :complete_responsefunctions22,0
+    attr_accessor :functions, :complete_responsefunctions=22,0
+    attr_accessor :functions, :complete_responsecomplete_response22,0
+    attr_accessor :functions, :complete_responsecomplete_response=22,0
+    def initialize(api_key:, llm_options: {}, default_options: {})initialize24,0
+    def embed(text:, **params)embed39,0
+    def complete(prompt:, **params)complete55,0
+    def chat(prompt: "", messages: [], context: "", examples: [], **options)chat115,0
+    def summarize(text:)summarize148,0
+    def compose_parameters(model, params)compose_parameters159,0
+    def compose_chat_messages(prompt:, messages:, context:, examples:)compose_chat_messages167,0
+    def transform_messages(messages)transform_messages190,0
+    def validate_max_tokens(messages, model)validate_max_tokens199,0
+
+lib/langchain/version.rb,106
+module LangchainLangchain3,0
+  VERSION = "0.6.6"VERSION4,0
+  VERSION = "0.6.6"Langchain::VERSION4,0
+
+lib/langchain/active_record/hooks.rb,581
+module LangchainLangchain3,0
+  module ActiveRecordActiveRecord4,0
+  module ActiveRecordLangchain::ActiveRecord4,0
+    module HooksHooks40,0
+    module HooksLangchain::ActiveRecord::Hooks40,0
+      def self.included(base)included41,0
+      def upsert_to_vectorsearchupsert_to_vectorsearch50,0
+      def as_vectoras_vector68,0
+      module ClassMethodsClassMethods72,0
+      module ClassMethodsLangchain::ActiveRecord::Hooks::ClassMethods72,0
+        def vectorsearch(provider:)vectorsearch76,0
+        def similarity_search(query, k: 1)similarity_search85,0
+
+lib/langchain/vectorsearch/pinecone.rb,876
+module Langchain::VectorsearchVectorsearch3,0
+module Langchain::VectorsearchLangchain::Vectorsearch3,0
+  class Pinecone < BasePinecone4,0
+  class Pinecone < BaseLangchain::Vectorsearch::Pinecone4,0
+    def initialize(environment:, api_key:, index_name:, llm:)initialize19,0
+    def add_texts(texts:, ids: [], namespace: "", metadata: nil)add_texts40,0
+    def update_texts(texts:, ids:, namespace: "", metadata: nil)update_texts60,0
+    def create_default_schemacreate_default_schema74,0
+    def destroy_default_schemadestroy_default_schema84,0
+    def get_default_schemaget_default_schema90,0
+    def similarity_search(similarity_search100,0
+    def similarity_search_by_vector(embedding:, k: 4, namespace: "", filter: nil)similarity_search_by_vector122,0
+    def ask(question:, namespace: "", filter: nil)ask143,0
+    private def indexindex158,0
+
+lib/langchain/vectorsearch/chroma.rb,732
+module Langchain::VectorsearchVectorsearch3,0
+module Langchain::VectorsearchLangchain::Vectorsearch3,0
+  class Chroma < BaseChroma4,0
+  class Chroma < BaseLangchain::Vectorsearch::Chroma4,0
+    def initialize(url:, index_name:, llm:, api_key: nil)initialize19,0
+    def add_texts(texts:, ids: [])add_texts35,0
+    def update_texts(texts:, ids:)update_texts50,0
+    def create_default_schemacreate_default_schema66,0
+    def get_default_schemaget_default_schema72,0
+    def destroy_default_schemadestroy_default_schema78,0
+    def similarity_search(similarity_search86,0
+    def similarity_search_by_vector(similarity_search_by_vector102,0
+    def ask(question:)ask117,0
+    def collectioncollection134,0
+
+lib/langchain/vectorsearch/qdrant.rb,699
+module Langchain::VectorsearchVectorsearch3,0
+module Langchain::VectorsearchLangchain::Vectorsearch3,0
+  class Qdrant < BaseQdrant4,0
+  class Qdrant < BaseLangchain::Vectorsearch::Qdrant4,0
+    def initialize(url:, api_key:, index_name:, llm:)initialize19,0
+    def add_texts(texts:, ids: [])add_texts35,0
+    def update_texts(texts:, ids:)update_texts51,0
+    def get_default_schemaget_default_schema57,0
+    def destroy_default_schemadestroy_default_schema63,0
+    def create_default_schemacreate_default_schema69,0
+    def similarity_search(similarity_search83,0
+    def similarity_search_by_vector(similarity_search_by_vector99,0
+    def ask(question:, &block)ask116,0
+
+lib/langchain/vectorsearch/pgvector.rb,1070
+module Langchain::VectorsearchVectorsearch3,0
+module Langchain::VectorsearchLangchain::Vectorsearch3,0
+  class Pgvector < BasePgvector4,0
+  class Pgvector < BaseLangchain::Vectorsearch::Pgvector4,0
+    OPERATORS = {OPERATORS15,0
+    OPERATORS = {Langchain::Vectorsearch::Pgvector::OPERATORS15,0
+    DEFAULT_OPERATOR = "cosine_distance"DEFAULT_OPERATOR19,0
+    DEFAULT_OPERATOR = "cosine_distance"Langchain::Vectorsearch::Pgvector::DEFAULT_OPERATOR19,0
+    attr_reader :operator, :quoted_table_nameoperator21,0
+    attr_reader :operator, :quoted_table_namequoted_table_name21,0
+    def initialize(url:, index_name:, llm:, api_key: nil)initialize27,0
+    def upsert_texts(texts:, ids:)upsert_texts48,0
+    def add_texts(texts:, ids: nil)add_texts66,0
+    def update_texts(texts:, ids:)update_texts86,0
+    def create_default_schemacreate_default_schema92,0
+    def similarity_search(query:, k: 4)similarity_search111,0
+    def similarity_search_by_vector(embedding:, k: 4)similarity_search_by_vector125,0
+    def ask(question:)ask140,0
+
+lib/langchain/vectorsearch/base.rb,1132
+module Langchain::VectorsearchVectorsearch5,0
+module Langchain::VectorsearchLangchain::Vectorsearch5,0
+  class BaseBase88,0
+  class BaseLangchain::Vectorsearch::Base88,0
+    attr_reader :client, :index_name, :llmclient92,0
+    attr_reader :client, :index_name, :llmindex_name92,0
+    attr_reader :client, :index_name, :llmllm92,0
+    DEFAULT_METRIC = "cosine"DEFAULT_METRIC94,0
+    DEFAULT_METRIC = "cosine"Langchain::Vectorsearch::Base::DEFAULT_METRIC94,0
+    def initialize(llm:)initialize97,0
+    def get_default_schemaget_default_schema102,0
+    def create_default_schemacreate_default_schema107,0
+    def destroy_default_schemadestroy_default_schema112,0
+    def add_texts(...)add_texts117,0
+    def update_texts(...)update_texts122,0
+    def similarity_search(...)similarity_search127,0
+    def similarity_search_by_vector(...)similarity_search_by_vector133,0
+    def ask(...)ask138,0
+      :default_dimensiondefault_dimension143,0
+    def generate_prompt(question:, context:)generate_prompt145,0
+    def add_data(paths:)add_data163,0
+    def self.logger_optionslogger_options178,0
+
+lib/langchain/vectorsearch/hnswlib.rb,648
+module Langchain::VectorsearchVectorsearch3,0
+module Langchain::VectorsearchLangchain::Vectorsearch3,0
+  class Hnswlib < BaseHnswlib4,0
+  class Hnswlib < BaseLangchain::Vectorsearch::Hnswlib4,0
+    attr_reader :client, :path_to_indexclient15,0
+    attr_reader :client, :path_to_indexpath_to_index15,0
+    def initialize(llm:, path_to_index:)initialize24,0
+    def add_texts(texts:, ids:)add_texts43,0
+    def similarity_search(similarity_search64,0
+    def similarity_search_by_vector(similarity_search_by_vector83,0
+    def resize_index(num_of_elements_to_add)resize_index97,0
+    def initialize_indexinitialize_index110,0
+
+lib/langchain/vectorsearch/weaviate.rb,866
+module Langchain::VectorsearchVectorsearch3,0
+module Langchain::VectorsearchLangchain::Vectorsearch3,0
+  class Weaviate < BaseWeaviate4,0
+  class Weaviate < BaseLangchain::Vectorsearch::Weaviate4,0
+    def initialize(url:, api_key:, index_name:, llm:)initialize19,0
+    def add_texts(texts:, ids: [])add_texts38,0
+    def update_texts(texts:, ids:)update_texts47,0
+    def create_default_schemacreate_default_schema76,0
+    def get_default_schemaget_default_schema90,0
+    def destroy_default_schemadestroy_default_schema96,0
+    def similarity_search(query:, k: 4)similarity_search104,0
+    def similarity_search_by_vector(embedding:, k: 4)similarity_search_by_vector114,0
+    def ask(question:, &block)ask128,0
+    def weaviate_objects(texts, ids = [])weaviate_objects143,0
+    def weaviate_object(text, id = nil)weaviate_object149,0
+
+lib/langchain/vectorsearch/milvus.rb,631
+module Langchain::VectorsearchVectorsearch3,0
+module Langchain::VectorsearchLangchain::Vectorsearch3,0
+  class Milvus < BaseMilvus4,0
+  class Milvus < BaseLangchain::Vectorsearch::Milvus4,0
+    def initialize(url:, index_name:, llm:, api_key: nil)initialize14,0
+    def add_texts(texts:)add_texts24,0
+    def create_default_schemacreate_default_schema46,0
+    def get_default_schemaget_default_schema84,0
+    def destroy_default_schemadestroy_default_schema90,0
+    def similarity_search(query:, k: 4)similarity_search94,0
+    def similarity_search_by_vector(embedding:, k: 4)similarity_search_by_vector103,0
+
+lib/langchain/tool/database.rb,638
+module Langchain::ToolTool1,0
+module Langchain::ToolLangchain::Tool1,0
+  class Database < BaseDatabase2,0
+  class Database < BaseLangchain::Tool::Database2,0
+    NAME = "database"NAME9,0
+    NAME = "database"Langchain::Tool::Database::NAME9,0
+    attr_reader :db, :requested_tables, :excluded_tablesdb17,0
+    attr_reader :db, :requested_tables, :excluded_tablesrequested_tables17,0
+    attr_reader :db, :requested_tables, :excluded_tablesexcluded_tables17,0
+    def initialize(connection_string:, tables: [], exclude_tables: [])initialize28,0
+    def dump_schemadump_schema44,0
+    def execute(input:)execute83,0
+
+lib/langchain/tool/ruby_code_interpreter.rb,462
+module Langchain::ToolTool3,0
+module Langchain::ToolLangchain::Tool3,0
+  class RubyCodeInterpreter < BaseRubyCodeInterpreter4,0
+  class RubyCodeInterpreter < BaseLangchain::Tool::RubyCodeInterpreter4,0
+    NAME = "ruby_code_interpreter"NAME10,0
+    NAME = "ruby_code_interpreter"Langchain::Tool::RubyCodeInterpreter::NAME10,0
+    def initialize(timeout: 30)initialize15,0
+    def execute(input:)execute23,0
+    def safe_eval(code)safe_eval29,0
+
+lib/langchain/tool/google_search.rb,514
+module Langchain::ToolTool3,0
+module Langchain::ToolLangchain::Tool3,0
+  class GoogleSearch < BaseGoogleSearch4,0
+  class GoogleSearch < BaseLangchain::Tool::GoogleSearch4,0
+    NAME = "google_search"NAME15,0
+    NAME = "google_search"Langchain::Tool::GoogleSearch::NAME15,0
+    attr_reader :api_keyapi_key26,0
+    def initialize(api_key:)initialize34,0
+    def self.execute_search(input:)execute_search46,0
+    def execute(input:)execute56,0
+    def execute_search(input:)execute_search74,0
+
+lib/langchain/tool/wikipedia.rb,336
+module Langchain::ToolTool3,0
+module Langchain::ToolLangchain::Tool3,0
+  class Wikipedia < BaseWikipedia4,0
+  class Wikipedia < BaseLangchain::Tool::Wikipedia4,0
+    NAME = "wikipedia"NAME10,0
+    NAME = "wikipedia"Langchain::Tool::Wikipedia::NAME10,0
+    def initializeinitialize20,0
+    def execute(input:)execute28,0
+
+lib/langchain/tool/base.rb,454
+module Langchain::ToolTool3,0
+module Langchain::ToolLangchain::Tool3,0
+  class BaseBase48,0
+  class BaseLangchain::Tool::Base48,0
+    def tool_nametool_name56,0
+    def self.logger_optionslogger_options60,0
+    def tool_descriptiontool_description71,0
+    def self.description(value)description80,0
+    def self.execute(input:)execute90,0
+    def execute(input:)execute100,0
+    def self.validate_tools!(tools:)validate_tools!110,0
+
+lib/langchain/tool/weather.rb,436
+module Langchain::ToolTool3,0
+module Langchain::ToolLangchain::Tool3,0
+  class Weather < BaseWeather4,0
+  class Weather < BaseLangchain::Tool::Weather4,0
+    NAME = "weather"NAME20,0
+    NAME = "weather"Langchain::Tool::Weather::NAME20,0
+    attr_reader :client, :unitsclient33,0
+    attr_reader :client, :unitsunits33,0
+    def initialize(api_key:, units: "metric")initialize41,0
+    def execute(input:)execute56,0
+
+lib/langchain/tool/calculator.rb,343
+module Langchain::ToolTool3,0
+module Langchain::ToolLangchain::Tool3,0
+  class Calculator < BaseCalculator4,0
+  class Calculator < BaseLangchain::Tool::Calculator4,0
+    NAME = "calculator"NAME13,0
+    NAME = "calculator"Langchain::Tool::Calculator::NAME13,0
+    def initializeinitialize26,0
+    def execute(input:)execute35,0
+
+lib/langchain/dependency_helper.rb,328
+module LangchainLangchain3,0
+  module DependencyHelperDependencyHelper4,0
+  module DependencyHelperLangchain::DependencyHelper4,0
+    class VersionError < ScriptError; endVersionError5,0
+    class VersionError < ScriptError; endLangchain::DependencyHelper::VersionError5,0
+    def depends_on(gem_name)depends_on15,0
+
+lib/langchain/utils/token_length/openai_validator.rb,621
+module LangchainLangchain5,0
+  module UtilsUtils6,0
+  module UtilsLangchain::Utils6,0
+    module TokenLengthTokenLength7,0
+    module TokenLengthLangchain::Utils::TokenLength7,0
+      class OpenAIValidator < BaseValidatorOpenAIValidator12,0
+      class OpenAIValidator < BaseValidatorLangchain::Utils::TokenLength::OpenAIValidator12,0
+        TOKEN_LIMITS = {TOKEN_LIMITS13,0
+        TOKEN_LIMITS = {Langchain::Utils::TokenLength::OpenAIValidator::TOKEN_LIMITS13,0
+        def self.token_length(text, model_name, options = {})token_length47,0
+        def self.token_limit(model_name)token_limit52,0
+
+lib/langchain/utils/token_length/cohere_validator.rb,615
+module LangchainLangchain3,0
+  module UtilsUtils4,0
+  module UtilsLangchain::Utils4,0
+    module TokenLengthTokenLength5,0
+    module TokenLengthLangchain::Utils::TokenLength5,0
+      class CohereValidator < BaseValidatorCohereValidator11,0
+      class CohereValidator < BaseValidatorLangchain::Utils::TokenLength::CohereValidator11,0
+        TOKEN_LIMITS = {TOKEN_LIMITS12,0
+        TOKEN_LIMITS = {Langchain::Utils::TokenLength::CohereValidator::TOKEN_LIMITS12,0
+        def self.token_length(text, model_name, client)token_length33,0
+        def self.token_limit(model_name)token_limit38,0
+
+lib/langchain/utils/token_length/base_validator.rb,495
+module LangchainLangchain3,0
+  module UtilsUtils4,0
+  module UtilsLangchain::Utils4,0
+    module TokenLengthTokenLength5,0
+    module TokenLengthLangchain::Utils::TokenLength5,0
+      class BaseValidatorBaseValidator14,0
+      class BaseValidatorLangchain::Utils::TokenLength::BaseValidator14,0
+        def self.validate_max_tokens!(content, model_name, options = {})validate_max_tokens!15,0
+        def self.limit_exceeded_exception(limit, length)limit_exceeded_exception32,0
+
+lib/langchain/utils/token_length/google_palm_validator.rb,655
+module LangchainLangchain3,0
+  module UtilsUtils4,0
+  module UtilsLangchain::Utils4,0
+    module TokenLengthTokenLength5,0
+    module TokenLengthLangchain::Utils::TokenLength5,0
+      class GooglePalmValidator < BaseValidatorGooglePalmValidator10,0
+      class GooglePalmValidator < BaseValidatorLangchain::Utils::TokenLength::GooglePalmValidator10,0
+        TOKEN_LIMITS = {TOKEN_LIMITS11,0
+        TOKEN_LIMITS = {Langchain::Utils::TokenLength::GooglePalmValidator::TOKEN_LIMITS11,0
+        def self.token_length(text, model_name = "chat-bison-001", options)token_length38,0
+        def self.token_limit(model_name)token_limit46,0
+
+lib/langchain/utils/token_length/ai21_validator.rb,605
+module LangchainLangchain3,0
+  module UtilsUtils4,0
+  module UtilsLangchain::Utils4,0
+    module TokenLengthTokenLength5,0
+    module TokenLengthLangchain::Utils::TokenLength5,0
+      class AI21Validator < BaseValidatorAI21Validator11,0
+      class AI21Validator < BaseValidatorLangchain::Utils::TokenLength::AI21Validator11,0
+        TOKEN_LIMITS = {TOKEN_LIMITS12,0
+        TOKEN_LIMITS = {Langchain::Utils::TokenLength::AI21Validator::TOKEN_LIMITS12,0
+        def self.token_length(text, model_name, client)token_length25,0
+        def self.token_limit(model_name)token_limit30,0
+
+lib/langchain/utils/token_length/token_limit_exceeded.rb,486
+module LangchainLangchain3,0
+  module UtilsUtils4,0
+  module UtilsLangchain::Utils4,0
+    module TokenLengthTokenLength5,0
+    module TokenLengthLangchain::Utils::TokenLength5,0
+      class TokenLimitExceeded < StandardErrorTokenLimitExceeded6,0
+      class TokenLimitExceeded < StandardErrorLangchain::Utils::TokenLength::TokenLimitExceeded6,0
+        attr_reader :token_overflowtoken_overflow7,0
+        def initialize(message = "", token_overflow = 0)initialize9,0
+
+lib/langchain/processors/json.rb,498
+module LangchainLangchain3,0
+  module ProcessorsProcessors4,0
+  module ProcessorsLangchain::Processors4,0
+    class JSON < BaseJSON5,0
+    class JSON < BaseLangchain::Processors::JSON5,0
+      EXTENSIONS = [".json"]EXTENSIONS6,0
+      EXTENSIONS = [".json"]Langchain::Processors::JSON::EXTENSIONS6,0
+      CONTENT_TYPES = ["application/json"]CONTENT_TYPES7,0
+      CONTENT_TYPES = ["application/json"]Langchain::Processors::JSON::CONTENT_TYPES7,0
+      def parse(data)parse12,0
+
+lib/langchain/processors/jsonl.rb,610
+module LangchainLangchain3,0
+  module ProcessorsProcessors4,0
+  module ProcessorsLangchain::Processors4,0
+    class JSONL < BaseJSONL5,0
+    class JSONL < BaseLangchain::Processors::JSONL5,0
+      EXTENSIONS = [".jsonl"]EXTENSIONS6,0
+      EXTENSIONS = [".jsonl"]Langchain::Processors::JSONL::EXTENSIONS6,0
+      CONTENT_TYPES = ["application/jsonl", "application/json-lines", "application/jsonlines"]CONTENT_TYPES7,0
+      CONTENT_TYPES = ["application/jsonl", "application/json-lines", "application/jsonlines"]Langchain::Processors::JSONL::CONTENT_TYPES7,0
+      def parse(data)parse12,0
+
+lib/langchain/processors/docx.rb,647
+module LangchainLangchain3,0
+  module ProcessorsProcessors4,0
+  module ProcessorsLangchain::Processors4,0
+    class Docx < BaseDocx5,0
+    class Docx < BaseLangchain::Processors::Docx5,0
+      EXTENSIONS = [".docx"]EXTENSIONS6,0
+      EXTENSIONS = [".docx"]Langchain::Processors::Docx::EXTENSIONS6,0
+      CONTENT_TYPES = ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]CONTENT_TYPES7,0
+      CONTENT_TYPES = ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]Langchain::Processors::Docx::CONTENT_TYPES7,0
+      def initialize(*)initialize9,0
+      def parse(data)parse17,0
+
+lib/langchain/processors/html.rb,715
+module LangchainLangchain3,0
+  module ProcessorsProcessors4,0
+  module ProcessorsLangchain::Processors4,0
+    class HTML < BaseHTML5,0
+    class HTML < BaseLangchain::Processors::HTML5,0
+      EXTENSIONS = [".html", ".htm"]EXTENSIONS6,0
+      EXTENSIONS = [".html", ".htm"]Langchain::Processors::HTML::EXTENSIONS6,0
+      CONTENT_TYPES = ["text/html"]CONTENT_TYPES7,0
+      CONTENT_TYPES = ["text/html"]Langchain::Processors::HTML::CONTENT_TYPES7,0
+      TEXT_CONTENT_TAGS = %w[h1 h2 h3 h4 h5 h6 p]TEXT_CONTENT_TAGS10,0
+      TEXT_CONTENT_TAGS = %w[h1 h2 h3 h4 h5 h6 p]Langchain::Processors::HTML::TEXT_CONTENT_TAGS10,0
+      def initialize(*)initialize12,0
+      def parse(data)parse20,0
+
+lib/langchain/processors/pdf.rb,527
+module LangchainLangchain3,0
+  module ProcessorsProcessors4,0
+  module ProcessorsLangchain::Processors4,0
+    class PDF < BasePDF5,0
+    class PDF < BaseLangchain::Processors::PDF5,0
+      EXTENSIONS = [".pdf"]EXTENSIONS6,0
+      EXTENSIONS = [".pdf"]Langchain::Processors::PDF::EXTENSIONS6,0
+      CONTENT_TYPES = ["application/pdf"]CONTENT_TYPES7,0
+      CONTENT_TYPES = ["application/pdf"]Langchain::Processors::PDF::CONTENT_TYPES7,0
+      def initialize(*)initialize9,0
+      def parse(data)parse17,0
+
+lib/langchain/processors/csv.rb,509
+module LangchainLangchain5,0
+  module ProcessorsProcessors6,0
+  module ProcessorsLangchain::Processors6,0
+    class CSV < BaseCSV7,0
+    class CSV < BaseLangchain::Processors::CSV7,0
+      EXTENSIONS = [".csv"]EXTENSIONS8,0
+      EXTENSIONS = [".csv"]Langchain::Processors::CSV::EXTENSIONS8,0
+      CONTENT_TYPES = ["text/csv"]CONTENT_TYPES9,0
+      CONTENT_TYPES = ["text/csv"]Langchain::Processors::CSV::CONTENT_TYPES9,0
+      def parse(data)parse14,0
+      def separatorseparator22,0
+
+lib/langchain/processors/base.rb,487
+module LangchainLangchain3,0
+  module ProcessorsProcessors4,0
+  module ProcessorsLangchain::Processors4,0
+    class BaseBase6,0
+    class BaseLangchain::Processors::Base6,0
+      EXTENSIONS = []EXTENSIONS9,0
+      EXTENSIONS = []Langchain::Processors::Base::EXTENSIONS9,0
+      CONTENT_TYPES = []CONTENT_TYPES10,0
+      CONTENT_TYPES = []Langchain::Processors::Base::CONTENT_TYPES10,0
+      def initialize(options = {})initialize12,0
+      def parse(data)parse16,0
+
+lib/langchain/processors/xlsx.rb,681
+module LangchainLangchain3,0
+  module ProcessorsProcessors4,0
+  module ProcessorsLangchain::Processors4,0
+    class Xlsx < BaseXlsx5,0
+    class Xlsx < BaseLangchain::Processors::Xlsx5,0
+      EXTENSIONS = [".xlsx", ".xlsm"].freezeEXTENSIONS6,0
+      EXTENSIONS = [".xlsx", ".xlsm"].freezeLangchain::Processors::Xlsx::EXTENSIONS6,0
+      CONTENT_TYPES = ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"].freezeCONTENT_TYPES7,0
+      CONTENT_TYPES = ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"].freezeLangchain::Processors::Xlsx::CONTENT_TYPES7,0
+      def initialize(*)initialize9,0
+      def parse(data)parse17,0
+
+lib/langchain/processors/text.rb,484
+module LangchainLangchain3,0
+  module ProcessorsProcessors4,0
+  module ProcessorsLangchain::Processors4,0
+    class Text < BaseText5,0
+    class Text < BaseLangchain::Processors::Text5,0
+      EXTENSIONS = [".txt"]EXTENSIONS6,0
+      EXTENSIONS = [".txt"]Langchain::Processors::Text::EXTENSIONS6,0
+      CONTENT_TYPES = ["text/plain"]CONTENT_TYPES7,0
+      CONTENT_TYPES = ["text/plain"]Langchain::Processors::Text::CONTENT_TYPES7,0
+      def parse(data)parse12,0
+
+lib/langchain/conversation.rb,541
+module LangchainLangchain3,0
+  class ConversationConversation19,0
+  class ConversationLangchain::Conversation19,0
+    attr_reader :optionsoptions20,0
+    def initialize(llm:, **options, &block)initialize27,0
+    def set_functions(functions)set_functions40,0
+    def set_context(message)set_context47,0
+    def add_examples(examples)add_examples53,0
+    def message(message)message60,0
+    def messagesmessages69,0
+    def contextcontext75,0
+    def examplesexamples81,0
+    def llm_response(prompt)llm_response87,0
+
+lib/langchain/loader.rb,1227
+module LangchainLangchain5,0
+  class LoaderLoader6,0
+  class LoaderLangchain::Loader6,0
+    class FileNotFound < StandardError; endFileNotFound7,0
+    class FileNotFound < StandardError; endLangchain::Loader::FileNotFound7,0
+    class UnknownFormatError < StandardError; endUnknownFormatError9,0
+    class UnknownFormatError < StandardError; endLangchain::Loader::UnknownFormatError9,0
+    URI_REGEX = %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}URI_REGEX11,0
+    URI_REGEX = %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}Langchain::Loader::URI_REGEX11,0
+    def self.load(path, options = {}, &block)load32,0
+    def initialize(path, options = {})initialize40,0
+    def url?url?48,0
+    def directory?directory?57,0
+    def load(&block)load78,0
+    def load_from_urlload_from_url87,0
+    def load_from_pathload_from_path91,0
+    def load_from_directory(&block)load_from_directory97,0
+    def process_data(data, &block)process_data106,0
+    def processor_klassprocessor_klass118,0
+    def find_processorfind_processor124,0
+    def processor_matches?(constant, value)processor_matches?128,0
+    def processorsprocessors132,0
+    def source_typesource_type136,0
+    def lookup_constantlookup_constant140,0
+
+lib/langchain/agent/sql_query_agent/sql_query_agent.rb,676
+module Langchain::AgentAgent3,0
+module Langchain::AgentLangchain::Agent3,0
+  class SQLQueryAgent < BaseSQLQueryAgent4,0
+  class SQLQueryAgent < BaseLangchain::Agent::SQLQueryAgent4,0
+    attr_reader :llm, :db, :schemallm5,0
+    attr_reader :llm, :db, :schemadb5,0
+    attr_reader :llm, :db, :schemaschema5,0
+    def initialize(llm:, db:)initialize13,0
+    def run(question:)run25,0
+    def create_prompt_for_sql(question:)create_prompt_for_sql47,0
+    def prompt_template_sqlprompt_template_sql57,0
+    def create_prompt_for_answer(question:, sql_query:, results:)create_prompt_for_answer66,0
+    def prompt_template_answerprompt_template_answer76,0
+
+lib/langchain/agent/base.rb,191
+module Langchain::AgentAgent3,0
+module Langchain::AgentLangchain::Agent3,0
+  class BaseBase12,0
+  class BaseLangchain::Agent::Base12,0
+    def self.logger_optionslogger_options13,0
+
+lib/langchain/agent/react_agent/react_agent.rb,886
+module Langchain::AgentAgent3,0
+module Langchain::AgentLangchain::Agent3,0
+  class ReActAgent < BaseReActAgent18,0
+  class ReActAgent < BaseLangchain::Agent::ReActAgent18,0
+    attr_reader :llm, :tools, :max_iterationsllm19,0
+    attr_reader :llm, :tools, :max_iterationstools19,0
+    attr_reader :llm, :tools, :max_iterationsmax_iterations19,0
+    def initialize(llm:, tools: [], max_iterations: 10)initialize27,0
+    def tools=(value)tools=40,0
+    def run(question:)run49,0
+    def create_prompt(question:, tools:)create_prompt101,0
+    def prompt_templateprompt_template118,0
+    class MaxIterationsReachedError < Langchain::Errors::BaseErrorMaxIterationsReachedError124,0
+    class MaxIterationsReachedError < Langchain::Errors::BaseErrorLangchain::Agent::ReActAgent::MaxIterationsReachedError124,0
+      def initialize(max_iterations)initialize125,0
+
+spec/spec_helper.rb,54
+RUNNING_ON_CI = ENV["CI"] == "true"RUNNING_ON_CI9,0
+
+spec/support/custom_matchers.rb,112
+module CustomMatchersCustomMatchers1,0
+  def array_with_strings_matcher(size:)array_with_strings_matcher4,0
+
+spec/langchain/output_parsers/spec_helper.rb,266
+def schema_exampleschema_example3,0
+def json_responsejson_response42,0
+def json_text_responsejson_text_response59,0
+def invalid_schema_json_responseinvalid_schema_json_response63,0
+def invalid_schema_json_text_responseinvalid_schema_json_text_response71,0
+
+spec/langchain/active_record/hooks_spec.rb,22
+class DummyDummy3,0
+
+spec/langchain/vectorsearch/weaviate_spec.rb,27
+    def stub(id)stub52,0
+
+examples/conversation_with_openai.rb,93
+DONE = %w[done end eof exit].freezeDONE12,0
+def prompt_for_messageprompt_for_message16,0
+
+examples/open_ai_function_calls.rb,46
+DONE = %w[done end eof exit].freezeDONE37,0
