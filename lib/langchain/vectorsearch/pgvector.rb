@@ -136,6 +136,7 @@ module Langchain::Vectorsearch
 
     # Ask a question and return the answer
     # @param question [String] The question to ask
+    # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
     def ask(question:, &block)
       search_results = similarity_search(query: question)
