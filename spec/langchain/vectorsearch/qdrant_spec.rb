@@ -10,7 +10,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
       url: "http://localhost:8000",
       index_name: index_name,
       api_key: "secret",
-      llm: Langchain::LLM::OpenAI.new(api_key: "123"),
+      llm: Langchain::LLM::OpenAI.new(api_key: "123")
     )
   }
 
@@ -25,7 +25,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
   end
 
   describe "#destroy_default_schema" do
-    let(:fixture) { { "result" => true, "status" => "ok", "time" => 0.001313625 } }
+    let(:fixture) { {"result" => true, "status" => "ok", "time" => 0.001313625} }
 
     before do
       allow(subject.client).to receive_message_chain(:collections, :delete).and_return(fixture)
@@ -74,7 +74,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
   describe "#similarity_search_by_vector" do
     before do
       allow(subject.client).to receive_message_chain(:points, :search).and_return(
-        { "result" => [{}] }
+        {"result" => [{}]}
       )
     end
 
@@ -101,7 +101,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     let(:answer) { "5 times" }
 
     before do
-      allow(subject).to receive(:similarity_search).with(query: question).and_return([{ "payload" => text }])
+      allow(subject).to receive(:similarity_search).with(query: question).and_return([{"payload" => text}])
     end
 
     context "without block" do
@@ -115,7 +115,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     end
 
     context "with block" do
-      let(:block) { Proc.new { |chunk| puts "Received chunk: #{chunk}" } }
+      let(:block) { proc { |chunk| puts "Received chunk: #{chunk}" } }
 
       before do
         allow(subject.llm).to receive(:chat) do |parameters|
