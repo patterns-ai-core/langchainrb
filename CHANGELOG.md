@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.6.7] - 2023-07-19
+- Support for OpenAI functions
+- Streaming vectorsearch ask() responses
+
 ## [0.6.6] - 2023-07-13
 - Langchain::Chunker::RecursiveText
 - Fixes
