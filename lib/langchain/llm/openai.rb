@@ -189,9 +189,12 @@ module Langchain::LLM
 
     def transform_messages(messages)
       messages.map do |message|
+        role = message[:role] || message["role"]
+        content = message[:content] || message["content"]
+
         {
-          content: message[:content],
-          role: (message[:role] == "ai") ? "assistant" : message[:role]
+          content: content,
+          role: (role == "ai") ? "assistant" : role
         }
       end
     end
