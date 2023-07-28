@@ -7,6 +7,7 @@ if ENV["POSTGRES_URL"]
     let(:client) { ::PG.connect(ENV["POSTGRES_URL"]) }
 
     let(:url) { ENV["POSTGRES_URL"] }
+
     subject {
       described_class.new(
         url: url,
@@ -15,10 +16,15 @@ if ENV["POSTGRES_URL"]
       )
     }
 
+    before do
+      client.exec("CREATE TABLE IF NOT EXISTS  products (id SERIAL PRIMARY KEY, content TEXT, vectors FLOAT[]);")
+    end
+
     after { client.exec("TRUNCATE TABLE products;") }
 
     describe "#create_default_schema" do
       it "creates the default schema" do
+        client.exec("DROP TABLE products")
         subject.create_default_schema
       end
     end
