@@ -3,31 +3,23 @@
 require "pg"
 
 if ENV["POSTGRES_URL"]
-  RSpec.describe Langchain::Vectorsearch::Pgvector do
-    let(:client) { ::PG.connect(ENV["POSTGRES_URL"]) }
+  client = ::PG.connect(ENV["POSTGRES_URL"])
 
-    let(:url) { ENV["POSTGRES_URL"] }
+  subject = Langchain::Vectorsearch::Pgvector.new(
+    url: ENV["POSTGRES_URL"],
+    index_name: "products",
+    llm: Langchain::LLM::OpenAI.new(api_key: "123")
+  )
+  subject.create_default_schema
+
+  RSpec.describe Langchain::Vectorsearch::Pgvector do
+    let(:client) { client }
 
     subject {
-      described_class.new(
-        url: url,
-        index_name: "products",
-        llm: Langchain::LLM::OpenAI.new(api_key: "123")
-      )
+      subject
     }
 
-    before do
-      client.exec("CREATE TABLE IF NOT EXISTS  products (id SERIAL PRIMARY KEY, content TEXT, vectors FLOAT[]);")
-    end
-
     after { client.exec("TRUNCATE TABLE products;") }
-
-    describe "#create_default_schema" do
-      it "creates the default schema" do
-        client.exec("DROP TABLE products")
-        subject.create_default_schema
-      end
-    end
 
     describe "#add_texts" do
       before do
