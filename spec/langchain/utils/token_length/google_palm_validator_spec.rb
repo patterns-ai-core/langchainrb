@@ -27,14 +27,28 @@ RSpec.describe Langchain::Utils::TokenLength::GooglePalmValidator do
       end
 
       context "when the text is too long" do
-        let(:token_length) { 4000 }
+        let(:token_length) { 10000 }
 
         let(:content) { "lorem ipsum" * 9000 }
 
         it "raises an error" do
           expect {
             subject
-          }.to raise_error(Langchain::Utils::TokenLength::TokenLimitExceeded, "This model's maximum context length is 4000 tokens, but the given text is 4000 tokens long.")
+          }.to raise_error(Langchain::Utils::TokenLength::TokenLimitExceeded, "This model's maximum context length is 4000 tokens, but the given text is 10000 tokens long.")
+        end
+      end
+
+      context "when the token is equal to the limit" do
+        let(:token_length) { Langchain::Utils::TokenLength::GooglePalmValidator::TOKEN_LIMITS.dig(model, "input_token_limit") }
+
+        let(:content) { "lorem ipsum" * 1000 }
+
+        it "does not raise an error" do
+          expect { subject }.not_to raise_error
+        end
+
+        it "returns the correct max_tokens" do
+          expect(subject).to eq(0)
         end
       end
     end

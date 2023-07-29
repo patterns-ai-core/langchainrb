@@ -26,9 +26,7 @@ RSpec.describe Langchain::Utils::TokenLength::AI21Validator do
         let(:content) { "lorem ipsum" * 10 }
 
         before do
-          allow(described_class).to receive(:token_length).and_return(
-            2000
-          )
+          allow(described_class).to receive(:token_length).and_return(2000)
         end
 
         it "does not raise an error" do
@@ -39,15 +37,31 @@ RSpec.describe Langchain::Utils::TokenLength::AI21Validator do
           expect(subject).to eq(6192)
         end
       end
+
+      context "when the token is equal to the limit" do
+        let(:content) { "lorem ipsum" * 9000 }
+
+        before do
+          allow(described_class).to receive(:token_length).and_return(
+            Langchain::Utils::TokenLength::AI21Validator::TOKEN_LIMITS[model]
+          )
+        end
+
+        it "does not raise an error" do
+          expect { subject }.not_to raise_error
+        end
+
+        it "returns the correct max_tokens" do
+          expect(subject).to eq(0)
+        end
+      end
     end
 
     context "with array argument" do
       let(:content) { ["lorem ipsum" * 10, "lorem ipsum" * 10] }
 
       before do
-        allow(described_class).to receive(:token_length).and_return(
-          2000
-        )
+        allow(described_class).to receive(:token_length).and_return(2000)
       end
 
       context "when the text is not too long" do

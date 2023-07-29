@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.6.6)
+    langchainrb (0.6.8)
       baran (~> 0.1.6)
       colorize (~> 0.8.1)
       json-schema (~> 4.0.0)
@@ -133,7 +133,7 @@ GEM
       faraday (>= 1.0)
       faraday_middleware
       graphql-client
-    graphql (2.0.23)
+    graphql (2.0.24)
     graphql-client (0.18.0)
       activesupport (>= 3.0)
       graphql
@@ -264,7 +264,7 @@ GEM
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
     ruby-next-core (0.15.3)
-    ruby-openai (4.0.0)
+    ruby-openai (4.1.0)
       faraday (>= 1)
       faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
@@ -299,7 +299,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
-    weaviate-ruby (0.8.3)
+    weaviate-ruby (0.8.4)
       faraday (~> 1)
       faraday_middleware (~> 1)
       graphlient (~> 0.6.0)
@@ -344,7 +344,7 @@ DEPENDENCIES
   roo (~> 2.10.0)
   rspec (~> 3.0)
   rubocop
-  ruby-openai (~> 4.0.0)
+  ruby-openai (~> 4.1.0)
   safe_ruby (~> 1.0.4)
   sequel (~> 5.68.0)
   standardrb

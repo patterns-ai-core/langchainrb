@@ -22,7 +22,7 @@ module Langchain
           leftover_tokens = token_limit(model_name) - text_token_length
 
           # Raise an error even if whole prompt is equal to the model's token limit (leftover_tokens == 0)
-          if leftover_tokens <= 0
+          if leftover_tokens < 0
             raise limit_exceeded_exception(token_limit(model_name), text_token_length)
           end
 

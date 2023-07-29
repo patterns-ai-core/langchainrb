@@ -28,6 +28,25 @@ RSpec.describe Langchain::Utils::TokenLength::OpenAIValidator do
           expect(subject).to eq(7892)
         end
       end
+
+      context "when the token is equal to the limit" do
+        let(:content) { "lorem ipsum" * 9000 }
+        let(:model) { "text-embedding-ada-002" }
+
+        before do
+          allow(described_class).to receive(:token_length).and_return(
+            Langchain::Utils::TokenLength::OpenAIValidator::TOKEN_LIMITS[model]
+          )
+        end
+
+        it "does not raise an error" do
+          expect { subject }.not_to raise_error
+        end
+
+        it "returns the correct max_tokens" do
+          expect(subject).to eq(0)
+        end
+      end
     end
 
     context "with array argument" do
