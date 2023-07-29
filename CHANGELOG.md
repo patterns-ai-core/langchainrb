@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.6.9] - 2023-07-29
+
+## [0.6.8] - 2023-07-21
+
 ## [0.6.7] - 2023-07-19
 - Support for OpenAI functions
 - Streaming vectorsearch ask() responses
