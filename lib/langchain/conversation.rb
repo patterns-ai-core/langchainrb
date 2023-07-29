@@ -17,18 +17,18 @@ module Langchain
   #     end
   #
   class Conversation
-    attr_reader :options
+    attr_reader :options, :memory
 
     # Intialize Conversation with a LLM
     #
     # @param llm [Object] The LLM to use for the conversation
     # @param options [Hash] Options to pass to the LLM, like temperature, top_k, etc.
     # @return [Langchain::Conversation] The Langchain::Conversation instance
-    def initialize(llm:, **options, &block)
+    def initialize(llm:, memory_class: ConversationMemory, **options, &block)
       @llm = llm
       @context = nil
       @examples = []
-      @memory = ConversationMemory.new(
+      @memory = memory_class.new(
         llm: llm,
         messages: options.delete(:messages) || [],
         strategy: options.delete(:memory_strategy)
