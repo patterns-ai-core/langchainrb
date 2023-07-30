@@ -537,7 +537,7 @@ Join us in the [Langchain.rb](https://discord.gg/WDARp7J2n8) Discord server.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/andreibondarev/langchain.
+Bug reports and pull requests are welcome on GitHub at https://github.com/andreibondarev/langchainrb.
 
 ## License
 
