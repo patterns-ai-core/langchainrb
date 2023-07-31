@@ -188,15 +188,24 @@ module Langchain::LLM
     end
 
     def transform_messages(messages)
-      messages.map do |message|
-        role = message[:role] || message["role"]
-        content = message[:content] || message["content"]
+      messages.map { |message| transform_message(message) }
+    end
 
-        {
-          content: content,
-          role: (role == "ai") ? "assistant" : role
-        }
+    def transform_message(message)
+      role = message[:role] || message["role"]
+      content = message[:content] || message["content"]
+
+      if content.is_a? Hash
+        function_call = content.dig("choices", 0, "message", "function_call")
+        content = content.dig("choices", 0, "message", "content")
       end
+
+      {
+        role: (role == "ai") ? "assistant" : role,
+        content: content
+      }.merge({
+        function_call: function_call
+      }.compact)
     end
 
     def validate_max_tokens(messages, model)
