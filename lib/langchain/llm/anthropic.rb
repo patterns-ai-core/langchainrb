@@ -31,7 +31,7 @@ module Langchain::LLM
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
-    # @param params  extra parameters passed to OpenAI::Client#complete
+    # @param params [Hash] extra parameters passed to Anthropic::Client#complete
     # @return [String] The completion
     #
     def complete(prompt:, **params)
