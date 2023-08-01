@@ -33,6 +33,9 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     afm (0.2.2)
     ai21 (0.2.1)
+    anthropic (0.1.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ast (2.4.2)
     baran (0.1.7)
     builder (3.2.4)
@@ -318,6 +321,7 @@ PLATFORMS
 
 DEPENDENCIES
   ai21 (~> 0.2.1)
+  anthropic (~> 0.1.0)
   chroma-db (~> 0.3.0)
   cohere-ruby (~> 0.9.5)
   docx (~> 0.8.0)

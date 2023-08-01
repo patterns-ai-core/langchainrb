@@ -45,6 +45,7 @@ Gem::Specification.new do |spec|
 
   # optional dependencies
   spec.add_development_dependency "ai21", "~> 0.2.1"
+  spec.add_development_dependency "anthropic", "~> 0.1.0"
   spec.add_development_dependency "chroma-db", "~> 0.3.0"
   spec.add_development_dependency "cohere-ruby", "~> 0.9.5"
   spec.add_development_dependency "docx", "~> 0.8.0"
