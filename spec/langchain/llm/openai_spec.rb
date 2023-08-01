@@ -327,6 +327,35 @@ RSpec.describe Langchain::LLM::OpenAI do
           subject.functions = [{foo: :bar}]
           expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Hash
         end
+
+        context "with function_calls responses in the history" do
+          let(:function_call_content) { {"name" => "get_current_weather", "arguments" => {location: "Boston, MA"}.to_json} }
+          let(:complete_response) { {"choices" => [{"message" => {"content" => nil, "function_call" => function_call_content}}]} }
+          let(:messages) do
+            [
+              {role: "user", content: "What is the weather like in Boston?"},
+              {role: "assistant", content: complete_response},
+            ]
+          end
+          let(:history) do
+            [
+              {role: "user", content: "What is the weather like in Boston?"},
+              {role: "assistant", content: nil, function_call: function_call_content},
+              {role: "user", content: prompt}
+            ]
+          end
+
+          it "transforms the messages in the history correctly" do
+            subject.complete_response = true
+            subject.functions = [{foo: :bar}]
+            expect(subject.client).to receive(:chat).with(parameters).and_return(response)
+            # Check that we only send strings or null to OpenAI, otherwise it fails
+            parameters[:parameters][:messages].each do |message|
+              expect([String, NilClass]).to include(message[:content].class)
+            end
+            expect(subject.chat(prompt: prompt, messages: messages, model: model, temperature: temperature)).to be_a Hash
+          end
+        end
       end
     end
 
