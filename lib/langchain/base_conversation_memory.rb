@@ -1,10 +1,7 @@
-# frozen_string_literal: true
-
 module Langchain
-  class ConversationMemory
+  class BaseConversationMemory
     attr_reader :examples, :messages
 
-    # The least number of tokens we want to be under the limit by
     TOKEN_LEEWAY = 20
 
     def initialize(llm:, messages: [], **options)
@@ -27,10 +24,20 @@ module Langchain
 
     def append_ai_message(message)
       @messages << {role: "ai", content: message}
+      after_add_message(message, "ai")
     end
 
     def append_user_message(message)
       @messages << {role: "user", content: message}
+      after_add_message(message, "user")
+    end
+
+    def after_add_message(message, role)
+      # This method can be overridden in subclasses
+    end
+
+    def end_of_conversation
+      # This method can be overridden in subclasses
     end
 
     def reduce_messages(exception)

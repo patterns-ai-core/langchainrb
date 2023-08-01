@@ -203,6 +203,64 @@ Add `gem "ai21", "~> 0.2.1"` to your Gemfile.
 ai21 = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
 ```
 
+### Using Conversation Memory
+
+#### BaseConversationMemory
+
+The `BaseConversationMemory` class in Langchain is a base class that provides a structure for managing the memory of a conversation. It is designed to be extended by subclasses that implement specific strategies for managing conversation memory.
+
+## Overview
+
+`BaseConversationMemory` provides a basic structure for storing and managing messages in a conversation. It maintains an array of messages, where each message is a hash with `role` and `content` keys. The `role` can be either "user" or "ai", and `content` is the text of the message.
+
+The class also provides methods for appending messages to the conversation, setting the context of the conversation, and adding examples to the conversation.
+
+## Usage
+
+Once you have created your custom conversation memory class by extending `BaseConversationMemory` and override the methods as needed, you can use it in a conversation by passing it as the `memory_class` parameter when creating a new `Conversation` instance.
+
+Here's how you can do it:
+
+```ruby
+class MyConversationMemory < Langchain::BaseConversationMemory
+  def after_add_message(message, role)
+    # Custom logic after a message is added
+  end
+
+  def end_of_conversation
+    # Custom logic when the conversation ends
+  end
+end
+
+chat = Langchain::Conversation.new(llm: openai, memory_class: Langchain::MyConversationMemory)
+```
+
+In your subclass, you can override the following methods:
+
+- `after_add_message(message, role)`: This method is called after a message is added to the conversation. You can add custom logic here, for example, to update a database or send a notification.
+
+- `end_of_conversation`: This method is called when the conversation ends. You can add custom logic here, for example, to clean up resources or update the status of the conversation.
+
+## Methods
+
+Here are the main methods provided by `BaseConversationMemory`:
+
+- `set_context(message)`: Sets the context of the conversation. The `message` parameter is the context message.
+
+- `add_examples(examples)`: Adds examples to the conversation. The `examples` parameter is an array of example messages.
+
+- `append_ai_message(message)`: Appends an AI message to the conversation. The `message` parameter is the AI message.
+
+- `append_user_message(message)`: Appends a user message to the conversation. The `message` parameter is the user message.
+
+- `reduce_messages(exception)`: Reduces the number of messages in the conversation. This method is called when the token limit is exceeded. The `exception` parameter is the exception that was raised.
+
+- `context`: Returns the context of the conversation.
+
+- `examples`: Returns the examples in the conversation.
+
+- `messages`: Returns the messages in the conversation.
+
 ### Using Prompts 📋
 
 #### Prompt Templates
