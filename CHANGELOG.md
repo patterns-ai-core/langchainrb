@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.6.10] - 2023-08-01
+- 🗣️ LLMs
+  - Introducing Anthropic support
+
 ## [0.6.9] - 2023-07-29
 
 ## [0.6.8] - 2023-07-21
