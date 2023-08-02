@@ -183,13 +183,13 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt" do
       it "sends prompt within messages" do
-        expect(subject.chat(prompt: prompt)).to eq(answer)
+        expect(subject.chat(prompt: prompt)).to eq(response)
       end
     end
 
     context "with messages" do
       it "sends messages" do
-        expect(subject.chat(messages: [role: "user", content: prompt])).to eq(answer)
+        expect(subject.chat(messages: [role: "user", content: prompt])).to eq(response)
       end
     end
 
@@ -203,11 +203,11 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context and prompt as messages" do
-        expect(subject.chat(prompt: prompt, context: context)).to eq(answer)
+        expect(subject.chat(prompt: prompt, context: context)).to eq(response)
       end
 
       it "sends context and messages as joint messages" do
-        expect(subject.chat(messages: [role: "user", content: prompt], context: context)).to eq(answer)
+        expect(subject.chat(messages: [role: "user", content: prompt], context: context)).to eq(response)
       end
     end
 
@@ -229,11 +229,11 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context, prompt and examples as joint messages" do
-        expect(subject.chat(prompt: prompt, context: context, examples: examples)).to eq(answer)
+        expect(subject.chat(prompt: prompt, context: context, examples: examples)).to eq(response)
       end
 
       it "sends context, messages and examples as joint messages" do
-        expect(subject.chat(messages: [role: "user", content: prompt], context: context, examples: examples)).to eq(answer)
+        expect(subject.chat(messages: [role: "user", content: prompt], context: context, examples: examples)).to eq(response)
       end
 
       context "with prompt, messages, context and examples" do
@@ -255,7 +255,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "sends context, prompt, messages and examples as joint messages" do
-          expect(subject.chat(prompt: prompt, messages: messages, context: context, examples: examples)).to eq(answer)
+          expect(subject.chat(prompt: prompt, messages: messages, context: context, examples: examples)).to eq(response)
         end
       end
 
@@ -278,7 +278,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it overrides system message with context" do
-          expect(subject.chat(messages: messages, context: "You are a human being")).to eq(answer)
+          expect(subject.chat(messages: messages, context: "You are a human being")).to eq(response)
         end
       end
 
@@ -301,7 +301,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it combines last message and prompt" do
-          expect(subject.chat(prompt: prompt, messages: messages)).to eq(answer)
+          expect(subject.chat(prompt: prompt, messages: messages)).to eq(response)
         end
       end
     end
@@ -311,11 +311,10 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:model) { "gpt-3.5-turbo-0301" }
 
       it "sends prompt as message and additional params and returns a response message" do
-        expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+        expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to eq(response)
       end
 
       it "complete response" do
-        subject.complete_response = true
         expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Hash
       end
 
@@ -323,7 +322,6 @@ RSpec.describe Langchain::LLM::OpenAI do
         let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, functions: [{foo: :bar}]}} }
 
         it "functions will be passed on options as accessor" do
-          subject.complete_response = true
           subject.functions = [{foo: :bar}]
           expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Hash
         end

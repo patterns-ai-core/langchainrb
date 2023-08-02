@@ -26,6 +26,8 @@ module Langchain
     # @return [Langchain::Conversation] The Langchain::Conversation instance
     def initialize(llm:, **options, &block)
       @llm = llm
+      @llm.content_only = true
+
       @context = nil
       @examples = []
       @memory = ConversationMemory.new(
@@ -39,7 +41,6 @@ module Langchain
 
     def set_functions(functions)
       @llm.functions = functions
-      @llm.complete_response = true
     end
 
     # Set the context of the conversation. Usually used to set the model's persona.

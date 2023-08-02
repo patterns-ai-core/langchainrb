@@ -161,10 +161,10 @@ qdrant:
 
 ```ruby
 client.llm.functions = functions
-client.llm.complete_response = true
+client.llm.content_only = false
 ```
 
-`complete_response` will return the entire choices data from the gpt response
+`content_only == false` will return the entire hash response.
 
 #### Cohere
 Add `gem "cohere-ruby", "~> 0.9.3"` to your Gemfile.

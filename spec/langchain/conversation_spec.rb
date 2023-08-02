@@ -176,7 +176,7 @@ RSpec.describe Langchain::Conversation do
               }
             ).and_return(response)
 
-            expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
+            expect(subject.message(prompt)).to eq(response)
           end
         end
       end
@@ -289,7 +289,7 @@ RSpec.describe Langchain::Conversation do
           }
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
+        expect(subject.message(prompt)).to eq(response)
       end
     end
   end

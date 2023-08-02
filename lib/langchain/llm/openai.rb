@@ -19,11 +19,13 @@ module Langchain::LLM
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
 
-    attr_accessor :functions, :complete_response
+    attr_accessor :functions, :content_only
 
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai"
       require "openai"
+
+      @content_only = false
 
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
       @defaults = DEFAULTS.merge(default_options)
@@ -124,18 +126,18 @@ module Langchain::LLM
         parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
       end
 
-      if (streaming = block_given?)
+      if block_given?
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk if complete_response
-          yield chunk.dig("choices", 0, "delta", "content") if !complete_response
+          yield chunk if !content_only
+          yield chunk.dig("choices", 0, "delta", "content") if content_only
         end
       end
 
       response = client.chat(parameters: parameters)
       raise Langchain::LLM::ApiError.new "Chat completion failed: #{response.dig("error", "message")}" if !response.empty? && response.dig("error")
-      unless streaming
-        return response.dig("choices", 0, "message", "content") if !complete_response
-        return response if complete_response
+      unless block_given?
+        return response.dig("choices", 0, "message", "content") if content_only
+        return response if !content_only
       end
     end
 
