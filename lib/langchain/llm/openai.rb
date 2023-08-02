@@ -25,7 +25,7 @@ module Langchain::LLM
       depends_on "ruby-openai"
       require "openai"
 
-      @content_only = false
+      @content_only = true
 
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
       @defaults = DEFAULTS.merge(default_options)

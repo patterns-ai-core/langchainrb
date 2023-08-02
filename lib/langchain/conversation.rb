@@ -26,8 +26,6 @@ module Langchain
     # @return [Langchain::Conversation] The Langchain::Conversation instance
     def initialize(llm:, **options, &block)
       @llm = llm
-      @llm.content_only = true
-
       @context = nil
       @examples = []
       @memory = ConversationMemory.new(
