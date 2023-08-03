@@ -203,6 +203,12 @@ Add `gem "ai21", "~> 0.2.1"` to your Gemfile.
 ai21 = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
 ```
 
+#### Anthropic
+Add `gem "anthropic", "~> 0.1.0"` to your Gemfile.
+```ruby
+anthropic = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
+```
+
 ### Using Prompts 📋
 
 #### Prompt Templates
@@ -537,7 +543,7 @@ Join us in the [Langchain.rb](https://discord.gg/WDARp7J2n8) Discord server.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/andreibondarev/langchain.
+Bug reports and pull requests are welcome on GitHub at https://github.com/andreibondarev/langchainrb.
 
 ## License
 

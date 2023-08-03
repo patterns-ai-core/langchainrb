@@ -53,6 +53,12 @@ RSpec.describe Langchain::Vectorsearch::Base do
     end
   end
 
+  describe "#ask" do
+    it "raises an error" do
+      expect { subject.ask }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe "#generate_prompt" do
     it "produces a prompt with the correct format" do
       expect(

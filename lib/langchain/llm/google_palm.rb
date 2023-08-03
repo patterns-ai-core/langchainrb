@@ -155,8 +155,8 @@ module Langchain::LLM
     def transform_messages(messages)
       messages.map do |message|
         {
-          author: message[:role],
-          content: message[:content]
+          author: message[:role] || message["role"],
+          content: message[:content] || message["content"]
         }
       end
     end

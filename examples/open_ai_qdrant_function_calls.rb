@@ -11,10 +11,6 @@ functions = [
         controller_name: {
           type: :string,
           description: "the controller name, e.g. users_controller"
-        },
-        unit: {
-          type: "string",
-          enum: %w[celsius fahrenheit]
         }
       },
       required: ["controller_name"]

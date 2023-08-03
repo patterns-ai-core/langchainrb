@@ -45,6 +45,7 @@ Gem::Specification.new do |spec|
 
   # optional dependencies
   spec.add_development_dependency "ai21", "~> 0.2.1"
+  spec.add_development_dependency "anthropic", "~> 0.1.0"
   spec.add_development_dependency "chroma-db", "~> 0.3.0"
   spec.add_development_dependency "cohere-ruby", "~> 0.9.5"
   spec.add_development_dependency "docx", "~> 0.8.0"
@@ -58,7 +59,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "nokogiri", "~> 1.13"
   spec.add_development_dependency "open-weather-ruby-client", "~> 0.3.0"
   spec.add_development_dependency "pg", "~> 1.5"
-  spec.add_development_dependency "pgvector", "~> 0.2"
+  spec.add_development_dependency "pgvector", "~> 0.2.1"
   spec.add_development_dependency "pdf-reader", "~> 1.4"
   spec.add_development_dependency "pinecone", "~> 0.1.6"
   spec.add_development_dependency "replicate-ruby", "~> 0.2.2"

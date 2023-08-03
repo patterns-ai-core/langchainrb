@@ -139,8 +139,9 @@ module Langchain::Vectorsearch
     # @param question [String] The question to ask
     # @param namespace [String] The namespace to search in
     # @param filter [String] The filter to use
+    # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, namespace: "", filter: nil)
+    def ask(question:, namespace: "", filter: nil, &block)
       search_results = similarity_search(query: question, namespace: namespace, filter: filter)
 
       context = search_results.map do |result|
@@ -150,7 +151,7 @@ module Langchain::Vectorsearch
 
       prompt = generate_prompt(question: question, context: context)
 
-      llm.chat(prompt: prompt)
+      llm.chat(prompt: prompt, &block)
     end
 
     # Pinecone index
