@@ -88,7 +88,11 @@ module Langchain::Vectorsearch
       }
     end
 
-    def similarity_search(text:, k: 10, query: {})
+    def similarity_search(text: "", k: 10, query: {})
+      if text.empty? && query.empty?
+        raise "Either text or query should pass as an argument"
+      end
+
       if query.empty?
         query_vector = llm.embed(text: text)
 
@@ -98,7 +102,11 @@ module Langchain::Vectorsearch
       es_client.search(body: { query: query, size: k }).body
     end
 
-    def similarity_search_by_vector(embedding:, k: 10, query: {})
+    def similarity_search_by_vector(embedding: [], k: 10, query: {})
+      if embedding.empty? && query.empty?
+        raise "Either embedding or query should pass as an argument"
+      end
+
       query = default_query(embedding) if query.empty?
 
       es_client.search(body: { query: query, size: k }).body
