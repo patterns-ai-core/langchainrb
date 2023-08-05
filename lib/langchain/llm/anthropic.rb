@@ -13,7 +13,8 @@ module Langchain::LLM
   class Anthropic < Base
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "claude-2"
+      completion_model_name: "claude-2",
+      max_tokens_to_sample: 256
     }.freeze
 
     # TODO: Implement token length validator for Anthropic
@@ -49,7 +50,7 @@ module Langchain::LLM
     private
 
     def compose_parameters(model, params)
-      default_params = {model: model, temperature: @defaults[:temperature]}
+      default_params = {model: model}.merge(@defaults.except(:completion_model_name))
 
       default_params.merge(params)
     end

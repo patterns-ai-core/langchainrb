@@ -16,7 +16,8 @@ RSpec.describe Langchain::LLM::Anthropic do
           .with(parameters: {
             model: described_class::DEFAULTS[:completion_model_name],
             prompt: completion,
-            temperature: described_class::DEFAULTS[:temperature]
+            temperature: described_class::DEFAULTS[:temperature],
+            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens_to_sample]
           })
           .and_return(response)
       end
