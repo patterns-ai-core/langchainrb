@@ -132,6 +132,7 @@ module Langchain
 
   module LLM
     autoload :AI21, "langchain/llm/ai21"
+    autoload :Anthropic, "langchain/llm/anthropic"
     autoload :Base, "langchain/llm/base"
     autoload :Cohere, "langchain/llm/cohere"
     autoload :GooglePalm, "langchain/llm/google_palm"

@@ -19,6 +19,8 @@ module Langchain::LLM
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
 
+    attr_accessor :functions, :complete_response
+
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai"
       require "openai"
@@ -115,20 +117,25 @@ module Langchain::LLM
 
       parameters = compose_parameters @defaults[:chat_completion_model_name], options
       parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
-      parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
+
+      if functions
+        parameters[:functions] = functions
+      else
+        parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
+      end
 
       if (streaming = block_given?)
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk.dig("choices", 0, "delta", "content")
+          yield chunk if complete_response
+          yield chunk.dig("choices", 0, "delta", "content") if !complete_response
         end
       end
 
       response = client.chat(parameters: parameters)
-
       raise Langchain::LLM::ApiError.new "Chat completion failed: #{response.dig("error", "message")}" if !response.empty? && response.dig("error")
-
       unless streaming
-        response.dig("choices", 0, "message", "content")
+        return response.dig("choices", 0, "message", "content") if !complete_response
+        return response if complete_response
       end
     end
 
@@ -182,9 +189,12 @@ module Langchain::LLM
 
     def transform_messages(messages)
       messages.map do |message|
+        role = message[:role] || message["role"]
+        content = message[:content] || message["content"]
+
         {
-          content: message[:content],
-          role: (message[:role] == "ai") ? "assistant" : message[:role]
+          content: content,
+          role: (role == "ai") ? "assistant" : role
         }
       end
     end

@@ -1,0 +1,7 @@
+{
+  "completion": " The sky has no definitive",
+  "stop_reason": "max_tokens",
+  "model": "claude-2.0",
+  "stop": null,
+  "log_id": "b5a12f0ec9900c47ed5c9254d2794f72c14afa6c61571a11ce33f45034ae7bce"
+}

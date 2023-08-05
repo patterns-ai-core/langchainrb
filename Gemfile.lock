@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.6.6)
+    langchainrb (0.6.10)
       baran (~> 0.1.6)
       colorize (~> 0.8.1)
       json-schema (~> 4.0.0)
@@ -33,8 +33,11 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     afm (0.2.2)
     ai21 (0.2.1)
+    anthropic (0.1.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ast (2.4.2)
-    baran (0.1.6)
+    baran (0.1.7)
     builder (3.2.4)
     byebug (11.1.3)
     childprocess (4.1.0)
@@ -141,7 +144,7 @@ GEM
       faraday (>= 1.0)
       faraday_middleware
       graphql-client
-    graphql (2.0.23)
+    graphql (2.0.24)
     graphql-client (0.18.0)
       activesupport (>= 3.0)
       graphql
@@ -198,7 +201,7 @@ GEM
       ruby-rc4
       ttfunk
     pg (1.5.3)
-    pgvector (0.2.0)
+    pgvector (0.2.1)
     pinecone (0.1.71)
       dry-struct (~> 1.6.0)
       dry-validation (~> 1.10.0)
@@ -273,7 +276,7 @@ GEM
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
     ruby-next-core (0.15.3)
-    ruby-openai (4.0.0)
+    ruby-openai (4.1.0)
       faraday (>= 1)
       faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
@@ -308,7 +311,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
-    weaviate-ruby (0.8.3)
+    weaviate-ruby (0.8.4)
       faraday (~> 1)
       faraday_middleware (~> 1)
       graphlient (~> 0.6.0)
@@ -327,6 +330,7 @@ PLATFORMS
 
 DEPENDENCIES
   ai21 (~> 0.2.1)
+  anthropic (~> 0.1.0)
   chroma-db (~> 0.3.0)
   cohere-ruby (~> 0.9.5)
   docx (~> 0.8.0)
@@ -344,7 +348,7 @@ DEPENDENCIES
   open-weather-ruby-client (~> 0.3.0)
   pdf-reader (~> 1.4)
   pg (~> 1.5)
-  pgvector (~> 0.2)
+  pgvector (~> 0.2.1)
   pinecone (~> 0.1.6)
   pry-byebug (~> 3.10.0)
   qdrant-ruby (~> 0.9.0)
@@ -354,7 +358,7 @@ DEPENDENCIES
   roo (~> 2.10.0)
   rspec (~> 3.0)
   rubocop
-  ruby-openai (~> 4.0.0)
+  ruby-openai (~> 4.1.0)
   safe_ruby (~> 1.0.4)
   sequel (~> 5.68.0)
   standardrb
@@ -363,4 +367,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   2.4.0
+   2.3.22

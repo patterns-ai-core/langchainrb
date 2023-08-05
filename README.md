@@ -145,6 +145,27 @@ openai.embed(text: "foo bar")
 openai.complete(prompt: "What is the meaning of life?")
 ```
 
+##### Open AI Function calls support
+
+Conversation support
+
+```ruby
+chat = Langchain::Conversation.new(llm: openai)
+```
+```ruby
+chat.set_context("You are the climate bot")
+chat.set_functions(functions)
+```
+
+qdrant:
+
+```ruby
+client.llm.functions = functions
+client.llm.complete_response = true
+```
+
+`complete_response` will return the entire choices data from the gpt response
+
 #### Cohere
 Add `gem "cohere-ruby", "~> 0.9.3"` to your Gemfile.
 
@@ -180,6 +201,12 @@ google_palm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"]
 Add `gem "ai21", "~> 0.2.1"` to your Gemfile.
 ```ruby
 ai21 = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
+```
+
+#### Anthropic
+Add `gem "anthropic", "~> 0.1.0"` to your Gemfile.
+```ruby
+anthropic = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
 ```
 
 ### Using Prompts 📋
@@ -516,7 +543,7 @@ Join us in the [Langchain.rb](https://discord.gg/WDARp7J2n8) Discord server.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/andreibondarev/langchain.
+Bug reports and pull requests are welcome on GitHub at https://github.com/andreibondarev/langchainrb.
 
 ## License
 
