@@ -490,7 +490,6 @@ Langchain::Loader.load('https://www.example.com/file.pdf')
 | xlsx   | Langchain::Processors::Xlsx  |   `gem "roo", "~> 2.10.0"`   |
 
 ## Examples
-
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
 
 ## Logging
