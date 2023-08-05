@@ -97,13 +97,13 @@ GEM
       dry-initializer (~> 3.0)
       dry-schema (>= 1.12, < 2)
       zeitwerk (~> 2.6)
-    elasticsearch (7.0.0)
-      elasticsearch-api (= 7.0.0)
-      elasticsearch-transport (= 7.0.0)
-    elasticsearch-api (7.0.0)
+    elastic-transport (8.0.0)
+      faraday (~> 1)
       multi_json
-    elasticsearch-transport (7.0.0)
-      faraday
+    elasticsearch (8.0.1)
+      elastic-transport (= 8.0.0)
+      elasticsearch-api (= 8.0.1)
+    elasticsearch-api (8.0.1)
       multi_json
     eqn (1.6.5)
       treetop (>= 1.2.0)
@@ -331,7 +331,7 @@ DEPENDENCIES
   cohere-ruby (~> 0.9.5)
   docx (~> 0.8.0)
   dotenv-rails (~> 2.7.6)
-  elasticsearch (~> 7.0.0)
+  elasticsearch (~> 8.0.0)
   eqn (~> 1.6.5)
   google_palm_api (~> 0.1.2)
   google_search_results (~> 2.0.0)
