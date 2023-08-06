@@ -209,6 +209,10 @@ Add `gem "anthropic", "~> 0.1.0"` to your Gemfile.
 anthropic = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
 ```
 
+```ruby
+anthropic.complete(prompt: "What is the meaning of life?")
+```
+
 ### Using Prompts 📋
 
 #### Prompt Templates
