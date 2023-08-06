@@ -89,9 +89,9 @@ module Langchain
     end
 
     def load_from_path
-      raise FileNotFound unless File.exist?(@path)
+      return File.open(@path) if File.exist?(@path)
 
-      File.open(@path)
+      raise FileNotFound, "File #{@path} does not exist"
     end
 
     def load_from_directory(&block)
