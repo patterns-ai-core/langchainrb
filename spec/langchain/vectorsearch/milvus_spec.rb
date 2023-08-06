@@ -65,6 +65,7 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
 
   describe "#similarity_search_by_vector" do
     before do
+      allow(subject.client.collections).to receive(:load).and_return(true)
       allow(subject.client).to receive(:search).and_return(true)
     end
 
