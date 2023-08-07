@@ -128,6 +128,20 @@ module Langchain::Vectorsearch
       raise NotImplementedError, "#{self.class.name} does not support similarity search"
     end
 
+    # Paper: https://arxiv.org/abs/2212.10496
+    # Hypothetical Document Embeddings (HyDE)-augmented similarity search
+    #
+    # @param query [String] The query to search for
+    # @param k [Integer] The number of results to return
+    # @return [String] Response
+    def similarity_search_with_hyde(query:, k: 4)
+      hyde_completion = llm.hyde_completion(question: query)
+
+      embedding = llm.embed(text: hyde_completion)
+
+      similarity_search_by_vector(embedding: embedding, k: k)
+    end
+
     # Method supported by Vectorsearch DB to search for similar texts in the index by the passed in vector.
     # You must generate your own vector using the same LLM that generated the embeddings stored in the Vectorsearch DB.
     def similarity_search_by_vector(...)
