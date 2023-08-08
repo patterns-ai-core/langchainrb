@@ -102,19 +102,13 @@ module Langchain::LLM
     #         },
     #       ]
     #
-    # @param prompt [String] The prompt to generate a chat completion for
-    # @param messages [Array<Hash>] The messages that have been sent in the conversation
-    #   Each message should be a Hash with the following keys:
-    #   - :content [String] The content of the message
-    #   - :role [String] The role of the sender (system, user, assistant, or function)
-    # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
-    # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
-    #   Each message should be a Hash with the following keys:
-    #   - :content [String] The content of the message
-    #   - :role [String] The role of the sender (system, user, assistant, or function)
-    # @param options <Hash> extra parameters passed to OpenAI::Client#chat
-    # @yield [String] Stream responses back one String at a time
-    # @return [String] The chat completion
+    # @param prompt [HumanMessage] The prompt to generate a chat completion for
+    # @param messages [Array<AIMessage|HumanMessage>] The messages that have been sent in the conversation
+    # @param context [SystemMessage] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
+    # @param examples [Array<AIMessage|HumanMessage>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    # @param options [Hash] extra parameters passed to OpenAI::Client#chat
+    # @yield [AIMessage] Stream responses back one String at a time
+    # @return [AIMessage] The chat completion
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
@@ -133,7 +127,7 @@ module Langchain::LLM
           delta = chunk.dig("choices", 0, "delta")
           content = delta["content"]
           additional_kwargs = {function_call: delta["function_call"]}.compact
-          yield AIMessage.new(content, additional_kwargs)
+          yield Langchain::AIMessage.new(content, additional_kwargs)
         end
       end
 
@@ -198,8 +192,8 @@ module Langchain::LLM
     def transform_messages(messages)
       messages.map do |message|
         {
-          content: message.content,
-          role: ROLE_MAPPING[message.type] || message.type
+          role: ROLE_MAPPING.fetch(message.type, message.type),
+          content: message.content
         }
       end
     end

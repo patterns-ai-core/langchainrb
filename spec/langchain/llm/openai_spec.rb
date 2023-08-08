@@ -151,7 +151,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     let(:model) { "gpt-3.5-turbo" }
     let(:temperature) { 0.0 }
     let(:history) { [content: prompt, role: "user"] }
-    let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, max_tokens: be_between(4015, 4096)}} }
+    let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, max_tokens: be_between(4014, 4096)}} }
     let(:answer) { "As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?" }
     let(:response) do
       {

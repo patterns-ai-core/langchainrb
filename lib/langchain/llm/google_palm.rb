@@ -75,10 +75,12 @@ module Langchain::LLM
     #
     # Generate a chat completion for a given prompt
     #
-    # @param prompt [String] The prompt to generate a chat completion for
-    # @param messages [Array] The messages that have been sent in the conversation
-    # @param params extra parameters passed to GooglePalmAPI::Client#generate_chat_message
-    # @return [String] The chat completion
+    # @param prompt [HumanMessage] The prompt to generate a chat completion for
+    # @param messages [Array<AIMessage|HumanMessage>] The messages that have been sent in the conversation
+    # @param context [SystemMessage] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
+    # @param examples [Array<AIMessage|HumanMessage>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    # @param options [Hash] extra parameters passed to GooglePalmAPI::Client#generate_chat_message
+    # @return [AIMessage] The chat completion
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
@@ -158,7 +160,7 @@ module Langchain::LLM
     def transform_messages(messages)
       messages.map do |message|
         {
-          author: ROLE_MAPPING[message.type] || message.type,
+          author: ROLE_MAPPING.fetch(message.type, message.type),
           content: message.content
         }
       end
