@@ -39,17 +39,16 @@ module Langchain
 
     def set_functions(functions)
       @llm.functions = functions
-      @llm.complete_response = true
     end
 
     # Set the context of the conversation. Usually used to set the model's persona.
     # @param message [String] The context of the conversation
     def set_context(message)
-      @memory.set_context message
+      @memory.set_context SystemMessage.new(message)
     end
 
     # Add examples to the conversation. Used to give the model a sense of the conversation.
-    # @param examples [Array<Hash>] The examples to add to the conversation
+    # @param examples [Array<HumanMessage|AIMessage>] The examples to add to the conversation
     def add_examples(examples)
       @memory.add_examples examples
     end
@@ -58,10 +57,11 @@ module Langchain
     # @param message [String] The prompt to message the model with
     # @return [String] The response from the model
     def message(message)
-      @memory.append_user_message(message)
-      response = llm_response(message)
-      @memory.append_ai_message(response)
-      response
+      human_message = HumanMessage.new(message)
+      @memory.append_message(human_message)
+      ai_message = llm_response(human_message)
+      @memory.append_message(ai_message)
+      ai_message
     end
 
     # Messages from conversation memory

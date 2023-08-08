@@ -19,6 +19,9 @@ module Langchain::LLM
       embeddings_model_name: "embedding-gecko-001"
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidator
+    ROLE_MAPPING = {
+      "human" => "user"
+    }
 
     def initialize(api_key:, default_options: {})
       depends_on "google_palm_api"
@@ -83,7 +86,7 @@ module Langchain::LLM
       default_params = {
         temperature: @defaults[:temperature],
         model: @defaults[:chat_completion_model_name],
-        context: context,
+        context: context.to_s,
         messages: compose_chat_messages(prompt: prompt, messages: messages),
         examples: compose_examples(examples)
       }
@@ -104,7 +107,7 @@ module Langchain::LLM
       response = client.generate_chat_message(**default_params)
       raise "GooglePalm API returned an error: #{response}" if response.dig("error")
 
-      response.dig("candidates", 0, "content")
+      Langchain::AIMessage.new(response.dig("candidates", 0, "content"))
     end
 
     #
@@ -146,8 +149,8 @@ module Langchain::LLM
     def compose_examples(examples)
       examples.each_slice(2).map do |example|
         {
-          input: {content: example.first[:content]},
-          output: {content: example.last[:content]}
+          input: {content: example.first.content},
+          output: {content: example.last.content}
         }
       end
     end
@@ -155,8 +158,8 @@ module Langchain::LLM
     def transform_messages(messages)
       messages.map do |message|
         {
-          author: message[:role] || message["role"],
-          content: message[:content] || message["content"]
+          author: ROLE_MAPPING[message.type] || message.type,
+          content: message.content
         }
       end
     end

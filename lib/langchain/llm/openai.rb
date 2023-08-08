@@ -18,8 +18,12 @@ module Langchain::LLM
       dimension: 1536
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
+    ROLE_MAPPING = {
+      "ai" => "assistant",
+      "human" => "user"
+    }
 
-    attr_accessor :functions, :complete_response
+    attr_accessor :functions
 
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai"
@@ -126,16 +130,20 @@ module Langchain::LLM
 
       if (streaming = block_given?)
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk if complete_response
-          yield chunk.dig("choices", 0, "delta", "content") if !complete_response
+          delta = chunk.dig("choices", 0, "delta")
+          content = delta["content"]
+          additional_kwargs = {function_call: delta["function_call"]}.compact
+          yield AIMessage.new(content, additional_kwargs)
         end
       end
 
       response = client.chat(parameters: parameters)
       raise Langchain::LLM::ApiError.new "Chat completion failed: #{response.dig("error", "message")}" if !response.empty? && response.dig("error")
       unless streaming
-        return response.dig("choices", 0, "message", "content") if !complete_response
-        return response if complete_response
+        message = response.dig("choices", 0, "message")
+        content = message["content"]
+        additional_kwargs = {function_call: message["function_call"]}.compact
+        Langchain::AIMessage.new(content.to_s, additional_kwargs)
       end
     end
 
@@ -171,9 +179,9 @@ module Langchain::LLM
 
       history.concat transform_messages(messages) unless messages.empty?
 
-      unless context.nil? || context.empty?
+      unless context.nil? || context.to_s.empty?
         history.reject! { |message| message[:role] == "system" }
-        history.prepend({role: "system", content: context})
+        history.prepend({role: "system", content: context.content})
       end
 
       unless prompt.empty?
@@ -189,12 +197,9 @@ module Langchain::LLM
 
     def transform_messages(messages)
       messages.map do |message|
-        role = message[:role] || message["role"]
-        content = message[:content] || message["content"]
-
         {
-          content: content,
-          role: (role == "ai") ? "assistant" : role
+          content: message.content,
+          role: ROLE_MAPPING[message.type] || message.type
         }
       end
     end
