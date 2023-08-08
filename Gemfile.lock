@@ -6,6 +6,7 @@ PATH
       colorize (~> 0.8.1)
       json-schema (~> 4.0.0)
       tiktoken_ruby (~> 0.0.5)
+      zeitwerk (= 2.6.11)
 
 GEM
   remote: https://rubygems.org/
@@ -309,7 +310,7 @@ GEM
     wikipedia-client (1.17.0)
       addressable (~> 2.7)
     yard (0.9.34)
-    zeitwerk (2.6.8)
+    zeitwerk (2.6.11)
 
 PLATFORMS
   arm64-darwin-21

@@ -32,22 +32,4 @@ module Langchain
       hash.to_json
     end
   end
-
-  class AIMessage < Message
-    def type
-      "ai"
-    end
-  end
-
-  class HumanMessage < Message
-    def type
-      "human"
-    end
-  end
-
-  class SystemMessage < Message
-    def type
-      "system"
-    end
-  end
 end
