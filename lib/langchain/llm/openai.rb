@@ -194,7 +194,7 @@ module Langchain::LLM
         {
           role: ROLE_MAPPING.fetch(message.type, message.type),
           content: message.content
-        }
+        }.merge(message.additional_kwargs || {})
       end
     end
 

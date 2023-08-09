@@ -50,4 +50,10 @@ module Langchain
       "system"
     end
   end
+
+  class FunctionMessage < Message
+    def type
+      "function"
+    end
+  end
 end

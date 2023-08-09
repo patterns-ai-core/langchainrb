@@ -64,6 +64,18 @@ module Langchain
       ai_message
     end
 
+    # Message the model with the function name, content and return the response.
+    # @param message [String] The content or arguments for the function call
+    # @param name [String] The name of the function to be called
+    # @return [String] The response from the function call
+    def function(message, name)
+      function_message = FunctionMessage.new(message, {name: name})
+      @memory.append_message(function_message)
+      ai_message = llm_response
+      @memory.append_message(ai_message)
+      ai_message
+    end
+
     # Messages from conversation memory
     # @return [Array<AIMessage|HumanMessage>] The messages from the conversation memory
     def messages
