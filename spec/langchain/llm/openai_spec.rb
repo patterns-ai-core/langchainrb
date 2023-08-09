@@ -152,7 +152,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     let(:model) { "gpt-3.5-turbo" }
     let(:temperature) { 0.0 }
     let(:history) { [content: prompt, role: "user"] }
-    let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, max_tokens: be_between(4015, 4096)}} }
+    let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, max_tokens: be_between(4014, 4096)}} }
     let(:answer) { "As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?" }
     let(:response) do
       {
@@ -184,45 +184,45 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt" do
       it "sends prompt within messages" do
-        expect(subject.chat(prompt: prompt)).to eq(answer)
+        expect(subject.chat(prompt: prompt).to_s).to eq(answer)
       end
     end
 
     context "with messages" do
       it "sends messages" do
-        expect(subject.chat(messages: [role: "user", content: prompt])).to eq(answer)
+        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)]).to_s).to eq(answer)
       end
     end
 
     context "with context" do
-      let(:context) { "You are a chatbot" }
+      let(:context) { Langchain::SystemMessage.new("You are a chatbot") }
       let(:history) do
         [
-          {role: "system", content: context},
+          {role: "system", content: context.to_s},
           {role: "user", content: prompt}
         ]
       end
 
       it "sends context and prompt as messages" do
-        expect(subject.chat(prompt: prompt, context: context)).to eq(answer)
+        expect(subject.chat(prompt: prompt, context: context).to_s).to eq(answer)
       end
 
       it "sends context and messages as joint messages" do
-        expect(subject.chat(messages: [role: "user", content: prompt], context: context)).to eq(answer)
+        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)], context: context).to_s).to eq(answer)
       end
     end
 
     context "with context and examples" do
-      let(:context) { "You are a chatbot" }
+      let(:context) { Langchain::SystemMessage.new("You are a chatbot") }
       let(:examples) do
         [
-          {role: "user", content: "Hello"},
-          {role: "assistant", content: "Hi. How can I assist you today?"}
+          Langchain::HumanMessage.new("Hello"),
+          Langchain::AIMessage.new("Hi. How can I assist you today?")
         ]
       end
       let(:history) do
         [
-          {role: "system", content: context},
+          {role: "system", content: context.to_s},
           {role: "user", content: "Hello"},
           {role: "assistant", content: "Hi. How can I assist you today?"},
           {role: "user", content: prompt}
@@ -230,23 +230,23 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context, prompt and examples as joint messages" do
-        expect(subject.chat(prompt: prompt, context: context, examples: examples)).to eq(answer)
+        expect(subject.chat(prompt: prompt, context: context, examples: examples).to_s).to eq(answer)
       end
 
       it "sends context, messages and examples as joint messages" do
-        expect(subject.chat(messages: [role: "user", content: prompt], context: context, examples: examples)).to eq(answer)
+        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)], context: context, examples: examples).to_s).to eq(answer)
       end
 
       context "with prompt, messages, context and examples" do
         let(:messages) do
           [
-            {role: "user", content: "Can you answer questions?"},
-            {role: "ai", content: "Yes, I can answer questions."}
+            Langchain::HumanMessage.new("Can you answer questions?"),
+            Langchain::AIMessage.new("Yes, I can answer questions.")
           ]
         end
         let(:history) do
           [
-            {role: "system", content: context},
+            {role: "system", content: context.to_s},
             {role: "user", content: "Hello"},
             {role: "assistant", content: "Hi. How can I assist you today?"},
             {role: "user", content: "Can you answer questions?"},
@@ -256,17 +256,17 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "sends context, prompt, messages and examples as joint messages" do
-          expect(subject.chat(prompt: prompt, messages: messages, context: context, examples: examples)).to eq(answer)
+          expect(subject.chat(prompt: prompt, messages: messages, context: context, examples: examples).to_s).to eq(answer)
         end
       end
 
       context "when context is already present in messages" do
         let(:messages) do
           [
-            {role: "system", content: context},
-            {role: "user", content: "Hello"},
-            {role: "assistant", content: "Hi. How can I assist you today?"},
-            {role: "user", content: prompt}
+            Langchain::SystemMessage.new(context),
+            Langchain::HumanMessage.new("Hello"),
+            Langchain::AIMessage.new("Hi. How can I assist you today?"),
+            Langchain::HumanMessage.new(prompt)
           ]
         end
         let(:history) do
@@ -279,22 +279,22 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it overrides system message with context" do
-          expect(subject.chat(messages: messages, context: "You are a human being")).to eq(answer)
+          expect(subject.chat(messages: messages, context: Langchain::SystemMessage.new("You are a human being")).to_s).to eq(answer)
         end
       end
 
       context "when last message is from user and prompt is present" do
         let(:messages) do
           [
-            {role: "system", content: context},
-            {role: "user", content: "Hello"},
-            {role: "assistant", content: "Hi. How can I assist you today?"},
-            {role: "user", content: "I want to ask a question"}
+            context,
+            Langchain::HumanMessage.new("Hello"),
+            Langchain::AIMessage.new("Hi. How can I assist you today?"),
+            Langchain::HumanMessage.new("I want to ask a question")
           ]
         end
         let(:history) do
           [
-            {role: "system", content: context},
+            {role: "system", content: context.to_s},
             {role: "user", content: "Hello"},
             {role: "assistant", content: "Hi. How can I assist you today?"},
             {role: "user", content: "I want to ask a question\n#{prompt}"}
@@ -302,7 +302,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it combines last message and prompt" do
-          expect(subject.chat(prompt: prompt, messages: messages)).to eq(answer)
+          expect(subject.chat(prompt: prompt, messages: messages).to_s).to eq(answer)
         end
       end
     end
@@ -312,21 +312,15 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:model) { "gpt-3.5-turbo-0301" }
 
       it "sends prompt as message and additional params and returns a response message" do
-        expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
-      end
-
-      it "complete response" do
-        subject.complete_response = true
-        expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Hash
+        expect(subject.chat(prompt: prompt, model: model, temperature: temperature).to_s).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
       end
 
       context "functions" do
         let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, functions: [{foo: :bar}]}} }
 
         it "functions will be passed on options as accessor" do
-          subject.complete_response = true
           subject.functions = [{foo: :bar}]
-          expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Hash
+          expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Langchain::AIMessage
         end
       end
     end

@@ -161,10 +161,7 @@ qdrant:
 
 ```ruby
 client.llm.functions = functions
-client.llm.complete_response = true
 ```
-
-`complete_response` will return the entire choices data from the gpt response
 
 #### Cohere
 Add `gem "cohere-ruby", "~> 0.9.3"` to your Gemfile.

@@ -25,12 +25,8 @@ module Langchain
       @examples.concat examples
     end
 
-    def append_ai_message(message)
-      @messages << {role: "ai", content: message}
-    end
-
-    def append_user_message(message)
-      @messages << {role: "user", content: message}
+    def append_message(message)
+      @messages.append(message)
     end
 
     def reduce_messages(exception)
@@ -47,7 +43,7 @@ module Langchain
     def context
       return if @context.nil? && @summary.nil?
 
-      [@context, @summary].compact.join("\n")
+      SystemMessage.new([@context, @summary].compact.join("\n"))
     end
 
     private
