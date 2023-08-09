@@ -90,7 +90,6 @@ module Langchain::Vectorsearch
     end
 
     # Create default schema
-    # @return [PG::Result] The response from the database
     def create_default_schema
       db.run "CREATE EXTENSION IF NOT EXISTS vector"
       namespace = namespace_column
@@ -103,7 +102,10 @@ module Langchain::Vectorsearch
       end
     end
 
-    # TODO: Add destroy_default_schema method
+    # Destroy default schema
+    def destroy_default_schema
+      db.drop_table? table_name.to_sym
+    end
 
     # Search for similar texts in the index
     # @param query [String] The text to search for
