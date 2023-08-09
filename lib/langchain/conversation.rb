@@ -59,7 +59,7 @@ module Langchain
     def message(message)
       human_message = HumanMessage.new(message)
       @memory.append_message(human_message)
-      ai_message = llm_response(human_message)
+      ai_message = llm_response
       @memory.append_message(ai_message)
       ai_message
     end
@@ -84,7 +84,7 @@ module Langchain
 
     private
 
-    def llm_response(prompt)
+    def llm_response
       @llm.chat(messages: @memory.messages, context: @memory.context, examples: @memory.examples, **@options, &@block)
     rescue Langchain::Utils::TokenLength::TokenLimitExceeded => exception
       @memory.reduce_messages(exception)
