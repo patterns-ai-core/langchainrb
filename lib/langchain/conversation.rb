@@ -17,7 +17,7 @@ module Langchain
   #     end
   #
   class Conversation
-    attr_reader :options
+    attr_reader :options, :memory
 
     # Intialize Conversation with a LLM
     #
