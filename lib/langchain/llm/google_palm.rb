@@ -75,12 +75,12 @@ module Langchain::LLM
     #
     # Generate a chat completion for a given prompt
     #
-    # @param prompt [HumanMessage] The prompt to generate a chat completion for
+    # @param prompt [String] The prompt to generate a chat completion for
     # @param messages [Array<AIMessage|HumanMessage>] The messages that have been sent in the conversation
-    # @param context [SystemMessage] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
+    # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
     # @param examples [Array<AIMessage|HumanMessage>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
     # @param options [Hash] extra parameters passed to GooglePalmAPI::Client#generate_chat_message
-    # @return [AIMessage] The chat completion
+    # @return [Hash] The LLM response
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
@@ -88,7 +88,7 @@ module Langchain::LLM
       default_params = {
         temperature: @defaults[:temperature],
         model: @defaults[:chat_completion_model_name],
-        context: context.to_s,
+        context: context,
         messages: compose_chat_messages(prompt: prompt, messages: messages),
         examples: compose_examples(examples)
       }
@@ -109,7 +109,7 @@ module Langchain::LLM
       response = client.generate_chat_message(**default_params)
       raise "GooglePalm API returned an error: #{response}" if response.dig("error")
 
-      Langchain::AIMessage.new(response.dig("candidates", 0, "content"))
+      response.dig("candidates", 0)
     end
 
     #

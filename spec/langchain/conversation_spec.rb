@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Conversation do
-  let(:llm) { double("Langchain::LLM::OpenaAI") }
+  let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
 
   subject { described_class.new(llm: llm) }
 
@@ -33,7 +33,7 @@ RSpec.describe Langchain::Conversation do
     let(:context) { "You are a chatbot" }
     let(:examples) { [Langchain::HumanMessage.new("Hello"), Langchain::AIMessage.new("Hi")] }
     let(:prompt) { "How are you doing?" }
-    let(:response) { Langchain::AIMessage.new("I'm doing well. How about you?") }
+    let(:response) { {"content" => "I'm doing well. How about you?"} }
 
     context "with stream: true option and block passed in" do
       let(:block) { proc { |chunk| print(chunk) } }
@@ -41,25 +41,25 @@ RSpec.describe Langchain::Conversation do
 
       it "messages the model and yields the response" do
         expect(llm).to receive(:chat).with(
-          context: nil,
+          context: "",
           examples: [],
           messages: [Langchain::HumanMessage.new(prompt)],
           &block
         ).and_return(response)
 
-        expect(conversation.message(prompt)).to eq(response)
+        expect(conversation.message(prompt)).to eq(Langchain::AIMessage.new(response["content"]))
       end
     end
 
     context "with simple prompt" do
       it "messages the model and returns the response" do
         expect(llm).to receive(:chat).with(
-          context: nil,
+          context: "",
           examples: [],
           messages: [Langchain::HumanMessage.new(prompt)]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(response)
+        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response["content"]))
       end
     end
 
@@ -70,12 +70,12 @@ RSpec.describe Langchain::Conversation do
 
       it "messages the model and returns the response" do
         expect(llm).to receive(:chat).with(
-          context: Langchain::SystemMessage.new(context),
+          context: context,
           examples: [],
           messages: [Langchain::HumanMessage.new(prompt)]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(response)
+        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response["content"]))
       end
     end
 
@@ -87,7 +87,7 @@ RSpec.describe Langchain::Conversation do
 
       it "messages the model and returns the response" do
         expect(llm).to receive(:chat).with(
-          context: Langchain::SystemMessage.new(context),
+          context: context,
           examples: [
             Langchain::HumanMessage.new("Hello"),
             Langchain::AIMessage.new("Hi")
@@ -97,7 +97,7 @@ RSpec.describe Langchain::Conversation do
           ]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(response)
+        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response["content"]))
       end
     end
 
@@ -106,13 +106,13 @@ RSpec.describe Langchain::Conversation do
 
       it "messages the model with passed options" do
         expect(llm).to receive(:chat).with(
-          context: nil,
+          context: "",
           examples: [],
           messages: [Langchain::HumanMessage.new(prompt)],
           temperature: 0.7
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(response)
+        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response["content"]))
       end
     end
 
