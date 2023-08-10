@@ -107,7 +107,7 @@ module Langchain::LLM
     # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
     # @param examples [Array<AIMessage|HumanMessage>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
     # @param options [Hash] extra parameters passed to OpenAI::Client#chat
-    # @yield [Hash] Stream responses back one String at a time
+    # @yield [Hash] Stream responses back one Hash at a time
     # @return [Hash] The LLM response
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
@@ -124,7 +124,7 @@ module Langchain::LLM
 
       if (streaming = block_given?)
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk.dig("choices", 0, "delta")
+          yield chunk
         end
       end
 
@@ -133,7 +133,7 @@ module Langchain::LLM
 
       return if streaming
 
-      response.dig("choices", 0, "message")
+      response
     end
 
     #

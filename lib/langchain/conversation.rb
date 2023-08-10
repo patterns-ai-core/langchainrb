@@ -60,7 +60,7 @@ module Langchain
       human_message = HumanMessage.new(message)
       @memory.append_message(human_message)
       llm_response = call_llm
-      ai_message = AIMessage.from_llm_response(@llm.class, llm_response)
+      ai_message = AIMessage.from_llm_response(@llm, llm_response)
       @memory.append_message(ai_message)
       ai_message
     end

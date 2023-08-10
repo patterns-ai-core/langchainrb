@@ -184,13 +184,13 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt" do
       it "sends prompt within messages" do
-        expect(subject.chat(prompt: prompt)["content"]).to eq(answer)
+        expect(subject.chat(prompt: prompt).dig("choices", 0, "message", "content")).to eq(answer)
       end
     end
 
     context "with messages" do
       it "sends messages" do
-        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)])["content"]).to eq(answer)
+        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)]).dig("choices", 0, "message", "content")).to eq(answer)
       end
     end
 
@@ -204,11 +204,11 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context and prompt as messages" do
-        expect(subject.chat(prompt: prompt, context: context)["content"]).to eq(answer)
+        expect(subject.chat(prompt: prompt, context: context).dig("choices", 0, "message", "content")).to eq(answer)
       end
 
       it "sends context and messages as joint messages" do
-        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)], context: context)["content"]).to eq(answer)
+        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)], context: context).dig("choices", 0, "message", "content")).to eq(answer)
       end
     end
 
@@ -230,11 +230,11 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context, prompt and examples as joint messages" do
-        expect(subject.chat(prompt: prompt, context: context, examples: examples)["content"]).to eq(answer)
+        expect(subject.chat(prompt: prompt, context: context, examples: examples).dig("choices", 0, "message", "content")).to eq(answer)
       end
 
       it "sends context, messages and examples as joint messages" do
-        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)], context: context, examples: examples)["content"]).to eq(answer)
+        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)], context: context, examples: examples).dig("choices", 0, "message", "content")).to eq(answer)
       end
 
       context "with prompt, messages, context and examples" do
@@ -256,7 +256,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "sends context, prompt, messages and examples as joint messages" do
-          expect(subject.chat(prompt: prompt, messages: messages, context: context, examples: examples)["content"]).to eq(answer)
+          expect(subject.chat(prompt: prompt, messages: messages, context: context, examples: examples).dig("choices", 0, "message", "content")).to eq(answer)
         end
       end
 
@@ -279,7 +279,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it overrides system message with context" do
-          expect(subject.chat(messages: messages, context: "You are a human being")["content"]).to eq(answer)
+          expect(subject.chat(messages: messages, context: "You are a human being").dig("choices", 0, "message", "content")).to eq(answer)
         end
       end
 
@@ -302,7 +302,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it combines last message and prompt" do
-          expect(subject.chat(prompt: prompt, messages: messages)["content"]).to eq(answer)
+          expect(subject.chat(prompt: prompt, messages: messages).dig("choices", 0, "message", "content")).to eq(answer)
         end
       end
     end
@@ -312,7 +312,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:model) { "gpt-3.5-turbo-0301" }
 
       it "sends prompt as message and additional params and returns a response message" do
-        expect(subject.chat(prompt: prompt, model: model, temperature: temperature)["content"]).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+        expect(subject.chat(prompt: prompt, model: model, temperature: temperature).dig("choices", 0, "message", "content")).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
       end
 
       context "functions" do

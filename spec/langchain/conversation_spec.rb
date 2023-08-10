@@ -33,7 +33,7 @@ RSpec.describe Langchain::Conversation do
     let(:context) { "You are a chatbot" }
     let(:examples) { [Langchain::HumanMessage.new("Hello"), Langchain::AIMessage.new("Hi")] }
     let(:prompt) { "How are you doing?" }
-    let(:response) { {"content" => "I'm doing well. How about you?"} }
+    let(:response) { {"choices" => [{"message" => {"content" => "I'm doing well. How about you?"}}]} }
 
     context "with stream: true option and block passed in" do
       let(:block) { proc { |chunk| print(chunk) } }
@@ -47,7 +47,7 @@ RSpec.describe Langchain::Conversation do
           &block
         ).and_return(response)
 
-        expect(conversation.message(prompt)).to eq(Langchain::AIMessage.new(response["content"]))
+        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response.dig("choices", 0, "message", "content")))
       end
     end
 
@@ -59,7 +59,7 @@ RSpec.describe Langchain::Conversation do
           messages: [Langchain::HumanMessage.new(prompt)]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response["content"]))
+        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response.dig("choices", 0, "message", "content")))
       end
     end
 
@@ -75,7 +75,7 @@ RSpec.describe Langchain::Conversation do
           messages: [Langchain::HumanMessage.new(prompt)]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response["content"]))
+        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response.dig("choices", 0, "message", "content")))
       end
     end
 
@@ -97,7 +97,7 @@ RSpec.describe Langchain::Conversation do
           ]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response["content"]))
+        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response.dig("choices", 0, "message", "content")))
       end
     end
 
@@ -112,7 +112,7 @@ RSpec.describe Langchain::Conversation do
           temperature: 0.7
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response["content"]))
+        expect(subject.message(prompt)).to eq(Langchain::AIMessage.new(response.dig("choices", 0, "message", "content")))
       end
     end
 

@@ -84,7 +84,7 @@ module Langchain::LLM
 
     # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`
     def chat(...)
-      {"output" => complete(...)}
+      complete(...)
     end
 
     #

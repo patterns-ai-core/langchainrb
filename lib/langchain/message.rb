@@ -1,13 +1,6 @@
 # frozen_string_literal: true
 
 module Langchain
-  CONTENT_MAPPING = {
-    Langchain::LLM::Cohere => "text",
-    Langchain::LLM::GooglePalm => "content",
-    Langchain::LLM::OpenAI => "content",
-    Langchain::LLM::Replicate => "output"
-  }
-
   class Message
     attr_reader :content, :additional_kwargs
 
