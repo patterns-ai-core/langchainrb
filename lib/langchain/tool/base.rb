@@ -73,6 +73,22 @@ module Langchain::Tool
     end
 
     #
+    # Returns the SCHEMA constant of the tool
+    #
+    # @return [Hash] tool description
+    #
+    def tool_schema
+      {
+        name: tool_name,
+        description: tool_description,
+        parameters: {
+          type: "object",
+          properties: self.class.const_get(:SCHEMA_PARAMETERS)
+        }
+      }
+    end
+
+    #
     # Sets the DESCRIPTION constant of the tool
     #
     # @param value [String] tool description

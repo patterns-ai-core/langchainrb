@@ -30,6 +30,13 @@ module Langchain::Tool
         Action Input: Kiev, Ukraine; metric
     DESC
 
+    SCHEMA_PARAMETERS = {
+      input: {
+        type: "string",
+        description: "Comma separated city and unit (optional: imperial, metric, or standard)"
+      }
+    }
+
     attr_reader :client, :units
 
     #

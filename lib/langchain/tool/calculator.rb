@@ -23,6 +23,13 @@ module Langchain::Tool
         Action Input: (4.1 + 2.3) / (2.0 - 5.6) * 3
     DESC
 
+    SCHEMA_PARAMETERS = {
+      input: {
+        type: "string",
+        description: "Math expression"
+      }
+    }
+
     def initialize
       depends_on "eqn"
       require "eqn"

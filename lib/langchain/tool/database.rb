@@ -14,6 +14,13 @@ module Langchain::Tool
       The input to this tool should be valid SQL.
     DESC
 
+    SCHEMA_PARAMETERS = {
+      input: {
+        type: "string",
+        description: "SQL expression"
+      }
+    }
+
     attr_reader :db, :requested_tables, :excluded_tables
 
     #

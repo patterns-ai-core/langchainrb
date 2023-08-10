@@ -23,6 +23,13 @@ module Langchain::Tool
       Input should be a search query.
     DESC
 
+    SCHEMA_PARAMETERS = {
+      input: {
+        type: "string",
+        description: "Search query"
+      }
+    }
+
     attr_reader :api_key
 
     #

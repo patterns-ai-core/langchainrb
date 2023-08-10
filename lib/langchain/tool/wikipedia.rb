@@ -17,6 +17,13 @@ module Langchain::Tool
       Input should be a search query.
     DESC
 
+    SCHEMA_PARAMETERS = {
+      input: {
+        type: "string",
+        description: "Search query"
+      }
+    }
+
     def initialize
       depends_on "wikipedia-client"
       require "wikipedia"

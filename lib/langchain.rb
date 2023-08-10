@@ -81,6 +81,7 @@ module Langchain
     autoload :Base, "langchain/agent/base"
     autoload :ReActAgent, "langchain/agent/react_agent/react_agent.rb"
     autoload :SQLQueryAgent, "langchain/agent/sql_query_agent/sql_query_agent.rb"
+    autoload :FunctionCallAgent, "langchain/agent/function_call_agent/function_call_agent.rb"
   end
 
   module Chunker
