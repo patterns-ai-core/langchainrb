@@ -7,6 +7,7 @@ module Langchain::Agent
   #
   # Available:
   # - {Langchain::Agent::ReActAgent}
+  # - {Langchain::Agent::SQLQueryAgent}
   #
   # @abstract
   class Base
