@@ -419,9 +419,6 @@ agent = Langchain::Agent::ReActAgent.new(
   llm: openai,
   tools: [search_tool, calculator]
 )
-
-agent.tools
-# => ["google_search", "calculator"]
 ```
 ```ruby
 agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
