@@ -57,7 +57,7 @@ module Langchain
     # @param name [String] The name of the function
     # @param result [Any] The result of a function call
     def add_function_call_result(name, result)
-      @memory.append_message(FunctionMessage.new(result.to_json, { "name" => name }))
+      @memory.append_message(FunctionMessage.new(result.to_json, {"name" => name}))
     end
 
     # Message the model with a prompt and return the response.

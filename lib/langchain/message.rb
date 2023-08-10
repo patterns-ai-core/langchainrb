@@ -4,7 +4,7 @@ module Langchain
   class Message
     attr_reader :content, :additional_kwargs
 
-    def initialize(content, additional_kwargs = nil)
+    def initialize(content, additional_kwargs = {})
       @content = content
       @additional_kwargs = additional_kwargs
     end
@@ -21,19 +21,13 @@ module Langchain
       to_json == other.to_json
     end
 
-    def as_json
+    def to_json(options = {})
       hash = {
         type: type,
         content: content
-      }
+      }.merge(additional_kwargs)
 
-      hash[:additional_kwargs] = additional_kwargs unless additional_kwargs.nil? || additional_kwargs.empty?
-
-      hash
-    end
-
-    def to_json(options = {})
-      as_json.to_json(options)
+      hash.to_json(options)
     end
   end
 
@@ -58,10 +52,6 @@ module Langchain
   class FunctionMessage < Message
     def type
       "function"
-    end
-
-    def as_json
-      super.merge(name: additional_kwargs["name"])
     end
   end
 end
