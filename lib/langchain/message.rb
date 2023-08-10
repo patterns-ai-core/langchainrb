@@ -21,7 +21,7 @@ module Langchain
       to_json == other.to_json
     end
 
-    def to_json(options = {})
+    def as_json
       hash = {
         type: type,
         content: content
@@ -29,7 +29,11 @@ module Langchain
 
       hash[:additional_kwargs] = additional_kwargs unless additional_kwargs.nil? || additional_kwargs.empty?
 
-      hash.to_json
+      hash
+    end
+
+    def to_json(options = {})
+      as_json.to_json(options)
     end
   end
 
@@ -48,6 +52,16 @@ module Langchain
   class SystemMessage < Message
     def type
       "system"
+    end
+  end
+
+  class FunctionMessage < Message
+    def type
+      "function"
+    end
+
+    def as_json
+      super.merge(name: additional_kwargs["name"])
     end
   end
 end

@@ -53,6 +53,13 @@ module Langchain
       @memory.add_examples examples
     end
 
+    # Add function call result to the conversation.
+    # @param name [String] The name of the function
+    # @param result [Any] The result of a function call
+    def add_function_call_result(name, result)
+      @memory.append_message(FunctionMessage.new(result.to_json, { "name" => name }))
+    end
+
     # Message the model with a prompt and return the response.
     # @param message [String] The prompt to message the model with
     # @return [AIMessage] The response from the model

@@ -29,7 +29,9 @@ module Langchain::Agent
 
       if (function = ai_response.additional_kwargs[:function_call])
         tool = tools.find { |tool| tool.tool_name == function["name"] }
-        tool.execute(**JSON.parse(function["arguments"]).transform_keys(&:to_sym))
+        tool.execute(**JSON.parse(function["arguments"]).transform_keys(&:to_sym)).tap do |result|
+          conversation.add_function_call_result(function["name"], result)
+        end
       else
         ai_response.content
       end

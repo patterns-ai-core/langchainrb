@@ -191,10 +191,11 @@ module Langchain::LLM
 
     def transform_messages(messages)
       messages.map do |message|
+        extra = message.additional_kwargs || {}
         {
           role: ROLE_MAPPING.fetch(message.type, message.type),
           content: message.content
-        }
+        }.merge(extra)
       end
     end
 
