@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.6.10)
+    langchainrb (0.6.11)
       baran (~> 0.1.6)
       colorize (~> 0.8.1)
       json-schema (~> 4.0.0)
@@ -235,7 +235,7 @@ GEM
       zeitwerk (~> 2.5)
     rainbow (3.1.1)
     rake (13.0.6)
-    rb_sys (0.9.79)
+    rb_sys (0.9.81)
     rdiscount (2.2.7)
     regexp_parser (2.8.0)
     replicate-ruby (0.2.2)

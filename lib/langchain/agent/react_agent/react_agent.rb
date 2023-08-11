@@ -7,11 +7,12 @@ module Langchain::Agent
   #
   #     agent = Langchain::Agent::ReActAgent.new(
   #       llm: llm,
-  #       tools: ["google_search", "calculator", "wikipedia"]
+  #       tools: [
+  #         Langchain::Tool::GoogleSearch.new(api_key: "YOUR_API_KEY"),
+  #         Langchain::Tool::Calculator.new,
+  #         Langchain::Tool::Wikipedia.new
+  #       ]
   #     )
-  #
-  #     agent.tools
-  #     # => ["google_search", "calculator", "wikipedia"]
   #
   #     agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
   #     #=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
@@ -21,7 +22,7 @@ module Langchain::Agent
     # Initializes the Agent
     #
     # @param llm [Object] The LLM client to use
-    # @param tools [Array] The tools to use
+    # @param tools [Array<Tool>] The tools to use
     # @param max_iterations [Integer] The maximum number of iterations to run
     # @return [ReActAgent] The Agent::ReActAgent instance
     def initialize(llm:, tools: [], max_iterations: 10)
@@ -35,8 +36,8 @@ module Langchain::Agent
 
     # Validate tools when they're re-assigned
     #
-    # @param value [Array] The tools to use
-    # @return [Array] The tools that will be used
+    # @param value [Array<Tool>] The tools to use
+    # @return [Array<Tool>] The tools that will be used
     def tools=(value)
       Langchain::Tool::Base.validate_tools!(tools: value)
       @tools = value

@@ -12,7 +12,6 @@ require "langchain"
 require "dotenv/load"
 require "pry-byebug"
 
-
 weaviate = Langchain::Vectorsearch::Weaviate.new(
   url: ENV["WEAVIATE_URL"],
   api_key: ENV["WEAVIATE_API_KEY"],

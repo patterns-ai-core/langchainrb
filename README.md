@@ -161,10 +161,7 @@ qdrant:
 
 ```ruby
 client.llm.functions = functions
-client.llm.complete_response = true
 ```
-
-`complete_response` will return the entire choices data from the gpt response
 
 #### Cohere
 Add `gem "cohere-ruby", "~> 0.9.3"` to your Gemfile.
@@ -422,9 +419,6 @@ agent = Langchain::Agent::ReActAgent.new(
   llm: openai,
   tools: [search_tool, calculator]
 )
-
-agent.tools
-# => ["google_search", "calculator"]
 ```
 ```ruby
 agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
