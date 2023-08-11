@@ -71,7 +71,7 @@ module Langchain::Agent
           action_input = response.match(/Action Input: "?(.*)"?/)&.send(:[], -1)
 
           # Find the Tool and call `execute`` with action_input as the input
-          tool = tools.find { |tool| tool.tool_name == action.strip }
+          tool = tools.find { |tool| tool.name == action.strip }
           Langchain.logger.info("Invoking \"#{tool.class}\" Tool with \"#{action_input}\"", for: self.class)
 
           # Call `execute` with action_input as the input
