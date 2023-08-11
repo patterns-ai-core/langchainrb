@@ -100,15 +100,15 @@ module Langchain::Agent
     # @param tools [Array] Tools to use
     # @return [String] Prompt
     def create_prompt(question:, tools:)
-      tool_list = tools.map(&:tool_name)
+      tool_list = tools.map(&:name)
 
       prompt_template.format(
         date: Date.today.strftime("%B %d, %Y"),
         question: question,
         tool_names: "[#{tool_list.join(", ")}]",
         tools: tools.map do |tool|
-          tool_name = tool.tool_name
-          tool_description = tool.tool_description
+          tool_name = tool.name
+          tool_description = tool.description
           "#{tool_name}: #{tool_description}"
         end.join("\n")
       )

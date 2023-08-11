@@ -53,7 +53,7 @@ module Langchain::Tool
     #
     # @return [String] tool name
     #
-    def tool_name
+    def name
       self.class.const_get(:NAME)
     end
 
@@ -68,7 +68,7 @@ module Langchain::Tool
     #
     # @return [String] tool description
     #
-    def tool_description
+    def description
       self.class.const_get(:DESCRIPTION)
     end
 
@@ -109,7 +109,7 @@ module Langchain::Tool
     #
     def self.validate_tools!(tools:)
       # Check if the tool count is equal to unique tool count
-      if tools.count != tools.map(&:tool_name).uniq.count
+      if tools.count != tools.map(&:name).uniq.count
         raise ArgumentError, "Either tools are not unique or are conflicting with each other"
       end
     end
