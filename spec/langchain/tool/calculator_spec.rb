@@ -17,9 +17,9 @@ RSpec.describe Langchain::Tool::Calculator do
     end
   end
 
-  describe "#tool_name" do
+  describe "#name" do
     it "returns the tool name" do
-      expect(subject.tool_name).to eq("calculator")
+      expect(subject.name).to eq("calculator")
     end
   end
 end
