@@ -24,11 +24,11 @@ module Langchain::Agent
     # @return [String] Answer to the question
     #
     def run(question:)
-      conversation.set_functions(tools.map(&:tool_schema))
+      conversation.set_functions(tools.map(&:schema))
       ai_response = conversation.message(question)
 
       if (function = ai_response.additional_kwargs[:function_call])
-        tool = tools.find { |tool| tool.tool_name == function["name"] }
+        tool = tools.find { |tool| tool.name == function["name"] }
         tool.execute(**JSON.parse(function["arguments"]).transform_keys(&:to_sym)).tap do |result|
           conversation.add_function_call_result(function["name"], result)
         end

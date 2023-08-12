@@ -77,10 +77,10 @@ module Langchain::Tool
     #
     # @return [Hash] tool description
     #
-    def tool_schema
+    def schema
       {
-        name: tool_name,
-        description: tool_description,
+        name: name,
+        description: description,
         parameters: {
           type: "object",
           properties: self.class.const_get(:SCHEMA_PARAMETERS)
