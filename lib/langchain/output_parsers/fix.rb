@@ -65,7 +65,9 @@ module Langchain::OutputParsers
     #
     # Creates a new instance of the class using the given JSON::Schema.
     #
-    # @param schema [JSON::Schema] The JSON::Schema to use
+    # @param llm [Langchain::LLM] The LLM used in the fixing process
+    # @param parser [Langchain::OutputParsers] The parser originally used which resulted in parsing error
+    # @param prompt [Langchain::Prompt::PromptTemplate]
     #
     # @return [Object] A new instance of the class
     #

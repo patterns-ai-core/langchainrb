@@ -9,7 +9,8 @@ module Langchain::OutputParsers
     # Parse the output of an LLM call.
     #
     # @param text - LLM output to parse.
-    # @returns Parsed output.
+    #
+    # @return [Object] Parsed output.
     #
     def parse(text:)
       raise NotImplementedError
@@ -18,9 +19,9 @@ module Langchain::OutputParsers
     #
     # Return a string describing the format of the output.
     #
-    # @returns Format instructions.
-    # @param options - Options for formatting instructions.
-    # @example
+    # @return [String] Format instructions.
+    #
+    # @example returns the format instructions
     # ```json
     # {
     #  "foo": "bar"

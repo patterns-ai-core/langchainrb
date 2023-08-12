@@ -33,8 +33,8 @@ module Langchain::LLM
       @seed = seed
     end
 
-    # @params text [String] The text to embed
-    # @params n_threads [Integer] The number of CPU threads to use
+    # @param text [String] The text to embed
+    # @param n_threads [Integer] The number of CPU threads to use
     # @return [Array] The embedding
     def embed(text:, n_threads: nil)
       # contexts are kinda stateful when it comes to embeddings, so allocate one each time
@@ -49,9 +49,9 @@ module Langchain::LLM
       context.embeddings
     end
 
-    # @params prompt [String] The prompt to complete
-    # @params n_predict [Integer] The number of tokens to predict
-    # @params n_threads [Integer] The number of CPU threads to use
+    # @param prompt [String] The prompt to complete
+    # @param n_predict [Integer] The number of tokens to predict
+    # @param n_threads [Integer] The number of CPU threads to use
     # @return [String] The completed prompt
     def complete(prompt:, n_predict: 128, n_threads: nil)
       n_threads ||= self.n_threads
