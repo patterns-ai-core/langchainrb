@@ -19,9 +19,9 @@ module Langchain::LLM
       embeddings_model_name: "embedding-gecko-001"
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidator
-    ROLE_MAPPING = {
-      "human" => "user"
-    }
+    COMPLETION_RESPONSE_PATH = ["candidates", 0]
+    ROLE_KEY = :author
+    USER_ROLE_KEY = "user"
 
     def initialize(api_key:, default_options: {})
       depends_on "google_palm_api"
@@ -76,9 +76,15 @@ module Langchain::LLM
     # Generate a chat completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a chat completion for
-    # @param messages [Array<AIMessage|HumanMessage>] The messages that have been sent in the conversation
+    # @param messages [Array<Hash>] The messages that have been sent in the conversation
+    #   Each message should be a Hash with the following keys:
+    #   - :content [String] The content of the message
+    #   - :author [String] The role of the sender
     # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
-    # @param examples [Array<AIMessage|HumanMessage>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    #   Each message should be a Hash with the following keys:
+    #   - :content [String] The content of the message
+    #   - :author [String] The role of the sender
     # @param options [Hash] extra parameters passed to GooglePalmAPI::Client#generate_chat_message
     # @return [Hash] The LLM response
     #
@@ -136,13 +142,13 @@ module Langchain::LLM
 
     def compose_chat_messages(prompt:, messages:)
       history = []
-      history.concat transform_messages(messages) unless messages.empty?
+      history.concat messages unless messages.empty?
 
       unless prompt.empty?
-        if history.last && history.last[:role] == "user"
+        if history.last && history.last[ROLE_KEY] == USER_ROLE_KEY
           history.last[:content] += "\n#{prompt}"
         else
-          history.append({author: "user", content: prompt})
+          history.append({ROLE_KEY => USER_ROLE_KEY, :content => prompt})
         end
       end
       history
@@ -151,17 +157,8 @@ module Langchain::LLM
     def compose_examples(examples)
       examples.each_slice(2).map do |example|
         {
-          input: {content: example.first.content},
-          output: {content: example.last.content}
-        }
-      end
-    end
-
-    def transform_messages(messages)
-      messages.map do |message|
-        {
-          author: ROLE_MAPPING.fetch(message.type, message.type),
-          content: message.content
+          input: {content: example.first[:content]},
+          output: {content: example.last[:content]}
         }
       end
     end

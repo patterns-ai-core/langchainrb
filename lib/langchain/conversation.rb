@@ -60,7 +60,7 @@ module Langchain
       human_message = HumanMessage.new(message)
       @memory.append_message(human_message)
       llm_response = call_llm
-      ai_message = AIMessage.from_llm_response(@llm, llm_response)
+      ai_message = AIMessage.from_llm_response(llm_response, completion_response_path)
       @memory.append_message(ai_message)
       ai_message
     end
@@ -86,10 +86,43 @@ module Langchain
     private
 
     def call_llm
-      @llm.chat(messages: @memory.messages, context: @memory.context.to_s, examples: @memory.examples, **@options, &@block)
+      @llm.chat(messages: transform_messages(messages), context: context&.to_s, examples: transform_messages(examples), **@options, &@block)
     rescue Langchain::Utils::TokenLength::TokenLimitExceeded => exception
       @memory.reduce_messages(exception)
       retry
+    end
+
+    def completion_response_path
+      key = @block ? "STREAMING_RESPONSE_PATH" : "COMPLETION_RESPONSE_PATH"
+
+      safe_const_get(llm_klass, key)
+    end
+
+    def transform_messages(messages)
+      role_key = safe_const_get(llm_klass, "ROLE_KEY") || :role
+
+      messages.map do |message|
+        {
+          role_key => role_mapping.fetch(message.type, message.type),
+          :content => message.content
+        }
+      end
+    end
+
+    def role_mapping
+      @role_mapping ||= {
+        "ai" => safe_const_get(llm_klass, "AI_ROLE_KEY"),
+        "human" => safe_const_get(llm_klass, "USER_ROLE_KEY"),
+        "system" => safe_const_get(llm_klass, "SYSTEM_ROLE_KEY")
+      }.compact
+    end
+
+    def llm_klass
+      @llm.class
+    end
+
+    def safe_const_get(obj, key)
+      obj.const_get(key) if obj.const_defined?(key)
     end
   end
 end

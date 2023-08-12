@@ -2,18 +2,13 @@
 
 module Langchain
   class AIMessage < Message
-    def self.from_llm_response(llm_klass, llm_response)
-      case llm_klass
-      when Langchain::LLM::Cohere
-        new(llm_response)
-      when Langchain::LLM::GooglePalm
-        new(llm_response.dig("candidates", 0, "content"))
-      when Langchain::LLM::OpenAI
-        message = llm_response.dig("choices", 0, "message") || llm_response.dig("choices", 0, "delta")
-        new(message["content"], message.except("content"))
-      when Langchain::LLM::Replicate
-        new(llm_response)
-      end
+    def self.from_llm_response(llm_response, completion_path)
+      return new(llm_response) if completion_path.nil?
+
+      completion = llm_response.dig(*completion_path)
+      content = completion["content"]
+      extra = completion.except("content")
+      new(content, extra)
     end
 
     def type

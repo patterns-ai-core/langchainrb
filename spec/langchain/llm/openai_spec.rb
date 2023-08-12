@@ -190,7 +190,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with messages" do
       it "sends messages" do
-        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)]).dig("choices", 0, "message", "content")).to eq(answer)
+        expect(subject.chat(messages: [{role: "user", content: prompt}]).dig("choices", 0, "message", "content")).to eq(answer)
       end
     end
 
@@ -208,7 +208,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context and messages as joint messages" do
-        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)], context: context).dig("choices", 0, "message", "content")).to eq(answer)
+        expect(subject.chat(messages: [{role: "user", content: prompt}], context: context).dig("choices", 0, "message", "content")).to eq(answer)
       end
     end
 
@@ -216,8 +216,8 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:context) { "You are a chatbot" }
       let(:examples) do
         [
-          Langchain::HumanMessage.new("Hello"),
-          Langchain::AIMessage.new("Hi. How can I assist you today?")
+          {role: "user", content: "Hello"},
+          {role: "assistant", content: "Hi. How can I assist you today?"}
         ]
       end
       let(:history) do
@@ -234,14 +234,14 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context, messages and examples as joint messages" do
-        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)], context: context, examples: examples).dig("choices", 0, "message", "content")).to eq(answer)
+        expect(subject.chat(messages: [{role: "user", content: prompt}], context: context, examples: examples).dig("choices", 0, "message", "content")).to eq(answer)
       end
 
       context "with prompt, messages, context and examples" do
         let(:messages) do
           [
-            Langchain::HumanMessage.new("Can you answer questions?"),
-            Langchain::AIMessage.new("Yes, I can answer questions.")
+            {role: "user", content: "Can you answer questions?"},
+            {role: "assistant", content: "Yes, I can answer questions."}
           ]
         end
         let(:history) do
@@ -263,10 +263,10 @@ RSpec.describe Langchain::LLM::OpenAI do
       context "when context is already present in messages" do
         let(:messages) do
           [
-            Langchain::SystemMessage.new(context),
-            Langchain::HumanMessage.new("Hello"),
-            Langchain::AIMessage.new("Hi. How can I assist you today?"),
-            Langchain::HumanMessage.new(prompt)
+            {role: "system", content: context},
+            {role: "user", content: "Hello"},
+            {role: "assistant", content: "Hi. How can I assist you today?"},
+            {role: "user", content: prompt}
           ]
         end
         let(:history) do
@@ -286,10 +286,10 @@ RSpec.describe Langchain::LLM::OpenAI do
       context "when last message is from user and prompt is present" do
         let(:messages) do
           [
-            Langchain::SystemMessage.new(context),
-            Langchain::HumanMessage.new("Hello"),
-            Langchain::AIMessage.new("Hi. How can I assist you today?"),
-            Langchain::HumanMessage.new("I want to ask a question")
+            {role: "system", content: context},
+            {role: "user", content: "Hello"},
+            {role: "assistant", content: "Hi. How can I assist you today?"},
+            {role: "user", content: "I want to ask a question"}
           ]
         end
         let(:history) do

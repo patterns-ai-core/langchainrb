@@ -18,10 +18,12 @@ module Langchain::LLM
       dimension: 1536
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
-    ROLE_MAPPING = {
-      "ai" => "assistant",
-      "human" => "user"
-    }
+    COMPLETION_RESPONSE_PATH = ["choices", 0, "message"]
+    STREAMING_RESPONSE_PATH = ["choices", 0, "delta"]
+    ROLE_KEY = :role
+    USER_ROLE_KEY = "user"
+    AI_ROLE_KEY = "assistant"
+    SYSTEM_ROLE_KEY = "system"
 
     attr_accessor :functions
 
@@ -103,9 +105,15 @@ module Langchain::LLM
     #       ]
     #
     # @param prompt [String] The prompt to generate a chat completion for
-    # @param messages [Array<AIMessage|HumanMessage>] The messages that have been sent in the conversation
+    # @param messages [Array<Hash>] The messages that have been sent in the conversation
+    #   Each message should be a Hash with the following keys:
+    #   - :content [String] The content of the message
+    #   - :role [String] The role of the sender (system, user, assistant, or function)
     # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
-    # @param examples [Array<AIMessage|HumanMessage>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    #   Each message should be a Hash with the following keys:
+    #   - :content [String] The content of the message
+    #   - :role [String] The role of the sender (system, user, assistant, or function)
     # @param options [Hash] extra parameters passed to OpenAI::Client#chat
     # @yield [Hash] Stream responses back one Hash at a time
     # @return [Hash] The LLM response
@@ -163,34 +171,23 @@ module Langchain::LLM
 
     def compose_chat_messages(prompt:, messages:, context:, examples:)
       history = []
-
-      history.concat transform_messages(examples) unless examples.empty?
-
-      history.concat transform_messages(messages) unless messages.empty?
+      history.concat examples unless examples.empty?
+      history.concat messages unless messages.empty?
 
       unless context.nil? || context.empty?
-        history.reject! { |message| message[:role] == "system" }
-        history.prepend({role: "system", content: context})
+        history.reject! { |message| message[ROLE_KEY] == SYSTEM_ROLE_KEY }
+        history.prepend({role: SYSTEM_ROLE_KEY, content: context})
       end
 
       unless prompt.empty?
-        if history.last && history.last[:role] == "user"
+        if history.last && history.last[ROLE_KEY] == USER_ROLE_KEY
           history.last[:content] += "\n#{prompt}"
         else
-          history.append({role: "user", content: prompt})
+          history.append({role: USER_ROLE_KEY, content: prompt})
         end
       end
 
       history
-    end
-
-    def transform_messages(messages)
-      messages.map do |message|
-        {
-          role: ROLE_MAPPING.fetch(message.type, message.type),
-          content: message.content
-        }
-      end
     end
 
     def validate_max_tokens(messages, model)
