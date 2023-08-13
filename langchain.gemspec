@@ -20,12 +20,7 @@ Gem::Specification.new do |spec|
   spec.metadata["documentation_uri"] = "https://rubydoc.info/gems/langchainrb"
 
   # Specify which files should be added to the gem when it is released.
-  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files = Dir.chdir(__dir__) do
-    `git ls-files -z`.split("\x0").reject do |f|
-      (f == __FILE__) || f.match(%r{\A(?:(?:bin|test|spec|features)/|\.(?:git|circleci)|appveyor)})
-    end
-  end
+  spec.files = Dir["LICENSE.txt", "README.md", "CHANGELOG.md", "lib/**/*"]
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
@@ -40,8 +35,8 @@ Gem::Specification.new do |spec|
   # development dependencies
   spec.add_development_dependency "dotenv-rails", "~> 2.7.6"
   spec.add_development_dependency "pry-byebug", "~> 3.10.0"
-  spec.add_development_dependency "yard"
-  spec.add_development_dependency "rdiscount" # for github-flavored markdown in yard
+  spec.add_development_dependency "yard", "~> 0.9.34"
+  spec.add_development_dependency "rdiscount", "~> 2.2.7" # for github-flavored markdown in yard
 
   # optional dependencies
   spec.add_development_dependency "ai21", "~> 0.2.1"
@@ -55,7 +50,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "hnswlib", "~> 0.8.1"
   spec.add_development_dependency "hugging-face", "~> 0.3.4"
   spec.add_development_dependency "milvus", "~> 0.9.0"
-  spec.add_development_dependency "llama_cpp"
+  spec.add_development_dependency "llama_cpp", "~> 0.3.7"
   spec.add_development_dependency "nokogiri", "~> 1.13"
   spec.add_development_dependency "open-weather-ruby-client", "~> 0.3.0"
   spec.add_development_dependency "pg", "~> 1.5"

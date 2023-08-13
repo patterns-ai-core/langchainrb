@@ -156,7 +156,7 @@ GEM
       addressable (>= 2.8)
     language_server-protocol (3.17.0.3)
     lint_roller (1.0.0)
-    llama_cpp (0.3.0)
+    llama_cpp (0.3.7)
     loofah (2.21.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -332,7 +332,7 @@ DEPENDENCIES
   hnswlib (~> 0.8.1)
   hugging-face (~> 0.3.4)
   langchainrb!
-  llama_cpp
+  llama_cpp (~> 0.3.7)
   milvus (~> 0.9.0)
   nokogiri (~> 1.13)
   open-weather-ruby-client (~> 0.3.0)
@@ -343,7 +343,7 @@ DEPENDENCIES
   pry-byebug (~> 3.10.0)
   qdrant-ruby (~> 0.9.0)
   rake (~> 13.0)
-  rdiscount
+  rdiscount (~> 2.2.7)
   replicate-ruby (~> 0.2.2)
   roo (~> 2.10.0)
   rspec (~> 3.0)
@@ -354,7 +354,7 @@ DEPENDENCIES
   standardrb
   weaviate-ruby (~> 0.8.3)
   wikipedia-client (~> 1.17.0)
-  yard
+  yard (~> 0.9.34)
 
 BUNDLED WITH
    2.3.22
