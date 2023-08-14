@@ -3,8 +3,25 @@
 require "logger"
 require "pathname"
 require "colorize"
-
-require_relative "./langchain/version"
+require "zeitwerk"
+loader = Zeitwerk::Loader.for_gem
+loader.ignore("#{__dir__}/langchainrb.rb")
+loader.inflector.inflect(
+  "ai_message" => "AIMessage",
+  "ai21" => "AI21",
+  "ai21_validator" => "AI21Validator",
+  "csv" => "CSV",
+  "html" => "HTML",
+  "json" => "JSON",
+  "jsonl" => "JSONL",
+  "llm" => "LLM",
+  "openai" => "OpenAI",
+  "openai_validator" => "OpenAIValidator",
+  "pdf" => "PDF",
+  "react_agent" => "ReActAgent",
+  "sql_query_agent" => "SQLQueryAgent"
+)
+loader.setup
 
 # Langchain.rb a is library for building LLM-backed Ruby applications. It is an abstraction layer that sits on top of the emerging AI-related tools that makes it easy for developers to consume and string those services together.
 #
@@ -48,17 +65,6 @@ require_relative "./langchain/version"
 #
 # Langchain.logger.level = :info
 module Langchain
-  autoload :Loader, "langchain/loader"
-  autoload :Data, "langchain/data"
-  autoload :Conversation, "langchain/conversation"
-  autoload :Message, "langchain/message"
-  autoload :AIMessage, "langchain/message"
-  autoload :HumanMessage, "langchain/message"
-  autoload :SystemMessage, "langchain/message"
-  autoload :ConversationMemory, "langchain/conversation_memory"
-  autoload :DependencyHelper, "langchain/dependency_helper"
-  autoload :ContextualLogger, "langchain/contextual_logger"
-
   class << self
     # @return [ContextualLogger]
     attr_reader :logger
@@ -168,5 +174,3 @@ module Langchain
     class BaseError < StandardError; end
   end
 end
-
-require "langchain/railtie" if defined?(Rails)
