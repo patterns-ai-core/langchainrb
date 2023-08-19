@@ -7,7 +7,7 @@ module Langchain
 
       completion = llm_response.dig(*completion_path)
       content = completion["content"]
-      extra = completion.except("content")
+      extra = completion.except("content", "role")
       new(content, extra)
     end
 
