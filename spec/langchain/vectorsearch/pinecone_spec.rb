@@ -305,11 +305,12 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     let(:question) { "How many times is \"lorem\" mentioned in this text?" }
     let(:prompt) { "Context:\n#{metadata}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:answer) { "5 times" }
+    let(:k) { 4 }
 
     describe "without a namespace" do
       before do
         allow(subject).to receive(:similarity_search).with(
-          query: question, namespace: "", filter: nil
+          query: question, namespace: "", filter: nil, k: k
         ).and_return(matches)
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
@@ -322,7 +323,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     describe "with a namespace" do
       before do
         allow(subject).to receive(:similarity_search).with(
-          query: question, namespace: namespace, filter: nil
+          query: question, namespace: namespace, filter: nil, k: k
         ).and_return(matches)
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
@@ -335,7 +336,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     describe "with a filter" do
       before do
         allow(subject).to receive(:similarity_search).with(
-          query: question, namespace: "", filter: filter
+          query: question, namespace: "", filter: filter, k: k
         ).and_return(matches)
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
