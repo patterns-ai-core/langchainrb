@@ -142,8 +142,8 @@ module Langchain::Vectorsearch
     # @param filter [String] The filter to use
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, namespace: "", filter: nil, &block)
-      search_results = similarity_search(query: question, namespace: namespace, filter: filter)
+    def ask(question:, namespace: "", filter: nil, k: 4, &block)
+      search_results = similarity_search(query: question, namespace: namespace, filter: filter, k: k)
 
       context = search_results.map do |result|
         result.dig("metadata").to_s
