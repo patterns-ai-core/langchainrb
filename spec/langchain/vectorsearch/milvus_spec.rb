@@ -51,6 +51,32 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   let(:embedding) { [0.1, 0.2, 0.3] }
   let(:count) { 1 }
   let(:query) { "Greetings Earth" }
+  let(:results) {
+    {
+      collection_name: 'earthlings',
+      num_rows: 1,
+      "results" => {
+        "fields_data" => [
+          {
+            'field_name' => "content",
+            'Field' => {
+              'Scalars' => {
+                'Data' => {
+                  'StringData' => {
+                    'data' => ['Hello World']
+                  }
+                }
+              }
+            }
+          }, {
+            "field_name" => "vectors",
+            type: ::Milvus::DATA_TYPES["float_vector"],
+            field: [0, 1, 2]
+          }
+        ]
+      }
+    }
+  }
 
   describe "add_texts" do
     before do
@@ -87,5 +113,44 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   end
 
   describe "#ask" do
+    let(:question) { "How many times is 'lorem' mentioned in this text?" }
+    let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
+    let(:answer) { "5 times" }
+    let(:k) { 4 }
+
+    before do
+      allow(subject).to receive(:similarity_search).with(query: question, k: k).and_return(results)
+    end
+
+    context "without block" do
+      before do
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
+      end
+
+      it "asks a question and returns the answer" do
+        expect(subject.ask(question: question)).to eq(answer)
+      end
+    end
+
+    context "with block" do
+      let(:block) { proc { |chunk| puts "Received chunk: #{chunk}" } }
+
+      before do
+        allow(subject.llm).to receive(:chat) do |parameters|
+          if parameters[:prompt] == prompt && parameters[:stream].is_a?(Proc)
+            parameters[:stream].call("Received chunk from llm.chat")
+          end
+        end
+      end
+
+      it "asks a question and yields the chunk to the block" do
+        expect do
+          captured_output = capture(:stdout) do
+            subject.ask(question: question, &block)
+          end
+          expect(captured_output).to match(/Received chunk from llm.chat/)
+        end
+      end
+    end
   end
 end
