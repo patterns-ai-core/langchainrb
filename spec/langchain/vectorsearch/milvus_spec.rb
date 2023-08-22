@@ -113,7 +113,7 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   end
 
   describe "#ask" do
-    let(:question) { "How many times is "lorem" mentioned in this text?" }
+    let(:question) { 'How many times is "lorem" mentioned in this text?' }
     let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:answer) { "5 times" }
     let(:k) { 4 }
