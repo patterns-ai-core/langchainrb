@@ -138,6 +138,7 @@ module Langchain::Vectorsearch
     # Ask a question and return the answer
     # @param question [String] The question to ask
     # @param namespace [String] The namespace to search in
+    # @param k [Integer] The number of results to have in context
     # @param filter [String] The filter to use
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
