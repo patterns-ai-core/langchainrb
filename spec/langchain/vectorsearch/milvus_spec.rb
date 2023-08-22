@@ -53,17 +53,17 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   let(:query) { "Greetings Earth" }
   let(:results) {
     {
-      "collection_name" => 'earthlings',
+      "collection_name" => "earthlings",
       "num_rows" => 1,
       "results" => {
         "fields_data" => [
           {
-            'field_name' => "content",
-            'Field' => {
-              'Scalars' => {
-                'Data' => {
-                  'StringData' => {
-                    'data' => ['Hello World']
+            "field_name" => "content",
+            "Field" => {
+              "Scalars" => {
+                "Data" => {
+                  "StringData" => {
+                    "data" => ["Hello World"]
                   }
                 }
               }
@@ -113,7 +113,7 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   end
 
   describe "#ask" do
-    let(:question) { "How many times is 'lorem' mentioned in this text?" }
+    let(:question) { "How many times is "lorem" mentioned in this text?" }
     let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:answer) { "5 times" }
     let(:k) { 4 }
