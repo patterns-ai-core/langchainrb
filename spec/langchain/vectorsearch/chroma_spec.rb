@@ -117,9 +117,10 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
     let(:question) { "How many times is 'lorem' mentioned in this text?" }
     let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:answer) { "5 times" }
+    let(:k) { 4 }
 
     before do
-      allow(subject).to receive(:similarity_search).with(query: question).and_return(results)
+      allow(subject).to receive(:similarity_search).with(query: question, k: k).and_return(results)
     end
 
     context "without block" do

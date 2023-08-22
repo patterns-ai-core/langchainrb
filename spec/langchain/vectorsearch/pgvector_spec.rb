@@ -161,6 +161,7 @@ if ENV["POSTGRES_URL"]
       let(:text) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor." }
       let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
       let(:answer) { "5 times" }
+      let(:k) { 4 }
 
       before do
         allow_any_instance_of(
@@ -189,7 +190,7 @@ if ENV["POSTGRES_URL"]
         end
 
         it "asks a question and returns the answer" do
-          expect(subject.ask(question: question)).to eq(answer)
+          expect(subject.ask(question: question, k: k)).to eq(answer)
         end
       end
 

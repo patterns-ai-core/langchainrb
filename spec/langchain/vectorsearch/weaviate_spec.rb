@@ -167,10 +167,12 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     let(:prompt) { "Context:\n#{matches[0]["content"]}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:question) { "How many times is \"lorem\" mentioned in this text?" }
     let(:answer) { "5 times" }
+    let(:k) { 4 }
 
     before do
       allow(subject).to receive(:similarity_search).with(
-        query: question
+        query: question,
+        k: k
       ).and_return(matches)
     end
 
@@ -180,7 +182,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
       end
 
       it "asks a question and returns the answer" do
-        expect(subject.ask(question: question)).to eq(answer)
+        expect(subject.ask(question: question, k: k)).to eq(answer)
       end
     end
 
@@ -198,7 +200,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
       it "asks a question and yields the chunk to the block" do
         expect do
           captured_output = capture(:stdout) do
-            subject.ask(question: question, &block)
+            subject.ask(question: question, k: k, &block)
           end
           expect(captured_output).to match(/Received chunk from llm.chat/)
         end
