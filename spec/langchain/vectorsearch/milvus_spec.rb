@@ -53,8 +53,8 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   let(:query) { "Greetings Earth" }
   let(:results) {
     {
-      collection_name: 'earthlings',
-      num_rows: 1,
+      "collection_name" => 'earthlings',
+      "num_rows" => 1,
       "results" => {
         "fields_data" => [
           {
@@ -70,8 +70,8 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
             }
           }, {
             "field_name" => "vectors",
-            type: ::Milvus::DATA_TYPES["float_vector"],
-            field: [0, 1, 2]
+            "type" => ::Milvus::DATA_TYPES["float_vector"],
+            "field" => [0, 1, 2]
           }
         ]
       }
