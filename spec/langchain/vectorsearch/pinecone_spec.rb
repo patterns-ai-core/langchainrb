@@ -182,7 +182,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         Langchain.root.join("../spec/fixtures/loaders/example.txt")
       ]
 
-      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), namespace: '')
+      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), namespace: "")
 
       subject.add_data(paths: paths)
     end
@@ -197,9 +197,9 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         Langchain.root.join("../spec/fixtures/loaders/example.txt")
       ]
 
-      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), namespace: 'earthlings')
+      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), namespace: "earthlings")
 
-      subject.add_data(paths: paths, namespace: 'earthlings')
+      subject.add_data(paths: paths, namespace: "earthlings")
     end
   end
 
