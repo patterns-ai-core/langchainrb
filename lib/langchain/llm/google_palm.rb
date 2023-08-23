@@ -5,7 +5,7 @@ module Langchain::LLM
   # Wrapper around the Google PaLM (Pathways Language Model) APIs: https://ai.google/build/machine-learning/
   #
   # Gem requirements:
-  #     gem "google_palm_api", "~> 0.1.2"
+  #     gem "google_palm_api", "~> 0.1.3"
   #
   # Usage:
   #     google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")

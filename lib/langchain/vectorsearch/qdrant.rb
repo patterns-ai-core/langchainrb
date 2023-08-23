@@ -5,7 +5,7 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Qdrant
     #
-    # Gem requirements: gem "qdrant-ruby", "~> 0.9.0"
+    # Gem requirements: gem "qdrant-ruby", "~> 0.9.3"
     #
     # Usage:
     # qdrant = Langchain::Vectorsearch::Qdrant.new(url:, api_key:, index_name:, llm:, llm_api_key:)
