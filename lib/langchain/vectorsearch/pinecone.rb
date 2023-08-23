@@ -51,7 +51,7 @@ module Langchain::Vectorsearch
       index.upsert(vectors: vectors, namespace: namespace)
     end
 
-    def add_data(paths:, namespace: '')
+    def add_data(paths:, namespace: "")
       raise ArgumentError, "Paths must be provided" if Array(paths).empty?
 
       texts = Array(paths)
