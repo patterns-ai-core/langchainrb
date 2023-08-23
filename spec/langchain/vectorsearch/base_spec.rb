@@ -84,7 +84,7 @@ RSpec.describe Langchain::Vectorsearch::Base do
         Langchain.root.join("../spec/fixtures/loaders/example.txt")
       ]
 
-      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14))
+      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), namespace: '')
 
       subject.add_data(paths: paths)
     end
