@@ -53,7 +53,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "milvus", "~> 0.9.0"
   spec.add_development_dependency "llama_cpp", "~> 0.3.7"
   spec.add_development_dependency "nokogiri", "~> 1.13"
-  spec.add_development_dependency "open-weather-ruby-client", "~> 0.3.0"
+  spec.add_development_dependency "open-weather-ruby-client", "~> 0.4.0"
   spec.add_development_dependency "pg", "~> 1.5"
   spec.add_development_dependency "pgvector", "~> 0.2.1"
   spec.add_development_dependency "pdf-reader", "~> 1.4"
@@ -64,6 +64,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "ruby-openai", "~> 4.1.0"
   spec.add_development_dependency "safe_ruby", "~> 1.0.4"
   spec.add_development_dependency "sequel", "~> 5.68.0"
-  spec.add_development_dependency "weaviate-ruby", "~> 0.8.3"
+  spec.add_development_dependency "weaviate-ruby", "~> 0.8.6"
   spec.add_development_dependency "wikipedia-client", "~> 1.17.0"
 end
