@@ -160,7 +160,7 @@ module Langchain::Vectorsearch
       prompt_template.format(question: question)
     end
 
-    def add_data(paths:, namespace: "")
+    def add_data(paths:)
       raise ArgumentError, "Paths must be provided" if Array(paths).empty?
 
       texts = Array(paths)
@@ -172,7 +172,7 @@ module Langchain::Vectorsearch
 
       texts.flatten!
 
-      add_texts(texts: texts, namespace: namespace)
+      add_texts(texts: texts)
     end
 
     def self.logger_options
