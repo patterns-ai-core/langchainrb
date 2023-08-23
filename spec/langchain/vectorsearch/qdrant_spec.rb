@@ -99,9 +99,10 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     let(:question) { "How many times is 'lorem' mentioned in this text?" }
     let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:answer) { "5 times" }
+    let(:k) { 4 }
 
     before do
-      allow(subject).to receive(:similarity_search).with(query: question).and_return([{"payload" => text}])
+      allow(subject).to receive(:similarity_search).with(query: question, k: k).and_return([{"payload" => text}])
     end
 
     context "without block" do
@@ -110,7 +111,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
       end
 
       it "asks a question and returns the answer" do
-        expect(subject.ask(question: question)).to eq(answer)
+        expect(subject.ask(question: question, k: k)).to eq(answer)
       end
     end
 
@@ -128,7 +129,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
       it "asks a question and yields the chunk to the block" do
         expect do
           captured_output = capture(:stdout) do
-            subject.ask(question: question, &block)
+            subject.ask(question: question, k: k, &block)
           end
           expect(captured_output).to match(/Received chunk from llm.chat/)
         end
