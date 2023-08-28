@@ -5,7 +5,7 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Qdrant
     #
-    # Gem requirements: gem "qdrant-ruby", "~> 0.9.0"
+    # Gem requirements: gem "qdrant-ruby", "~> 0.9.3"
     #
     # Usage:
     # qdrant = Langchain::Vectorsearch::Qdrant.new(url:, api_key:, index_name:, llm:, llm_api_key:)
@@ -112,10 +112,11 @@ module Langchain::Vectorsearch
 
     # Ask a question and return the answer
     # @param question [String] The question to ask
+    # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, &block)
-      search_results = similarity_search(query: question)
+    def ask(question:, k: 4, &block)
+      search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
         result.dig("payload").to_s

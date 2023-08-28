@@ -174,6 +174,35 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     end
   end
 
+  describe "#add_data" do
+    it "allows adding multiple paths" do
+      paths = [
+        Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
+        Langchain.root.join("../spec/fixtures/loaders/clearscan-with-image-removed.pdf"),
+        Langchain.root.join("../spec/fixtures/loaders/example.txt")
+      ]
+
+      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), namespace: "")
+
+      subject.add_data(paths: paths)
+    end
+
+    it "requires paths" do
+      expect { subject.add_data(paths: []) }.to raise_error(ArgumentError, /Paths must be provided/)
+    end
+    it "allows namespaces" do
+      paths = [
+        Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
+        Langchain.root.join("../spec/fixtures/loaders/clearscan-with-image-removed.pdf"),
+        Langchain.root.join("../spec/fixtures/loaders/example.txt")
+      ]
+
+      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), namespace: "earthlings")
+
+      subject.add_data(paths: paths, namespace: "earthlings")
+    end
+  end
+
   describe "#update_texts" do
     let(:vectors) do
       [
@@ -305,11 +334,12 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     let(:question) { "How many times is \"lorem\" mentioned in this text?" }
     let(:prompt) { "Context:\n#{metadata}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:answer) { "5 times" }
+    let(:k) { 4 }
 
     describe "without a namespace" do
       before do
         allow(subject).to receive(:similarity_search).with(
-          query: question, namespace: "", filter: nil
+          query: question, namespace: "", filter: nil, k: k
         ).and_return(matches)
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
@@ -322,7 +352,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     describe "with a namespace" do
       before do
         allow(subject).to receive(:similarity_search).with(
-          query: question, namespace: namespace, filter: nil
+          query: question, namespace: namespace, filter: nil, k: k
         ).and_return(matches)
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
       end
@@ -335,7 +365,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     describe "with a filter" do
       before do
         allow(subject).to receive(:similarity_search).with(
-          query: question, namespace: "", filter: filter
+          query: question, namespace: "", filter: filter, k: k
         ).and_return(matches)
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
       end

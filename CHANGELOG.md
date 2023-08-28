@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.6.13] - 2023-08-23
+- Add `k:` parameter to all `ask()` vector search methods
+- Bump Faraday to 2.x 
+
 ## [0.6.12] - 2023-08-13
 
 ## [0.6.11] - 2023-08-08

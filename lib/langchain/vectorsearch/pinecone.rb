@@ -51,6 +51,21 @@ module Langchain::Vectorsearch
       index.upsert(vectors: vectors, namespace: namespace)
     end
 
+    def add_data(paths:, namespace: "")
+      raise ArgumentError, "Paths must be provided" if Array(paths).empty?
+
+      texts = Array(paths)
+        .flatten
+        .map do |path|
+          data = Langchain::Loader.new(path)&.load&.chunks
+          data.map { |chunk| chunk[:text] }
+        end
+
+      texts.flatten!
+
+      add_texts(texts: texts, namespace: namespace)
+    end
+
     # Update a list of texts in the index
     # @param texts [Array] The list of texts to update
     # @param ids [Array] The list of IDs to update
@@ -138,11 +153,12 @@ module Langchain::Vectorsearch
     # Ask a question and return the answer
     # @param question [String] The question to ask
     # @param namespace [String] The namespace to search in
+    # @param k [Integer] The number of results to have in context
     # @param filter [String] The filter to use
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, namespace: "", filter: nil, &block)
-      search_results = similarity_search(query: question, namespace: namespace, filter: filter)
+    def ask(question:, namespace: "", filter: nil, k: 4, &block)
+      search_results = similarity_search(query: question, namespace: namespace, filter: filter, k: k)
 
       context = search_results.map do |result|
         result.dig("metadata").to_s

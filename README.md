@@ -61,10 +61,10 @@ client = Langchain::Vectorsearch::Weaviate.new(
 # You can instantiate any other supported vector search database:
 client = Langchain::Vectorsearch::Chroma.new(...) # `gem "chroma-db", "~> 0.3.0"`
 client = Langchain::Vectorsearch::Hnswlib.new(...) # `gem "hnswlib", "~> 0.8.1"`
-client = Langchain::Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.0"`
+client = Langchain::Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.2"`
 client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
 client = Langchain::Vectorsearch::Pgvector.new(...) # `gem "pgvector", "~> 0.2"`
-client = Langchain::Vectorsearch::Qdrant.new(...) # `gem"qdrant-ruby", "~> 0.9.0"`
+client = Langchain::Vectorsearch::Qdrant.new(...) # `gem"qdrant-ruby", "~> 0.9.3"`
 ```
 
 ```ruby
@@ -164,7 +164,7 @@ client.llm.functions = functions
 ```
 
 #### Cohere
-Add `gem "cohere-ruby", "~> 0.9.3"` to your Gemfile.
+Add `gem "cohere-ruby", "~> 0.9.6"` to your Gemfile.
 
 ```ruby
 cohere = Langchain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
@@ -189,7 +189,7 @@ replicate = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
 ```
 
 #### Google PaLM (Pathways Language Model)
-Add `"google_palm_api", "~> 0.1.2"` to your Gemfile.
+Add `"google_palm_api", "~> 0.1.3"` to your Gemfile.
 ```ruby
 google_palm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
 ```
