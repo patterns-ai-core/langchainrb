@@ -84,12 +84,8 @@ module Langchain::LLM
       response.dig("summary")
     end
 
-    def parse_chat_content(llm_response)
-      llm_response
-    end
-
-    def parse_chat_additional_kwargs(_llm_response)
-      {}
+    def chat_parser
+      @chat_parser ||= Langchain::LLM::IdentityChatParser.new
     end
   end
 end

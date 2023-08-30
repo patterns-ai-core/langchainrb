@@ -153,20 +153,11 @@ module Langchain::LLM
       complete(prompt: prompt, temperature: @defaults[:temperature])
     end
 
-    def parse_chat_content(llm_response)
-      parse_chat_message(llm_response)["content"]
-    end
-
-    def parse_chat_additional_kwargs(llm_response)
-      parse_chat_message(llm_response).except("content", "role")
+    def chat_parser
+      @chat_parser ||= Langchain::LLM::OpenAIChatParser.new
     end
 
     private
-
-    def parse_chat_message(llm_response)
-      choice = llm_response.dig("choices", 0)
-      choice["message"] || choice["delta"]
-    end
 
     def compose_parameters(model, params)
       default_params = {model: model, temperature: @defaults[:temperature]}

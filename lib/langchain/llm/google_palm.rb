@@ -135,19 +135,11 @@ module Langchain::LLM
       )
     end
 
-    def parse_chat_content(llm_response)
-      parse_chat_message(llm_response)["content"]
-    end
-
-    def parse_chat_additional_kwargs(llm_response)
-      parse_chat_message(llm_response).except("content", "role")
+    def chat_parser
+      @chat_parser ||= Langchain::LLM::GooglePalmChatParser.new
     end
 
     private
-
-    def parse_chat_message(llm_response)
-      choice = llm_response.dig("candidates", 0)
-    end
 
     def compose_chat_messages(prompt:, messages:)
       history = []

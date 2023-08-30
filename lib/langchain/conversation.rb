@@ -61,7 +61,8 @@ module Langchain
       @memory.append_message(human_message)
       llm_response = call_llm
       ai_message = AIMessage.new(
-        @llm.parse_chat_content(llm_response), @llm.parse_chat_additional_kwargs(llm_response)
+        @llm.chat_parser.content(llm_response),
+        @llm.chat_parser.additional_kwargs(llm_response)
       )
       @memory.append_message(ai_message)
       ai_message
