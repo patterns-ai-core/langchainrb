@@ -143,13 +143,13 @@ module Langchain::LLM
 
     def compose_chat_messages(prompt:, messages:)
       history = []
-      history.concat transform_messages(messages) unless messages.empty?
+      history.concat messages unless messages.empty?
 
       unless prompt.empty?
-        if history.last && history.last[ROLE_KEY] == USER_ROLE_KEY
+        if history.last && history.last[:author] == "user"
           history.last[:content] += "\n#{prompt}"
         else
-          history.append({ROLE_KEY => USER_ROLE_KEY, :content => prompt})
+          history.append({author: "user", :content => prompt})
         end
       end
       history
@@ -160,15 +160,6 @@ module Langchain::LLM
         {
           input: {content: example.first[:content]},
           output: {content: example.last[:content]}
-        }
-      end
-    end
-
-    def transform_messages(messages)
-      messages.map do |message|
-        {
-          author: ROLE_MAPPING.fetch(message.type, message.type),
-          content: message.content
         }
       end
     end

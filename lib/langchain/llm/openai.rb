@@ -169,8 +169,8 @@ module Langchain::LLM
 
     def compose_chat_messages(prompt:, messages:, context:, examples:)
       history = []
-      history.concat transform_messages(examples) unless examples.empty?
-      history.concat transform_messages(messages) unless messages.empty?
+      history.concat examples unless examples.empty?
+      history.concat messages unless messages.empty?
 
       unless context.nil? || context.empty?
         history.reject! { |message| message[:role] == "system" }
@@ -186,15 +186,6 @@ module Langchain::LLM
       end
 
       history
-    end
-
-    def transform_messages(messages)
-      messages.map do |message|
-        {
-          role: ROLE_MAPPING.fetch(message.type, message.type),
-          content: message.content
-        }
-      end
     end
 
     def validate_max_tokens(messages, model)

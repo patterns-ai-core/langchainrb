@@ -89,10 +89,18 @@ module Langchain
     private
 
     def call_llm
-      @llm.chat(messages: messages, context: context&.to_s, examples: examples, **@options, &@block)
+      @llm.chat(messages: transform_messages(messages), context: context&.to_s, examples: transform_messages(examples), **@options, &@block)
     rescue Langchain::Utils::TokenLength::TokenLimitExceeded => exception
       @memory.reduce_messages(exception)
       retry
+    end
+
+    def transform_messages(messages)
+      return [] unless messages
+
+      messages.map do |message|
+        @llm.chat_parser.to_llm(message.type, message.content, message.additional_kwargs)
+      end
     end
   end
 end
