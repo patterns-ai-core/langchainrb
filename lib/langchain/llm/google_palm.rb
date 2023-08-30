@@ -19,9 +19,6 @@ module Langchain::LLM
       embeddings_model_name: "embedding-gecko-001"
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidator
-    COMPLETION_RESPONSE_PATH = ["candidates", 0]
-    ROLE_KEY = :author
-    USER_ROLE_KEY = "user"
 
     def initialize(api_key:, default_options: {})
       depends_on "google_palm_api"
@@ -138,11 +135,23 @@ module Langchain::LLM
       )
     end
 
+    def parse_chat_content(llm_response)
+      parse_chat_message(llm_response)["content"]
+    end
+
+    def parse_chat_additional_kwargs(llm_response)
+      parse_chat_message(llm_response).except("content", "role")
+    end
+
     private
+
+    def parse_chat_message(llm_response)
+      choice = llm_response.dig("candidates", 0)
+    end
 
     def compose_chat_messages(prompt:, messages:)
       history = []
-      history.concat messages unless messages.empty?
+      history.concat transform_messages(messages) unless messages.empty?
 
       unless prompt.empty?
         if history.last && history.last[ROLE_KEY] == USER_ROLE_KEY
@@ -159,6 +168,15 @@ module Langchain::LLM
         {
           input: {content: example.first[:content]},
           output: {content: example.last[:content]}
+        }
+      end
+    end
+
+    def transform_messages(messages)
+      messages.map do |message|
+        {
+          author: ROLE_MAPPING.fetch(message.type, message.type),
+          content: message.content
         }
       end
     end

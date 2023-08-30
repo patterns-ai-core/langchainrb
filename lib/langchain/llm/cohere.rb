@@ -83,5 +83,13 @@ module Langchain::LLM
       response = client.summarize(text: text)
       response.dig("summary")
     end
+
+    def parse_chat_content(llm_response)
+      llm_response
+    end
+
+    def parse_chat_additional_kwargs(_llm_response)
+      {}
+    end
   end
 end

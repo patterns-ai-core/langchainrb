@@ -18,12 +18,6 @@ module Langchain::LLM
       dimension: 1536
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
-    COMPLETION_RESPONSE_PATH = ["choices", 0, "message"]
-    STREAMING_RESPONSE_PATH = ["choices", 0, "delta"]
-    ROLE_KEY = :role
-    USER_ROLE_KEY = "user"
-    AI_ROLE_KEY = "assistant"
-    SYSTEM_ROLE_KEY = "system"
 
     attr_accessor :functions
 
@@ -159,7 +153,20 @@ module Langchain::LLM
       complete(prompt: prompt, temperature: @defaults[:temperature])
     end
 
+    def parse_chat_content(llm_response)
+      parse_chat_message(llm_response)["content"]
+    end
+
+    def parse_chat_additional_kwargs(llm_response)
+      parse_chat_message(llm_response).except("content", "role")
+    end
+
     private
+
+    def parse_chat_message(llm_response)
+      choice = llm_response.dig("choices", 0)
+      choice["message"] || choice["delta"]
+    end
 
     def compose_parameters(model, params)
       default_params = {model: model, temperature: @defaults[:temperature]}
@@ -171,23 +178,32 @@ module Langchain::LLM
 
     def compose_chat_messages(prompt:, messages:, context:, examples:)
       history = []
-      history.concat examples unless examples.empty?
-      history.concat messages unless messages.empty?
+      history.concat transform_messages(examples) unless examples.empty?
+      history.concat transform_messages(messages) unless messages.empty?
 
       unless context.nil? || context.empty?
-        history.reject! { |message| message[ROLE_KEY] == SYSTEM_ROLE_KEY }
-        history.prepend({role: SYSTEM_ROLE_KEY, content: context})
+        history.reject! { |message| message[:role] == "system" }
+        history.prepend({role: "system", content: context})
       end
 
       unless prompt.empty?
-        if history.last && history.last[ROLE_KEY] == USER_ROLE_KEY
+        if history.last && history.last[:role] == "user"
           history.last[:content] += "\n#{prompt}"
         else
-          history.append({role: USER_ROLE_KEY, content: prompt})
+          history.append({role: "user", content: prompt})
         end
       end
 
       history
+    end
+
+    def transform_messages(messages)
+      messages.map do |message|
+        {
+          role: ROLE_MAPPING.fetch(message.type, message.type),
+          content: message.content
+        }
+      end
     end
 
     def validate_max_tokens(messages, model)

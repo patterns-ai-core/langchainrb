@@ -109,6 +109,14 @@ module Langchain::LLM
 
     alias_method :generate_embedding, :embed
 
+    def parse_chat_content(llm_response)
+      llm_response
+    end
+
+    def parse_chat_additional_kwargs(_llm_response)
+      {}
+    end
+
     private
 
     def completion_model
