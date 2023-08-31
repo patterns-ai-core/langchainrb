@@ -15,7 +15,7 @@ module Langchain
       end
 
       def to_llm(role, content, additional_kwargs = {})
-        { role: ROLE_MAPPING.fetch(role, role), content: content, **additional_kwargs }
+        {role: ROLE_MAPPING.fetch(role, role), content: content, **Hash(additional_kwargs)}
       end
     end
   end

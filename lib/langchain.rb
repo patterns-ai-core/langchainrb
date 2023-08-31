@@ -4,24 +4,26 @@ require "logger"
 require "pathname"
 require "colorize"
 require "zeitwerk"
-loader = Zeitwerk::Loader.for_gem
-loader.ignore("#{__dir__}/langchainrb.rb")
-loader.inflector.inflect(
-  "ai_message" => "AIMessage",
-  "ai21" => "AI21",
-  "ai21_validator" => "AI21Validator",
-  "csv" => "CSV",
-  "html" => "HTML",
-  "json" => "JSON",
-  "jsonl" => "JSONL",
-  "llm" => "LLM",
-  "openai" => "OpenAI",
-  "openai_validator" => "OpenAIValidator",
-  "pdf" => "PDF",
-  "react_agent" => "ReActAgent",
-  "sql_query_agent" => "SQLQueryAgent"
-)
-loader.setup
+Zeitwerk::Loader.for_gem.tap do |loader|
+  loader.ignore("#{__dir__}/langchainrb.rb")
+  loader.inflector.inflect(
+    "ai_message" => "AIMessage",
+    "ai21" => "AI21",
+    "ai21_validator" => "AI21Validator",
+    "csv" => "CSV",
+    "html" => "HTML",
+    "json" => "JSON",
+    "jsonl" => "JSONL",
+    "llm" => "LLM",
+    "openai" => "OpenAI",
+    "openai_chat_parser" => "OpenAIChatParser",
+    "openai_validator" => "OpenAIValidator",
+    "pdf" => "PDF",
+    "react_agent" => "ReActAgent",
+    "sql_query_agent" => "SQLQueryAgent"
+  )
+  loader.setup
+end
 
 # Langchain.rb a is library for building LLM-backed Ruby applications. It is an abstraction layer that sits on top of the emerging AI-related tools that makes it easy for developers to consume and string those services together.
 #
