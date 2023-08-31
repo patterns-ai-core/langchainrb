@@ -93,6 +93,26 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
       allow(subject.client).to receive(:index).with(index_name).and_return(Pinecone::Index.new)
     end
 
+    describe "#find" do
+      let(:index) { Pinecone::Index.new }
+
+      before(:each) do
+        allow(subject.client).to receive(:index).and_return(index)
+        allow(subject.client.index).to receive(:fetch).and_return(vectors)
+        allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
+          vectors: vectors, namespace: namespace
+        ).and_return(true)
+      end
+
+      it "returns ArgumentError if no ids supplied" do
+        expect {subject.find(ids: []) }.to raise_error(ArgumentError, /Ids must be provided/)
+      end
+
+      it "finds vectors with the correct ids and namespace" do
+        expect(subject.find(ids: ['123'], namespace: namespace)).to eq(vectors)
+      end
+    end
+
     describe "without a namespace" do
       before(:each) do
         allow_any_instance_of(Pinecone::Index).to receive(:upsert).with(
