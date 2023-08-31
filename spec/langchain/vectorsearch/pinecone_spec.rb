@@ -105,11 +105,11 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
       end
 
       it "returns ArgumentError if no ids supplied" do
-        expect {subject.find(ids: []) }.to raise_error(ArgumentError, /Ids must be provided/)
+        expect { subject.find(ids: []) }.to raise_error(ArgumentError, /Ids must be provided/)
       end
 
       it "finds vectors with the correct ids and namespace" do
-        expect(subject.find(ids: ['123'], namespace: namespace)).to eq(vectors)
+        expect(subject.find(ids: ["123"], namespace: namespace)).to eq(vectors)
       end
     end
 
