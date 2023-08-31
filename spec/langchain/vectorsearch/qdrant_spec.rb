@@ -53,6 +53,18 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
   let(:count) { 1 }
   let(:query) { "Greetings Earth" }
 
+  describe "#find" do
+    let(:points_fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/qdrant/points.json")) }
+
+    before do
+      allow(subject.client).to receive_message_chain(:points, :get_all).and_return(points_fixture)
+    end
+
+    it "searches for similar texts" do
+      expect(subject.find(ids: [4, 1, 2, 5, 6]).dig("result").count).to eq(5)
+    end
+  end
+
   describe "add_texts" do
     before do
       allow(subject.llm).to receive(:embed).with(text: text).and_return(embedding)

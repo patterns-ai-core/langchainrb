@@ -29,6 +29,15 @@ module Langchain::Vectorsearch
       super(llm: llm)
     end
 
+    def find(ids: [])
+      client.points.get_all(
+        collection_name: index_name,
+        ids: ids,
+        with_payload: true,
+        with_vector: true
+      )
+    end
+
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @return [Hash] The response from the server
