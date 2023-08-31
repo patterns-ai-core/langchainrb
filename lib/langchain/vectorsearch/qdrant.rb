@@ -29,6 +29,9 @@ module Langchain::Vectorsearch
       super(llm: llm)
     end
 
+    # Find records by ids
+    # @param ids [Array] The ids to find
+    # @return [Hash] The response from the server
     def find(ids: [])
       client.points.get_all(
         collection_name: index_name,
