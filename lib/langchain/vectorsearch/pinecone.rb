@@ -31,6 +31,19 @@ module Langchain::Vectorsearch
       super(llm: llm)
     end
 
+    # Find records by ids
+    # @param ids [Array] The ids to find
+    # @param namespace String The namespace to search through
+    # @return [Hash] The response from the server
+    def find(ids: [], namespace: "")
+      raise ArgumentError, "Ids must be provided" if Array(ids).empty?
+
+      client.index(index_name).fetch(
+        ids: ids,
+        namespace: namespace
+      )
+    end
+
     # Add a list of texts to the index
     # @param texts [Array] The list of texts to add
     # @param ids [Array] The list of IDs to add
