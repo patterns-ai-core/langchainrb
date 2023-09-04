@@ -3,7 +3,7 @@
 module Langchain::Tool
   class GoogleSearch < Base
     #
-    # Wrapper around Google Serp SPI
+    # Wrapper around SerpApi's Google Search API
     #
     # Gem requirements: gem "google_search_results", "~> 2.0.0"
     #
@@ -15,7 +15,7 @@ module Langchain::Tool
     NAME = "google_search"
 
     description <<~DESC
-      A wrapper around Google Search.
+      A wrapper around SerpApi's Google Search API.
 
       Useful for when you need to answer questions about current events.
       Always one of the first options when you need to find information on internet.
