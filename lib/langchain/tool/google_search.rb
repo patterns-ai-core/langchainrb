@@ -104,7 +104,7 @@ module Langchain::Tool
         end
       end
 
-      if first_organic_result = results.dig(:organic_results, 0)
+      if (first_organic_result = results.dig(:organic_results, 0))
         if (snippet = first_organic_result[:snippet])
           snippets << snippet
         elsif (snippet_highlighted_words = first_organic_result[:snippet_highlighted_words])
