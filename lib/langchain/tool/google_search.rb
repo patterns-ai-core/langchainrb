@@ -55,16 +55,16 @@ module Langchain::Tool
     #
     def execute(input:)
       Langchain.logger.info("Executing \"#{input}\"", for: self.class)
-      
+
       results = execute_search(input: input)
 
       answer_box = results[:answer_box_list] ? results[:answer_box_list].first : results[:answer_box]
       if answer_box
         return answer_box[:result] ||
-          answer_box[:answer] ||
-          answer_box[:snippet] ||
-          answer_box[:snippet_highlighted_words] ||
-          answer_box.reject { |_k, v| v.is_a?(Hash) || v.is_a?(Array) || v.start_with?("http") }
+            answer_box[:answer] ||
+            answer_box[:snippet] ||
+            answer_box[:snippet_highlighted_words] ||
+            answer_box.reject { |_k, v| v.is_a?(Hash) || v.is_a?(Array) || v.start_with?("http") }
       elsif (events_results = results[:events_results])
         return events_results.take(10)
       elsif (sports_results = results[:sports_results])
@@ -75,7 +75,7 @@ module Langchain::Tool
         return news_results
       elsif (jobs_results = results.dig(:jobs_results, :jobs))
         return jobs_results
-      elsif (shopping_results = results[:shopping_results]) && shopping_results.first.keys.include?(:title)
+      elsif (shopping_results = results[:shopping_results]) && shopping_results.first.key?(:title)
         return shopping_results.take(3)
       elsif (questions_and_answers = results[:questions_and_answers])
         return questions_and_answers
@@ -83,8 +83,8 @@ module Langchain::Tool
         return popular_destinations
       elsif (top_sights = results.dig(:top_sights, :sights))
         return top_sights
-      elsif (images_results = results[:images_results]) && images_results.first.keys.include?(:thumbnail)
-        return images_results.map{ |h| h[:thumbnail] }.take(10)
+      elsif (images_results = results[:images_results]) && images_results.first.key?(:thumbnail)
+        return images_results.map { |h| h[:thumbnail] }.take(10)
       end
 
       snippets = []
@@ -94,11 +94,11 @@ module Langchain::Tool
         title = knowledge_graph[:title] || ""
         knowledge_graph.each do |k, v|
           if v.is_a?(String) &&
-            k != :title &&
-            k != :description &&
-            !k.to_s.end_with?("_stick") &&
-            !k.to_s.end_with?("_link") &&
-            !k.to_s.start_with?("http")
+              k != :title &&
+              k != :description &&
+              !k.to_s.end_with?("_stick") &&
+              !k.to_s.end_with?("_link") &&
+              !k.to_s.start_with?("http")
             snippets << "#{title} #{k}: #{v}"
           end
         end
