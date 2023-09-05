@@ -20,7 +20,6 @@ module Langchain::LLM
 
     def initialize(api_key:, default_options: {})
       depends_on "ai21"
-      require "ai21"
 
       @client = ::AI21::Client.new(api_key)
       @defaults = DEFAULTS.merge(default_options)

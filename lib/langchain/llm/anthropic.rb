@@ -22,7 +22,6 @@ module Langchain::LLM
 
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "anthropic"
-      require "anthropic"
 
       @client = ::Anthropic::Client.new(access_token: api_key, **llm_options)
       @defaults = DEFAULTS.merge(default_options)

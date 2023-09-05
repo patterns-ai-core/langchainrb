@@ -18,7 +18,6 @@ module Langchain::Vectorsearch
     # @param llm [Object] The LLM client to use
     def initialize(environment:, api_key:, index_name:, llm:)
       depends_on "pinecone"
-      require "pinecone"
 
       ::Pinecone.configure do |config|
         config.api_key = api_key

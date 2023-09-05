@@ -25,7 +25,6 @@ module Langchain::LLM
 
     def initialize(api_key:, default_options: {})
       depends_on "google_palm_api"
-      require "google_palm_api"
 
       @client = ::GooglePalmApi::Client.new(api_key: api_key)
       @defaults = DEFAULTS.merge(default_options)

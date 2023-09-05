@@ -26,9 +26,7 @@ module Langchain::Vectorsearch
     # @param namespace [String] The namespace to use for the index when inserting/querying
     def initialize(url:, index_name:, llm:, namespace: nil)
       depends_on "sequel"
-      require "sequel"
       depends_on "pgvector"
-      require "pgvector"
 
       @db = Sequel.connect(url)
 

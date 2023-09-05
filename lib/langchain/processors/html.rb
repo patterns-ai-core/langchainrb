@@ -11,7 +11,6 @@ module Langchain
 
       def initialize(*)
         depends_on "nokogiri"
-        require "nokogiri"
       end
 
       # Parse the document and return the text

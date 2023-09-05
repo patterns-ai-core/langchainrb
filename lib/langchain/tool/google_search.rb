@@ -33,7 +33,7 @@ module Langchain::Tool
     #
     def initialize(api_key:)
       depends_on "google_search_results"
-      require "google_search_results"
+
       @api_key = api_key
     end
 

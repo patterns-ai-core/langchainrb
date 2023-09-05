@@ -17,8 +17,7 @@ module Langchain::Vectorsearch
     # @param index_name [String] The name of the index to use
     # @param llm [Object] The LLM client to use
     def initialize(url:, api_key:, index_name:, llm:)
-      depends_on "qdrant-ruby"
-      require "qdrant"
+      depends_on "qdrant-ruby", req: "qdrant"
 
       @client = ::Qdrant::Client.new(
         url: url,
