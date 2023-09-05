@@ -12,14 +12,14 @@ RSpec.describe "depends_on" do
   end
 
   it "raises an error if the gem isn't included" do
-    expect { subject.depends_on("random-gem") }.to raise_error(LoadError, /Could not load random-gem/)
+    expect { subject.depends_on("random-gem") }.to raise_error(Langchain::DependencyHelper::LoadError, /Could not load random-gem/)
   end
 
   it "raises an error when it doesn't have it as a bundler dependency" do
     bundler_load = double(:load, dependencies: [])
     allow(Bundler).to receive(:load).and_return(bundler_load)
 
-    expect { subject.depends_on("rspec") }.to raise_error(LoadError, /Could not load rspec/)
+    expect { subject.depends_on("rspec") }.to raise_error(Langchain::DependencyHelper::LoadError, /Could not load rspec/)
   end
 
   it "raises an error when it doesn't match gem version requirement" do

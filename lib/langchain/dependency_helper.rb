@@ -2,6 +2,8 @@
 
 module Langchain
   module DependencyHelper
+    class LoadError < ::LoadError; end
+
     class VersionError < ScriptError; end
 
     # This method requires and loads the given gem, and then checks to see if the version of the gem meets the requirements listed in `langchain.gemspec`
@@ -32,7 +34,7 @@ module Langchain
       require(lib_name) if lib_name
 
       true
-    rescue LoadError
+    rescue ::LoadError
       raise LoadError, "Could not load #{gem_name}. Please ensure that the #{gem_name} gem is installed."
     end
   end
