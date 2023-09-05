@@ -13,7 +13,6 @@ module Langchain::Vectorsearch
 
     def initialize(url:, index_name:, llm:, api_key: nil)
       depends_on "milvus"
-      require "milvus"
 
       @client = ::Milvus::Client.new(url: url)
       @index_name = index_name

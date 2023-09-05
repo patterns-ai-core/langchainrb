@@ -18,7 +18,6 @@ module Langchain::Vectorsearch
     # @param llm [Object] The LLM client to use
     def initialize(url:, index_name:, llm:, api_key: nil)
       depends_on "chroma-db"
-      require "chroma-db"
 
       ::Chroma.connect_host = url
       ::Chroma.logger = Langchain.logger

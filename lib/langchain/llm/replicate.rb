@@ -33,8 +33,7 @@ module Langchain::LLM
     # @param api_key [String] The API key to use
     #
     def initialize(api_key:, default_options: {})
-      depends_on "replicate-ruby"
-      require "replicate"
+      depends_on "replicate-ruby", req: "replicate"
 
       ::Replicate.configure do |config|
         config.api_token = api_key

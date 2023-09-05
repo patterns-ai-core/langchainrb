@@ -23,7 +23,6 @@ module Langchain::Vectorsearch
     #
     def initialize(llm:, path_to_index:)
       depends_on "hnswlib"
-      require "hnswlib"
 
       super(llm: llm)
 

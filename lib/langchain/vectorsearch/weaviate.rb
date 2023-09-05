@@ -17,8 +17,7 @@ module Langchain::Vectorsearch
     # @param index_name [String] The capitalized name of the index to use
     # @param llm [Object] The LLM client to use
     def initialize(url:, api_key:, index_name:, llm:)
-      depends_on "weaviate-ruby"
-      require "weaviate"
+      depends_on "weaviate-ruby", req: "weaviate"
 
       @client = ::Weaviate::Client.new(
         url: url,
