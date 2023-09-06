@@ -150,7 +150,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
       it "raises an error" do
         expect {
-          subject.complete(prompt: "Hello World")
+          subject.complete(prompt: 'Hello World')
         }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
       end
     end
