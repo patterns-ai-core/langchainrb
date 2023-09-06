@@ -44,7 +44,10 @@ module Langchain::LLM
 
       validate_max_tokens(text, parameters[:model])
 
-      response = client.embeddings(parameters: parameters.merge(params))
+      response = with_api_error_handling do
+        client.embeddings(parameters: parameters.merge(params))
+      end
+
       response.dig("data").first.dig("embedding")
     end
 
@@ -61,7 +64,10 @@ module Langchain::LLM
       parameters[:prompt] = prompt
       parameters[:max_tokens] = validate_max_tokens(prompt, parameters[:model])
 
-      response = client.completions(parameters: parameters)
+      response = with_api_error_handling do
+        client.completions(parameters: parameters)
+      end
+
       response.dig("choices", 0, "text")
     end
 
@@ -130,8 +136,10 @@ module Langchain::LLM
         end
       end
 
-      response = client.chat(parameters: parameters)
-      raise Langchain::LLM::ApiError.new "Chat completion failed: #{response.dig("error", "message")}" if !response.empty? && response.dig("error")
+      response = with_api_error_handling do
+        client.chat(parameters: parameters)
+      end
+
       unless streaming
         message = response.dig("choices", 0, "message")
         content = message["content"]
@@ -195,6 +203,13 @@ module Langchain::LLM
           content: message.content
         }
       end
+    end
+
+    def with_api_error_handling
+      response = yield
+      raise Langchain::LLM::ApiError.new "OpenAI API error: #{response.dig("error", "message")}" if response&.dig("error")
+
+      response
     end
 
     def validate_max_tokens(messages, model)
