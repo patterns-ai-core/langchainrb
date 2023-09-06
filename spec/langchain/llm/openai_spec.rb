@@ -141,7 +141,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     context "with failed API call" do
-      let(:parameters)  do
+      let(:parameters) do
         {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0, max_tokens: 4095}}
       end
       let(:response) do
@@ -150,7 +150,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
       it "raises an error" do
         expect {
-          subject.complete(prompt: 'Hello World')
+          subject.complete(prompt: "Hello World")
         }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
       end
     end
