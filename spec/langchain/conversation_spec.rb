@@ -251,8 +251,8 @@ RSpec.describe Langchain::Conversation do
         {"choices" => [{"message" => {"content" => "I'm doing well. How about you?"}}]}
       end
       let(:context) { "You are a chatbot" }
-      let(:summary1) { {"choices" => [{"text" => "Just chatting about life"}]} }
-      let(:summary2) { {"choices" => [{"text" => "Nothing interesting here"}]} }
+      let(:summary1) { "Just chatting about life" }
+      let(:summary2) { "Nothing interesting here" }
       let(:examples) { [Langchain::HumanMessage.new("Hello"), Langchain::AIMessage.new("Hi")] }
       let(:messages) do
         [
@@ -268,7 +268,7 @@ RSpec.describe Langchain::Conversation do
       before do
         allow(llm).to receive(:client).and_return(client)
         allow(client).to receive(:chat).and_return(response)
-        allow(client).to receive(:completions).and_return(summary1, summary2)
+        allow(llm).to receive(:summarize).and_return(summary1, summary2)
 
         subject.set_context(context)
         subject.add_examples(examples)

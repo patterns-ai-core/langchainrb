@@ -12,7 +12,6 @@ module Langchain::LLM
   class OpenAI < Base
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "text-davinci-003",
       chat_completion_model_name: "gpt-3.5-turbo",
       embeddings_model_name: "text-embedding-ada-002",
       dimension: 1536
@@ -59,16 +58,16 @@ module Langchain::LLM
     # @return [String] The completion
     #
     def complete(prompt:, **params)
-      parameters = compose_parameters @defaults[:completion_model_name], params
+      parameters = compose_parameters @defaults[:chat_completion_model_name], params
 
-      parameters[:prompt] = prompt
-      parameters[:max_tokens] = validate_max_tokens(prompt, parameters[:model])
+      parameters[:messages] = compose_chat_messages(prompt: prompt)
+      parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
 
       response = with_api_error_handling do
-        client.completions(parameters: parameters)
+        client.chat(parameters: parameters)
       end
 
-      response.dig("choices", 0, "text")
+      response.dig("choices", 0, "message", "content")
     end
 
     #
@@ -173,7 +172,7 @@ module Langchain::LLM
       default_params.merge(params)
     end
 
-    def compose_chat_messages(prompt:, messages:, context:, examples:)
+    def compose_chat_messages(prompt:, messages: [], context: "", examples: [])
       history = []
 
       history.concat transform_messages(examples) unless examples.empty?

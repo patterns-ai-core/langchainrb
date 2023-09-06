@@ -70,15 +70,17 @@ RSpec.describe Langchain::LLM::OpenAI do
     let(:response) do
       {
         "id" => "cmpl-7BZg4cP5xzga4IyLI6u97WMepAJj2",
-        "object" => "text_completion",
+        "object" => "chat.completion",
         "created" => 1682993108,
-        "model" => "text-davinci-003",
+        "model" => "gpt-3.5-turbo",
         "choices" => [
           {
-            "text" => "\n\nThe meaning of life is subjective and can vary from person to person.",
-            "index" => 0,
-            "logprobs" => nil,
-            "finish_reason" => "length"
+            "message" => {
+              "role" => "assistant",
+              "content" => "The meaning of life is subjective and can vary from person to person."
+            },
+            "finish_reason" => "stop",
+            "index" => 0
           }
         ],
         "usage" => {
@@ -90,16 +92,23 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     before do
-      allow(subject.client).to receive(:completions).with(parameters).and_return(response)
+      allow(subject.client).to receive(:chat).with(parameters).and_return(response)
     end
 
     context "with default parameters" do
       let(:parameters) do
-        {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0, max_tokens: 4095}}
+        {
+          parameters: {
+            model: "gpt-3.5-turbo",
+            messages: [{content: "Hello World", role: "user"}],
+            temperature: 0.0,
+            max_tokens: 4086
+          }
+        }
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World")).to eq("\n\nThe meaning of life is subjective and can vary from person to person.")
+        expect(subject.complete(prompt: "Hello World")).to eq("The meaning of life is subjective and can vary from person to person.")
       end
     end
 
@@ -107,23 +116,23 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:subject) {
         described_class.new(
           api_key: "123",
-          default_options: {completion_model_name: "gpt-3.5-turbo-16k"}
+          default_options: {chat_completion_model_name: "gpt-3.5-turbo-16k"}
         )
       }
 
       let(:parameters) do
         {parameters:
-          {model: "text-davinci-003",
-           prompt: "Hello World",
+          {model: "gpt-3.5-turbo",
+           messages: [{content: "Hello World", role: "user"}],
            temperature: 0.0,
-           max_tokens: 4095}}
+           max_tokens: 4086}}
       end
 
       it "passes correct options to the completions method" do
-        expect(subject.client).to receive(:completions).with(
-          {parameters: {max_tokens: 16382,
+        expect(subject.client).to receive(:chat).with(
+          {parameters: {max_tokens: 16374,
                         model: "gpt-3.5-turbo-16k",
-                        prompt: "Hello World",
+                        messages: [{content: "Hello World", role: "user"}],
                         temperature: 0.0}}
         ).and_return(response)
         subject.complete(prompt: "Hello World")
@@ -132,11 +141,11 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {model: "text-curie-001", prompt: "Hello World", temperature: 1.0, max_tokens: 2047}}
+        {parameters: {model: "text-curie-001", messages: [{content: "Hello World", role: "user"}], temperature: 1.0, max_tokens: 2039}}
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World", model: "text-curie-001", temperature: 1.0)).to eq("\n\nThe meaning of life is subjective and can vary from person to person.")
+        expect(subject.complete(prompt: "Hello World", model: "text-curie-001", temperature: 1.0)).to eq("The meaning of life is subjective and can vary from person to person.")
       end
     end
 
@@ -150,7 +159,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
       it "raises an error" do
         expect {
-          subject.complete(prompt: 'Hello World')
+          subject.complete(prompt: "Hello World")
         }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
       end
     end
