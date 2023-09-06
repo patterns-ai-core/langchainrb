@@ -139,6 +139,21 @@ RSpec.describe Langchain::LLM::OpenAI do
         expect(subject.complete(prompt: "Hello World", model: "text-curie-001", temperature: 1.0)).to eq("\n\nThe meaning of life is subjective and can vary from person to person.")
       end
     end
+
+    context "with failed API call" do
+      let(:parameters)  do
+        {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0, max_tokens: 4095}}
+      end
+      let(:response) do
+        {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
+      end
+
+      it "raises an error" do
+        expect {
+          subject.complete(prompt: 'Hello World')
+        }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
+      end
+    end
   end
 
   describe "#default_dimension" do
@@ -333,7 +348,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "raises an error" do
         expect {
           subject.chat(prompt: prompt)
-        }.to raise_error(Langchain::LLM::ApiError, "Chat completion failed: User location is not supported for the API use.")
+        }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
       end
     end
   end
