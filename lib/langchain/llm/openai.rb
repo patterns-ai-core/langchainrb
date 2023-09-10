@@ -141,10 +141,13 @@ module Langchain::LLM
       end
 
       unless streaming
-        message = response.dig("choices", 0, "message")
-        content = message["content"]
-        additional_kwargs = {function_call: message["function_call"]}.compact
-        Langchain::AIMessage.new(content.to_s, additional_kwargs)
+        choices = response.dig('choices').map do |choice|
+          message = choice['message']
+          content = message["content"]
+          additional_kwargs = {function_call: message["function_call"]}.compact
+          Langchain::AIMessage.new(content.to_s, additional_kwargs)
+        end
+        # Extend choices so that we can attach the billing / token information
       end
     end
 
