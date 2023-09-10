@@ -12,10 +12,19 @@ module Langchain::LLM
   class OpenAI < Base
     DEFAULTS = {
       temperature: 0.0,
+      completion_model_name: "gpt-3.5-turbo",
       chat_completion_model_name: "gpt-3.5-turbo",
       embeddings_model_name: "text-embedding-ada-002",
       dimension: 1536
     }.freeze
+
+    LEGACY_COMPLETION_MODELS = %w[
+      ada
+      babbage
+      curie
+      davinci
+    ].freeze
+
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
     ROLE_MAPPING = {
       "ai" => "assistant",
@@ -58,7 +67,9 @@ module Langchain::LLM
     # @return [String] The completion
     #
     def complete(prompt:, **params)
-      parameters = compose_parameters @defaults[:chat_completion_model_name], params
+      parameters = compose_parameters @defaults[:completion_model_name], params
+
+      return legacy_complete(prompt, parameters) if is_legacy_model?(parameters[:model])
 
       parameters[:messages] = compose_chat_messages(prompt: prompt)
       parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
@@ -163,6 +174,22 @@ module Langchain::LLM
     end
 
     private
+
+    def is_legacy_model?(model)
+      LEGACY_COMPLETION_MODELS.any? { |legacy_model| model.include?(legacy_model) }
+    end
+
+    def legacy_complete(prompt, parameters)
+      Langchain.logger.warn "DEPRECATION WARNING: The model #{parameters[:model]} is deprecated. Please use gpt-3.5-turbo instead. Details: https://platform.openai.com/docs/deprecations/2023-07-06-gpt-and-embeddings"
+
+      parameters[:prompt] = prompt
+      parameters[:max_tokens] = validate_max_tokens(prompt, parameters[:model])
+
+      response = with_api_error_handling do
+        client.completions(parameters: parameters)
+      end
+      response.dig("choices", 0, "text")
+    end
 
     def compose_parameters(model, params)
       default_params = {model: model, temperature: @defaults[:temperature]}

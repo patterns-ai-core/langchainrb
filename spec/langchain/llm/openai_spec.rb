@@ -93,6 +93,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     before do
       allow(subject.client).to receive(:chat).with(parameters).and_return(response)
+      allow(subject.client).to receive(:completions).with(parameters).and_return(response)
     end
 
     context "with default parameters" do
@@ -113,39 +114,79 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     context "with custom default_options" do
-      let(:subject) {
-        described_class.new(
-          api_key: "123",
-          default_options: {chat_completion_model_name: "gpt-3.5-turbo-16k"}
-        )
-      }
+      context "with legacy model" do
+        let(:logger) { double("logger") }
+        let(:subject) {
+          described_class.new(
+            api_key: "123",
+            default_options: {completion_model_name: "text-davinci-003"}
+          )
+        }
+        let(:parameters) do
+          {parameters:
+            {model: "text-davinci-003",
+             prompt: "Hello World",
+             temperature: 0.0,
+             max_tokens: 4095}}
+        end
 
-      let(:parameters) do
-        {parameters:
-          {model: "gpt-3.5-turbo",
-           messages: [{content: "Hello World", role: "user"}],
-           temperature: 0.0,
-           max_tokens: 4086}}
+        before do
+          allow(Langchain).to receive(:logger).and_return(logger)
+          allow(logger).to receive(:warn)
+        end
+
+        it "passes correct options to the completions method" do
+          expect(subject.client).to receive(:completions).with({
+            parameters: {max_tokens: 4095,
+                         model: "text-davinci-003",
+                         prompt: "Hello World",
+                         temperature: 0.0}
+          }).and_return(response)
+          subject.complete(prompt: "Hello World")
+        end
+
+        it "logs a deprecation warning" do
+          expect(Langchain.logger).to receive(:warn).with("DEPRECATION WARNING: The model text-davinci-003 is deprecated. Please use gpt-3.5-turbo instead. Details: https://platform.openai.com/docs/deprecations/2023-07-06-gpt-and-embeddings")
+
+          subject.complete(prompt: "Hello World")
+        end
       end
 
-      it "passes correct options to the completions method" do
-        expect(subject.client).to receive(:chat).with(
-          {parameters: {max_tokens: 16374,
-                        model: "gpt-3.5-turbo-16k",
-                        messages: [{content: "Hello World", role: "user"}],
-                        temperature: 0.0}}
-        ).and_return(response)
-        subject.complete(prompt: "Hello World")
+      context "with new model" do
+        let(:subject) {
+          described_class.new(
+            api_key: "123",
+            default_options: {completion_model_name: "gpt-3.5-turbo-16k"}
+          )
+        }
+
+        let(:parameters) do
+          {parameters:
+            {model: "gpt-3.5-turbo",
+             messages: [{content: "Hello World", role: "user"}],
+             temperature: 0.0,
+             max_tokens: 4086}}
+        end
+
+        it "passes correct options to the chat method" do
+          expect(subject.client).to receive(:chat).with(
+            {parameters: {max_tokens: 16374,
+                          model: "gpt-3.5-turbo-16k",
+                          messages: [{content: "Hello World", role: "user"}],
+                          temperature: 0.0}}
+          ).and_return(response)
+          subject.complete(prompt: "Hello World")
+        end
       end
     end
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {model: "text-curie-001", messages: [{content: "Hello World", role: "user"}], temperature: 1.0, max_tokens: 2039}}
+        {parameters: {model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 1.0, max_tokens: 4086}}
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World", model: "text-curie-001", temperature: 1.0)).to eq("The meaning of life is subjective and can vary from person to person.")
+        expect(subject.complete(prompt: "Hello World", model: "gpt-3.5-turbo", temperature: 1.0)).to eq("The meaning of life is subjective and can vary from person to person.")
       end
     end
 
