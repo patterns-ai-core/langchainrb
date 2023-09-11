@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.6.14] - 2023-09-11
+- Add `find` method to `Langchain::Vectorsearch::Qdrant`
+- Enhance Google search output
+- Raise ApiError when OpenAI returns an error
+- Update OpenAI `complete` method to use chat completion api
+  - Deprecate legacy completion models. See https://platform.openai.com/docs/deprecations/2023-07-06-gpt-and-embeddings
+
 ## [0.6.13] - 2023-08-23
 - Add `k:` parameter to all `ask()` vector search methods
 - Bump Faraday to 2.x 
