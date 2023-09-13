@@ -1,0 +1,27 @@
+_type: prompt
+template: |
+  Here is an API JSON response with its corresponding API description:
+
+  API: {api_path}
+  API description: {api_description}
+  Parameters for this API call:
+  {api_param}
+
+  JSON response:
+  {json}
+
+  The response is about: {response_description}
+
+  ====
+  Your task is to extract some information according to these instructions: {query}
+  When working with API objects, you should usually use ids over names.
+  If the response indicates an error, you should instead output a summary of the error.
+
+  Output:
+input_variables:
+  - api_path
+  - api_description
+  - api_param
+  - json
+  - response_description
+  - query

@@ -1,0 +1,13 @@
+_type: prompt
+template: |
+  Given a string, due to the maximum context length, the final item/sentence may be truncated and incomplete. First, remove the final truncated incomplete item/sentence. Then if the list are in brackets "[]", add bracket in the tail to make it a grammarly correct list. You should just output the final result.
+
+  Example:
+  Input: The ids and names of the albums from Lana Del Rey are [{{'id': '5HOHne1wzItQlIYmLXLYfZ', 'name': "Did you know that there's a tunnel under Ocean Blvd"}}, {{'id': '2wwCc6fcyhp1tfY3J6Javr', 'name': 'Blue Banisters'}}, {{'id': '6Qeos
+  Output: The ids and names of the albums from Lana Del Rey are [{{'id': '5HOHne1wzItQlIYmLXLYfZ', 'name': "Did you know that there's a tunnel under Ocean Blvd"}}, {{'id': '2wwCc6fcyhp1tfY3J6Javr', 'name': 'Blue Banisters'}}]
+
+  Begin!
+  Input: {truncated_str}
+  Output: 
+input_variables:
+  - truncated_str

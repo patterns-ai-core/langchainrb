@@ -1,0 +1,33 @@
+_type: prompt
+template: |
+  Here is an API response JSON snippet with its corresponding schema and a query. 
+  The API's response JSON follows the schema.
+  Assume the JSON response is stored in a Ruby hash variable called 'data', your task is to generate Ruby code to extract information I need from the API response.
+  Please print the final result.
+  The example result format are:
+  "The release date of the album is 2002-11-03"
+  "The id of the person is 12345"
+  Note you should generate only Ruby code.
+  DO NOT use fields that are not in the response schema.
+  DO NOT use "list comprehensions" in your generated code.
+
+  API: {api_path}
+  API description: {api_description}
+  Parameters for this API call:
+  {api_param}
+
+  Response JSON schema defined in the OAS:
+  {response_schema}
+
+  JSON snippet:
+  {json}
+
+  Query: {query}
+  Ruby Code:
+input_variables:
+  - api_path
+  - api_description
+  - api_param
+  - response_schema
+  - json
+  - query

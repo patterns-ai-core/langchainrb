@@ -6,7 +6,6 @@ PATH
       colorize (~> 0.8.1)
       json-schema (~> 4.0.0)
       tiktoken_ruby (~> 0.0.5)
-      zeitwerk (= 2.6.11)
 
 GEM
   remote: https://rubygems.org/

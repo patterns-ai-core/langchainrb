@@ -1,0 +1,45 @@
+_type: prompt
+template: |
+  Here is an API response schema from an OAS and a query. 
+  The API's response will follow the schema and be a JSON. 
+  Assume you are given a JSON response which is stored in a Ruby hash variable called 'data', your task is to generate Ruby code to extract information I need from the API response.
+  Note: I will give you 'data', do not make up one, just reference it in your code.
+  Please print the final result as brief as possible. If the result is a list, just print it in one sentence. Do not print each item in a new line.
+  The example result format are:
+  "The release date of the album is 2002-11-03"
+  "The id of the person is 12345"
+  "The movies directed by Wong Kar-Wai are In the Mood for Love (843), My Blueberry Nights (1989), Chungking Express (11104)"
+  Note you should generate only Ruby code.
+  DO NOT use fields that are not in the response schema.
+
+  API: {api_path}
+  API description: {api_description}
+  Parameters or body for this API call:
+  {api_param}
+
+  Response JSON schema defined in the OAS:
+  {response_schema}
+
+  Example:
+  {response_example}
+
+  The response is about: {response_description}
+
+  Query: {query}
+
+  The code you generate should satisfy the following requirements:
+  1. The code you generate should contain the filter in the query. For example, if the query is "what is the name and id of the director of this movie" and the response is the cast and crew for the movie, instead of directly selecting the first result in the crew list (director_name = data['crew'][0]['name']), the code you generate should have a filter for crews where the job is a "Director" (item['job'] == 'Director').
+  2. If the response is something about X, e.g., the movies credits of Lee Chang-dong, then the filter condition cannot include searching for X (e.g., Lee Chang-dong). For example, the API response is the movie credits of Akira Kurosawa and the instruction is what are the ids of the movies directed by him. Then the your code should not contain "movie['title'] == 'Akira Kurosawa'" or "movie['name'] == 'Akira Kurosawa'"
+  3. Do not set your own 'data' variable, just reference it in your code.
+  4. Please print the final result as brief as possible. If the result is a list, just print it in one sentence. Do not print each item in a new line.
+
+  Begin!
+  Ruby Code:
+input_variables:
+  - api_path
+  - api_description
+  - api_param
+  - response_schema
+  - response_example
+  - response_description
+  - query

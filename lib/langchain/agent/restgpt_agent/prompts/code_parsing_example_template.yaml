@@ -1,0 +1,23 @@
+_type: prompt
+template: |
+  Here is an API response schema and a query. 
+  The API's response will follow the schema and be a JSON. 
+  Assume you are given a JSON response which is stored in a Ruby hash variable called 'data', your task is to generate Ruby code to extract information I need from the API response.
+  Please print the final result.
+  The example result format are:
+  Note you should generate only Ruby code.
+  DO NOT use fields that are not in the response schema.
+
+  API: {api_path}
+  API description: {api_description}
+
+  Response example:
+  {response_example}
+
+  Query: {query}
+  Ruby Code:
+input_variables:
+  - api_path
+  - api_description
+  - response_example
+  - query
