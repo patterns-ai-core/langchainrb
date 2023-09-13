@@ -67,25 +67,6 @@ module Langchain::Agent
         @postprocess_prompt = POSTPROCESS_TEMPLATE
       end
 
-      # Placeholder for the _chain_type method
-      def _chain_type
-        "RestGPT Parser"
-      end
-
-      # Placeholder for the input_keys method
-      def input_keys
-        ["query", "json", "api_param", "response_description"]
-      end
-
-      # Placeholder for the output_keys method
-      def output_keys
-        if !@return_intermediate_steps
-          [@output_key]
-        else
-          [@output_key, "intermediate_steps"]
-        end
-      end
-
       def call(query:, json:, api_param:, response_description:)
         if @code_parsing_schema_prompt.nil? || query.nil?
           prompt = @llm_parsing_prompt.format(
@@ -183,7 +164,7 @@ module Langchain::Agent
           output = @llm.complete(prompt: prompt)
         end
 
-        return {"result" => output}
+        {"result" => output}
       end
     end
   end

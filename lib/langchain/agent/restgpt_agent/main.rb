@@ -27,14 +27,6 @@ module Langchain::Agent
         @api_selector = APISelector.new(llm: llm, scenario: @scenario, api_spec: api_spec)
       end
 
-      def save(file_path)
-        raise "Saving not supported for RestGPT. If you are trying to save the agent, please use the `.save_agent(...)`"
-      end
-
-      def _chain_type
-        "RestGPT"
-      end
-
       def input_keys
         ["query"]
       end

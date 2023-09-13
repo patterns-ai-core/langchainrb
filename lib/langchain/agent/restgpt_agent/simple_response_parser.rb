@@ -28,22 +28,6 @@ module Langchain::Agent
         @return_intermediate_steps = false
       end
 
-      def chain_type
-        "RestGPT Parser"
-      end
-
-      def input_keys
-        ["query", "json", "api_param", "response_description"]
-      end
-
-      def output_keys
-        if !@return_intermediate_steps
-          [@output_key]
-        else
-          [@output_key, "intermediate_steps"]
-        end
-      end
-
       def call(inputs)
         if inputs["query"].nil?
 

@@ -20,18 +20,6 @@ module Langchain::Agent
         @output_key = "result"
       end
 
-      def _chain_type
-        "RestGPT Caller"
-      end
-
-      def input_keys
-        ["api_plan"]
-      end
-
-      def output_keys
-        [@output_key]
-      end
-
       def _should_continue(iterations, time_elapsed)
         return false if !@max_iterations.nil? && iterations >= @max_iterations
         return false if !@max_execution_time.nil? && time_elapsed >= @max_execution_time
