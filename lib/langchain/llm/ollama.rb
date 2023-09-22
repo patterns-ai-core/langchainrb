@@ -24,7 +24,7 @@ module Langchain::LLM
 
     # Generate the completion for a given prompt
     # @param prompt [String] The prompt to complete
-    # @param model [String] The model to use 
+    # @param model [String] The model to use
     # @param options [Hash] The options to use (https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values)
     # @return [String] The completed prompt
     def complete(prompt:, model: nil, **options)
