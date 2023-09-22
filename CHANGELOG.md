@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.6.15] - 2023-09-22
+- Bump weaviate-ruby gem version
+- Ollama support
+
 ## [0.6.14] - 2023-09-11
 - Add `find` method to `Langchain::Vectorsearch::Qdrant`
 - Enhance Google search output
