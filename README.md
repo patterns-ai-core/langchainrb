@@ -210,6 +210,18 @@ anthropic = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
 anthropic.complete(prompt: "What is the meaning of life?")
 ```
 
+#### Ollama
+```ruby
+ollama = Langchain::LLM::Ollama.new(url: ENV["OLLAMA_URL"])
+```
+
+```ruby
+ollama.complete(prompt: "What is the meaning of life?")
+```
+```ruby
+ollama.embed(text: "Hello world!")
+```
+
 ### Using Prompts 📋
 
 #### Prompt Templates
