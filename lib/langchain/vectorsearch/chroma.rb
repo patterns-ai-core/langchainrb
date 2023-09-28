@@ -37,7 +37,7 @@ module Langchain::Vectorsearch
           id: ids[i] ? ids[i].to_s : SecureRandom.uuid,
           embedding: llm.embed(text: text),
           # TODO: Add support for passing metadata
-          metadata: [], # metadatas[index],
+          metadata: {}, # metadatas[index],
           document: text # Do we actually need to store the whole original document?
         )
       end
