@@ -8,7 +8,7 @@ module Langchain::Vectorsearch
     # Gem requirements: gem "pgvector", "~> 0.2"
     #
     # Usage:
-    # pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace_column: nil, namespace: nil)
+    # pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace: nil)
     #
 
     # The operators supported by the PostgreSQL vector search adapter
@@ -26,9 +26,7 @@ module Langchain::Vectorsearch
     # @param namespace [String] The namespace to use for the index when inserting/querying
     def initialize(url:, index_name:, llm:, namespace: nil)
       depends_on "sequel"
-      require "sequel"
       depends_on "pgvector"
-      require "pgvector"
 
       @db = Sequel.connect(url)
 
@@ -90,20 +88,22 @@ module Langchain::Vectorsearch
     end
 
     # Create default schema
-    # @return [PG::Result] The response from the database
     def create_default_schema
       db.run "CREATE EXTENSION IF NOT EXISTS vector"
-      namespace = namespace_column
+      namespace_column = @namespace_column
       vector_dimension = default_dimension
       db.create_table? table_name.to_sym do
         primary_key :id
         text :content
         column :vectors, "vector(#{vector_dimension})"
-        text namespace.to_sym, default: nil
+        text namespace_column.to_sym, default: nil
       end
     end
 
-    # TODO: Add destroy_default_schema method
+    # Destroy default schema
+    def destroy_default_schema
+      db.drop_table? table_name.to_sym
+    end
 
     # Search for similar texts in the index
     # @param query [String] The text to search for
@@ -133,10 +133,11 @@ module Langchain::Vectorsearch
 
     # Ask a question and return the answer
     # @param question [String] The question to ask
+    # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, &block)
-      search_results = similarity_search(query: question)
+    def ask(question:, k: 4, &block)
+      search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
         result.content.to_s

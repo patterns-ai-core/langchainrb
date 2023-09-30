@@ -5,7 +5,7 @@ module Langchain::LLM
   # Wrapper around the Google PaLM (Pathways Language Model) APIs: https://ai.google/build/machine-learning/
   #
   # Gem requirements:
-  #     gem "google_palm_api", "~> 0.1.2"
+  #     gem "google_palm_api", "~> 0.1.3"
   #
   # Usage:
   #     google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")
@@ -19,10 +19,12 @@ module Langchain::LLM
       embeddings_model_name: "embedding-gecko-001"
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidator
+    ROLE_MAPPING = {
+      "human" => "user"
+    }
 
     def initialize(api_key:, default_options: {})
       depends_on "google_palm_api"
-      require "google_palm_api"
 
       @client = ::GooglePalmApi::Client.new(api_key: api_key)
       @defaults = DEFAULTS.merge(default_options)
@@ -72,10 +74,12 @@ module Langchain::LLM
     #
     # Generate a chat completion for a given prompt
     #
-    # @param prompt [String] The prompt to generate a chat completion for
-    # @param messages [Array] The messages that have been sent in the conversation
-    # @param params extra parameters passed to GooglePalmAPI::Client#generate_chat_message
-    # @return [String] The chat completion
+    # @param prompt [HumanMessage] The prompt to generate a chat completion for
+    # @param messages [Array<AIMessage|HumanMessage>] The messages that have been sent in the conversation
+    # @param context [SystemMessage] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
+    # @param examples [Array<AIMessage|HumanMessage>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    # @param options [Hash] extra parameters passed to GooglePalmAPI::Client#generate_chat_message
+    # @return [AIMessage] The chat completion
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
@@ -83,7 +87,7 @@ module Langchain::LLM
       default_params = {
         temperature: @defaults[:temperature],
         model: @defaults[:chat_completion_model_name],
-        context: context,
+        context: context.to_s,
         messages: compose_chat_messages(prompt: prompt, messages: messages),
         examples: compose_examples(examples)
       }
@@ -104,7 +108,7 @@ module Langchain::LLM
       response = client.generate_chat_message(**default_params)
       raise "GooglePalm API returned an error: #{response}" if response.dig("error")
 
-      response.dig("candidates", 0, "content")
+      Langchain::AIMessage.new(response.dig("candidates", 0, "content"))
     end
 
     #
@@ -146,8 +150,8 @@ module Langchain::LLM
     def compose_examples(examples)
       examples.each_slice(2).map do |example|
         {
-          input: {content: example.first[:content]},
-          output: {content: example.last[:content]}
+          input: {content: example.first.content},
+          output: {content: example.last.content}
         }
       end
     end
@@ -155,8 +159,8 @@ module Langchain::LLM
     def transform_messages(messages)
       messages.map do |message|
         {
-          author: message[:role] || message["role"],
-          content: message[:content] || message["content"]
+          author: ROLE_MAPPING.fetch(message.type, message.type),
+          content: message.content
         }
       end
     end

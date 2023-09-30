@@ -6,7 +6,7 @@
 
 :warning: UNDER ACTIVE AND RAPID DEVELOPMENT (MAY BE BUGGY AND UNTESTED)
 
-![Tests status](https://github.com/andreibondarev/langchainrb/actions/workflows/ci.yml/badge.svg)
+![Tests status](https://github.com/andreibondarev/langchainrb/actions/workflows/ci.yml/badge.svg?branch=main)
 [![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
 [![Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/gems/langchainrb)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/andreibondarev/langchainrb/blob/main/LICENSE.txt)
@@ -61,10 +61,10 @@ client = Langchain::Vectorsearch::Weaviate.new(
 # You can instantiate any other supported vector search database:
 client = Langchain::Vectorsearch::Chroma.new(...) # `gem "chroma-db", "~> 0.3.0"`
 client = Langchain::Vectorsearch::Hnswlib.new(...) # `gem "hnswlib", "~> 0.8.1"`
-client = Langchain::Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.0"`
+client = Langchain::Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.2"`
 client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
 client = Langchain::Vectorsearch::Pgvector.new(...) # `gem "pgvector", "~> 0.2"`
-client = Langchain::Vectorsearch::Qdrant.new(...) # `gem"qdrant-ruby", "~> 0.9.0"`
+client = Langchain::Vectorsearch::Qdrant.new(...) # `gem"qdrant-ruby", "~> 0.9.3"`
 ```
 
 ```ruby
@@ -161,13 +161,10 @@ qdrant:
 
 ```ruby
 client.llm.functions = functions
-client.llm.complete_response = true
 ```
 
-`complete_response` will return the entire choices data from the gpt response
-
 #### Cohere
-Add `gem "cohere-ruby", "~> 0.9.3"` to your Gemfile.
+Add `gem "cohere-ruby", "~> 0.9.6"` to your Gemfile.
 
 ```ruby
 cohere = Langchain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
@@ -192,7 +189,7 @@ replicate = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
 ```
 
 #### Google PaLM (Pathways Language Model)
-Add `"google_palm_api", "~> 0.1.2"` to your Gemfile.
+Add `"google_palm_api", "~> 0.1.3"` to your Gemfile.
 ```ruby
 google_palm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
 ```
@@ -211,6 +208,18 @@ anthropic = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
 
 ```ruby
 anthropic.complete(prompt: "What is the meaning of life?")
+```
+
+#### Ollama
+```ruby
+ollama = Langchain::LLM::Ollama.new(url: ENV["OLLAMA_URL"])
+```
+
+```ruby
+ollama.complete(prompt: "What is the meaning of life?")
+```
+```ruby
+ollama.embed(text: "Hello world!")
 ```
 
 ### Using Prompts 📋
@@ -422,9 +431,6 @@ agent = Langchain::Agent::ReActAgent.new(
   llm: openai,
   tools: [search_tool, calculator]
 )
-
-agent.tools
-# => ["google_search", "calculator"]
 ```
 ```ruby
 agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")

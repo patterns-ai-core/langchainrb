@@ -18,8 +18,7 @@ module Langchain::Tool
     DESC
 
     def initialize
-      depends_on "wikipedia-client"
-      require "wikipedia"
+      depends_on "wikipedia-client", req: "wikipedia"
     end
 
     # Executes Wikipedia API search and returns the answer

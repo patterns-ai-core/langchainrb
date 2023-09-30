@@ -33,7 +33,6 @@ client = Langchain::Vectorsearch::Qdrant.new(
 )
 
 client.llm.functions = functions
-client.llm.complete_response = true
 chat = client.ask(question: "create a users_controller")
 
 puts chat

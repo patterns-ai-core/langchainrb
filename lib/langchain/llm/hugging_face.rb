@@ -25,8 +25,7 @@ module Langchain::LLM
     # @param api_key [String] The API key to use
     #
     def initialize(api_key:)
-      depends_on "hugging-face"
-      require "hugging_face"
+      depends_on "hugging-face", req: "hugging_face"
 
       @client = ::HuggingFace::InferenceApi.new(api_token: api_key)
     end

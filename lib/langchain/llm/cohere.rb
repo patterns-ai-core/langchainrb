@@ -5,7 +5,7 @@ module Langchain::LLM
   # Wrapper around the Cohere API.
   #
   # Gem requirements:
-  #     gem "cohere-ruby", "~> 0.9.5"
+  #     gem "cohere-ruby", "~> 0.9.6"
   #
   # Usage:
   #     cohere = Langchain::LLM::Cohere.new(api_key: "YOUR_API_KEY")
@@ -20,8 +20,7 @@ module Langchain::LLM
     }.freeze
 
     def initialize(api_key:, default_options: {})
-      depends_on "cohere-ruby"
-      require "cohere"
+      depends_on "cohere-ruby", req: "cohere"
 
       @client = ::Cohere::Client.new(api_key: api_key)
       @defaults = DEFAULTS.merge(default_options)
@@ -70,7 +69,8 @@ module Langchain::LLM
 
     # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`
     def chat(...)
-      complete(...)
+      response_text = complete(...)
+      Langchain::AIMessage.new(response_text)
     end
 
     # Generate a summary in English for a given text

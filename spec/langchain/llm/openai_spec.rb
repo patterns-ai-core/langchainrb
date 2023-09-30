@@ -19,6 +19,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
       it "passes correct options to the client" do
         # openai-ruby sets global configuration options here: https://github.com/alexrudall/ruby-openai/blob/main/lib/openai/client.rb
+        subject
         expect(OpenAI.configuration.uri_base).to eq("http://localhost:1234")
       end
     end
@@ -69,15 +70,17 @@ RSpec.describe Langchain::LLM::OpenAI do
     let(:response) do
       {
         "id" => "cmpl-7BZg4cP5xzga4IyLI6u97WMepAJj2",
-        "object" => "text_completion",
+        "object" => "chat.completion",
         "created" => 1682993108,
-        "model" => "text-davinci-003",
+        "model" => "gpt-3.5-turbo",
         "choices" => [
           {
-            "text" => "\n\nThe meaning of life is subjective and can vary from person to person.",
-            "index" => 0,
-            "logprobs" => nil,
-            "finish_reason" => "length"
+            "message" => {
+              "role" => "assistant",
+              "content" => "The meaning of life is subjective and can vary from person to person."
+            },
+            "finish_reason" => "stop",
+            "index" => 0
           }
         ],
         "usage" => {
@@ -89,53 +92,116 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     before do
+      allow(subject.client).to receive(:chat).with(parameters).and_return(response)
       allow(subject.client).to receive(:completions).with(parameters).and_return(response)
     end
 
     context "with default parameters" do
       let(:parameters) do
-        {parameters: {model: "text-davinci-003", prompt: "Hello World", temperature: 0.0, max_tokens: 4095}}
+        {
+          parameters: {
+            model: "gpt-3.5-turbo",
+            messages: [{content: "Hello World", role: "user"}],
+            temperature: 0.0,
+            max_tokens: 4086
+          }
+        }
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World")).to eq("\n\nThe meaning of life is subjective and can vary from person to person.")
+        expect(subject.complete(prompt: "Hello World")).to eq("The meaning of life is subjective and can vary from person to person.")
       end
     end
 
     context "with custom default_options" do
-      let(:subject) {
-        described_class.new(
-          api_key: "123",
-          default_options: {completion_model_name: "gpt-3.5-turbo-16k"}
-        )
-      }
+      context "with legacy model" do
+        let(:logger) { double("logger") }
+        let(:subject) {
+          described_class.new(
+            api_key: "123",
+            default_options: {completion_model_name: "text-davinci-003"}
+          )
+        }
+        let(:parameters) do
+          {parameters:
+            {model: "text-davinci-003",
+             prompt: "Hello World",
+             temperature: 0.0,
+             max_tokens: 4095}}
+        end
 
-      let(:parameters) do
-        {parameters:
-          {model: "text-davinci-003",
-           prompt: "Hello World",
-           temperature: 0.0,
-           max_tokens: 4095}}
+        before do
+          allow(Langchain).to receive(:logger).and_return(logger)
+          allow(logger).to receive(:warn)
+        end
+
+        it "passes correct options to the completions method" do
+          expect(subject.client).to receive(:completions).with({
+            parameters: {max_tokens: 4095,
+                         model: "text-davinci-003",
+                         prompt: "Hello World",
+                         temperature: 0.0}
+          }).and_return(response)
+          subject.complete(prompt: "Hello World")
+        end
+
+        it "logs a deprecation warning" do
+          expect(Langchain.logger).to receive(:warn).with("DEPRECATION WARNING: The model text-davinci-003 is deprecated. Please use gpt-3.5-turbo instead. Details: https://platform.openai.com/docs/deprecations/2023-07-06-gpt-and-embeddings")
+
+          subject.complete(prompt: "Hello World")
+        end
       end
 
-      it "passes correct options to the completions method" do
-        expect(subject.client).to receive(:completions).with(
-          {parameters: {max_tokens: 16382,
-                        model: "gpt-3.5-turbo-16k",
-                        prompt: "Hello World",
-                        temperature: 0.0}}
-        ).and_return(response)
-        subject.complete(prompt: "Hello World")
+      context "with new model" do
+        let(:subject) {
+          described_class.new(
+            api_key: "123",
+            default_options: {completion_model_name: "gpt-3.5-turbo-16k"}
+          )
+        }
+
+        let(:parameters) do
+          {parameters:
+            {model: "gpt-3.5-turbo",
+             messages: [{content: "Hello World", role: "user"}],
+             temperature: 0.0,
+             max_tokens: 4086}}
+        end
+
+        it "passes correct options to the chat method" do
+          expect(subject.client).to receive(:chat).with(
+            {parameters: {max_tokens: 16374,
+                          model: "gpt-3.5-turbo-16k",
+                          messages: [{content: "Hello World", role: "user"}],
+                          temperature: 0.0}}
+          ).and_return(response)
+          subject.complete(prompt: "Hello World")
+        end
       end
     end
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {model: "text-curie-001", prompt: "Hello World", temperature: 1.0, max_tokens: 2047}}
+        {parameters: {model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 1.0, max_tokens: 4086}}
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World", model: "text-curie-001", temperature: 1.0)).to eq("\n\nThe meaning of life is subjective and can vary from person to person.")
+        expect(subject.complete(prompt: "Hello World", model: "gpt-3.5-turbo", temperature: 1.0)).to eq("The meaning of life is subjective and can vary from person to person.")
+      end
+    end
+
+    context "with failed API call" do
+      let(:parameters) do
+        {parameters: {model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 0.0, max_tokens: 4086}}
+      end
+      let(:response) do
+        {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
+      end
+
+      it "raises an error" do
+        expect {
+          subject.complete(prompt: "Hello World")
+        }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
       end
     end
   end
@@ -151,7 +217,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     let(:model) { "gpt-3.5-turbo" }
     let(:temperature) { 0.0 }
     let(:history) { [content: prompt, role: "user"] }
-    let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, max_tokens: be_between(4015, 4096)}} }
+    let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, max_tokens: be_between(4014, 4096)}} }
     let(:answer) { "As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?" }
     let(:response) do
       {
@@ -183,45 +249,45 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt" do
       it "sends prompt within messages" do
-        expect(subject.chat(prompt: prompt)).to eq(answer)
+        expect(subject.chat(prompt: prompt).to_s).to eq(answer)
       end
     end
 
     context "with messages" do
       it "sends messages" do
-        expect(subject.chat(messages: [role: "user", content: prompt])).to eq(answer)
+        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)]).to_s).to eq(answer)
       end
     end
 
     context "with context" do
-      let(:context) { "You are a chatbot" }
+      let(:context) { Langchain::SystemMessage.new("You are a chatbot") }
       let(:history) do
         [
-          {role: "system", content: context},
+          {role: "system", content: context.to_s},
           {role: "user", content: prompt}
         ]
       end
 
       it "sends context and prompt as messages" do
-        expect(subject.chat(prompt: prompt, context: context)).to eq(answer)
+        expect(subject.chat(prompt: prompt, context: context).to_s).to eq(answer)
       end
 
       it "sends context and messages as joint messages" do
-        expect(subject.chat(messages: [role: "user", content: prompt], context: context)).to eq(answer)
+        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)], context: context).to_s).to eq(answer)
       end
     end
 
     context "with context and examples" do
-      let(:context) { "You are a chatbot" }
+      let(:context) { Langchain::SystemMessage.new("You are a chatbot") }
       let(:examples) do
         [
-          {role: "user", content: "Hello"},
-          {role: "assistant", content: "Hi. How can I assist you today?"}
+          Langchain::HumanMessage.new("Hello"),
+          Langchain::AIMessage.new("Hi. How can I assist you today?")
         ]
       end
       let(:history) do
         [
-          {role: "system", content: context},
+          {role: "system", content: context.to_s},
           {role: "user", content: "Hello"},
           {role: "assistant", content: "Hi. How can I assist you today?"},
           {role: "user", content: prompt}
@@ -229,23 +295,23 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context, prompt and examples as joint messages" do
-        expect(subject.chat(prompt: prompt, context: context, examples: examples)).to eq(answer)
+        expect(subject.chat(prompt: prompt, context: context, examples: examples).to_s).to eq(answer)
       end
 
       it "sends context, messages and examples as joint messages" do
-        expect(subject.chat(messages: [role: "user", content: prompt], context: context, examples: examples)).to eq(answer)
+        expect(subject.chat(messages: [Langchain::HumanMessage.new(prompt)], context: context, examples: examples).to_s).to eq(answer)
       end
 
       context "with prompt, messages, context and examples" do
         let(:messages) do
           [
-            {role: "user", content: "Can you answer questions?"},
-            {role: "ai", content: "Yes, I can answer questions."}
+            Langchain::HumanMessage.new("Can you answer questions?"),
+            Langchain::AIMessage.new("Yes, I can answer questions.")
           ]
         end
         let(:history) do
           [
-            {role: "system", content: context},
+            {role: "system", content: context.to_s},
             {role: "user", content: "Hello"},
             {role: "assistant", content: "Hi. How can I assist you today?"},
             {role: "user", content: "Can you answer questions?"},
@@ -255,17 +321,17 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "sends context, prompt, messages and examples as joint messages" do
-          expect(subject.chat(prompt: prompt, messages: messages, context: context, examples: examples)).to eq(answer)
+          expect(subject.chat(prompt: prompt, messages: messages, context: context, examples: examples).to_s).to eq(answer)
         end
       end
 
       context "when context is already present in messages" do
         let(:messages) do
           [
-            {role: "system", content: context},
-            {role: "user", content: "Hello"},
-            {role: "assistant", content: "Hi. How can I assist you today?"},
-            {role: "user", content: prompt}
+            Langchain::SystemMessage.new(context),
+            Langchain::HumanMessage.new("Hello"),
+            Langchain::AIMessage.new("Hi. How can I assist you today?"),
+            Langchain::HumanMessage.new(prompt)
           ]
         end
         let(:history) do
@@ -278,22 +344,22 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it overrides system message with context" do
-          expect(subject.chat(messages: messages, context: "You are a human being")).to eq(answer)
+          expect(subject.chat(messages: messages, context: Langchain::SystemMessage.new("You are a human being")).to_s).to eq(answer)
         end
       end
 
       context "when last message is from user and prompt is present" do
         let(:messages) do
           [
-            {role: "system", content: context},
-            {role: "user", content: "Hello"},
-            {role: "assistant", content: "Hi. How can I assist you today?"},
-            {role: "user", content: "I want to ask a question"}
+            context,
+            Langchain::HumanMessage.new("Hello"),
+            Langchain::AIMessage.new("Hi. How can I assist you today?"),
+            Langchain::HumanMessage.new("I want to ask a question")
           ]
         end
         let(:history) do
           [
-            {role: "system", content: context},
+            {role: "system", content: context.to_s},
             {role: "user", content: "Hello"},
             {role: "assistant", content: "Hi. How can I assist you today?"},
             {role: "user", content: "I want to ask a question\n#{prompt}"}
@@ -301,7 +367,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it combines last message and prompt" do
-          expect(subject.chat(prompt: prompt, messages: messages)).to eq(answer)
+          expect(subject.chat(prompt: prompt, messages: messages).to_s).to eq(answer)
         end
       end
     end
@@ -311,21 +377,15 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:model) { "gpt-3.5-turbo-0301" }
 
       it "sends prompt as message and additional params and returns a response message" do
-        expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
-      end
-
-      it "complete response" do
-        subject.complete_response = true
-        expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Hash
+        expect(subject.chat(prompt: prompt, model: model, temperature: temperature).to_s).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
       end
 
       context "functions" do
         let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, functions: [{foo: :bar}]}} }
 
         it "functions will be passed on options as accessor" do
-          subject.complete_response = true
           subject.functions = [{foo: :bar}]
-          expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Hash
+          expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Langchain::AIMessage
         end
       end
     end
@@ -338,7 +398,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "raises an error" do
         expect {
           subject.chat(prompt: prompt)
-        }.to raise_error(Langchain::LLM::ApiError, "Chat completion failed: User location is not supported for the API use.")
+        }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
       end
     end
   end

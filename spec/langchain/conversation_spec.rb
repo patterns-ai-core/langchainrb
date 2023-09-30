@@ -11,13 +11,13 @@ RSpec.describe Langchain::Conversation do
     it "sets the context" do
       subject.set_context(context)
 
-      expect(subject.context).to eq(context)
+      expect(subject.context).to eq(Langchain::SystemMessage.new(context))
     end
   end
 
   describe "#add_examples" do
-    let(:examples1) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
-    let(:examples2) { [{role: "user", content: "How are you doing?"}, {role: "ai", content: "I'm doing well. How about you?"}] }
+    let(:examples1) { [Langchain::HumanMessage.new("Hello"), Langchain::AIMessage.new("Hi")] }
+    let(:examples2) { [Langchain::HumanMessage.new("How are you doing?"), Langchain::AIMessage.new("I'm doing well. How about you?")] }
 
     it "adds examples" do
       subject.add_examples(examples1)
@@ -31,9 +31,9 @@ RSpec.describe Langchain::Conversation do
 
   describe "#message" do
     let(:context) { "You are a chatbot" }
-    let(:examples) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
+    let(:examples) { [Langchain::HumanMessage.new("Hello"), Langchain::AIMessage.new("Hi")] }
     let(:prompt) { "How are you doing?" }
-    let(:response) { "I'm doing well. How about you?" }
+    let(:response) { Langchain::AIMessage.new("I'm doing well. How about you?") }
 
     context "with stream: true option and block passed in" do
       let(:block) { proc { |chunk| print(chunk) } }
@@ -43,7 +43,7 @@ RSpec.describe Langchain::Conversation do
         expect(llm).to receive(:chat).with(
           context: nil,
           examples: [],
-          messages: [{role: "user", content: prompt}],
+          messages: [Langchain::HumanMessage.new(prompt)],
           &block
         ).and_return(response)
 
@@ -56,7 +56,7 @@ RSpec.describe Langchain::Conversation do
         expect(llm).to receive(:chat).with(
           context: nil,
           examples: [],
-          messages: [{role: "user", content: prompt}]
+          messages: [Langchain::HumanMessage.new(prompt)]
         ).and_return(response)
 
         expect(subject.message(prompt)).to eq(response)
@@ -70,9 +70,9 @@ RSpec.describe Langchain::Conversation do
 
       it "messages the model and returns the response" do
         expect(llm).to receive(:chat).with(
-          context: context,
+          context: Langchain::SystemMessage.new(context),
           examples: [],
-          messages: [{role: "user", content: prompt}]
+          messages: [Langchain::HumanMessage.new(prompt)]
         ).and_return(response)
 
         expect(subject.message(prompt)).to eq(response)
@@ -87,13 +87,13 @@ RSpec.describe Langchain::Conversation do
 
       it "messages the model and returns the response" do
         expect(llm).to receive(:chat).with(
-          context: context,
+          context: Langchain::SystemMessage.new(context),
           examples: [
-            {role: "user", content: "Hello"},
-            {role: "ai", content: "Hi"}
+            Langchain::HumanMessage.new("Hello"),
+            Langchain::AIMessage.new("Hi")
           ],
           messages: [
-            {role: "user", content: prompt}
+            Langchain::HumanMessage.new(prompt)
           ]
         ).and_return(response)
 
@@ -108,7 +108,7 @@ RSpec.describe Langchain::Conversation do
         expect(llm).to receive(:chat).with(
           context: nil,
           examples: [],
-          messages: [{role: "user", content: prompt}],
+          messages: [Langchain::HumanMessage.new(prompt)],
           temperature: 0.7
         ).and_return(response)
 
@@ -144,13 +144,13 @@ RSpec.describe Langchain::Conversation do
             {"choices" => [{"message" => {"content" => "I'm doing well. How about you?"}}]}
           end
           let(:context) { "You are a chatbot" }
-          let(:examples) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
+          let(:examples) { [Langchain::HumanMessage.new("Hello"), Langchain::AIMessage.new("Hi")] }
           let(:messages) do
             [
-              {role: "user", content: "Lorem " * 512},
-              {role: "ai", content: "Ipsum " * 512},
-              {role: "user", content: "Dolor " * 512},
-              {role: "ai", content: "Sit " * 512}
+              Langchain::HumanMessage.new("Lorem " * 512),
+              Langchain::AIMessage.new("Ipsum " * 512),
+              Langchain::HumanMessage.new("Dolor " * 512),
+              Langchain::AIMessage.new("Sit " * 512)
             ]
           end
 
@@ -167,8 +167,8 @@ RSpec.describe Langchain::Conversation do
                   {role: "system", content: "You are a chatbot"},
                   {role: "user", content: "Hello"},
                   {role: "assistant", content: "Hi"},
-                  {role: "user", content: messages[2][:content]},
-                  {role: "assistant", content: messages[3][:content]},
+                  {role: "user", content: messages[2].content},
+                  {role: "assistant", content: messages[3].content},
                   {role: "user", content: prompt}
                 ],
                 model: "gpt-3.5-turbo",
@@ -176,7 +176,7 @@ RSpec.describe Langchain::Conversation do
               }
             ).and_return(response)
 
-            expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
+            expect(subject.message(prompt).to_s).to eq("I'm doing well. How about you?")
           end
         end
       end
@@ -206,13 +206,13 @@ RSpec.describe Langchain::Conversation do
             {"candidates" => [{"content" => "I'm doing well. How about you?"}]}
           end
           let(:context) { "You are a chatbot" }
-          let(:examples) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
+          let(:examples) { [Langchain::HumanMessage.new("Hello"), Langchain::AIMessage.new("Hi")] }
           let(:messages) do
             [
-              {role: "user", content: "Lorem " * 512},
-              {role: "ai", content: "Ipsum " * 512},
-              {role: "user", content: "Dolor " * 512},
-              {role: "ai", content: "Sit " * 512}
+              Langchain::HumanMessage.new("Lorem " * 512),
+              Langchain::AIMessage.new("Ipsum " * 512),
+              Langchain::HumanMessage.new("Dolor " * 512),
+              Langchain::AIMessage.new("Sit " * 512)
             ]
           end
 
@@ -228,16 +228,16 @@ RSpec.describe Langchain::Conversation do
                 {input: {content: "Hello"}, output: {content: "Hi"}}
               ],
               messages: [
-                {author: "ai", content: messages[1][:content]},
-                {author: "user", content: messages[2][:content]},
-                {author: "ai", content: messages[3][:content]},
+                {author: "ai", content: messages[1].content},
+                {author: "user", content: messages[2].content},
+                {author: "ai", content: messages[3].content},
                 {author: "user", content: prompt}
               ],
               temperature: 0.0,
               model: "chat-bison-001"
             ).and_return(response)
 
-            expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
+            expect(subject.message(prompt).to_s).to eq("I'm doing well. How about you?")
           end
         end
       end
@@ -251,15 +251,15 @@ RSpec.describe Langchain::Conversation do
         {"choices" => [{"message" => {"content" => "I'm doing well. How about you?"}}]}
       end
       let(:context) { "You are a chatbot" }
-      let(:summary1) { {"choices" => [{"text" => "Just chatting about life"}]} }
-      let(:summary2) { {"choices" => [{"text" => "Nothing interesting here"}]} }
-      let(:examples) { [{role: "user", content: "Hello"}, {role: "ai", content: "Hi"}] }
+      let(:summary1) { "Just chatting about life" }
+      let(:summary2) { "Nothing interesting here" }
+      let(:examples) { [Langchain::HumanMessage.new("Hello"), Langchain::AIMessage.new("Hi")] }
       let(:messages) do
         [
-          {role: "user", content: "Lorem " * 512},
-          {role: "ai", content: "Ipsum " * 512},
-          {role: "user", content: "Dolor " * 512},
-          {role: "ai", content: "Sit " * 512}
+          Langchain::HumanMessage.new("Lorem " * 512),
+          Langchain::AIMessage.new("Ipsum " * 512),
+          Langchain::HumanMessage.new("Dolor " * 512),
+          Langchain::AIMessage.new("Sit " * 512)
         ]
       end
 
@@ -268,7 +268,7 @@ RSpec.describe Langchain::Conversation do
       before do
         allow(llm).to receive(:client).and_return(client)
         allow(client).to receive(:chat).and_return(response)
-        allow(client).to receive(:completions).and_return(summary1, summary2)
+        allow(llm).to receive(:summarize).and_return(summary1, summary2)
 
         subject.set_context(context)
         subject.add_examples(examples)
@@ -289,7 +289,7 @@ RSpec.describe Langchain::Conversation do
           }
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq("I'm doing well. How about you?")
+        expect(subject.message(prompt).to_s).to eq("I'm doing well. How about you?")
       end
     end
   end
