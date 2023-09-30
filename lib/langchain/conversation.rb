@@ -44,20 +44,20 @@ module Langchain
     # Set the context of the conversation. Usually used to set the model's persona.
     # @param message [String] The context of the conversation
     def set_context(message)
-      @memory.set_context ::Langchain::Conversation::SystemMessage.new(message)
+      @memory.set_context ::Langchain::Conversation::Context.new(message)
     end
 
     # Add examples to the conversation. Used to give the model a sense of the conversation.
-    # @param examples [Array<AIMessage|HumanMessage>] The examples to add to the conversation
+    # @param examples [Array<Prompt|Response>] The examples to add to the conversation
     def add_examples(examples)
       @memory.add_examples examples
     end
 
     # Message the model with a prompt and return the response.
     # @param message [String] The prompt to message the model with
-    # @return [AIMessage] The response from the model
+    # @return [Response] The response from the model
     def message(message)
-      human_message = ::Langchain::Conversation::HumanMessage.new(message)
+      human_message = ::Langchain::Conversation::Prompt.new(message)
       @memory.append_message(human_message)
       ai_message = llm_response(human_message)
       @memory.append_message(ai_message)
@@ -65,19 +65,19 @@ module Langchain
     end
 
     # Messages from conversation memory
-    # @return [Array<AIMessage|HumanMessage>] The messages from the conversation memory
+    # @return [Array<Prompt|Response>] The messages from the conversation memory
     def messages
       @memory.messages
     end
 
     # Context from conversation memory
-    # @return [SystemMessage] Context from conversation memory
+    # @return [Context] Context from conversation memory
     def context
       @memory.context
     end
 
     # Examples from conversation memory
-    # @return [Array<AIMessage|HumanMessage>] Examples from the conversation memory
+    # @return [Array<Prompt|Response>] Examples from the conversation memory
     def examples
       @memory.examples
     end

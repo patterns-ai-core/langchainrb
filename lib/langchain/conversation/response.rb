@@ -2,9 +2,9 @@
 
 module Langchain
   class Conversation
-    class HumanMessage < Message
+    class Response < Message
       def type
-        "human"
+        "ai"
       end
     end
   end

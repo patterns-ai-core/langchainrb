@@ -44,7 +44,7 @@ module Langchain
       def context
         return if @context.nil? && @summary.nil?
 
-        SystemMessage.new([@context, @summary].compact.join("\n"))
+        Context.new([@context, @summary].compact.join("\n"))
       end
 
       private

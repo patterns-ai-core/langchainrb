@@ -2,9 +2,9 @@
 
 module Langchain
   class Conversation
-    class SystemMessage < Message
+    class Prompt < Message
       def type
-        "system"
+        "human"
       end
     end
   end

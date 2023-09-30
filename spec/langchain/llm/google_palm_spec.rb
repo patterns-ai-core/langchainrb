@@ -142,9 +142,9 @@ RSpec.describe Langchain::LLM::GooglePalm do
       it "returns a message" do
         expect(
           subject.chat(messages: [
-            Langchain::Conversation::HumanMessage.new(completion),
-            Langchain::Conversation::AIMessage.new("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?"),
-            Langchain::Conversation::HumanMessage.new("I'm doing great. What are you up to?")
+            Langchain::Conversation::Prompt.new(completion),
+            Langchain::Conversation::Response.new("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?"),
+            Langchain::Conversation::Prompt.new("I'm doing great. What are you up to?")
           ]).to_s
         ).to eq("I am currently working on a project to help people with their tasks. I am also learning more about the world and how to interact with people. I am excited to be able to help people and to learn more about the world.\r\n\r\nWhat are you up to today?")
       end

@@ -2,9 +2,9 @@
 
 module Langchain
   class Conversation
-    class AIMessage < Message
+    class Context < Message
       def type
-        "ai"
+        "system"
       end
     end
   end

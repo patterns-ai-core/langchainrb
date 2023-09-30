@@ -255,12 +255,12 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with messages" do
       it "sends messages" do
-        expect(subject.chat(messages: [Langchain::Conversation::HumanMessage.new(prompt)]).to_s).to eq(answer)
+        expect(subject.chat(messages: [Langchain::Conversation::Prompt.new(prompt)]).to_s).to eq(answer)
       end
     end
 
     context "with context" do
-      let(:context) { Langchain::Conversation::SystemMessage.new("You are a chatbot") }
+      let(:context) { Langchain::Conversation::Context.new("You are a chatbot") }
       let(:history) do
         [
           {role: "system", content: context.to_s},
@@ -273,16 +273,16 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context and messages as joint messages" do
-        expect(subject.chat(messages: [Langchain::Conversation::HumanMessage.new(prompt)], context: context).to_s).to eq(answer)
+        expect(subject.chat(messages: [Langchain::Conversation::Prompt.new(prompt)], context: context).to_s).to eq(answer)
       end
     end
 
     context "with context and examples" do
-      let(:context) { Langchain::Conversation::SystemMessage.new("You are a chatbot") }
+      let(:context) { Langchain::Conversation::Context.new("You are a chatbot") }
       let(:examples) do
         [
-          Langchain::Conversation::HumanMessage.new("Hello"),
-          Langchain::Conversation::AIMessage.new("Hi. How can I assist you today?")
+          Langchain::Conversation::Prompt.new("Hello"),
+          Langchain::Conversation::Response.new("Hi. How can I assist you today?")
         ]
       end
       let(:history) do
@@ -299,14 +299,14 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context, messages and examples as joint messages" do
-        expect(subject.chat(messages: [Langchain::Conversation::HumanMessage.new(prompt)], context: context, examples: examples).to_s).to eq(answer)
+        expect(subject.chat(messages: [Langchain::Conversation::Prompt.new(prompt)], context: context, examples: examples).to_s).to eq(answer)
       end
 
       context "with prompt, messages, context and examples" do
         let(:messages) do
           [
-            Langchain::Conversation::HumanMessage.new("Can you answer questions?"),
-            Langchain::Conversation::AIMessage.new("Yes, I can answer questions.")
+            Langchain::Conversation::Prompt.new("Can you answer questions?"),
+            Langchain::Conversation::Response.new("Yes, I can answer questions.")
           ]
         end
         let(:history) do
@@ -328,10 +328,10 @@ RSpec.describe Langchain::LLM::OpenAI do
       context "when context is already present in messages" do
         let(:messages) do
           [
-            Langchain::Conversation::SystemMessage.new(context),
-            Langchain::Conversation::HumanMessage.new("Hello"),
-            Langchain::Conversation::AIMessage.new("Hi. How can I assist you today?"),
-            Langchain::Conversation::HumanMessage.new(prompt)
+            Langchain::Conversation::Context.new(context),
+            Langchain::Conversation::Prompt.new("Hello"),
+            Langchain::Conversation::Response.new("Hi. How can I assist you today?"),
+            Langchain::Conversation::Prompt.new(prompt)
           ]
         end
         let(:history) do
@@ -344,7 +344,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it overrides system message with context" do
-          expect(subject.chat(messages: messages, context: Langchain::Conversation::SystemMessage.new("You are a human being")).to_s).to eq(answer)
+          expect(subject.chat(messages: messages, context: Langchain::Conversation::Context.new("You are a human being")).to_s).to eq(answer)
         end
       end
 
@@ -352,9 +352,9 @@ RSpec.describe Langchain::LLM::OpenAI do
         let(:messages) do
           [
             context,
-            Langchain::Conversation::HumanMessage.new("Hello"),
-            Langchain::Conversation::AIMessage.new("Hi. How can I assist you today?"),
-            Langchain::Conversation::HumanMessage.new("I want to ask a question")
+            Langchain::Conversation::Prompt.new("Hello"),
+            Langchain::Conversation::Response.new("Hi. How can I assist you today?"),
+            Langchain::Conversation::Prompt.new("I want to ask a question")
           ]
         end
         let(:history) do
@@ -385,7 +385,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
         it "functions will be passed on options as accessor" do
           subject.functions = [{foo: :bar}]
-          expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Langchain::Conversation::AIMessage
+          expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to be_a Langchain::Conversation::Response
         end
       end
     end
