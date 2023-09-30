@@ -194,7 +194,7 @@ module Langchain::LLM
 
       history.concat transform_messages(messages) unless messages.empty?
 
-      unless context.empty?
+      unless context.nil? || context.empty?
         history.reject! { |message| message[:role] == "system" }
         history.prepend({role: "system", content: context})
       end

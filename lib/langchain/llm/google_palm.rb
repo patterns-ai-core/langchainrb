@@ -19,6 +19,9 @@ module Langchain::LLM
       embeddings_model_name: "embedding-gecko-001"
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidator
+    ROLE_MAPPING = {
+      "assistant" => "ai"
+    }
 
     def initialize(api_key:, default_options: {})
       depends_on "google_palm_api"
@@ -147,8 +150,8 @@ module Langchain::LLM
     def compose_examples(examples)
       examples.each_slice(2).map do |example|
         {
-          input: {content: example.first.content},
-          output: {content: example.last.content}
+          input: {content: example.first[:content]},
+          output: {content: example.last[:content]}
         }
       end
     end
@@ -156,7 +159,7 @@ module Langchain::LLM
     def transform_messages(messages)
       messages.map do |message|
         {
-          author: message[:role],
+          author: ROLE_MAPPING.fetch(message[:role], message[:role]),
           content: message[:content]
         }
       end
