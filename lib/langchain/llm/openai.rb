@@ -26,10 +26,6 @@ module Langchain::LLM
     ].freeze
 
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
-    ROLE_MAPPING = {
-      "ai" => "assistant",
-      "human" => "user"
-    }
 
     attr_accessor :functions
 
