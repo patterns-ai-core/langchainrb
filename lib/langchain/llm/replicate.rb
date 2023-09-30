@@ -84,7 +84,7 @@ module Langchain::LLM
     # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`
     def chat(...)
       response_text = complete(...)
-      Langchain::AIMessage.new(response_text)
+      ::Langchain::Conversation::AIMessage.new(response_text)
     end
 
     #

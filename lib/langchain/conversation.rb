@@ -28,7 +28,7 @@ module Langchain
       @llm = llm
       @context = nil
       @examples = []
-      @memory = ConversationMemory.new(
+      @memory = ::Langchain::Conversation::Memory.new(
         llm: llm,
         messages: options.delete(:messages) || [],
         strategy: options.delete(:memory_strategy)
@@ -44,7 +44,7 @@ module Langchain
     # Set the context of the conversation. Usually used to set the model's persona.
     # @param message [String] The context of the conversation
     def set_context(message)
-      @memory.set_context SystemMessage.new(message)
+      @memory.set_context ::Langchain::Conversation::SystemMessage.new(message)
     end
 
     # Add examples to the conversation. Used to give the model a sense of the conversation.
@@ -57,7 +57,7 @@ module Langchain
     # @param message [String] The prompt to message the model with
     # @return [AIMessage] The response from the model
     def message(message)
-      human_message = HumanMessage.new(message)
+      human_message = ::Langchain::Conversation::HumanMessage.new(message)
       @memory.append_message(human_message)
       ai_message = llm_response(human_message)
       @memory.append_message(ai_message)

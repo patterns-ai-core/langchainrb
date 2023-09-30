@@ -108,7 +108,7 @@ module Langchain::LLM
       response = client.generate_chat_message(**default_params)
       raise "GooglePalm API returned an error: #{response}" if response.dig("error")
 
-      Langchain::AIMessage.new(response.dig("candidates", 0, "content"))
+      ::Langchain::Conversation::AIMessage.new(response.dig("candidates", 0, "content"))
     end
 
     #

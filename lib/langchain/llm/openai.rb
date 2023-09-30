@@ -142,7 +142,7 @@ module Langchain::LLM
           delta = chunk.dig("choices", 0, "delta")
           content = delta["content"]
           additional_kwargs = {function_call: delta["function_call"]}.compact
-          yield Langchain::AIMessage.new(content, additional_kwargs)
+          yield ::Langchain::Conversation::AIMessage.new(content, additional_kwargs)
         end
       end
 
@@ -154,7 +154,7 @@ module Langchain::LLM
         message = response.dig("choices", 0, "message")
         content = message["content"]
         additional_kwargs = {function_call: message["function_call"]}.compact
-        Langchain::AIMessage.new(content.to_s, additional_kwargs)
+        ::Langchain::Conversation::AIMessage.new(content.to_s, additional_kwargs)
       end
     end
 
