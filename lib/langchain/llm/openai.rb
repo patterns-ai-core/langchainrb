@@ -11,6 +11,7 @@ module Langchain::LLM
   #
   class OpenAI < Base
     DEFAULTS = {
+      n: 1,
       temperature: 0.0,
       completion_model_name: "gpt-3.5-turbo",
       chat_completion_model_name: "gpt-3.5-turbo",
@@ -121,10 +122,10 @@ module Langchain::LLM
     # @yield [Hash] Stream responses back one String at a time
     # @return [Hash] The chat completion
     #
-    def chat(prompt: "", messages: [], context: "", examples: [], **options)
+    def chat(prompt: "", messages: [], context: "", examples: [], **options, &block)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
 
-      parameters = compose_parameters @defaults[:chat_completion_model_name], options
+      parameters = compose_parameters @defaults[:chat_completion_model_name], options, &block
       parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
 
       if functions
@@ -133,17 +134,11 @@ module Langchain::LLM
         parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
       end
 
-      if (streaming = block_given?)
-        parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk.dig("choices", 0, "delta")
-        end
-      end
-
       response = with_api_error_handling { client.chat(parameters: parameters) }
 
-      return if streaming
+      return if block
 
-      response.dig("choices", 0, "message", "content")
+      extract_response response
     end
 
     #
@@ -179,12 +174,18 @@ module Langchain::LLM
       response.dig("choices", 0, "text")
     end
 
-    def compose_parameters(model, params)
-      default_params = {model: model, temperature: @defaults[:temperature]}
-
+    def compose_parameters(model, params, &block)
+      default_params = {model: model, temperature: @defaults[:temperature], n: @defaults[:n]}
       default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
+      parameters = default_params.merge(params)
 
-      default_params.merge(params)
+      if block
+        parameters[:stream] = proc do |chunk, _bytesize|
+          yield chunk.dig("choices", 0)
+        end
+      end
+
+      parameters
     end
 
     def compose_chat_messages(prompt:, messages: [], context: "", examples: [])
@@ -221,6 +222,8 @@ module Langchain::LLM
 
     def with_api_error_handling
       response = yield
+      return if response.empty?
+
       raise Langchain::LLM::ApiError.new "OpenAI API error: #{response.dig("error", "message")}" if response&.dig("error")
 
       response
@@ -228,6 +231,11 @@ module Langchain::LLM
 
     def validate_max_tokens(messages, model)
       LENGTH_VALIDATOR.validate_max_tokens!(messages, model)
+    end
+
+    def extract_response(response)
+      results = response.dig("choices").map { |choice| choice.dig("message", "content") }
+      (results.size == 1) ? results.first : results
     end
   end
 end

@@ -100,6 +100,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:parameters) do
         {
           parameters: {
+            n: 1,
             model: "gpt-3.5-turbo",
             messages: [{content: "Hello World", role: "user"}],
             temperature: 0.0,
@@ -123,11 +124,16 @@ RSpec.describe Langchain::LLM::OpenAI do
           )
         }
         let(:parameters) do
-          {parameters:
-            {model: "text-davinci-003",
-             prompt: "Hello World",
-             temperature: 0.0,
-             max_tokens: 4095}}
+          {
+            parameters:
+            {
+              n: 1,
+              model: "text-davinci-003",
+              prompt: "Hello World",
+              temperature: 0.0,
+              max_tokens: 4095
+            }
+          }
         end
 
         before do
@@ -137,10 +143,13 @@ RSpec.describe Langchain::LLM::OpenAI do
 
         it "passes correct options to the completions method" do
           expect(subject.client).to receive(:completions).with({
-            parameters: {max_tokens: 4095,
-                         model: "text-davinci-003",
-                         prompt: "Hello World",
-                         temperature: 0.0}
+            parameters: {
+              n: 1,
+              max_tokens: 4095,
+              model: "text-davinci-003",
+              prompt: "Hello World",
+              temperature: 0.0
+            }
           }).and_return(response)
           subject.complete(prompt: "Hello World")
         end
@@ -161,20 +170,27 @@ RSpec.describe Langchain::LLM::OpenAI do
         }
 
         let(:parameters) do
-          {parameters:
-            {model: "gpt-3.5-turbo",
-             messages: [{content: "Hello World", role: "user"}],
-             temperature: 0.0,
-             max_tokens: 4086}}
+          {
+            parameters: {
+              n: 1,
+              model: "gpt-3.5-turbo",
+              messages: [{content: "Hello World", role: "user"}],
+              temperature: 0.0,
+              max_tokens: 4086
+            }
+          }
         end
 
         it "passes correct options to the chat method" do
-          expect(subject.client).to receive(:chat).with(
-            {parameters: {max_tokens: 16374,
-                          model: "gpt-3.5-turbo-16k",
-                          messages: [{content: "Hello World", role: "user"}],
-                          temperature: 0.0}}
-          ).and_return(response)
+          expect(subject.client).to receive(:chat).with({
+            parameters: {
+              n: 1,
+              max_tokens: 16374,
+              model: "gpt-3.5-turbo-16k",
+              messages: [{content: "Hello World", role: "user"}],
+              temperature: 0.0
+            }
+          }).and_return(response)
           subject.complete(prompt: "Hello World")
         end
       end
@@ -182,7 +198,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 1.0, max_tokens: 4086}}
+        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 1.0, max_tokens: 4086}}
       end
 
       it "returns a completion" do
@@ -192,7 +208,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with failed API call" do
       let(:parameters) do
-        {parameters: {model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 0.0, max_tokens: 4086}}
+        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 0.0, max_tokens: 4086}}
       end
       let(:response) do
         {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
@@ -217,7 +233,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     let(:model) { "gpt-3.5-turbo" }
     let(:temperature) { 0.0 }
     let(:history) { [content: prompt, role: "user"] }
-    let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, max_tokens: be_between(4014, 4096)}} }
+    let(:parameters) { {parameters: {n: 1, messages: history, model: model, temperature: temperature, max_tokens: be_between(4014, 4096)}} }
     let(:answer) { "As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?" }
     let(:response) do
       {
@@ -381,7 +397,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       context "functions" do
-        let(:parameters) { {parameters: {messages: history, model: model, temperature: temperature, functions: [{foo: :bar}]}} }
+        let(:parameters) { {parameters: {n: 1, messages: history, model: model, temperature: temperature, functions: [{foo: :bar}]}} }
 
         it "functions will be passed on options as accessor" do
           subject.functions = [{foo: :bar}]
