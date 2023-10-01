@@ -119,8 +119,8 @@ module Langchain::LLM
     # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
     # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
     # @param options [Hash] extra parameters passed to OpenAI::Client#chat
-    # @yield [Hash] Stream responses back one String at a time
-    # @return [Hash] The chat completion
+    # @yield [Hash] Stream responses back one token at a time
+    # @return [String|Array<String>] The chat completion
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options, &block)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?

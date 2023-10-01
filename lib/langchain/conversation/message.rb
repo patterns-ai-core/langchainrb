@@ -3,7 +3,7 @@
 module Langchain
   class Conversation
     class Message
-      attr_reader :content, :additional_kwargs
+      attr_reader :content
 
       ROLE_MAPPING = {
         context: "system",
@@ -11,9 +11,8 @@ module Langchain
         response: "assistant"
       }
 
-      def initialize(content, additional_kwargs = nil)
+      def initialize(content)
         @content = content
-        @additional_kwargs = additional_kwargs
       end
 
       def role
@@ -36,11 +35,7 @@ module Langchain
       end
 
       def to_json(options = {})
-        hash = to_h
-
-        hash[:additional_kwargs] = additional_kwargs unless additional_kwargs.nil? || additional_kwargs.empty?
-
-        hash.to_json
+        to_h.to_json
       end
 
       private
