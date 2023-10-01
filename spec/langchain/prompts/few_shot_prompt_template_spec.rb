@@ -39,10 +39,10 @@ RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
       )
     end
 
-    context 'input_variables is invalid' do
+    context "input_variables is invalid" do
       let(:input_variables) { ["adjective", "extra_adjective"] }
 
-      context 'when validate template is true' do
+      context "when validate template is true" do
         let(:validate_template) { true }
 
         it "raises an error if the template is invalid" do
@@ -50,10 +50,10 @@ RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
         end
       end
 
-      context 'when validate template is false' do
+      context "when validate template is false" do
         let(:validate_template) { false }
 
-        it 'does not raise an error' do
+        it "does not raise an error" do
           expect { prompt }.not_to raise_error
         end
       end
