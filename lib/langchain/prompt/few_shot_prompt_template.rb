@@ -75,6 +75,7 @@ module Langchain::Prompt
       @prefix = prefix
       @suffix = suffix
       @example_separator = example_separator
+      @validate_template = validate_template
 
       validate(template: @prefix + @suffix, input_variables: @input_variables) if @validate_template
     end
