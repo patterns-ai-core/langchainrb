@@ -1,4 +1,5 @@
 require "langchain"
+require "dotenv/load"
 
 # gem install pinecone
 # or add `gem "pinecone"` to your Gemfile
