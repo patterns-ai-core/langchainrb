@@ -1,5 +1,6 @@
 require "langchain"
 require "reline"
+require "dotenv/load"
 
 # gem install reline
 # or add `gem "reline"` to your Gemfile

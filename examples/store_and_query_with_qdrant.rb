@@ -1,4 +1,5 @@
 require "langchain"
+require "dotenv/load"
 
 # gem install qdrant-ruby
 # or add `gem "qdrant-ruby"` to your Gemfile
