@@ -232,9 +232,23 @@ RSpec.describe Langchain::LLM::OpenAI do
     let(:prompt) { "What is the meaning of life?" }
     let(:model) { "gpt-3.5-turbo" }
     let(:temperature) { 0.0 }
+    let(:n) { 1 }
     let(:history) { [content: prompt, role: "user"] }
-    let(:parameters) { {parameters: {n: 1, messages: history, model: model, temperature: temperature, max_tokens: be_between(4014, 4096)}} }
+    let(:parameters) { {parameters: {n: n, messages: history, model: model, temperature: temperature, max_tokens: be_between(4014, 4096)}} }
     let(:answer) { "As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?" }
+    let(:answer_2) { "Alternative answer" }
+    let(:choices) do
+      [
+        {
+          "message" => {
+            "role" => "assistant",
+            "content" => answer
+          },
+          "finish_reason" => "stop",
+          "index" => 0
+        }
+      ]
+    end
     let(:response) do
       {
         "id" => "chatcmpl-7Hcl1sXOtsaUBKJGGhNujEIwhauaD",
@@ -246,16 +260,7 @@ RSpec.describe Langchain::LLM::OpenAI do
           "completion_tokens" => 25,
           "total_tokens" => 39
         },
-        "choices" => [
-          {
-            "message" => {
-              "role" => "assistant",
-              "content" => answer
-            },
-            "finish_reason" => "stop",
-            "index" => 0
-          }
-        ]
+        "choices" => choices
       }
     end
 
@@ -394,6 +399,28 @@ RSpec.describe Langchain::LLM::OpenAI do
 
       it "sends prompt as message and additional params and returns a response message" do
         expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to eq(answer)
+      end
+
+      context "with multiple choices" do
+        let(:n) { 2 }
+        let(:choices) do
+          [
+            {
+              "message" => {"role" => "assistant", "content" => answer},
+              "finish_reason" => "stop",
+              "index" => 0
+            },
+            {
+              "message" => {"role" => "assistant", "content" => answer_2},
+              "finish_reason" => "stop",
+              "index" => 1
+            }
+          ]
+        end
+
+        it "returns multiple response messages" do
+          expect(subject.chat(prompt: prompt, model: model, temperature: temperature, n: 2)).to eq([answer, answer_2])
+        end
       end
 
       context "functions" do
