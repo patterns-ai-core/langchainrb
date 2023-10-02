@@ -165,7 +165,7 @@ module Langchain::Vectorsearch
         # Zero-shot prompt to generate a hypothetical document based on a given question
         file_path: Langchain.root.join("langchain/vectorsearch/prompts/hyde.yaml")
       )
-      prompt_template.format(question: query)
+      prompt_template.format(question: question)
     end
 
     # Retrieval Augmented Generation (RAG)
