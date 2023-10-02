@@ -1,0 +1,11 @@
+_type: prompt
+input_variables:
+  - question
+  - context
+template: |
+  Context:
+  {context}
+  ---
+  Question: {question}
+  ---
+  Answer:

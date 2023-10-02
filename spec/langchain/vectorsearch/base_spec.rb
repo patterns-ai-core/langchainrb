@@ -59,10 +59,10 @@ RSpec.describe Langchain::Vectorsearch::Base do
     end
   end
 
-  describe "#generate_prompt" do
+  describe "#generate_rag_prompt" do
     it "produces a prompt with the correct format" do
       expect(
-        subject.generate_prompt(question: "What is the meaning of life?", context: "41\n42\n43")
+        subject.generate_rag_prompt(question: "What is the meaning of life?", context: "41\n42\n43")
       ).to eq <<~PROMPT.chomp
         Context:
         41

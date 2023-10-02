@@ -59,19 +59,5 @@ module Langchain::LLM
     def summarize(...)
       raise NotImplementedError, "#{self.class.name} does not support summarization"
     end
-
-    #
-    # Zero-shot prompt to generate a hypothetical document based on a given question
-    #
-    # @param question [String] The question to generate a hypothetical document for
-    # @return [String] The hypothetical document
-    def hyde_completion(question:)
-      prompt_template = Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/llm/prompts/hyde.yaml")
-      )
-      prompt = prompt_template.format(question: question)
-
-      complete(prompt: prompt)
-    end
   end
 end

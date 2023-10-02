@@ -135,7 +135,7 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of results to return
     # @return [String] Response
     def similarity_search_with_hyde(query:, k: 4)
-      hyde_completion = llm.hyde_completion(question: query)
+      hyde_completion = llm.complete(prompt: generate_hyde_prompt(question: query))
 
       embedding = llm.embed(text: hyde_completion)
 
@@ -156,22 +156,28 @@ module Langchain::Vectorsearch
     def_delegators :llm,
       :default_dimension
 
-    def generate_prompt(question:, context:)
-      prompt_template = Langchain::Prompt::FewShotPromptTemplate.new(
-        prefix: "Context:",
-        suffix: "---\nQuestion: {question}\n---\nAnswer:",
-        example_prompt: Langchain::Prompt::PromptTemplate.new(
-          template: "{context}",
-          input_variables: ["context"]
-        ),
-        examples: [
-          {context: context}
-        ],
-        input_variables: ["question"],
-        example_separator: "\n"
+    # HyDE-style prompt
+    #
+    # @param [String] User's question
+    # @return [String] Prompt
+    def generate_hyde_prompt(question:)
+      prompt_template = Langchain::Prompt.load_from_path(
+        # Zero-shot prompt to generate a hypothetical document based on a given question
+        file_path: Langchain.root.join("langchain/vectorsearch/prompts/hyde.yaml")
       )
+      prompt_template.format(question: query)
+    end
 
-      prompt_template.format(question: question)
+    # Retrieval Augmented Generation (RAG)
+    #
+    # @param question [String] User's question
+    # @param context [String] The context to synthesize the answer from
+    # @return [String] Prompt
+    def generate_rag_prompt(question:, context:)
+      prompt_template = Langchain::Prompt.load_from_path(
+        file_path: Langchain.root.join("langchain/vectorsearch/prompts/rag.yaml")
+      )
+      prompt_template.format(question: question, context: context)
     end
 
     def add_data(paths:)
