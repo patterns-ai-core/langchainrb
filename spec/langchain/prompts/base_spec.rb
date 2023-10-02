@@ -48,6 +48,16 @@ RSpec.describe Langchain::Prompt::Base do
     end
   end
 
+  describe "#validate" do
+    it "raises an error if there are missing variables" do
+      expect { subject.validate(template: "Tell me a {adjective} joke.", input_variables: []) }.to raise_error(ArgumentError, 'Missing variables: ["adjective"]')
+    end
+
+    it "raises an error if there are extra variables" do
+      expect { subject.validate(template: "Tell me a {adjective} joke.", input_variables: ["adjective", "noun"]) }.to raise_error(ArgumentError, 'Extra variables: ["noun"]')
+    end
+  end
+
   describe "#extract_variables_from_template" do
     let(:basic_template) { "Tell me a {adjective} joke." }
     let(:escaped_template) { "Tell me a {adjective} joke. Return in JSON in the format {{joke: 'The joke'}}" }

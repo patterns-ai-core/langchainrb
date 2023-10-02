@@ -1,4 +1,5 @@
 require "langchain"
+require "dotenv/load"
 
 llm = Langchain::LLM::LlamaCpp.new(
   model_path: ENV["LLAMACPP_MODEL_PATH"],

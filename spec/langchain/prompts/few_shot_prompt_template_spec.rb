@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
-  let!(:prompt) do
+  let(:input_variables) { ["adjective"] }
+  let(:validate_template) { true }
+  let(:prompt) do
     described_class.new(
       prefix: "Write antonyms for the following words.",
       suffix: "Input: {adjective}\nOutput:",
@@ -13,7 +15,8 @@ RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
         {input: "happy", output: "sad"},
         {input: "tall", output: "short"}
       ],
-      input_variables: ["adjective"]
+      input_variables: input_variables,
+      validate_template: validate_template
     )
   end
 
@@ -34,6 +37,26 @@ RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
           Output:
         PROMPT
       )
+    end
+
+    context "input_variables is invalid" do
+      let(:input_variables) { ["adjective", "extra_adjective"] }
+
+      context "when validate template is true" do
+        let(:validate_template) { true }
+
+        it "raises an error if the template is invalid" do
+          expect { prompt }.to raise_error(ArgumentError)
+        end
+      end
+
+      context "when validate template is false" do
+        let(:validate_template) { false }
+
+        it "does not raise an error" do
+          expect { prompt }.not_to raise_error
+        end
+      end
     end
   end
 
