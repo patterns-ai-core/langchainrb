@@ -117,13 +117,13 @@ module Langchain::LLM
     #         },
     #       ]
     #
-    # @param prompt [HumanMessage] The prompt to generate a chat completion for
-    # @param messages [Array<AIMessage|HumanMessage>] The messages that have been sent in the conversation
-    # @param context [SystemMessage] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
-    # @param examples [Array<AIMessage|HumanMessage>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    # @param prompt [Prompt] The prompt to generate a chat completion for
+    # @param messages [Array<Prompt|Response>] The messages that have been sent in the conversation
+    # @param context [Context] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
+    # @param examples [Array<Prompt|Response>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
     # @param options [Hash] extra parameters passed to OpenAI::Client#chat
-    # @yield [AIMessage] Stream responses back one String at a time
-    # @return [AIMessage] The chat completion
+    # @yield [Response] Stream responses back one String at a time
+    # @return [Response] The chat completion
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
@@ -142,7 +142,7 @@ module Langchain::LLM
           delta = chunk.dig("choices", 0, "delta")
           content = delta["content"]
           additional_kwargs = {function_call: delta["function_call"]}.compact
-          yield Langchain::AIMessage.new(content, additional_kwargs)
+          yield ::Langchain::Conversation::Response.new(content, additional_kwargs)
         end
       end
 
@@ -154,7 +154,7 @@ module Langchain::LLM
         message = response.dig("choices", 0, "message")
         content = message["content"]
         additional_kwargs = {function_call: message["function_call"]}.compact
-        Langchain::AIMessage.new(content.to_s, additional_kwargs)
+        ::Langchain::Conversation::Response.new(content.to_s, additional_kwargs)
       end
     end
 

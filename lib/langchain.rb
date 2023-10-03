@@ -7,7 +7,6 @@ require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
 loader.ignore("#{__dir__}/langchainrb.rb")
 loader.inflector.inflect(
-  "ai_message" => "AIMessage",
   "ai21" => "AI21",
   "ai21_validator" => "AI21Validator",
   "csv" => "CSV",
