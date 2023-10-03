@@ -170,6 +170,7 @@ RSpec.describe Langchain::Conversation do
                   {role: "user", content: prompt}
                 ],
                 model: "gpt-3.5-turbo",
+                n: 1,
                 temperature: 0.0
               }
             ).and_return(response)
@@ -283,6 +284,7 @@ RSpec.describe Langchain::Conversation do
               {role: "user", content: prompt}
             ],
             model: "gpt-3.5-turbo",
+            n: 1,
             temperature: 0.0
           }
         ).and_return(response)
