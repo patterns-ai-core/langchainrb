@@ -136,10 +136,7 @@ module Langchain::Vectorsearch
     # @return [String] Response
     def similarity_search_with_hyde(query:, k: 4)
       hyde_completion = llm.complete(prompt: generate_hyde_prompt(question: query))
-
-      embedding = llm.embed(text: hyde_completion)
-
-      similarity_search_by_vector(embedding: embedding, k: k)
+      similarity_search(query: hyde_completion, k: k)
     end
 
     # Method supported by Vectorsearch DB to search for similar texts in the index by the passed in vector.

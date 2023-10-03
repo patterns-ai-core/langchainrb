@@ -3,7 +3,7 @@ _type: prompt
 input_variables:
   - question
 template: |
-  Please write a passage to answer the question 
+  Please write a passage to answer the question
   
   Question: {question}
 
