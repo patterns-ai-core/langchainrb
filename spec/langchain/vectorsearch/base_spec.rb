@@ -53,16 +53,41 @@ RSpec.describe Langchain::Vectorsearch::Base do
     end
   end
 
+  describe "#similarity_search_with_hyde" do
+    before do
+      allow(subject.llm).to receive(:complete).and_return("fictional passage")
+    end
+
+    it "raises an error" do
+      expect(subject).to receive(:similarity_search).once
+      subject.similarity_search_with_hyde(query: "sci-fi", k: 4)
+    end
+  end
+
   describe "#ask" do
     it "raises an error" do
       expect { subject.ask }.to raise_error(NotImplementedError)
     end
   end
 
-  describe "#generate_prompt" do
+  describe "#generate_hyde_prompt" do
     it "produces a prompt with the correct format" do
       expect(
-        subject.generate_prompt(question: "What is the meaning of life?", context: "41\n42\n43")
+        subject.generate_hyde_prompt(question: "What is the meaning of life?")
+      ).to eq <<~PROMPT.chomp
+        Please write a passage to answer the question
+
+        Question: What is the meaning of life?
+
+        Passage:
+      PROMPT
+    end
+  end
+
+  describe "#generate_rag_prompt" do
+    it "produces a prompt with the correct format" do
+      expect(
+        subject.generate_rag_prompt(question: "What is the meaning of life?", context: "41\n42\n43")
       ).to eq <<~PROMPT.chomp
         Context:
         41
