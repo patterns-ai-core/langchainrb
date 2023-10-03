@@ -59,7 +59,7 @@ RSpec.describe Langchain::Vectorsearch::Base do
     end
 
     it "raises an error" do
-      expect(subject).to receive(:similarity_search_by_vector)
+      expect(subject).to receive(:similarity_search).once
       subject.similarity_search_with_hyde(query: "sci-fi", k: 4)
     end
   end
