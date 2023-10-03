@@ -59,7 +59,7 @@ client = Langchain::Vectorsearch::Weaviate.new(
 )
 
 # You can instantiate any other supported vector search database:
-client = Langchain::Vectorsearch::Chroma.new(...) # `gem "chroma-db", "~> 0.3.0"`
+client = Langchain::Vectorsearch::Chroma.new(...) # `gem "chroma-db", "~> 0.6.0"`
 client = Langchain::Vectorsearch::Hnswlib.new(...) # `gem "hnswlib", "~> 0.8.1"`
 client = Langchain::Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.2"`
 client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
