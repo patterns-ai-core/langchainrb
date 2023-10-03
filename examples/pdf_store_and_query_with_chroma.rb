@@ -2,7 +2,7 @@ require "langchain"
 require "dotenv/load"
 
 # gem install chroma-db
-# or add `gem "chroma-db", "~> 0.3.0"` to your Gemfile
+# or add `gem "chroma-db", "~> 0.6.0"` to your Gemfile
 
 # Instantiate the Chroma client
 chroma = Langchain::Vectorsearch::Chroma.new(
