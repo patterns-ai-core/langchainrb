@@ -57,9 +57,8 @@ module Langchain
     # @param message [String] The prompt to message the model with
     # @return [Response] The response from the model
     def message(message)
-      human_message = ::Langchain::Conversation::Prompt.new(message)
-      @memory.append_message(human_message)
-      ai_message = llm_response(human_message)
+      @memory.append_message ::Langchain::Conversation::Prompt.new(message)
+      ai_message = ::Langchain::Conversation::Response.new(llm_response)
       @memory.append_message(ai_message)
       ai_message
     end
@@ -84,8 +83,8 @@ module Langchain
 
     private
 
-    def llm_response(prompt)
-      @llm.chat(messages: @memory.messages, context: @memory.context, examples: @memory.examples, **@options, &@block)
+    def llm_response
+      @llm.chat(messages: @memory.messages.map(&:to_h), context: @memory.context&.to_s, examples: @memory.examples.map(&:to_h), **@options, &@block)
     rescue Langchain::Utils::TokenLength::TokenLimitExceeded => exception
       @memory.reduce_messages(exception)
       retry

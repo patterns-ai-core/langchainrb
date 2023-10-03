@@ -33,7 +33,7 @@ RSpec.describe Langchain::Conversation do
     let(:context) { "You are a chatbot" }
     let(:examples) { [Langchain::Conversation::Prompt.new("Hello"), Langchain::Conversation::Response.new("Hi")] }
     let(:prompt) { "How are you doing?" }
-    let(:response) { Langchain::Conversation::Response.new("I'm doing well. How about you?") }
+    let(:response) { "I'm doing well. How about you?" }
 
     context "with stream: true option and block passed in" do
       let(:block) { proc { |chunk| print(chunk) } }
@@ -47,7 +47,7 @@ RSpec.describe Langchain::Conversation do
           &block
         ).and_return(response)
 
-        expect(conversation.message(prompt)).to eq(response)
+        expect(conversation.message(prompt)).to eq(Langchain::Conversation::Response.new(response))
       end
     end
 
@@ -59,7 +59,7 @@ RSpec.describe Langchain::Conversation do
           messages: [Langchain::Conversation::Prompt.new(prompt)]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(response)
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response))
       end
     end
 
@@ -70,12 +70,12 @@ RSpec.describe Langchain::Conversation do
 
       it "messages the model and returns the response" do
         expect(llm).to receive(:chat).with(
-          context: Langchain::Conversation::Context.new(context),
+          context: context,
           examples: [],
-          messages: [Langchain::Conversation::Prompt.new(prompt)]
+          messages: [{role: "user", content: prompt}]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(response)
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response))
       end
     end
 
@@ -87,17 +87,15 @@ RSpec.describe Langchain::Conversation do
 
       it "messages the model and returns the response" do
         expect(llm).to receive(:chat).with(
-          context: Langchain::Conversation::Context.new(context),
+          context: context,
           examples: [
-            Langchain::Conversation::Prompt.new("Hello"),
-            Langchain::Conversation::Response.new("Hi")
+            {role: "user", content: "Hello"},
+            {role: "assistant", content: "Hi"}
           ],
-          messages: [
-            Langchain::Conversation::Prompt.new(prompt)
-          ]
+          messages: [{role: "user", content: prompt}]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(response)
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response))
       end
     end
 
@@ -108,11 +106,11 @@ RSpec.describe Langchain::Conversation do
         expect(llm).to receive(:chat).with(
           context: nil,
           examples: [],
-          messages: [Langchain::Conversation::Prompt.new(prompt)],
+          messages: [{role: "user", content: prompt}],
           temperature: 0.7
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(response)
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response))
       end
     end
 

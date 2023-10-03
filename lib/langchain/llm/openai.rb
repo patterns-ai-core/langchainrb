@@ -26,10 +26,6 @@ module Langchain::LLM
     ].freeze
 
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
-    ROLE_MAPPING = {
-      "ai" => "assistant",
-      "human" => "user"
-    }
 
     attr_accessor :functions
 
@@ -117,13 +113,13 @@ module Langchain::LLM
     #         },
     #       ]
     #
-    # @param prompt [Prompt] The prompt to generate a chat completion for
-    # @param messages [Array<Prompt|Response>] The messages that have been sent in the conversation
-    # @param context [Context] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
-    # @param examples [Array<Prompt|Response>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    # @param prompt [String] The prompt to generate a chat completion for
+    # @param messages [Array<Hash>] The messages that have been sent in the conversation
+    # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
+    # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
     # @param options [Hash] extra parameters passed to OpenAI::Client#chat
-    # @yield [Response] Stream responses back one String at a time
-    # @return [Response] The chat completion
+    # @yield [Hash] Stream responses back one String at a time
+    # @return [Hash] The chat completion
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
@@ -139,23 +135,15 @@ module Langchain::LLM
 
       if (streaming = block_given?)
         parameters[:stream] = proc do |chunk, _bytesize|
-          delta = chunk.dig("choices", 0, "delta")
-          content = delta["content"]
-          additional_kwargs = {function_call: delta["function_call"]}.compact
-          yield ::Langchain::Conversation::Response.new(content, additional_kwargs)
+          yield chunk.dig("choices", 0, "delta")
         end
       end
 
-      response = with_api_error_handling do
-        client.chat(parameters: parameters)
-      end
+      response = with_api_error_handling { client.chat(parameters: parameters) }
 
-      unless streaming
-        message = response.dig("choices", 0, "message")
-        content = message["content"]
-        additional_kwargs = {function_call: message["function_call"]}.compact
-        ::Langchain::Conversation::Response.new(content.to_s, additional_kwargs)
-      end
+      return if streaming
+
+      response.dig("choices", 0, "message", "content")
     end
 
     #
@@ -206,9 +194,9 @@ module Langchain::LLM
 
       history.concat transform_messages(messages) unless messages.empty?
 
-      unless context.nil? || context.to_s.empty?
+      unless context.nil? || context.empty?
         history.reject! { |message| message[:role] == "system" }
-        history.prepend({role: "system", content: context.content})
+        history.prepend({role: "system", content: context})
       end
 
       unless prompt.empty?
@@ -225,8 +213,8 @@ module Langchain::LLM
     def transform_messages(messages)
       messages.map do |message|
         {
-          role: ROLE_MAPPING.fetch(message.type, message.type),
-          content: message.content
+          role: message[:role],
+          content: message[:content]
         }
       end
     end
