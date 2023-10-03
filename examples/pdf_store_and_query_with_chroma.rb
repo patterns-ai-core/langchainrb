@@ -21,7 +21,7 @@ chroma.create_default_schema
 # Set up an array of PDF and TXT documents
 docs = [
   Langchain.root.join("/docs/document.pdf"),
-  Langchain.root.join("/docs/docum.ent.txt"),
+  Langchain.root.join("/docs/document.txt"),
   Langchain.root.join("/docs/document.docx")
 ]
 
