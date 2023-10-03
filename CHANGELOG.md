@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.6.16] - 2023-10-02
+- HyDE-style similarity search
+- `Langchain::Chunker::Sentence` chunker
+- Bug fixes
+
 ## [0.6.15] - 2023-09-22
 - Bump weaviate-ruby gem version
 - Ollama support
