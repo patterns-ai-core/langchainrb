@@ -128,6 +128,17 @@ module Langchain::Vectorsearch
       raise NotImplementedError, "#{self.class.name} does not support similarity search"
     end
 
+    # Paper: https://arxiv.org/abs/2212.10496
+    # Hypothetical Document Embeddings (HyDE)-augmented similarity search
+    #
+    # @param query [String] The query to search for
+    # @param k [Integer] The number of results to return
+    # @return [String] Response
+    def similarity_search_with_hyde(query:, k: 4)
+      hyde_completion = llm.complete(prompt: generate_hyde_prompt(question: query))
+      similarity_search(query: hyde_completion, k: k)
+    end
+
     # Method supported by Vectorsearch DB to search for similar texts in the index by the passed in vector.
     # You must generate your own vector using the same LLM that generated the embeddings stored in the Vectorsearch DB.
     def similarity_search_by_vector(...)
@@ -142,22 +153,28 @@ module Langchain::Vectorsearch
     def_delegators :llm,
       :default_dimension
 
-    def generate_prompt(question:, context:)
-      prompt_template = Langchain::Prompt::FewShotPromptTemplate.new(
-        prefix: "Context:",
-        suffix: "---\nQuestion: {question}\n---\nAnswer:",
-        example_prompt: Langchain::Prompt::PromptTemplate.new(
-          template: "{context}",
-          input_variables: ["context"]
-        ),
-        examples: [
-          {context: context}
-        ],
-        input_variables: ["question"],
-        example_separator: "\n"
+    # HyDE-style prompt
+    #
+    # @param [String] User's question
+    # @return [String] Prompt
+    def generate_hyde_prompt(question:)
+      prompt_template = Langchain::Prompt.load_from_path(
+        # Zero-shot prompt to generate a hypothetical document based on a given question
+        file_path: Langchain.root.join("langchain/vectorsearch/prompts/hyde.yaml")
       )
-
       prompt_template.format(question: question)
+    end
+
+    # Retrieval Augmented Generation (RAG)
+    #
+    # @param question [String] User's question
+    # @param context [String] The context to synthesize the answer from
+    # @return [String] Prompt
+    def generate_rag_prompt(question:, context:)
+      prompt_template = Langchain::Prompt.load_from_path(
+        file_path: Langchain.root.join("langchain/vectorsearch/prompts/rag.yaml")
+      )
+      prompt_template.format(question: question, context: context)
     end
 
     def add_data(paths:)

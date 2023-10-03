@@ -97,6 +97,10 @@ client.similarity_search(
 )
 ```
 ```ruby
+# Retrieve similar documents based on the query string passed in via the [HyDE technique](https://arxiv.org/abs/2212.10496)
+client.similarity_search_with_hyde()
+```
+```ruby
 # Retrieve similar documents based on the embedding passed in
 client.similarity_search_by_vector(
     embedding:,
