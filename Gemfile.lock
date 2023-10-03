@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.6.15)
+    langchainrb (0.6.16)
       baran (~> 0.1.9)
       colorize (~> 0.8.1)
       json-schema (~> 4.0.0)
@@ -208,7 +208,7 @@ GEM
       zeitwerk (~> 2.5)
     rainbow (3.1.1)
     rake (13.0.6)
-    rb_sys (0.9.81)
+    rb_sys (0.9.82)
     rdiscount (2.2.7)
     regexp_parser (2.8.0)
     replicate-ruby (0.2.3)
@@ -273,11 +273,11 @@ GEM
     standardrb (1.0.1)
       standard
     thor (1.2.1)
-    tiktoken_ruby (0.0.5)
+    tiktoken_ruby (0.0.6)
       rb_sys (~> 0.9.68)
-    tiktoken_ruby (0.0.5-arm64-darwin)
-    tiktoken_ruby (0.0.5-x86_64-darwin)
-    tiktoken_ruby (0.0.5-x86_64-linux)
+    tiktoken_ruby (0.0.6-arm64-darwin)
+    tiktoken_ruby (0.0.6-x86_64-darwin)
+    tiktoken_ruby (0.0.6-x86_64-linux)
     treetop (1.6.12)
       polyglot (~> 0.3)
     ttfunk (1.7.0)
