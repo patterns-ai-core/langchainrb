@@ -60,19 +60,19 @@ module Langchain::Vectorsearch
     end
 
     # Create the collection with the default schema
-    # @return [Hash] The response from the server
+    # @return [::Chroma::Resources::Collection] Created collection
     def create_default_schema
       ::Chroma::Resources::Collection.create(index_name)
     end
 
     # Get the default schema
-    # @return [Hash] The response from the server
+    # @return [::Chroma::Resources::Collection] default schema
     def get_default_schema
       ::Chroma::Resources::Collection.get(index_name)
     end
 
     # Delete the default schema
-    # @return [Hash] The response from the server
+    # @return [bool] success or failure
     def destroy_default_schema
       ::Chroma::Resources::Collection.delete(index_name)
     end
