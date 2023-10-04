@@ -8,7 +8,10 @@ module Langchain
     #
     # == Available chunkers
     #
+    # - {Langchain::Chunker::RecursiveText}
     # - {Langchain::Chunker::Text}
+    # - {Langchain::Chunker::Semantic}
+    # - {Langchain::Chunker::Sentence}
     class Base
     end
   end
