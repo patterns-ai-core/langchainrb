@@ -33,6 +33,7 @@ if ENV["POSTGRES_URL"]
             }
           )
           .and_return({
+            "object" => "list",
             "data" => [
               {"embedding" => 1536.times.map { rand }}
             ]
@@ -65,6 +66,7 @@ if ENV["POSTGRES_URL"]
               }
             )
             .and_return({
+              "object" => "list",
               "data" => [
                 {"embedding" => embedding}
               ]
@@ -106,6 +108,7 @@ if ENV["POSTGRES_URL"]
             }
           )
           .and_return({
+            "object" => "list",
             "data" => [
               {"embedding" => 1536.times.map { 0 }}
             ]
@@ -174,6 +177,7 @@ if ENV["POSTGRES_URL"]
             }
           )
           .and_return({
+            "object" => "list",
             "data" => [
               {"embedding" => 1536.times.map { 0 }}
             ]
