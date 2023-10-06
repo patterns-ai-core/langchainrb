@@ -469,7 +469,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         it "returns multiple response messages" do
           response = subject.chat(prompt: prompt, model: model, temperature: temperature, n: 2)
 
-          expect(response.values).to eq(choices.map{|r|r["message"]})
+          expect(response.values).to eq(choices.map { |r| r["message"] })
         end
       end
 
