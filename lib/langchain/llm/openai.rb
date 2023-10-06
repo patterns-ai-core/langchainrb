@@ -52,8 +52,7 @@ module Langchain::LLM
       response = with_api_error_handling do
         client.embeddings(parameters: parameters.merge(params))
       end
-
-      response.dig("data").first.dig("embedding")
+      Langchain::LLM::Responses::OpenAI.parse(response)
     end
 
     #
@@ -75,7 +74,7 @@ module Langchain::LLM
         client.chat(parameters: parameters)
       end
 
-      response.dig("choices", 0, "message", "content")
+      Langchain::LLM::Responses::OpenAI.parse(response, type: "completion")
     end
 
     #
@@ -138,7 +137,7 @@ module Langchain::LLM
 
       return if block
 
-      extract_response response
+      Langchain::LLM::Responses::OpenAI.parse(response)
     end
 
     #
