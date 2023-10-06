@@ -42,7 +42,7 @@ module Langchain::LLM
     #
     # @param text [String] The text to generate an embedding for
     # @param params extra parameters passed to OpenAI::Client#embeddings
-    # @return [Array] The embedding
+    # @return [Langchain::LLM::Response] LLM response object with embedding as a value
     #
     def embed(text:, **params)
       parameters = {model: @defaults[:embeddings_model_name], input: text}
@@ -52,6 +52,7 @@ module Langchain::LLM
       response = with_api_error_handling do
         client.embeddings(parameters: parameters.merge(params))
       end
+
       Langchain::LLM::Responses::OpenAI.parse(response)
     end
 
@@ -60,7 +61,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params  extra parameters passed to OpenAI::Client#complete
-    # @return [String] The completion
+    # @return [Langchain::LLM::Response] LLM response object with comletion as a value
     #
     def complete(prompt:, **params)
       parameters = compose_parameters @defaults[:completion_model_name], params
@@ -119,7 +120,7 @@ module Langchain::LLM
     # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
     # @param options [Hash] extra parameters passed to OpenAI::Client#chat
     # @yield [Hash] Stream responses back one token at a time
-    # @return [String|Array<String>] The chat completion
+    # @return [Langchain::LLM::Response] LLM response object with response messages as a value
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options, &block)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?

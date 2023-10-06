@@ -27,6 +27,9 @@ RSpec.describe Langchain::LLM::OpenAI do
 
   describe "#embed" do
     let(:result) { [-0.007097351, 0.0035200312, -0.0069700438] }
+    let(:parameters) do
+      {parameters: {input: "Hello World", model: "text-embedding-ada-002"}}
+    end
     let(:response) do
       {
         "object" => "list",
@@ -37,7 +40,11 @@ RSpec.describe Langchain::LLM::OpenAI do
             "index" => 0,
             "embedding" => result
           }
-        ]
+        ],
+        "usage" => {
+          "prompt_tokens" => 2,
+          "total_tokens" => 2,
+        }
       }
     end
 
@@ -45,19 +52,24 @@ RSpec.describe Langchain::LLM::OpenAI do
       allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
     end
 
-    context "with default parameters" do
-      let(:parameters) do
-        {parameters: {input: "Hello World", model: "text-embedding-ada-002"}}
-      end
+    it "returns valid llm response object" do
+      response = subject.embed(text: "Hello World")
 
+      expect(response).to be_a(Langchain::LLM::Response)
+      expect(response.provider).to eq(:openai)
+      expect(response.type).to eq("embedding")
+      expect(response.model).to eq("text-embedding-ada-002")
+      expect(response.value).to eq([-0.007097351, 0.0035200312, -0.0069700438])
+      expect(response.prompt_tokens).to eq(2)
+      expect(response.completion_tokens).to eq(nil)
+      expect(response.total_tokens).to eq(2)
+    end
+
+    context "with default parameters" do
       it "returns an embedding" do
         response = subject.embed(text: "Hello World")
 
         expect(response).to be_a(Langchain::LLM::Response)
-        expect(response.provider).to eq(:openai)
-        expect(response.type).to eq("embedding")
-        expect(response.model).to eq("text-embedding-ada-002")
-        expect(response.values).to eq([result])
         expect(response.value).to eq(result)
       end
     end
@@ -71,10 +83,6 @@ RSpec.describe Langchain::LLM::OpenAI do
         response = subject.embed(text: "Hello World", model: "text-embedding-ada-001", user: "id")
 
         expect(response).to be_a(Langchain::LLM::Response)
-        expect(response.provider).to eq(:openai)
-        expect(response.type).to eq("embedding")
-        expect(response.model).to eq("text-embedding-ada-001")
-        expect(response.values).to eq([result])
         expect(response.value).to eq(result)
       end
     end
@@ -121,6 +129,19 @@ RSpec.describe Langchain::LLM::OpenAI do
             max_tokens: 4086
           }
         }
+      end
+
+      it "returns valid llm response object" do
+        response = subject.complete(prompt: "Hello World")
+
+        expect(response).to be_a(Langchain::LLM::Response)
+        expect(response.provider).to eq(:openai)
+        expect(response.type).to eq("completion")
+        expect(response.model).to eq("gpt-3.5-turbo")
+        expect(response.value).to eq("The meaning of life is subjective and can vary from person to person.")
+        expect(response.prompt_tokens).to eq(7)
+        expect(response.completion_tokens).to eq(16)
+        expect(response.total_tokens).to eq(23)
       end
 
       it "returns a completion" do
@@ -289,6 +310,19 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     before do
       allow(subject.client).to receive(:chat).with(parameters).and_return(response)
+    end
+
+    it "returns valid llm response object" do
+      response = subject.chat(prompt: "What is the meaning of life?")
+
+      expect(response).to be_a(Langchain::LLM::Response)
+      expect(response.provider).to eq(:openai)
+      expect(response.type).to eq("chat.completion")
+      expect(response.model).to eq("gpt-3.5-turbo")
+      expect(response.value).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+      expect(response.prompt_tokens).to eq(14)
+      expect(response.completion_tokens).to eq(25)
+      expect(response.total_tokens).to eq(39)
     end
 
     context "with prompt" do

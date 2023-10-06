@@ -6,7 +6,7 @@ module Langchain::LLM::Responses::OpenAI
       provider: :openai,
       type: type || get_type(response),
       model: response.dig("model"),
-      values: (response.dig("object") == "list") ? embeddings(response) : completions(response),
+      values: is_embedding?(response) ? embeddings(response) : completions(response),
       error: response.dig("error"),
       prompt_tokens: response.dig("usage", "prompt_tokens"),
       completion_tokens: response.dig("usage", "completion_tokens"),
@@ -15,7 +15,7 @@ module Langchain::LLM::Responses::OpenAI
   end
 
   def self.get_type(response)
-    return "embedding" if response.dig("object") == "list"
+    return "embedding" if is_embedding?(response)
 
     response.dig("object")
   end
@@ -26,5 +26,9 @@ module Langchain::LLM::Responses::OpenAI
 
   def self.embeddings(response)
     response.dig("data").map { |datum| datum.dig("embedding") }
+  end
+
+  def self.is_embedding?(response)
+    response.dig("object") == "list"
   end
 end
