@@ -43,7 +43,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         ],
         "usage" => {
           "prompt_tokens" => 2,
-          "total_tokens" => 2,
+          "total_tokens" => 2
         }
       }
     end

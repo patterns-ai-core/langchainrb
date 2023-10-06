@@ -14,6 +14,19 @@ RSpec.describe Langchain::LLM::GooglePalm do
       )
     end
 
+    it "returns valid llm response object" do
+      response = subject.embed(text: "Hello world")
+
+      expect(response).to be_a(Langchain::LLM::Response)
+      expect(response.provider).to eq(:google_palm)
+      expect(response.type).to eq("embedding")
+      expect(response.model).to eq("embedding-gecko-001")
+      expect(response.value).to eq(embedding)
+      expect(response.prompt_tokens).to eq(nil)
+      expect(response.completion_tokens).to eq(nil)
+      expect(response.total_tokens).to eq(nil)
+    end
+
     it "returns an embedding" do
       response = subject.embed(text: "Hello world")
 
@@ -30,6 +43,19 @@ RSpec.describe Langchain::LLM::GooglePalm do
       allow(subject.client).to receive(:generate_text).and_return(
         response
       )
+    end
+
+    it "returns valid llm response object" do
+      response = subject.complete(prompt: completion)
+
+      expect(response).to be_a(Langchain::LLM::Response)
+      expect(response.provider).to eq(:google_palm)
+      expect(response.type).to eq("completion")
+      expect(response.model).to eq("text-bison-001")
+      expect(response.value).to eq("A man walks into a library and asks for books about paranoia. The librarian whispers, \"They're right behind you!\"")
+      expect(response.prompt_tokens).to eq(nil)
+      expect(response.completion_tokens).to eq(nil)
+      expect(response.total_tokens).to eq(nil)
     end
 
     it "returns a completion" do
@@ -93,6 +119,19 @@ RSpec.describe Langchain::LLM::GooglePalm do
         allow(subject.client).to receive(:generate_chat_message).and_return(
           JSON.parse(fixture)
         )
+      end
+
+      it "returns valid llm response object" do
+        response = subject.chat(prompt: completion)
+
+        expect(response).to be_a(Langchain::LLM::Response)
+        expect(response.provider).to eq(:google_palm)
+        expect(response.type).to eq("chat.completion")
+        expect(response.model).to eq("chat-bison-001")
+        expect(response.value).to eq("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?")
+        expect(response.prompt_tokens).to eq(nil)
+        expect(response.completion_tokens).to eq(nil)
+        expect(response.total_tokens).to eq(nil)
       end
 
       it "returns a message" do

@@ -61,7 +61,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params  extra parameters passed to OpenAI::Client#complete
-    # @return [Langchain::LLM::Response] LLM response object with comletion as a value
+    # @return [Langchain::LLM::Response] LLM response object with completion as a value
     #
     def complete(prompt:, **params)
       parameters = compose_parameters @defaults[:completion_model_name], params
