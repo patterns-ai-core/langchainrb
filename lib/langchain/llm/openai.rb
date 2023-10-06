@@ -53,7 +53,7 @@ module Langchain::LLM
         client.embeddings(parameters: parameters.merge(params))
       end
 
-      Langchain::LLM::Responses::OpenAI.parse(response)
+      Langchain::LLM::Response::OpenAI.new(response)
     end
 
     #
@@ -75,7 +75,7 @@ module Langchain::LLM
         client.chat(parameters: parameters)
       end
 
-      Langchain::LLM::Responses::OpenAI.parse(response, type: "completion")
+      Langchain::LLM::Response::OpenAI.new(response, type: "completion")
     end
 
     #
@@ -138,7 +138,7 @@ module Langchain::LLM
 
       return if block
 
-      Langchain::LLM::Responses::OpenAI.parse(response)
+      Langchain::LLM::Response::OpenAI.new(response)
     end
 
     #

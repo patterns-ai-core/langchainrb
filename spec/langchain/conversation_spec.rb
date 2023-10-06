@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Conversation do
-  let(:llm) { double("Langchain::LLM::OpenaAI") }
+  let(:llm) { double("Langchain::LLM::OpenAI") }
 
   subject { described_class.new(llm: llm) }
 
@@ -33,7 +33,7 @@ RSpec.describe Langchain::Conversation do
     let(:context) { "You are a chatbot" }
     let(:examples) { [Langchain::Conversation::Prompt.new("Hello"), Langchain::Conversation::Response.new("Hi")] }
     let(:prompt) { "How are you doing?" }
-    let(:response) { Langchain::LLM::Response.new(values: [{"role" => "assistant", "content" => "I'm doing well. How about you?"}]) }
+    let(:response) { Langchain::LLM::Response::OpenAI.new({"choices" => [{"message" => {"role" => "assistant", "content" => "I'm doing well. How about you?"}}]}) }
 
     context "with stream: true option and block passed in" do
       let(:block) { proc { |chunk| print(chunk) } }

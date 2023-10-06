@@ -17,8 +17,7 @@ RSpec.describe Langchain::LLM::GooglePalm do
     it "returns valid llm response object" do
       response = subject.embed(text: "Hello world")
 
-      expect(response).to be_a(Langchain::LLM::Response)
-      expect(response.provider).to eq(:google_palm)
+      expect(response).to be_a(Langchain::LLM::Response::GooglePalm)
       expect(response.type).to eq("embedding")
       expect(response.model).to eq("embedding-gecko-001")
       expect(response.value).to eq(embedding)
@@ -48,8 +47,7 @@ RSpec.describe Langchain::LLM::GooglePalm do
     it "returns valid llm response object" do
       response = subject.complete(prompt: completion)
 
-      expect(response).to be_a(Langchain::LLM::Response)
-      expect(response.provider).to eq(:google_palm)
+      expect(response).to be_a(Langchain::LLM::Response::GooglePalm)
       expect(response.type).to eq("completion")
       expect(response.model).to eq("text-bison-001")
       expect(response.value).to eq("A man walks into a library and asks for books about paranoia. The librarian whispers, \"They're right behind you!\"")
@@ -124,8 +122,7 @@ RSpec.describe Langchain::LLM::GooglePalm do
       it "returns valid llm response object" do
         response = subject.chat(prompt: completion)
 
-        expect(response).to be_a(Langchain::LLM::Response)
-        expect(response.provider).to eq(:google_palm)
+        expect(response).to be_a(Langchain::LLM::Response::GooglePalm)
         expect(response.type).to eq("chat.completion")
         expect(response.model).to eq("chat-bison-001")
         expect(response.value).to eq("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?")
