@@ -5,6 +5,72 @@ RSpec.describe Langchain::Conversation do
 
   subject { described_class.new(llm: llm) }
 
+  describe "#initialize" do
+    let(:llm_response) do
+      {
+        "choices" => [
+          {
+            "message" => {"role" => "assistant", "content" => "I'm doing well. How about you?"}
+          }
+        ]
+      }
+    end
+
+    before do
+      allow(llm).to receive(:chat).and_return(Langchain::LLM::OpenAIResponse.new(llm_response))
+    end
+
+    context "with messages" do
+      subject { described_class.new(llm: llm, messages: messages) }
+
+      context "accepts and array of message objects" do
+        let(:messages) do
+          [Langchain::Conversation::Prompt.new("Hello"), Langchain::Conversation::Response.new("Hi")]
+        end
+
+        it "initializes the client without any errors" do
+          expect(subject.messages.first).to be_a(Langchain::Conversation::Prompt)
+          expect(subject.messages.first.to_s).to eq("Hello")
+
+          expect(subject.messages.last).to be_a(Langchain::Conversation::Response)
+          expect(subject.messages.last.to_s).to eq("Hi")
+        end
+
+        it "passes messages as hashes to llm" do
+          expect(llm).to receive(:chat).with(context: nil, examples: [], messages: [
+            {role: "user", content: "Hello"},
+            {role: "assistant", content: "Hi"},
+            {role: "user", content: "How are you?"}
+          ])
+          subject.message("How are you?")
+        end
+      end
+
+      context "accepts and array of hashes" do
+        let(:messages) do
+          [{role: "user", content: "Hello"}, {role: "assistant", content: "Hi"}]
+        end
+
+        it "initializes the client without any errors" do
+          expect(subject.messages.first).to be_a(Langchain::Conversation::Prompt)
+          expect(subject.messages.first.to_s).to eq("Hello")
+
+          expect(subject.messages.last).to be_a(Langchain::Conversation::Response)
+          expect(subject.messages.last.to_s).to eq("Hi")
+        end
+
+        it "passes messages as hashes to llm" do
+          expect(llm).to receive(:chat).with(context: nil, examples: [], messages: [
+            {role: "user", content: "Hello"},
+            {role: "assistant", content: "Hi"},
+            {role: "user", content: "How are you?"}
+          ])
+          subject.message("How are you?")
+        end
+      end
+    end
+  end
+
   describe "#set_context" do
     let(:context) { "You are a chatbot" }
 
@@ -16,16 +82,36 @@ RSpec.describe Langchain::Conversation do
   end
 
   describe "#add_examples" do
-    let(:examples1) { [Langchain::Conversation::Prompt.new("Hello"), Langchain::Conversation::Response.new("Hi")] }
-    let(:examples2) { [Langchain::Conversation::Prompt.new("How are you doing?"), Langchain::Conversation::Response.new("I'm doing well. How about you?")] }
+    context "with array of hashes" do
+      let(:examples) do
+        [
+          {role: "user", content: "Hello"},
+          {role: "assistant", content: "Hi"}
+        ]
+      end
 
-    it "adds examples" do
-      subject.add_examples(examples1)
+      it "adds examples" do
+        subject.add_examples(examples)
 
-      expect(subject.examples).to eq(examples1)
+        expect(subject.examples.first).to be_a(Langchain::Conversation::Prompt)
+        expect(subject.examples.first.to_s).to eq("Hello")
+        expect(subject.examples.last).to be_a(Langchain::Conversation::Response)
+        expect(subject.examples.last.to_s).to eq("Hi")
+      end
+    end
 
-      subject.add_examples(examples2)
-      expect(subject.examples).to eq(examples1 | examples2)
+    context "with array of message objects" do
+      let(:examples1) { [Langchain::Conversation::Prompt.new("Hello"), Langchain::Conversation::Response.new("Hi")] }
+      let(:examples2) { [Langchain::Conversation::Prompt.new("How are you doing?"), Langchain::Conversation::Response.new("I'm doing well. How about you?")] }
+
+      it "adds examples" do
+        subject.add_examples(examples1)
+
+        expect(subject.examples).to eq(examples1)
+
+        subject.add_examples(examples2)
+        expect(subject.examples).to eq(examples1 | examples2)
+      end
     end
   end
 
@@ -43,7 +129,7 @@ RSpec.describe Langchain::Conversation do
         expect(llm).to receive(:chat).with(
           context: nil,
           examples: [],
-          messages: [Langchain::Conversation::Prompt.new(prompt)],
+          messages: [{role: "user", content: prompt}],
           &block
         ).and_return(response)
 
@@ -56,7 +142,7 @@ RSpec.describe Langchain::Conversation do
         expect(llm).to receive(:chat).with(
           context: nil,
           examples: [],
-          messages: [Langchain::Conversation::Prompt.new(prompt)]
+          messages: [{role: "user", content: prompt}]
         ).and_return(response)
 
         expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))

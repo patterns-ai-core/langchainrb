@@ -22,15 +22,14 @@ module Langchain
     # Intialize Conversation with a LLM
     #
     # @param llm [Object] The LLM to use for the conversation
-    # @param options [Hash] Options to pass to the LLM, like temperature, top_k, etc.
+    # @param options [Hash] Conversation options :messages, :memory_strategy
     # @return [Langchain::Conversation] The Langchain::Conversation instance
     def initialize(llm:, **options, &block)
       @llm = llm
       @context = nil
-      @examples = []
       @memory = ::Langchain::Conversation::Memory.new(
         llm: llm,
-        messages: options.delete(:messages) || [],
+        messages: convert_messages(options.delete(:messages)),
         strategy: options.delete(:memory_strategy)
       )
       @options = options
@@ -48,9 +47,9 @@ module Langchain
     end
 
     # Add examples to the conversation. Used to give the model a sense of the conversation.
-    # @param examples [Array<Prompt|Response>] The examples to add to the conversation
+    # @param examples [Array<Prompt|Response|Hash>] The examples to add to the conversation
     def add_examples(examples)
-      @memory.add_examples examples
+      @memory.add_examples convert_messages(examples)
     end
 
     # Message the model with a prompt and return the response.
@@ -84,10 +83,35 @@ module Langchain
     private
 
     def llm_response
-      @llm.chat(messages: @memory.messages.map(&:to_h), context: @memory.context&.to_s, examples: @memory.examples.map(&:to_h), **@options, &@block)
+      @llm.chat(
+        messages: @memory.messages.map(&:to_h),
+        context: @memory.context&.to_s,
+        examples: @memory.examples.map(&:to_h),
+        **@options,
+        &@block
+      )
     rescue Langchain::Utils::TokenLength::TokenLimitExceeded => exception
       @memory.reduce_messages(exception)
       retry
+    end
+
+    def convert_messages(messages)
+      return [] if messages.nil?
+
+      messages.map do |message|
+        case message.class.name
+        when "Hash"
+          if message[:role] == "user"
+            ::Langchain::Conversation::Prompt.new(message[:content])
+          else
+            ::Langchain::Conversation::Response.new(message[:content])
+          end
+        when "Langchain::Conversation::Prompt", "Langchain::Conversation::Response"
+          message
+        else
+          raise ArgumentError.new("Invalid message type: #{message.class}")
+        end
+      end
     end
   end
 end
