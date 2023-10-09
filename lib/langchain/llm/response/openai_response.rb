@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Langchain::LLM::Response
-  class OpenAI < Base
+module Langchain::LLM
+  class OpenAIResponse < BaseResponse
     attr_reader :raw_response
 
     def model

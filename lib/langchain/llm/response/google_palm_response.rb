@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Langchain::LLM::Response
-  class GooglePalm < Base
+module Langchain::LLM
+  class GooglePalmResponse < BaseResponse
     def model
       options[:model]
     end

@@ -33,7 +33,7 @@ RSpec.describe Langchain::Conversation do
     let(:context) { "You are a chatbot" }
     let(:examples) { [Langchain::Conversation::Prompt.new("Hello"), Langchain::Conversation::Response.new("Hi")] }
     let(:prompt) { "How are you doing?" }
-    let(:response) { Langchain::LLM::Response::OpenAI.new({"choices" => [{"message" => {"role" => "assistant", "content" => "I'm doing well. How about you?"}}]}) }
+    let(:response) { Langchain::LLM::OpenAIResponse.new({"choices" => [{"message" => {"role" => "assistant", "content" => "I'm doing well. How about you?"}}]}) }
 
     context "with stream: true option and block passed in" do
       let(:block) { proc { |chunk| print(chunk) } }
