@@ -5,7 +5,7 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Qdrant
     #
-    # Gem requirements: gem "qdrant-ruby", "~> 0.9.0"
+    # Gem requirements: gem "qdrant-ruby", "~> 0.9.3"
     #
     # Usage:
     # qdrant = Langchain::Vectorsearch::Qdrant.new(url:, api_key:, index_name:, llm:, llm_api_key:)
@@ -17,8 +17,7 @@ module Langchain::Vectorsearch
     # @param index_name [String] The name of the index to use
     # @param llm [Object] The LLM client to use
     def initialize(url:, api_key:, index_name:, llm:)
-      depends_on "qdrant-ruby"
-      require "qdrant"
+      depends_on "qdrant-ruby", req: "qdrant"
 
       @client = ::Qdrant::Client.new(
         url: url,
@@ -27,6 +26,18 @@ module Langchain::Vectorsearch
       @index_name = index_name
 
       super(llm: llm)
+    end
+
+    # Find records by ids
+    # @param ids [Array] The ids to find
+    # @return [Hash] The response from the server
+    def find(ids: [])
+      client.points.get_all(
+        collection_name: index_name,
+        ids: ids,
+        with_payload: true,
+        with_vector: true
+      )
     end
 
     # Add a list of texts to the index
@@ -112,17 +123,18 @@ module Langchain::Vectorsearch
 
     # Ask a question and return the answer
     # @param question [String] The question to ask
+    # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, &block)
-      search_results = similarity_search(query: question)
+    def ask(question:, k: 4, &block)
+      search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
         result.dig("payload").to_s
       end
       context = context.join("\n---\n")
 
-      prompt = generate_prompt(question: question, context: context)
+      prompt = generate_rag_prompt(question: question, context: context)
 
       llm.chat(prompt: prompt, &block)
     end

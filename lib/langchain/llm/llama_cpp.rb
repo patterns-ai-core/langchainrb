@@ -24,7 +24,6 @@ module Langchain::LLM
     # @param seed [Integer] The seed to use
     def initialize(model_path:, n_gpu_layers: 1, n_ctx: 2048, n_threads: 1, seed: -1)
       depends_on "llama_cpp"
-      require "llama_cpp"
 
       @model_path = model_path
       @n_gpu_layers = n_gpu_layers

@@ -33,8 +33,7 @@ module Langchain::LLM
     # @param api_key [String] The API key to use
     #
     def initialize(api_key:, default_options: {})
-      depends_on "replicate-ruby"
-      require "replicate"
+      depends_on "replicate-ruby", req: "replicate"
 
       ::Replicate.configure do |config|
         config.api_token = api_key
@@ -85,7 +84,7 @@ module Langchain::LLM
     # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`
     def chat(...)
       response_text = complete(...)
-      Langchain::AIMessage.new(response_text)
+      ::Langchain::Conversation::Response.new(response_text)
     end
 
     #

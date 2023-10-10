@@ -17,8 +17,7 @@ module Langchain::Vectorsearch
     # @param index_name [String] The capitalized name of the index to use
     # @param llm [Object] The LLM client to use
     def initialize(url:, api_key:, index_name:, llm:)
-      depends_on "weaviate-ruby"
-      require "weaviate"
+      depends_on "weaviate-ruby", req: "weaviate"
 
       @client = ::Weaviate::Client.new(
         url: url,
@@ -124,17 +123,18 @@ module Langchain::Vectorsearch
 
     # Ask a question and return the answer
     # @param question [String] The question to ask
+    # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [Hash] The answer
-    def ask(question:, &block)
-      search_results = similarity_search(query: question)
+    def ask(question:, k: 4, &block)
+      search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
         result.dig("content").to_s
       end
       context = context.join("\n---\n")
 
-      prompt = generate_prompt(question: question, context: context)
+      prompt = generate_rag_prompt(question: question, context: context)
 
       llm.chat(prompt: prompt, &block)
     end

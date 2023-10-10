@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 module Langchain
-  class AIMessage < Message
-    def type
-      "ai"
+  class Conversation
+    class Response < Message
     end
   end
 end

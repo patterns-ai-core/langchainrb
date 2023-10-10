@@ -5,20 +5,18 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Chroma DB
     #
-    # Gem requirements: gem "chroma-db", "~> 0.3.0"
+    # Gem requirements: gem "chroma-db", "~> 0.6.0"
     #
     # Usage:
     # chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, llm_api_key:, api_key: nil)
     #
 
     # Initialize the Chroma client
-    # @param url [String] The URL of the Qdrant server
-    # @param api_key [String] The API key to use
+    # @param url [String] The URL of the Chroma server
     # @param index_name [String] The name of the index to use
     # @param llm [Object] The LLM client to use
-    def initialize(url:, index_name:, llm:, api_key: nil)
+    def initialize(url:, index_name:, llm:)
       depends_on "chroma-db"
-      require "chroma-db"
 
       ::Chroma.connect_host = url
       ::Chroma.logger = Langchain.logger
@@ -38,7 +36,7 @@ module Langchain::Vectorsearch
           id: ids[i] ? ids[i].to_s : SecureRandom.uuid,
           embedding: llm.embed(text: text),
           # TODO: Add support for passing metadata
-          metadata: [], # metadatas[index],
+          metadata: {}, # metadatas[index],
           document: text # Do we actually need to store the whole original document?
         )
       end
@@ -62,19 +60,19 @@ module Langchain::Vectorsearch
     end
 
     # Create the collection with the default schema
-    # @return [Hash] The response from the server
+    # @return [::Chroma::Resources::Collection] Created collection
     def create_default_schema
       ::Chroma::Resources::Collection.create(index_name)
     end
 
     # Get the default schema
-    # @return [Hash] The response from the server
+    # @return [::Chroma::Resources::Collection] Default schema
     def get_default_schema
       ::Chroma::Resources::Collection.get(index_name)
     end
 
     # Delete the default schema
-    # @return [Hash] The response from the server
+    # @return [bool] Success or failure
     def destroy_default_schema
       ::Chroma::Resources::Collection.delete(index_name)
     end
@@ -113,10 +111,11 @@ module Langchain::Vectorsearch
 
     # Ask a question and return the answer
     # @param question [String] The question to ask
+    # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, &block)
-      search_results = similarity_search(query: question)
+    def ask(question:, k: 4, &block)
+      search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
         result.document
@@ -124,7 +123,7 @@ module Langchain::Vectorsearch
 
       context = context.join("\n---\n")
 
-      prompt = generate_prompt(question: question, context: context)
+      prompt = generate_rag_prompt(question: question, context: context)
 
       llm.chat(prompt: prompt, &block)
     end

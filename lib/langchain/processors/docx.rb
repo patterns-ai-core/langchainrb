@@ -8,7 +8,6 @@ module Langchain
 
       def initialize(*)
         depends_on "docx"
-        require "docx"
       end
 
       # Parse the document and return the text

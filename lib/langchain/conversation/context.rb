@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 module Langchain
-  class SystemMessage < Message
-    def type
-      "system"
+  class Conversation
+    class Context < Message
     end
   end
 end

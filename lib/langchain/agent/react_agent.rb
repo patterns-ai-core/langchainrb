@@ -83,9 +83,9 @@ module Langchain::Agent
           else
             "\nObservation: #{result}\nThought:"
           end
-        else
+        elsif response.include?("Final Answer:")
           # Return the final answer
-          final_response = response.match(/Final Answer: (.*)/)&.send(:[], -1)
+          final_response = response.split("Final Answer:")[-1]
           break
         end
       end

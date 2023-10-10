@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 module Langchain
-  class HumanMessage < Message
-    def type
-      "human"
+  class Conversation
+    class Prompt < Message
     end
   end
 end

@@ -11,23 +11,27 @@ module Langchain::LLM
   #
   class OpenAI < Base
     DEFAULTS = {
+      n: 1,
       temperature: 0.0,
-      completion_model_name: "text-davinci-003",
+      completion_model_name: "gpt-3.5-turbo",
       chat_completion_model_name: "gpt-3.5-turbo",
       embeddings_model_name: "text-embedding-ada-002",
       dimension: 1536
     }.freeze
+
+    LEGACY_COMPLETION_MODELS = %w[
+      ada
+      babbage
+      curie
+      davinci
+    ].freeze
+
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
-    ROLE_MAPPING = {
-      "ai" => "assistant",
-      "human" => "user"
-    }
 
     attr_accessor :functions
 
     def initialize(api_key:, llm_options: {}, default_options: {})
-      depends_on "ruby-openai"
-      require "openai"
+      depends_on "ruby-openai", req: "openai"
 
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
       @defaults = DEFAULTS.merge(default_options)
@@ -45,7 +49,10 @@ module Langchain::LLM
 
       validate_max_tokens(text, parameters[:model])
 
-      response = client.embeddings(parameters: parameters.merge(params))
+      response = with_api_error_handling do
+        client.embeddings(parameters: parameters.merge(params))
+      end
+
       response.dig("data").first.dig("embedding")
     end
 
@@ -59,11 +66,16 @@ module Langchain::LLM
     def complete(prompt:, **params)
       parameters = compose_parameters @defaults[:completion_model_name], params
 
-      parameters[:prompt] = prompt
-      parameters[:max_tokens] = validate_max_tokens(prompt, parameters[:model])
+      return legacy_complete(prompt, parameters) if is_legacy_model?(parameters[:model])
 
-      response = client.completions(parameters: parameters)
-      response.dig("choices", 0, "text")
+      parameters[:messages] = compose_chat_messages(prompt: prompt)
+      parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
+
+      response = with_api_error_handling do
+        client.chat(parameters: parameters)
+      end
+
+      response.dig("choices", 0, "message", "content")
     end
 
     #
@@ -102,18 +114,18 @@ module Langchain::LLM
     #         },
     #       ]
     #
-    # @param prompt [HumanMessage] The prompt to generate a chat completion for
-    # @param messages [Array<AIMessage|HumanMessage>] The messages that have been sent in the conversation
-    # @param context [SystemMessage] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
-    # @param examples [Array<AIMessage|HumanMessage>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    # @param prompt [String] The prompt to generate a chat completion for
+    # @param messages [Array<Hash>] The messages that have been sent in the conversation
+    # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
+    # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
     # @param options [Hash] extra parameters passed to OpenAI::Client#chat
-    # @yield [AIMessage] Stream responses back one String at a time
-    # @return [AIMessage] The chat completion
+    # @yield [Hash] Stream responses back one token at a time
+    # @return [String|Array<String>] The chat completion
     #
-    def chat(prompt: "", messages: [], context: "", examples: [], **options)
+    def chat(prompt: "", messages: [], context: "", examples: [], **options, &block)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
 
-      parameters = compose_parameters @defaults[:chat_completion_model_name], options
+      parameters = compose_parameters @defaults[:chat_completion_model_name], options, &block
       parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
 
       if functions
@@ -122,23 +134,11 @@ module Langchain::LLM
         parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
       end
 
-      if (streaming = block_given?)
-        parameters[:stream] = proc do |chunk, _bytesize|
-          delta = chunk.dig("choices", 0, "delta")
-          content = delta["content"]
-          additional_kwargs = {function_call: delta["function_call"]}.compact
-          yield Langchain::AIMessage.new(content, additional_kwargs)
-        end
-      end
+      response = with_api_error_handling { client.chat(parameters: parameters) }
 
-      response = client.chat(parameters: parameters)
-      raise Langchain::LLM::ApiError.new "Chat completion failed: #{response.dig("error", "message")}" if !response.empty? && response.dig("error")
-      unless streaming
-        message = response.dig("choices", 0, "message")
-        content = message["content"]
-        additional_kwargs = {function_call: message["function_call"]}.compact
-        Langchain::AIMessage.new(content.to_s, additional_kwargs)
-      end
+      return if block
+
+      extract_response response
     end
 
     #
@@ -158,24 +158,46 @@ module Langchain::LLM
 
     private
 
-    def compose_parameters(model, params)
-      default_params = {model: model, temperature: @defaults[:temperature]}
-
-      default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
-
-      default_params.merge(params)
+    def is_legacy_model?(model)
+      LEGACY_COMPLETION_MODELS.any? { |legacy_model| model.include?(legacy_model) }
     end
 
-    def compose_chat_messages(prompt:, messages:, context:, examples:)
+    def legacy_complete(prompt, parameters)
+      Langchain.logger.warn "DEPRECATION WARNING: The model #{parameters[:model]} is deprecated. Please use gpt-3.5-turbo instead. Details: https://platform.openai.com/docs/deprecations/2023-07-06-gpt-and-embeddings"
+
+      parameters[:prompt] = prompt
+      parameters[:max_tokens] = validate_max_tokens(prompt, parameters[:model])
+
+      response = with_api_error_handling do
+        client.completions(parameters: parameters)
+      end
+      response.dig("choices", 0, "text")
+    end
+
+    def compose_parameters(model, params, &block)
+      default_params = {model: model, temperature: @defaults[:temperature], n: @defaults[:n]}
+      default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
+      parameters = default_params.merge(params)
+
+      if block
+        parameters[:stream] = proc do |chunk, _bytesize|
+          yield chunk.dig("choices", 0)
+        end
+      end
+
+      parameters
+    end
+
+    def compose_chat_messages(prompt:, messages: [], context: "", examples: [])
       history = []
 
       history.concat transform_messages(examples) unless examples.empty?
 
       history.concat transform_messages(messages) unless messages.empty?
 
-      unless context.nil? || context.to_s.empty?
+      unless context.nil? || context.empty?
         history.reject! { |message| message[:role] == "system" }
-        history.prepend({role: "system", content: context.content})
+        history.prepend({role: "system", content: context})
       end
 
       unless prompt.empty?
@@ -192,14 +214,28 @@ module Langchain::LLM
     def transform_messages(messages)
       messages.map do |message|
         {
-          role: ROLE_MAPPING.fetch(message.type, message.type),
-          content: message.content
+          role: message[:role],
+          content: message[:content]
         }
       end
     end
 
+    def with_api_error_handling
+      response = yield
+      return if response.empty?
+
+      raise Langchain::LLM::ApiError.new "OpenAI API error: #{response.dig("error", "message")}" if response&.dig("error")
+
+      response
+    end
+
     def validate_max_tokens(messages, model)
       LENGTH_VALIDATOR.validate_max_tokens!(messages, model)
+    end
+
+    def extract_response(response)
+      results = response.dig("choices").map { |choice| choice.dig("message", "content") }
+      (results.size == 1) ? results.first : results
     end
   end
 end

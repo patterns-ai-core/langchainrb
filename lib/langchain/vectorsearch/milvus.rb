@@ -5,7 +5,7 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Milvus REST APIs.
     #
-    # Gem requirements: gem "milvus", "~> 0.9.0"
+    # Gem requirements: gem "milvus", "~> 0.9.2"
     #
     # Usage:
     # milvus = Langchain::Vectorsearch::Milvus.new(url:, index_name:, llm:, api_key:)
@@ -13,7 +13,6 @@ module Langchain::Vectorsearch
 
     def initialize(url:, index_name:, llm:, api_key: nil)
       depends_on "milvus"
-      require "milvus"
 
       @client = ::Milvus::Client.new(url: url)
       @index_name = index_name
@@ -138,17 +137,18 @@ module Langchain::Vectorsearch
 
     # Ask a question and return the answer
     # @param question [String] The question to ask
+    # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, &block)
-      search_results = similarity_search(query: question)
+    def ask(question:, k: 4, &block)
+      search_results = similarity_search(query: question, k: k)
 
       content_field = search_results.dig("results", "fields_data").select { |field| field.dig("field_name") == "content" }
       content_data = content_field.first.dig("Field", "Scalars", "Data", "StringData", "data")
 
       context = content_data.join("\n---\n")
 
-      prompt = generate_prompt(question: question, context: context)
+      prompt = generate_rag_prompt(question: question, context: context)
 
       llm.chat(prompt: prompt, &block)
     end

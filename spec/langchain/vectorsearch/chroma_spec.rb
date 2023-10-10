@@ -25,7 +25,7 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
   end
 
   describe "#get_default_schema" do
-    let(:collection) { Chroma::Resources::Collection.new(name: "documents") }
+    let(:collection) { Chroma::Resources::Collection.new(id: collection_id, name: "documents") }
 
     it "returns the collection" do
       allow(Chroma::Resources::Collection).to receive(:get).and_return(collection)
@@ -41,7 +41,8 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
   end
 
   let(:text) { "Hello World" }
-  let(:collection) { Chroma::Resources::Collection.new(name: "documents") }
+  let(:collection_id) { "3ee1c14a-0f08-4632-8161-8b6276ae16b4" }
+  let(:collection) { Chroma::Resources::Collection.new(id: collection_id, name: "documents") }
   let(:embedding) { [0.1, 0.2, 0.3] }
   let(:count) { 1 }
   let(:query) { "Greetings Earth" }
@@ -117,9 +118,10 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
     let(:question) { "How many times is 'lorem' mentioned in this text?" }
     let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:answer) { "5 times" }
+    let(:k) { 4 }
 
     before do
-      allow(subject).to receive(:similarity_search).with(query: question).and_return(results)
+      allow(subject).to receive(:similarity_search).with(query: question, k: k).and_return(results)
     end
 
     context "without block" do

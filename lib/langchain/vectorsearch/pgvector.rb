@@ -26,9 +26,7 @@ module Langchain::Vectorsearch
     # @param namespace [String] The namespace to use for the index when inserting/querying
     def initialize(url:, index_name:, llm:, namespace: nil)
       depends_on "sequel"
-      require "sequel"
       depends_on "pgvector"
-      require "pgvector"
 
       @db = Sequel.connect(url)
 
@@ -135,17 +133,18 @@ module Langchain::Vectorsearch
 
     # Ask a question and return the answer
     # @param question [String] The question to ask
+    # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, &block)
-      search_results = similarity_search(query: question)
+    def ask(question:, k: 4, &block)
+      search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
         result.content.to_s
       end
       context = context.join("\n---\n")
 
-      prompt = generate_prompt(question: question, context: context)
+      prompt = generate_rag_prompt(question: question, context: context)
 
       llm.chat(prompt: prompt, &block)
     end
