@@ -65,6 +65,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "ruby-openai", "~> 4.1.0"
   spec.add_development_dependency "safe_ruby", "~> 1.0.4"
   spec.add_development_dependency "sequel", "~> 5.68.0"
-  spec.add_development_dependency "weaviate-ruby", "~> 0.8.7"
+  spec.add_development_dependency "weaviate-ruby", "~> 0.8.9"
   spec.add_development_dependency "wikipedia-client", "~> 1.17.0"
 end
