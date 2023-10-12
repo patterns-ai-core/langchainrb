@@ -8,7 +8,7 @@ module Langchain::LLM
   #   gem "ai21", "~> 0.2.1"
   #
   # Usage:
-  #     ai21 = Langchain::LLM::AI21.new(api_key:)
+  #     ai21 = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
   #
   class AI21 < Base
     DEFAULTS = {
@@ -38,7 +38,7 @@ module Langchain::LLM
       parameters[:maxTokens] = LENGTH_VALIDATOR.validate_max_tokens!(prompt, parameters[:model], client)
 
       response = client.complete(prompt, parameters)
-      response.dig(:completions, 0, :data, :text)
+      Langchain::LLM::AI21Response.new response, model: parameters[:model]
     end
 
     #

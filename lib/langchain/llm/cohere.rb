@@ -8,7 +8,7 @@ module Langchain::LLM
   #     gem "cohere-ruby", "~> 0.9.6"
   #
   # Usage:
-  #     cohere = Langchain::LLM::Cohere.new(api_key: "YOUR_API_KEY")
+  #     cohere = Langchain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
   #
   class Cohere < Base
     DEFAULTS = {
@@ -37,7 +37,8 @@ module Langchain::LLM
         texts: [text],
         model: @defaults[:embeddings_model_name]
       )
-      response.dig("embeddings").first
+
+      Langchain::LLM::CohereResponse.new response, model: @defaults[:embeddings_model_name]
     end
 
     #
@@ -64,7 +65,7 @@ module Langchain::LLM
       default_params[:max_tokens] = Langchain::Utils::TokenLength::CohereValidator.validate_max_tokens!(prompt, default_params[:model], client)
 
       response = client.generate(**default_params)
-      response.dig("generations").first.dig("text")
+      Langchain::LLM::CohereResponse.new response, model: @defaults[:completion_model_name]
     end
 
     # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`

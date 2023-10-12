@@ -54,10 +54,10 @@ module Langchain::LLM
 
       until response.finished?
         response.refetch
-        sleep(1)
+        sleep(0.1)
       end
 
-      response.output
+      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:embeddings_model_name])
     end
 
     #
@@ -71,14 +71,10 @@ module Langchain::LLM
 
       until response.finished?
         response.refetch
-        sleep(1)
+        sleep(0.1)
       end
 
-      # Response comes back as an array of strings, e.g.: ["Hi", "how ", "are ", "you?"]
-      # The first array element is missing a space at the end, so we add it manually
-      response.output[0] += " "
-
-      response.output.join
+      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:completion_model_name])
     end
 
     # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`
