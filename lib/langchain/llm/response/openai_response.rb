@@ -2,28 +2,38 @@
 
 module Langchain::LLM
   class OpenAIResponse < BaseResponse
-    attr_reader :raw_response
-
     def model
       raw_response["model"]
     end
 
-    def type
-      return options[:type] if options[:type]
+    def created_at
+      if raw_response.dig("created")
+        Time.at(raw_response.dig("created"))
+      end
+    end
 
-      is_embedding? ? "embedding" : raw_response.dig("object")
+    def first_completion_text
+      completions&.dig(0, "message", "content")
+    end
+
+    def first_chat_completion_text
+      first_completion_text
+    end
+
+    def first_embedding
+      embeddings&.first
     end
 
     def completions
-      raw_response.dig("choices")&.map { |choice| choice.dig("message") }
+      raw_response.dig("choices")
+    end
+
+    def chat_completions
+      raw_response.dig("choices")
     end
 
     def embeddings
       raw_response.dig("data")&.map { |datum| datum.dig("embedding") }
-    end
-
-    def value
-      is_embedding? ? embeddings.first : completions.first.dig("content")
     end
 
     def prompt_tokens
@@ -36,12 +46,6 @@ module Langchain::LLM
 
     def total_tokens
       raw_response.dig("usage", "total_tokens")
-    end
-
-    private
-
-    def is_embedding?
-      raw_response.dig("object") == "list"
     end
   end
 end

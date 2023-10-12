@@ -3,18 +3,22 @@
 module Langchain
   module LLM
     class BaseResponse
-      attr_reader :raw_response
+      attr_reader :raw_response, :model
 
-      def initialize(raw_response, **options)
+      def initialize(raw_response, model: nil)
         @raw_response = raw_response
-        @options = options
+        @model = model
       end
 
-      def model
+      def first_completion_text
+        raise NotImplementedError
+      end
+  
+      def first_chat_completion_text
         raise NotImplementedError
       end
 
-      def type
+      def first_embedding
         raise NotImplementedError
       end
 
@@ -22,11 +26,11 @@ module Langchain
         raise NotImplementedError
       end
 
-      def embeddings
+      def chat_completions
         raise NotImplementedError
       end
 
-      def value
+      def embeddings
         raise NotImplementedError
       end
 
@@ -41,10 +45,6 @@ module Langchain
       def total_tokens
         raise NotImplementedError
       end
-
-      protected
-
-      attr_reader :options
     end
   end
 end

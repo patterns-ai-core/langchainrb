@@ -75,7 +75,7 @@ module Langchain::LLM
         client.chat(parameters: parameters)
       end
 
-      Langchain::LLM::OpenAIResponse.new(response, type: "completion")
+      Langchain::LLM::OpenAIResponse.new(response)
     end
 
     #

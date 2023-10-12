@@ -39,7 +39,8 @@ module Langchain::LLM
     def embed(text:)
       response = client.embed(text: text)
 
-      Langchain::LLM::GooglePalmResponse.new response, model: @defaults[:embeddings_model_name], type: "embedding"
+      Langchain::LLM::GooglePalmResponse.new response,
+        model: @defaults[:embeddings_model_name]
     end
 
     #
@@ -68,7 +69,8 @@ module Langchain::LLM
 
       response = client.generate_text(**default_params)
 
-      Langchain::LLM::GooglePalmResponse.new response, model: default_params[:model], type: "completion"
+      Langchain::LLM::GooglePalmResponse.new response,
+        model: default_params[:model]
     end
 
     #
@@ -108,7 +110,9 @@ module Langchain::LLM
       response = client.generate_chat_message(**default_params)
       raise "GooglePalm API returned an error: #{response}" if response.dig("error")
 
-      Langchain::LLM::GooglePalmResponse.new response, model: default_params[:model], type: "chat.completion"
+      Langchain::LLM::GooglePalmResponse.new response,
+        model: default_params[:model]
+        # TODO: Pass in prompt_tokens: prompt_tokens
     end
 
     #
