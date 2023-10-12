@@ -52,7 +52,7 @@ module Langchain::Vectorsearch
     # the added or updated texts.
     def upsert_texts(texts:, ids:)
       data = texts.zip(ids).flat_map do |(text, id)|
-        {id: id, content: text, vectors: llm.embed(text: text).value.to_s, namespace: namespace}
+        {id: id, content: text, vectors: llm.embed(text: text).first_embedding.to_s, namespace: namespace}
       end
       # @db[table_name.to_sym].multi_insert(data, return: :primary_key)
       @db[table_name.to_sym]
@@ -70,7 +70,7 @@ module Langchain::Vectorsearch
     def add_texts(texts:, ids: nil)
       if ids.nil? || ids.empty?
         data = texts.map do |text|
-          {content: text, vectors: llm.embed(text: text).value.to_s, namespace: namespace}
+          {content: text, vectors: llm.embed(text: text).first_embedding.to_s, namespace: namespace}
         end
 
         @db[table_name.to_sym].multi_insert(data, return: :primary_key)
@@ -110,7 +110,7 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of top results to return
     # @return [Array<Hash>] The results of the search
     def similarity_search(query:, k: 4)
-      embedding = llm.embed(text: query).value
+      embedding = llm.embed(text: query).first_embedding
 
       similarity_search_by_vector(
         embedding: embedding,

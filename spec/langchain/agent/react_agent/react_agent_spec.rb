@@ -40,37 +40,37 @@ RSpec.describe Langchain::Agent::ReActAgent do
     let(:final_response) { " I now know the final answer\nFinal Answer: #{final_answer}" }
 
     before do
-      allow(subject.llm).to receive(:complete).with(
-        prompt: first_prompt,
-        stop_sequences: ["Observation:"]
-      ).and_return(first_response)
+      allow(subject.llm).to receive_message_chain(:complete, :first_completion_text)
+        .with(prompt: first_prompt, stop_sequences: ["Observation:"])
+        .with(no_args)
+        .and_return(first_response)
 
       allow(subject.tools[1]).to receive(:execute).with(
         input: "average temperature in Miami, Florida in May"
       ).and_return(search_response)
 
-      allow(subject.llm).to receive(:complete).with(
-        prompt: second_prompt,
-        stop_sequences: ["Observation:"]
-      ).and_return(second_response)
+      allow(subject.llm).to receive_message_chain(:complete, :first_completion_text)
+        .with(prompt: second_prompt, stop_sequences: ["Observation:"])
+        .with(no_args)
+        .and_return(second_response)
 
       allow(subject.tools[0]).to receive(:execute).with(
         input: "(83+86+79+90)/4"
       ).and_return(calculator_response)
 
-      allow(subject.llm).to receive(:complete).with(
-        prompt: third_prompt,
-        stop_sequences: ["Observation:"]
-      ).and_return(third_response)
+      allow(subject.llm).to receive_message_chain(:complete, :first_completion_text)
+        .with(prompt: third_prompt, stop_sequences: ["Observation:"])
+        .with(no_args)
+        .and_return(third_response)
 
       allow(subject.tools[0]).to receive(:execute).with(
         input: "sqrt(84.5)"
       ).and_return(calculator_response_2)
 
-      allow(subject.llm).to receive(:complete).with(
-        prompt: final_prompt,
-        stop_sequences: ["Observation:"]
-      ).and_return(final_response)
+      allow(subject.llm).to receive_message_chain(:complete, :first_completion_text)
+        .with(prompt: final_prompt, stop_sequences: ["Observation:"])
+        .with(no_args)
+        .and_return(final_response)
     end
 
     it "runs the agent" do
