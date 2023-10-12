@@ -14,7 +14,7 @@ module Langchain::LLM
     end
 
     def first_embedding
-      embeddings
+      embeddings.first
     end
 
     def completions
@@ -30,7 +30,7 @@ module Langchain::LLM
     end
 
     def embeddings
-      Array(raw_response.dig("embedding", "value"))
+      [raw_response.dig("embedding", "value")]
     end
   end
 end

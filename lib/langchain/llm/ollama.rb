@@ -30,10 +30,12 @@ module Langchain::LLM
     def complete(prompt:, model: nil, **options)
       response = +""
 
+      model_name = model || DEFAULTS[:completion_model_name]
+
       client.post("api/generate") do |req|
         req.body = {}
         req.body["prompt"] = prompt
-        req.body["model"] = model || DEFAULTS[:completion_model_name]
+        req.body["model"] = model_name
 
         req.body["options"] = options if options.any?
 
@@ -47,7 +49,7 @@ module Langchain::LLM
         end
       end
 
-      response
+      Langchain::LLM::OllamaResponse.new(response, model: model_name)
     end
 
     # Generate an embedding for a given text
@@ -55,15 +57,17 @@ module Langchain::LLM
     # @param model [String] The model to use
     # @param options [Hash] The options to use (
     def embed(text:, model: nil, **options)
+      model_name = model || DEFAULTS[:embeddings_model_name]
+
       response = client.post("api/embeddings") do |req|
         req.body = {}
         req.body["prompt"] = text
-        req.body["model"] = model || DEFAULTS[:embeddings_model_name]
+        req.body["model"] = model_name
 
         req.body["options"] = options if options.any?
       end
 
-      response.body.dig("embedding")
+      Langchain::LLM::OllamaResponse.new(response.body, model: model_name)
     end
 
     private
