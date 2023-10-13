@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Langchain::Vectorsearch
   class Elasticsearch < Base
     attr_accessor :es_client, :index_name, :options
@@ -21,8 +22,8 @@ module Langchain::Vectorsearch
     def add_texts(texts: [])
       body = texts.map do |text|
         [
-          { index: { _index: index_name } },
-          { input: text, input_vector: llm.embed(text: text) }
+          {index: {_index: index_name}},
+          {input: text, input_vector: llm.embed(text: text).embedding}
         ]
       end.flatten
 
@@ -32,8 +33,8 @@ module Langchain::Vectorsearch
     def update_texts(texts: [], ids: [])
       body = texts.map.with_index do |text, i|
         [
-          { index: { _index: index_name, _id: ids[i] } },
-          { input: text, input_vector: llm.embed(text: text) }
+          {index: {_index: index_name, _id: ids[i]}},
+          {input: text, input_vector: llm.embed(text: text).embedding}
         ]
       end.flatten
 
@@ -54,7 +55,7 @@ module Langchain::Vectorsearch
     end
 
     def default_vector_settings
-      { type: "dense_vector", dims: 384 }
+      {type: "dense_vector", dims: 384}
     end
 
     def vector_settings
@@ -77,7 +78,7 @@ module Langchain::Vectorsearch
     def default_query(query_vector)
       {
         script_score: {
-          query: { match_all: {} },
+          query: {match_all: {}},
           script: {
             source: "cosineSimilarity(params.query_vector, 'input_vector') + 1.0",
             params: {
@@ -94,12 +95,12 @@ module Langchain::Vectorsearch
       end
 
       if query.empty?
-        query_vector = llm.embed(text: text)
+        query_vector = llm.embed(text: text).embedding
 
         query = default_query(query_vector)
       end
 
-      es_client.search(body: { query: query, size: k }).body
+      es_client.search(body: {query: query, size: k}).body
     end
 
     def similarity_search_by_vector(embedding: [], k: 10, query: {})
@@ -109,7 +110,7 @@ module Langchain::Vectorsearch
 
       query = default_query(embedding) if query.empty?
 
-      es_client.search(body: { query: query, size: k }).body
+      es_client.search(body: {query: query, size: k}).body
     end
   end
 end

@@ -19,8 +19,8 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   describe "#add_texts" do
     it "indexes data into elasticsearch" do
       es_body = [
-        { index: { _index: "langchain" } },
-        { input: "simple text", input_vector: [0.1, 0.2, 0.3] }
+        {index: {_index: "langchain"}},
+        {input: "simple text", input_vector: [0.1, 0.2, 0.3]}
       ]
 
       allow_any_instance_of(::Elasticsearch::Client).to receive(:bulk).with(body: es_body)
@@ -31,12 +31,12 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   end
 
   describe "#update_texts" do
-    it "updates respective document" do 
+    it "updates respective document" do
       allow(llm).to receive(:embed).and_return([0.1, 0.2, 0.3, 0.4])
 
       es_body = [
-        { index: { _index: "langchain", _id: 1 } },
-        { input: "updated text", input_vector: [0.1, 0.2, 0.3, 0.4] }
+        {index: {_index: "langchain", _id: 1}},
+        {input: "updated text", input_vector: [0.1, 0.2, 0.3, 0.4]}
       ]
 
       allow_any_instance_of(::Elasticsearch::Client).to receive(:bulk).with(body: es_body)
@@ -47,9 +47,9 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   end
 
   describe "#default_vector_settings" do
-    it "returns default vector settings" do 
-      expect(subject.default_vector_settings).to eq({ type: "dense_vector", dims: 384 })
-    end 
+    it "returns default vector settings" do
+      expect(subject.default_vector_settings).to eq({type: "dense_vector", dims: 384})
+    end
   end
 
   describe "#create_default_schema" do
@@ -63,7 +63,7 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
     end
   end
 
-  describe "#delete_default_schema" do 
+  describe "#delete_default_schema" do
     it "deletes default schema" do
       allow_any_instance_of(::Elasticsearch::Client)
         .to receive_message_chain("indices.delete").with(index: "langchain")
@@ -82,7 +82,7 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
             input: {
               type: "text"
             },
-            input_vector: { type: "dense_vector", dims: 384 }
+            input_vector: {type: "dense_vector", dims: 384}
           }
         }
       }
@@ -91,7 +91,7 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
     end
 
     it "override default vector settings" do
-      subject.options[:vector_settings] = { type: "dense_vector", dims: 500 }
+      subject.options[:vector_settings] = {type: "dense_vector", dims: 500}
 
       schema = {
         mappings: {
@@ -99,7 +99,7 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
             input: {
               type: "text"
             },
-            input_vector: { type: "dense_vector", dims: 500 }
+            input_vector: {type: "dense_vector", dims: 500}
           }
         }
       }
@@ -112,7 +112,7 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
     it "returns cosineSimilarity as default query" do
       query = {
         script_score: {
-          query: { match_all: {} },
+          query: {match_all: {}},
           script: {
             source: "cosineSimilarity(params.query_vector, 'input_vector') + 1.0",
             params: {
@@ -129,17 +129,17 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   describe "#similarity_search" do
     it "should return similar documents" do
       response = [
-        { _id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6] },
-        { _id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1] }
+        {_id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6]},
+        {_id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1]}
       ]
       es_response = double("Elasticsearch::API::Response")
 
       allow(es_response).to receive(:body).and_return(response)
       allow_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: { query: subject.default_query([0.1, 0.2, 0.3]), size: 5 }).and_return(es_response)
+        .to receive(:search).with(body: {query: subject.default_query([0.1, 0.2, 0.3]), size: 5}).and_return(es_response)
 
       expect_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: { query: subject.default_query([0.1, 0.2, 0.3]), size: 5 })
+        .to receive(:search).with(body: {query: subject.default_query([0.1, 0.2, 0.3]), size: 5})
       expect(es_response).to receive(:body)
 
       expect(subject.similarity_search(text: "simple", k: 5)).to eq(response)
@@ -148,12 +148,12 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
     it "able to search with custom query" do
       es_response = double("Elasticsearch::API::Response")
       response = [
-        { _id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6] },
-        { _id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1] }
+        {_id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6]},
+        {_id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1]}
       ]
       custom_query = {
         script_score: {
-          query: { match_all: {} },
+          query: {match_all: {}},
           script: {
             source: "cosineSimilarity(params.query_vector, 'input_vector') + 2.0",
             params: {
@@ -165,10 +165,10 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
 
       allow(es_response).to receive(:body).and_return(response)
       allow_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: { query: custom_query, size: 10 }).and_return(es_response)
+        .to receive(:search).with(body: {query: custom_query, size: 10}).and_return(es_response)
 
       expect_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: { query: custom_query, size: 10 })
+        .to receive(:search).with(body: {query: custom_query, size: 10})
       expect(es_response).to receive(:body)
       expect(subject.similarity_search(query: custom_query)).to eq(response)
     end
@@ -181,17 +181,17 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   describe "#similarity_search_by_vector" do
     it "should return similar documents" do
       response = [
-        { _id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6] },
-        { _id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1] }
+        {_id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6]},
+        {_id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1]}
       ]
       es_response = double("Elasticsearch::API::Response")
 
       allow(es_response).to receive(:body).and_return(response)
       allow_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: { query: subject.default_query([0.5, 0.6, 0.7]), size: 5 }).and_return(es_response)
+        .to receive(:search).with(body: {query: subject.default_query([0.5, 0.6, 0.7]), size: 5}).and_return(es_response)
 
       expect_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: { query: subject.default_query([0.5, 0.6, 0.7]), size: 5 })
+        .to receive(:search).with(body: {query: subject.default_query([0.5, 0.6, 0.7]), size: 5})
       expect(es_response).to receive(:body)
 
       expect(subject.similarity_search_by_vector(embedding: [0.5, 0.6, 0.7], k: 5)).to eq(response)
@@ -200,12 +200,12 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
     it "able to search with custom query" do
       es_response = double("Elasticsearch::API::Response")
       response = [
-        { _id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6] },
-        { _id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1] }
+        {_id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6]},
+        {_id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1]}
       ]
       custom_query = {
         script_score: {
-          query: { match_all: {} },
+          query: {match_all: {}},
           script: {
             source: "cosineSimilarity(params.query_vector, 'input_vector') + 2.0",
             params: {
@@ -217,10 +217,10 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
 
       allow(es_response).to receive(:body).and_return(response)
       allow_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: { query: custom_query, size: 10 }).and_return(es_response)
+        .to receive(:search).with(body: {query: custom_query, size: 10}).and_return(es_response)
 
       expect_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: { query: custom_query, size: 10 })
+        .to receive(:search).with(body: {query: custom_query, size: 10})
       expect(es_response).to receive(:body)
       expect(subject.similarity_search_by_vector(query: custom_query)).to eq(response)
     end
