@@ -12,12 +12,12 @@ module Langchain::LLM
       end
     end
 
-    def first_completion_text
+    def completion
       completions&.dig(0, "message", "content")
     end
 
-    def first_chat_completion_text
-      first_completion_text
+    def chat_completion
+      completion
     end
 
     def first_embedding

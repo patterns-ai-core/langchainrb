@@ -49,7 +49,7 @@ module Langchain::Vectorsearch
       Array(texts).each_with_index do |text, i|
         id = ids[i] || SecureRandom.uuid
         batch[:ids].push(id)
-        batch[:vectors].push(llm.embed(text: text).first_embedding)
+        batch[:vectors].push(llm.embed(text: text).embedding)
         batch[:payloads].push({content: text})
       end
 
@@ -95,7 +95,7 @@ module Langchain::Vectorsearch
       query:,
       k: 4
     )
-      embedding = llm.embed(text: query).first_embedding
+      embedding = llm.embed(text: query).embedding
 
       similarity_search_by_vector(
         embedding: embedding,

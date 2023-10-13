@@ -7,7 +7,7 @@ module Langchain::LLM
       super(raw_response, model: model)
     end
 
-    def first_completion_text
+    def completion
       raw_response.first
     end
 

@@ -35,7 +35,7 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
         input: sql_string
       ).and_return(database_tool_response)
 
-      allow(subject.llm).to receive_message_chain(:complete, :first_completion_text)
+      allow(subject.llm).to receive_message_chain(:complete, :completion)
         .with(
           prompt: <<~PROMPT
             Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:

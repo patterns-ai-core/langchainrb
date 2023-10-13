@@ -47,7 +47,7 @@ RSpec.describe Langchain::Conversation do
           &block
         ).and_return(response)
 
-        expect(conversation.message(prompt)).to eq(Langchain::Conversation::Response.new(response.first_chat_completion_text))
+        expect(conversation.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
       end
     end
 
@@ -59,7 +59,7 @@ RSpec.describe Langchain::Conversation do
           messages: [Langchain::Conversation::Prompt.new(prompt)]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.first_chat_completion_text))
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
       end
     end
 
@@ -75,7 +75,7 @@ RSpec.describe Langchain::Conversation do
           messages: [{role: "user", content: prompt}]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.first_chat_completion_text))
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
       end
     end
 
@@ -95,7 +95,7 @@ RSpec.describe Langchain::Conversation do
           messages: [{role: "user", content: prompt}]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.first_chat_completion_text))
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
       end
     end
 
@@ -110,7 +110,7 @@ RSpec.describe Langchain::Conversation do
           temperature: 0.7
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.first_chat_completion_text))
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
       end
     end
 

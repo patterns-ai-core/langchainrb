@@ -6,7 +6,7 @@ module Langchain::LLM
       raw_response.dig("model")
     end
 
-    def first_completion_text
+    def completion
       completions.first
     end
 

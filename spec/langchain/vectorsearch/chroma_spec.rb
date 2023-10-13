@@ -58,7 +58,7 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
 
   describe "add_texts" do
     before do
-      allow(subject.llm).to receive_message_chain(:embed, :first_embedding).with(text: text).with(no_args).and_return([0.1, 0.2, 0.3])
+      allow(subject.llm).to receive_message_chain(:embed, :embedding).with(text: text).with(no_args).and_return([0.1, 0.2, 0.3])
       allow_any_instance_of(Chroma::Resources::Collection).to receive(:add).and_return(true)
     end
 
@@ -75,7 +75,7 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
 
   describe "update_texts" do
     before do
-      allow(subject.llm).to receive_message_chain(:embed, :first_embedding).with(text: text).with(no_args).and_return([0.1, 0.2, 0.3])
+      allow(subject.llm).to receive_message_chain(:embed, :embedding).with(text: text).with(no_args).and_return([0.1, 0.2, 0.3])
       allow_any_instance_of(Chroma::Resources::Collection).to receive(:update).and_return(true)
     end
 
@@ -103,7 +103,7 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
 
   describe "#similarity_search" do
     before do
-      allow(subject.llm).to receive_message_chain(:embed, :first_embedding).with(text: query).with(no_args).and_return(embedding)
+      allow(subject.llm).to receive_message_chain(:embed, :embedding).with(text: query).with(no_args).and_return(embedding)
       allow(subject).to receive(:similarity_search_by_vector).with(embedding: embedding, k: count).and_return(results)
     end
 

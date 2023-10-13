@@ -9,7 +9,7 @@ module Langchain::LLM
       super(raw_response, model: model)
     end
 
-    def first_completion_text
+    def completion
       completions&.dig(0, "output")
     end
 
@@ -21,7 +21,7 @@ module Langchain::LLM
       raw_response.dig("candidates")
     end
 
-    def first_chat_completion_text
+    def chat_completion
       chat_completions&.dig(0, "content")
     end
 

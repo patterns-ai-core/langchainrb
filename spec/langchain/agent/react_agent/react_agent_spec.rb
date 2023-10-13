@@ -41,7 +41,7 @@ RSpec.describe Langchain::Agent::ReActAgent do
 
     describe "successfully" do
       before do
-        allow(subject.llm).to receive_message_chain(:complete, :first_completion_text)
+        allow(subject.llm).to receive_message_chain(:complete, :completion)
           .with(prompt: first_prompt, stop_sequences: ["Observation:"])
           .with(no_args)
           .and_return(first_response)
@@ -50,7 +50,7 @@ RSpec.describe Langchain::Agent::ReActAgent do
           input: "average temperature in Miami, Florida in May"
         ).and_return(search_response)
 
-        allow(subject.llm).to receive_message_chain(:complete, :first_completion_text)
+        allow(subject.llm).to receive_message_chain(:complete, :completion)
           .with(prompt: second_prompt, stop_sequences: ["Observation:"])
           .with(no_args)
           .and_return(second_response)
@@ -59,7 +59,7 @@ RSpec.describe Langchain::Agent::ReActAgent do
           input: "(83+86+79+90)/4"
         ).and_return(calculator_response)
 
-        allow(subject.llm).to receive_message_chain(:complete, :first_completion_text)
+        allow(subject.llm).to receive_message_chain(:complete, :completion)
           .with(prompt: third_prompt, stop_sequences: ["Observation:"])
           .with(no_args)
           .and_return(third_response)
@@ -68,7 +68,7 @@ RSpec.describe Langchain::Agent::ReActAgent do
           input: "sqrt(84.5)"
         ).and_return(calculator_response_2)
 
-        allow(subject.llm).to receive_message_chain(:complete, :first_completion_text)
+        allow(subject.llm).to receive_message_chain(:complete, :completion)
           .with(prompt: final_prompt, stop_sequences: ["Observation:"])
           .with(no_args)
           .and_return(final_response)
@@ -81,7 +81,7 @@ RSpec.describe Langchain::Agent::ReActAgent do
 
     describe "unsuccessful and" do
       before do
-        allow(subject.llm).to receive_message_chain(:complete, :first_completion_text)
+        allow(subject.llm).to receive_message_chain(:complete, :completion)
           .with(prompt: first_prompt, stop_sequences: ["Observation:"])
           .with(no_args)
           .and_return(first_response)

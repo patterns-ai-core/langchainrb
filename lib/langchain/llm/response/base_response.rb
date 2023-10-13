@@ -10,15 +10,15 @@ module Langchain
         @model = model
       end
 
-      def first_completion_text
+      def completion
         raise NotImplementedError
       end
 
-      def first_chat_completion_text
+      def chat_completion
         raise NotImplementedError
       end
 
-      def first_embedding
+      def embedding
         raise NotImplementedError
       end
 

@@ -14,7 +14,7 @@ module Langchain::LLM
       raw_response.dig("generations")
     end
 
-    def first_completion_text
+    def completion
       completions&.dig(0, "text")
     end
   end

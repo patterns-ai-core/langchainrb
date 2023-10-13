@@ -62,7 +62,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
         )
         .and_return(fixture)
 
-      allow(subject.llm).to receive_message_chain(:embed, :first_embedding)
+      allow(subject.llm).to receive_message_chain(:embed, :embedding)
         .with(text: "Hello World")
         .with(no_args)
         .and_return([
@@ -103,7 +103,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     before do
       allow(subject.client.query).to receive(:get).and_return(record)
 
-      allow(subject.llm).to receive_message_chain(:embed, :first_embedding)
+      allow(subject.llm).to receive_message_chain(:embed, :embedding)
         .with(text: "Hello World")
         .with(no_args)
         .and_return([
@@ -135,7 +135,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
         )
         .and_return(fixture)
 
-      allow(subject.llm).to receive_message_chain(:embed, :first_embedding)
+      allow(subject.llm).to receive_message_chain(:embed, :embedding)
         .with(text: "earth")
         .with(no_args)
         .and_return([

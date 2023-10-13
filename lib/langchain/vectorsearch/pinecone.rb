@@ -54,7 +54,7 @@ module Langchain::Vectorsearch
         {
           id: ids[i] ? ids[i].to_s : SecureRandom.uuid,
           metadata: metadata || {content: text},
-          values: llm.embed(text: text).first_embedding
+          values: llm.embed(text: text).embedding
         }
       end
 
@@ -90,7 +90,7 @@ module Langchain::Vectorsearch
         index.update(
           namespace: namespace,
           id: ids[i].to_s,
-          values: llm.embed(text: text).first_embedding,
+          values: llm.embed(text: text).embedding,
           set_metadata: metadata
         )
       end
@@ -130,7 +130,7 @@ module Langchain::Vectorsearch
       namespace: "",
       filter: nil
     )
-      embedding = llm.embed(text: query).first_embedding
+      embedding = llm.embed(text: query).embedding
 
       similarity_search_by_vector(
         embedding: embedding,
