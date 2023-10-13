@@ -13,7 +13,7 @@ module Langchain
       def first_completion_text
         raise NotImplementedError
       end
-  
+
       def first_chat_completion_text
         raise NotImplementedError
       end

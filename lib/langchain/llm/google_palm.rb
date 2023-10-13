@@ -112,7 +112,7 @@ module Langchain::LLM
 
       Langchain::LLM::GooglePalmResponse.new response,
         model: default_params[:model]
-        # TODO: Pass in prompt_tokens: prompt_tokens
+      # TODO: Pass in prompt_tokens: prompt_tokens
     end
 
     #
