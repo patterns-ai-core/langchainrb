@@ -10,38 +10,67 @@ module Langchain
         @model = model
       end
 
+      # Returns the completion text
+      #
+      # @return [String]
+      #
       def completion
         raise NotImplementedError
       end
 
+      # Returns the chat completion text
+      #
+      # @return [String]
+      #
       def chat_completion
         raise NotImplementedError
       end
 
+      # Return the first embedding
+      #
+      # @return [Array]
       def embedding
         raise NotImplementedError
       end
 
+      # Return the completion candidates
+      #
+      # @return [Array]
       def completions
         raise NotImplementedError
       end
 
+      # Return the chat completion candidates
+      #
+      # @return [Array]
       def chat_completions
         raise NotImplementedError
       end
 
+      # Return the embeddings
+      #
+      # @return [Array[]]
       def embeddings
         raise NotImplementedError
       end
 
+      # Number of tokens utilized in the prompt
+      #
+      # @return [Integer]
       def prompt_tokens
         raise NotImplementedError
       end
 
+      # Number of tokens utilized to generate the completion
+      #
+      # @return [Integer]
       def completion_tokens
         raise NotImplementedError
       end
 
+      # Total number of tokens utilized
+      #
+      # @return [Integer]
       def total_tokens
         raise NotImplementedError
       end
