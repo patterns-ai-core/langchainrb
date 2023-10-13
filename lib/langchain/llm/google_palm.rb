@@ -8,7 +8,7 @@ module Langchain::LLM
   #     gem "google_palm_api", "~> 0.1.3"
   #
   # Usage:
-  #     google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")
+  #     google_palm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
   #
   class GooglePalm < Base
     DEFAULTS = {
