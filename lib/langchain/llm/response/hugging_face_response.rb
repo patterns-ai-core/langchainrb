@@ -6,7 +6,7 @@ module Langchain::LLM
       [raw_response]
     end
 
-    def first_embedding
+    def embedding
       embeddings.first
     end
   end

@@ -2,7 +2,7 @@
 
 module Langchain::LLM
   class CohereResponse < BaseResponse
-    def first_embedding
+    def embedding
       embeddings.first
     end
 

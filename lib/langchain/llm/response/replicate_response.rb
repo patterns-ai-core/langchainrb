@@ -17,7 +17,7 @@ module Langchain::LLM
       Time.parse(raw_response.created_at)
     end
 
-    def first_embedding
+    def embedding
       embeddings.first
     end
 

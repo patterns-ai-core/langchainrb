@@ -13,7 +13,7 @@ module Langchain::LLM
       completions&.dig(0, "output")
     end
 
-    def first_embedding
+    def embedding
       embeddings.first
     end
 

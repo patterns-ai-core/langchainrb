@@ -20,7 +20,7 @@ module Langchain::LLM
       completion
     end
 
-    def first_embedding
+    def embedding
       embeddings&.first
     end
 
