@@ -34,7 +34,7 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Langchain::LLM::GooglePalmResponse] LLM response object with embedding as a value
+    # @return [Langchain::LLM::GooglePalmResponse] Response object
     #
     def embed(text:)
       response = client.embed(text: text)
@@ -48,7 +48,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params extra parameters passed to GooglePalmAPI::Client#generate_text
-    # @return [Langchain::LLM::GooglePalmResponse] LLM response object with completion as a value
+    # @return [Langchain::LLM::GooglePalmResponse] Response object
     #
     def complete(prompt:, **params)
       default_params = {
@@ -81,7 +81,7 @@ module Langchain::LLM
     # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
     # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
     # @param options [Hash] extra parameters passed to GooglePalmAPI::Client#generate_chat_message
-    # @return [Langchain::LLM::GooglePalmResponse] LLM response object with response messages as a value
+    # @return [Langchain::LLM::GooglePalmResponse] Response object
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?

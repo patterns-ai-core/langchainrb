@@ -30,7 +30,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params [Hash] The parameters to pass to the API
-    # @return [String] The completion
+    # @return [Langchain::LLM::AI21Response] The completion
     #
     def complete(prompt:, **params)
       parameters = complete_parameters params
@@ -51,6 +51,7 @@ module Langchain::LLM
     def summarize(text:, **params)
       response = client.summarize(text, "TEXT", params)
       response.dig(:summary)
+      # Should we update this to also return a Langchain::LLM::AI21Response?
     end
 
     private

@@ -32,7 +32,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params [Hash] extra parameters passed to Anthropic::Client#complete
-    # @return [String] The completion
+    # @return [Langchain::LLM::AnthropicResponse] The completion
     #
     def complete(prompt:, **params)
       parameters = compose_parameters @defaults[:completion_model_name], params

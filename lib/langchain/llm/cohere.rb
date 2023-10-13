@@ -30,7 +30,7 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Hash] The embedding
+    # @return [Langchain::LLM::CohereResponse] Response object
     #
     def embed(text:)
       response = client.embed(
@@ -46,7 +46,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params[:stop_sequences]
-    # @return [Hash] The completion
+    # @return [Langchain::LLM::CohereResponse] Response object
     #
     def complete(prompt:, **params)
       default_params = {

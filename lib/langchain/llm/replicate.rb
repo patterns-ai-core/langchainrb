@@ -47,7 +47,7 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Hash] The embedding
+    # @return [Langchain::LLM::ReplicateResponse] Response object
     #
     def embed(text:)
       response = embeddings_model.predict(input: text)
@@ -64,7 +64,7 @@ module Langchain::LLM
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
-    # @return [Hash] The completion
+    # @return [Langchain::LLM::ReplicateResponse] Reponse object
     #
     def complete(prompt:, **params)
       response = completion_model.predict(prompt: prompt)

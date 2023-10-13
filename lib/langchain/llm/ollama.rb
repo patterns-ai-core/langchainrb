@@ -22,11 +22,14 @@ module Langchain::LLM
       @url = url
     end
 
+    #
     # Generate the completion for a given prompt
+    #
     # @param prompt [String] The prompt to complete
     # @param model [String] The model to use
     # @param options [Hash] The options to use (https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values)
-    # @return [String] The completed prompt
+    # @return [Langchain::LLM::OllamaResponse] Response object
+    #
     def complete(prompt:, model: nil, **options)
       response = +""
 
@@ -52,10 +55,14 @@ module Langchain::LLM
       Langchain::LLM::OllamaResponse.new(response, model: model_name)
     end
 
+    #
     # Generate an embedding for a given text
+    #
     # @param text [String] The text to generate an embedding for
     # @param model [String] The model to use
-    # @param options [Hash] The options to use (
+    # @param options [Hash] The options to use
+    # @return [Langchain::LLM::OllamaResponse] Response object
+    #
     def embed(text:, model: nil, **options)
       model_name = model || DEFAULTS[:embeddings_model_name]
 
