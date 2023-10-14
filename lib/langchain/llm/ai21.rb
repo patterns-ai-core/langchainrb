@@ -8,7 +8,7 @@ module Langchain::LLM
   #   gem "ai21", "~> 0.2.1"
   #
   # Usage:
-  #     ai21 = Langchain::LLM::AI21.new(api_key:)
+  #     ai21 = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
   #
   class AI21 < Base
     DEFAULTS = {
@@ -30,7 +30,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params [Hash] The parameters to pass to the API
-    # @return [String] The completion
+    # @return [Langchain::LLM::AI21Response] The completion
     #
     def complete(prompt:, **params)
       parameters = complete_parameters params
@@ -38,7 +38,7 @@ module Langchain::LLM
       parameters[:maxTokens] = LENGTH_VALIDATOR.validate_max_tokens!(prompt, parameters[:model], client)
 
       response = client.complete(prompt, parameters)
-      response.dig(:completions, 0, :data, :text)
+      Langchain::LLM::AI21Response.new response, model: parameters[:model]
     end
 
     #
@@ -51,6 +51,7 @@ module Langchain::LLM
     def summarize(text:, **params)
       response = client.summarize(text, "TEXT", params)
       response.dig(:summary)
+      # Should we update this to also return a Langchain::LLM::AI21Response?
     end
 
     private

@@ -58,7 +58,7 @@ module Langchain
     # @return [Response] The response from the model
     def message(message)
       @memory.append_message ::Langchain::Conversation::Prompt.new(message)
-      ai_message = ::Langchain::Conversation::Response.new(llm_response)
+      ai_message = ::Langchain::Conversation::Response.new(llm_response.chat_completion)
       @memory.append_message(ai_message)
       ai_message
     end

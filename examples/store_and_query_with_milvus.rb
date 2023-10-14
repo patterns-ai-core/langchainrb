@@ -1,20 +1,23 @@
 require "langchain"
-require "dotenv/load"
 
 # gem install pinecone
-# or add `gem "pinecone"` to your Gemfile
+# or add `gem "milvus"` to your Gemfile
 
-# Instantiate the Pinecone client
-pinecone = Langchain::Vectorsearch::Pinecone.new(
-  environment: ENV["PINECONE_ENVIRONMENT"],
-  api_key: ENV["PINECONE_API_KEY"],
+# Instantiate the OpenAI client
+openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+
+# Instantiate the Milvus client
+milvus = Langchain::Vectorsearch::Milvus.new(
+  url: ENV["MILVUS_URL"],
   index_name: "recipes",
-  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+  llm: openai
 )
 
 # Create the default schema.
-# If you are using the free Pinecone tier, ensure there is not an existing schema/index
-pinecone.create_default_schema
+milvus.create_default_schema
+
+# Create the default index
+milvus.create_default_index
 
 # Set up an array of text strings
 recipes = [
@@ -23,25 +26,24 @@ recipes = [
 ]
 
 # Add data to the index. Pinecone will use OpenAI to generate embeddings behind the scene.
-pinecone.add_texts(
+milvus.add_texts(
   texts: recipes
 )
 
 # Query your data
-pinecone.similarity_search(
+milvus.similarity_search(
   query: "chicken",
   k: 1
 )
 
 # Interact with your index through Q&A
-pinecone.ask(
+milvus.ask(
   question: "What is a good recipe for chicken?"
 )
 
 # Generate an embedding and search by it
-openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 embedding = openai.embed(text: "veggie").embedding
 
-pinecone.similarity_search_by_vector(
+milvus.similarity_search_by_vector(
   embedding: embedding
 )

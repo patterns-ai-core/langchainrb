@@ -65,7 +65,7 @@ module Langchain::Vectorsearch
             __id: ids[i].to_s,
             content: text
           },
-          vector: llm.embed(text: text)
+          vector: llm.embed(text: text).embedding
         )
       end
     end
@@ -101,7 +101,7 @@ module Langchain::Vectorsearch
     # @param k [Integer|String] The number of results to return
     # @return [Hash] The search results
     def similarity_search(query:, k: 4)
-      embedding = llm.embed(text: query)
+      embedding = llm.embed(text: query).embedding
 
       similarity_search_by_vector(embedding: embedding, k: k)
     end
@@ -154,7 +154,7 @@ module Langchain::Vectorsearch
           __id: id.to_s,
           content: text
         },
-        vector: llm.embed(text: text)
+        vector: llm.embed(text: text).embedding
       }
     end
   end

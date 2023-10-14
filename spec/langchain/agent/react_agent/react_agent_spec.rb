@@ -39,48 +39,63 @@ RSpec.describe Langchain::Agent::ReActAgent do
     let(:final_answer) { "9.2" }
     let(:final_response) { " I now know the final answer\nFinal Answer: #{final_answer}" }
 
-    before do
-      allow(subject.llm).to receive(:complete).with(
-        prompt: first_prompt,
-        stop_sequences: ["Observation:"]
-      ).and_return(first_response)
+    describe "successfully" do
+      before do
+        allow(subject.llm).to receive_message_chain(:complete, :completion)
+          .with(prompt: first_prompt, stop_sequences: ["Observation:"])
+          .with(no_args)
+          .and_return(first_response)
 
-      allow(subject.tools[1]).to receive(:execute).with(
-        input: "average temperature in Miami, Florida in May"
-      ).and_return(search_response)
+        allow(subject.tools[1]).to receive(:execute).with(
+          input: "average temperature in Miami, Florida in May"
+        ).and_return(search_response)
 
-      allow(subject.llm).to receive(:complete).with(
-        prompt: second_prompt,
-        stop_sequences: ["Observation:"]
-      ).and_return(second_response)
+        allow(subject.llm).to receive_message_chain(:complete, :completion)
+          .with(prompt: second_prompt, stop_sequences: ["Observation:"])
+          .with(no_args)
+          .and_return(second_response)
 
-      allow(subject.tools[0]).to receive(:execute).with(
-        input: "(83+86+79+90)/4"
-      ).and_return(calculator_response)
+        allow(subject.tools[0]).to receive(:execute).with(
+          input: "(83+86+79+90)/4"
+        ).and_return(calculator_response)
 
-      allow(subject.llm).to receive(:complete).with(
-        prompt: third_prompt,
-        stop_sequences: ["Observation:"]
-      ).and_return(third_response)
+        allow(subject.llm).to receive_message_chain(:complete, :completion)
+          .with(prompt: third_prompt, stop_sequences: ["Observation:"])
+          .with(no_args)
+          .and_return(third_response)
 
-      allow(subject.tools[0]).to receive(:execute).with(
-        input: "sqrt(84.5)"
-      ).and_return(calculator_response_2)
+        allow(subject.tools[0]).to receive(:execute).with(
+          input: "sqrt(84.5)"
+        ).and_return(calculator_response_2)
 
-      allow(subject.llm).to receive(:complete).with(
-        prompt: final_prompt,
-        stop_sequences: ["Observation:"]
-      ).and_return(final_response)
+        allow(subject.llm).to receive_message_chain(:complete, :completion)
+          .with(prompt: final_prompt, stop_sequences: ["Observation:"])
+          .with(no_args)
+          .and_return(final_response)
+      end
+
+      it "runs the agent" do
+        expect(subject.run(question: question)).to eq(" #{final_answer}")
+      end
     end
 
-    it "runs the agent" do
-      expect(subject.run(question: question)).to eq(" #{final_answer}")
-    end
+    describe "unsuccessful and" do
+      before do
+        allow(subject.llm).to receive_message_chain(:complete, :completion)
+          .with(prompt: first_prompt, stop_sequences: ["Observation:"])
+          .with(no_args)
+          .and_return(first_response)
 
-    it "raises an error after max_iterations" do
-      allow(subject).to receive(:max_iterations).and_return(1)
+        allow(subject.tools[1]).to receive(:execute)
+          .with(input: "average temperature in Miami, Florida in May")
+          .and_return(search_response)
+      end
 
-      expect { subject.run(question: question) }.to raise_error(Langchain::Agent::ReActAgent::MaxIterationsReachedError)
+      it "raises an error after max_iterations" do
+        allow(subject).to receive(:max_iterations).and_return(1)
+
+        expect { subject.run(question: question) }.to raise_error(Langchain::Agent::ReActAgent::MaxIterationsReachedError)
+      end
     end
   end
 

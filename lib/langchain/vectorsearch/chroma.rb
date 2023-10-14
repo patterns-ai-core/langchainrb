@@ -34,7 +34,7 @@ module Langchain::Vectorsearch
       embeddings = Array(texts).map.with_index do |text, i|
         ::Chroma::Resources::Embedding.new(
           id: ids[i] ? ids[i].to_s : SecureRandom.uuid,
-          embedding: llm.embed(text: text),
+          embedding: llm.embed(text: text).embedding,
           # TODO: Add support for passing metadata
           metadata: {}, # metadatas[index],
           document: text # Do we actually need to store the whole original document?
@@ -49,7 +49,7 @@ module Langchain::Vectorsearch
       embeddings = Array(texts).map.with_index do |text, i|
         ::Chroma::Resources::Embedding.new(
           id: ids[i].to_s,
-          embedding: llm.embed(text: text),
+          embedding: llm.embed(text: text).embedding,
           # TODO: Add support for passing metadata
           metadata: [], # metadatas[index],
           document: text # Do we actually need to store the whole original document?
@@ -85,7 +85,7 @@ module Langchain::Vectorsearch
       query:,
       k: 4
     )
-      embedding = llm.embed(text: query)
+      embedding = llm.embed(text: query).embedding
 
       similarity_search_by_vector(
         embedding: embedding,

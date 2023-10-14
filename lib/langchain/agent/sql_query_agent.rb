@@ -27,7 +27,7 @@ module Langchain::Agent
 
       # Get the SQL string to execute
       Langchain.logger.info("Passing the inital prompt to the #{llm.class} LLM", for: self.class)
-      sql_string = llm.complete(prompt: prompt)
+      sql_string = llm.complete(prompt: prompt).completion
 
       # Execute the SQL string and collect the results
       Langchain.logger.info("Passing the SQL to the Database: #{sql_string}", for: self.class)
@@ -36,7 +36,7 @@ module Langchain::Agent
       # Pass the results and get the LLM to synthesize the answer to the question
       Langchain.logger.info("Passing the synthesize prompt to the #{llm.class} LLM with results: #{results}", for: self.class)
       prompt2 = create_prompt_for_answer(question: question, sql_query: sql_string, results: results)
-      llm.complete(prompt: prompt2)
+      llm.complete(prompt: prompt2).completion
     end
 
     private

@@ -8,7 +8,7 @@ module Langchain::LLM
   #   gem "anthropic", "~> 0.1.0"
   #
   # Usage:
-  #     anthorpic = Langchain::LLM::Anthropic.new(api_key:)
+  #     anthorpic = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
   #
   class Anthropic < Base
     DEFAULTS = {
@@ -32,7 +32,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params [Hash] extra parameters passed to Anthropic::Client#complete
-    # @return [String] The completion
+    # @return [Langchain::LLM::AnthropicResponse] The completion
     #
     def complete(prompt:, **params)
       parameters = compose_parameters @defaults[:completion_model_name], params
@@ -43,7 +43,7 @@ module Langchain::LLM
       # parameters[:max_tokens_to_sample] = validate_max_tokens(prompt, parameters[:completion_model_name])
 
       response = client.complete(parameters: parameters)
-      response.dig("completion")
+      Langchain::LLM::AnthropicResponse.new(response)
     end
 
     private

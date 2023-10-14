@@ -62,11 +62,14 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
         )
         .and_return(fixture)
 
-      allow(subject.llm).to receive(:embed).and_return([
-        -0.0018150936,
-        0.0017554426,
-        -0.022715086
-      ])
+      allow(subject.llm).to receive_message_chain(:embed, :embedding)
+        .with(text: "Hello World")
+        .with(no_args)
+        .and_return([
+          -0.0018150936,
+          0.0017554426,
+          -0.022715086
+        ])
     end
 
     context "with ids" do
@@ -100,11 +103,14 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     before do
       allow(subject.client.query).to receive(:get).and_return(record)
 
-      allow(subject.llm).to receive(:embed).and_return([
-        -0.0018150936,
-        0.0017554426,
-        -0.022715086
-      ])
+      allow(subject.llm).to receive_message_chain(:embed, :embedding)
+        .with(text: "Hello World")
+        .with(no_args)
+        .and_return([
+          -0.0018150936,
+          0.0017554426,
+          -0.022715086
+        ])
 
       allow(subject.client.objects).to receive(:update).and_return(fixture.first)
     end
@@ -129,11 +135,14 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
         )
         .and_return(fixture)
 
-      allow(subject.llm).to receive(:embed).and_return([
-        -0.0018150936,
-        0.0017554426,
-        -0.022715086
-      ])
+      allow(subject.llm).to receive_message_chain(:embed, :embedding)
+        .with(text: "earth")
+        .with(no_args)
+        .and_return([
+          -0.0018150936,
+          0.0017554426,
+          -0.022715086
+        ])
     end
 
     it "searches for similar texts" do

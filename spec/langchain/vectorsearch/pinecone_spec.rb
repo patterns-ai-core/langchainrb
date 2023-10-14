@@ -89,7 +89,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
 
     before do
       allow(SecureRandom).to receive(:uuid).and_return("123")
-      allow(subject.llm).to receive(:embed).with(text: text).and_return(embedding)
+      allow(subject.llm).to receive_message_chain(:embed, :embedding).with(text: text).with(no_args).and_return(embedding)
       allow(subject.client).to receive(:index).with(index_name).and_return(Pinecone::Index.new)
     end
 
@@ -236,7 +236,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
 
     before do
       vector = double(Pinecone::Vector)
-      allow(subject.llm).to receive(:embed).with(text: text).and_return(embedding)
+      allow(subject.llm).to receive_message_chain(:embed, :embedding).with(text: text).with(no_args).and_return(embedding)
       allow(subject.client).to receive(:index).with(index_name).and_return(vector)
       allow(vector).to receive(:update).with(
         values: embedding, id: "123", namespace: "", set_metadata: nil
@@ -250,7 +250,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
 
   describe "#similarity_search_by_vector" do
     before do
-      allow(subject.llm).to receive(:embed).with(text: text).and_return(embedding)
+      allow(subject.llm).to receive_message_chain(:embed, :embedding).with(text: text).and_return(embedding)
       allow(subject.client).to receive(:index).with(index_name).and_return(Pinecone::Index.new)
     end
 
@@ -306,7 +306,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
 
   describe "#similarity_search" do
     before do
-      allow(subject.llm).to receive(:embed).with(text: query).and_return(embedding)
+      allow(subject.llm).to receive_message_chain(:embed, :embedding).with(text: query).with(no_args).and_return(embedding)
     end
 
     describe "without a namespace" do

@@ -30,7 +30,7 @@ RSpec.describe Langchain::LLM::AI21 do
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World")).to eq("\nWhat is the meaning of life? What is the meaning of life?\nWhat is the meaning")
+        expect(subject.complete(prompt: "Hello World").completion).to eq("\nWhat is the meaning of life? What is the meaning of life?\nWhat is the meaning")
       end
     end
 
@@ -48,7 +48,7 @@ RSpec.describe Langchain::LLM::AI21 do
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World", model: "j2-light", temperature: 0.7)).to eq(
+        expect(subject.complete(prompt: "Hello World", model: "j2-light", temperature: 0.7).completion).to eq(
           "\nWhat is the meaning of life? What is the meaning of life?\nWhat is the meaning"
         )
       end

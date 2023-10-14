@@ -47,38 +47,34 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Hash] The embedding
+    # @return [Langchain::LLM::ReplicateResponse] Response object
     #
     def embed(text:)
       response = embeddings_model.predict(input: text)
 
       until response.finished?
         response.refetch
-        sleep(1)
+        sleep(0.1)
       end
 
-      response.output
+      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:embeddings_model_name])
     end
 
     #
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
-    # @return [Hash] The completion
+    # @return [Langchain::LLM::ReplicateResponse] Reponse object
     #
     def complete(prompt:, **params)
       response = completion_model.predict(prompt: prompt)
 
       until response.finished?
         response.refetch
-        sleep(1)
+        sleep(0.1)
       end
 
-      # Response comes back as an array of strings, e.g.: ["Hi", "how ", "are ", "you?"]
-      # The first array element is missing a space at the end, so we add it manually
-      response.output[0] += " "
-
-      response.output.join
+      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:completion_model_name])
     end
 
     # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`

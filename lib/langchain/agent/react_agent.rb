@@ -58,7 +58,7 @@ module Langchain::Agent
       max_iterations.times do
         Langchain.logger.info("Sending the prompt to the #{llm.class} LLM", for: self.class)
 
-        response = llm.complete(prompt: prompt, stop_sequences: ["Observation:"])
+        response = llm.complete(prompt: prompt, stop_sequences: ["Observation:"]).completion
 
         # Append the response to the prompt
         prompt += response
