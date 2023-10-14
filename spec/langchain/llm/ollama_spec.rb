@@ -21,8 +21,8 @@ RSpec.describe Langchain::LLM::Ollama do
     end
 
     it "returns an embedding" do
-      expect(subject.embed(text: "Hello, world!")).to be_a(Array)
-      expect(subject.embed(text: "Hello, world!").count).to eq(3)
+      expect(subject.embed(text: "Hello, world!")).to be_a(Langchain::LLM::OllamaResponse)
+      expect(subject.embed(text: "Hello, world!").embedding.count).to eq(3)
     end
   end
 

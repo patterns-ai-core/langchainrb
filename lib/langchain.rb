@@ -8,6 +8,7 @@ loader = Zeitwerk::Loader.for_gem
 loader.ignore("#{__dir__}/langchainrb.rb")
 loader.inflector.inflect(
   "ai21" => "AI21",
+  "ai21_response" => "AI21Response",
   "ai21_validator" => "AI21Validator",
   "csv" => "CSV",
   "html" => "HTML",
@@ -16,10 +17,12 @@ loader.inflector.inflect(
   "llm" => "LLM",
   "openai" => "OpenAI",
   "openai_validator" => "OpenAIValidator",
+  "openai_response" => "OpenAIResponse",
   "pdf" => "PDF",
   "react_agent" => "ReActAgent",
   "sql_query_agent" => "SQLQueryAgent"
 )
+loader.collapse("#{__dir__}/langchain/llm/response")
 loader.setup
 
 # Langchain.rb a is library for building LLM-backed Ruby applications. It is an abstraction layer that sits on top of the emerging AI-related tools that makes it easy for developers to consume and string those services together.

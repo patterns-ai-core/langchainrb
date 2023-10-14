@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Conversation do
-  let(:llm) { double("Langchain::LLM::OpenaAI") }
+  let(:llm) { double("Langchain::LLM::OpenAI") }
 
   subject { described_class.new(llm: llm) }
 
@@ -33,7 +33,7 @@ RSpec.describe Langchain::Conversation do
     let(:context) { "You are a chatbot" }
     let(:examples) { [Langchain::Conversation::Prompt.new("Hello"), Langchain::Conversation::Response.new("Hi")] }
     let(:prompt) { "How are you doing?" }
-    let(:response) { "I'm doing well. How about you?" }
+    let(:response) { Langchain::LLM::OpenAIResponse.new({"choices" => [{"message" => {"role" => "assistant", "content" => "I'm doing well. How about you?"}}]}) }
 
     context "with stream: true option and block passed in" do
       let(:block) { proc { |chunk| print(chunk) } }
@@ -47,7 +47,7 @@ RSpec.describe Langchain::Conversation do
           &block
         ).and_return(response)
 
-        expect(conversation.message(prompt)).to eq(Langchain::Conversation::Response.new(response))
+        expect(conversation.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
       end
     end
 
@@ -59,7 +59,7 @@ RSpec.describe Langchain::Conversation do
           messages: [Langchain::Conversation::Prompt.new(prompt)]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response))
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
       end
     end
 
@@ -75,7 +75,7 @@ RSpec.describe Langchain::Conversation do
           messages: [{role: "user", content: prompt}]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response))
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
       end
     end
 
@@ -95,7 +95,7 @@ RSpec.describe Langchain::Conversation do
           messages: [{role: "user", content: prompt}]
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response))
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
       end
     end
 
@@ -110,7 +110,7 @@ RSpec.describe Langchain::Conversation do
           temperature: 0.7
         ).and_return(response)
 
-        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response))
+        expect(subject.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
       end
     end
 
@@ -175,7 +175,8 @@ RSpec.describe Langchain::Conversation do
               }
             ).and_return(response)
 
-            expect(subject.message(prompt).to_s).to eq("I'm doing well. How about you?")
+            expect(subject.message(prompt)).to be_a(Langchain::Conversation::Response)
+            expect(subject.message(prompt).content).to eq("I'm doing well. How about you?")
           end
         end
       end
@@ -236,7 +237,8 @@ RSpec.describe Langchain::Conversation do
               model: "chat-bison-001"
             ).and_return(response)
 
-            expect(subject.message(prompt).to_s).to eq("I'm doing well. How about you?")
+            expect(subject.message(prompt)).to be_a(Langchain::Conversation::Response)
+            expect(subject.message(prompt).content).to eq("I'm doing well. How about you?")
           end
         end
       end
@@ -289,7 +291,8 @@ RSpec.describe Langchain::Conversation do
           }
         ).and_return(response)
 
-        expect(subject.message(prompt).to_s).to eq("I'm doing well. How about you?")
+        expect(subject.message(prompt)).to be_a(Langchain::Conversation::Response)
+        expect(subject.message(prompt).content).to eq("I'm doing well. How about you?")
       end
     end
   end

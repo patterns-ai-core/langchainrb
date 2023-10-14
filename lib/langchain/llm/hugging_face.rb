@@ -8,7 +8,7 @@ module Langchain::LLM
   #     gem "hugging-face", "~> 0.3.4"
   #
   # Usage:
-  #     hf = Langchain::LLM::HuggingFace.new(api_key: "YOUR_API_KEY")
+  #     hf = Langchain::LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
   #
   class HuggingFace < Base
     # The gem does not currently accept other models:
@@ -34,13 +34,14 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to embed
-    # @return [Array] The embedding
+    # @return [Langchain::LLM::HuggingFaceResponse] Response object
     #
     def embed(text:)
-      client.embedding(
+      response = client.embedding(
         input: text,
         model: DEFAULTS[:embeddings_model_name]
       )
+      Langchain::LLM::HuggingFaceResponse.new(response, model: DEFAULTS[:embeddings_model_name])
     end
   end
 end

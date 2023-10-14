@@ -42,7 +42,7 @@ RSpec.describe Langchain::LLM::Replicate do
     end
 
     it "returns an embedding" do
-      expect(subject.complete(prompt: prompt)).to eq("Foo bar !")
+      expect(subject.complete(prompt: prompt).completion).to eq("Foo bar !")
     end
 
     context "with custom default_options" do
@@ -79,7 +79,7 @@ RSpec.describe Langchain::LLM::Replicate do
     end
 
     it "returns an embedding" do
-      expect(subject.embed(text: text)).to eq(embedding)
+      expect(subject.embed(text: text).embedding).to eq(embedding)
     end
   end
 

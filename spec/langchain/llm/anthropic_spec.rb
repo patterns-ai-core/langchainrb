@@ -23,7 +23,7 @@ RSpec.describe Langchain::LLM::Anthropic do
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: completion)).to eq(" The sky has no definitive")
+        expect(subject.complete(prompt: completion).completion).to eq(" The sky has no definitive")
       end
     end
   end

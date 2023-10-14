@@ -43,7 +43,7 @@ module Langchain::Vectorsearch
       resize_index(texts.size)
 
       Array(texts).each_with_index do |text, i|
-        embedding = llm.embed(text: text)
+        embedding = llm.embed(text: text).embedding
 
         client.add_point(embedding, ids[i])
       end
@@ -64,7 +64,7 @@ module Langchain::Vectorsearch
       query:,
       k: 4
     )
-      embedding = llm.embed(text: query)
+      embedding = llm.embed(text: query).embedding
 
       similarity_search_by_vector(
         embedding: embedding,

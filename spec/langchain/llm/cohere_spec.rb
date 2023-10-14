@@ -17,7 +17,7 @@ RSpec.describe Langchain::LLM::Cohere do
     end
 
     it "returns an embedding" do
-      expect(subject.embed(text: "Hello World")).to eq([-1.5693359, -0.9458008, 1.9355469])
+      expect(subject.embed(text: "Hello World").embedding).to eq([-1.5693359, -0.9458008, 1.9355469])
     end
   end
 
@@ -59,7 +59,7 @@ RSpec.describe Langchain::LLM::Cohere do
     end
 
     it "returns a completion" do
-      expect(subject.complete(prompt: "Hello World")).to eq("\nWhat is the meaning of life? What is the meaning of life?\nWhat is the meaning")
+      expect(subject.complete(prompt: "Hello World").completion).to eq("\nWhat is the meaning of life? What is the meaning of life?\nWhat is the meaning")
     end
 
     context "with custom default_options" do

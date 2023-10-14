@@ -26,20 +26,25 @@ RSpec.describe Langchain::LLM::OpenAI do
   end
 
   describe "#embed" do
+    let(:result) { [-0.007097351, 0.0035200312, -0.0069700438] }
+    let(:parameters) do
+      {parameters: {input: "Hello World", model: "text-embedding-ada-002"}}
+    end
     let(:response) do
       {
         "object" => "list",
+        "model" => parameters[:parameters][:model],
         "data" => [
           {
             "object" => "embedding",
             "index" => 0,
-            "embedding" => [
-              -0.007097351,
-              0.0035200312,
-              -0.0069700438
-            ]
+            "embedding" => result
           }
-        ]
+        ],
+        "usage" => {
+          "prompt_tokens" => 2,
+          "total_tokens" => 2
+        }
       }
     end
 
@@ -47,21 +52,36 @@ RSpec.describe Langchain::LLM::OpenAI do
       allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
     end
 
+    it "returns valid llm response object" do
+      response = subject.embed(text: "Hello World")
+
+      expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+      expect(response.model).to eq("text-embedding-ada-002")
+      expect(response.embedding).to eq([-0.007097351, 0.0035200312, -0.0069700438])
+      expect(response.prompt_tokens).to eq(2)
+      expect(response.completion_tokens).to eq(nil)
+      expect(response.total_tokens).to eq(2)
+    end
+
     context "with default parameters" do
-      let(:parameters) do
-        {parameters: {input: "Hello World", model: "text-embedding-ada-002"}}
-      end
       it "returns an embedding" do
-        expect(subject.embed(text: "Hello World")).to eq([-0.007097351, 0.0035200312, -0.0069700438])
+        response = subject.embed(text: "Hello World")
+
+        expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+        expect(response.embedding).to eq(result)
       end
     end
 
-    context "with text and  parameters" do
+    context "with text and parameters" do
       let(:parameters) do
         {parameters: {input: "Hello World", model: "text-embedding-ada-001", user: "id"}}
       end
+
       it "returns an embedding" do
-        expect(subject.embed(text: "Hello World", model: "text-embedding-ada-001", user: "id")).to eq([-0.007097351, 0.0035200312, -0.0069700438])
+        response = subject.embed(text: "Hello World", model: "text-embedding-ada-001", user: "id")
+
+        expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+        expect(response.embedding).to eq(result)
       end
     end
   end
@@ -109,8 +129,24 @@ RSpec.describe Langchain::LLM::OpenAI do
         }
       end
 
+      it "returns valid llm response object" do
+        response = subject.complete(prompt: "Hello World")
+
+        expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+        expect(response.model).to eq("gpt-3.5-turbo")
+        expect(response.completion).to eq("The meaning of life is subjective and can vary from person to person.")
+        expect(response.prompt_tokens).to eq(7)
+        expect(response.completion_tokens).to eq(16)
+        expect(response.total_tokens).to eq(23)
+      end
+
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World")).to eq("The meaning of life is subjective and can vary from person to person.")
+        response = subject.complete(prompt: "Hello World")
+
+        expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+        expect(response.model).to eq("gpt-3.5-turbo")
+        expect(response.completions).to eq([{"message" => {"role" => "assistant", "content" => "The meaning of life is subjective and can vary from person to person."}, "finish_reason" => "stop", "index" => 0}])
+        expect(response.completion).to eq("The meaning of life is subjective and can vary from person to person.")
       end
     end
 
@@ -202,7 +238,9 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World", model: "gpt-3.5-turbo", temperature: 1.0)).to eq("The meaning of life is subjective and can vary from person to person.")
+        response = subject.complete(prompt: "Hello World", model: "gpt-3.5-turbo", temperature: 1.0)
+
+        expect(response.completion).to eq("The meaning of life is subjective and can vary from person to person.")
       end
     end
 
@@ -268,15 +306,33 @@ RSpec.describe Langchain::LLM::OpenAI do
       allow(subject.client).to receive(:chat).with(parameters).and_return(response)
     end
 
+    it "returns valid llm response object" do
+      response = subject.chat(prompt: "What is the meaning of life?")
+
+      expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+      expect(response.model).to eq("gpt-3.5-turbo")
+      expect(response.chat_completion).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
+      expect(response.prompt_tokens).to eq(14)
+      expect(response.completion_tokens).to eq(25)
+      expect(response.total_tokens).to eq(39)
+    end
+
     context "with prompt" do
       it "sends prompt within messages" do
-        expect(subject.chat(prompt: prompt)).to eq(answer)
+        response = subject.chat(prompt: prompt)
+
+        expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+        expect(response.model).to eq(model)
+        expect(response.completions).to eq(choices)
+        expect(response.chat_completion).to eq(answer)
       end
     end
 
     context "with messages" do
       it "sends messages" do
-        expect(subject.chat(messages: [{role: "user", content: prompt}])).to eq(answer)
+        response = subject.chat(messages: [{role: "user", content: prompt}])
+
+        expect(response.chat_completion).to eq(answer)
       end
     end
 
@@ -290,11 +346,15 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context and prompt as messages" do
-        expect(subject.chat(prompt: prompt, context: context)).to eq(answer)
+        response = subject.chat(prompt: prompt, context: context)
+
+        expect(response.chat_completion).to eq(answer)
       end
 
       it "sends context and messages as joint messages" do
-        expect(subject.chat(messages: [{role: "user", content: prompt}], context: context)).to eq(answer)
+        response = subject.chat(messages: [{role: "user", content: prompt}], context: context)
+
+        expect(response.chat_completion).to eq(answer)
       end
     end
 
@@ -316,11 +376,15 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       it "sends context, prompt and examples as joint messages" do
-        expect(subject.chat(prompt: prompt, context: context, examples: examples)).to eq(answer)
+        response = subject.chat(prompt: prompt, context: context, examples: examples)
+
+        expect(response.chat_completion).to eq(answer)
       end
 
       it "sends context, messages and examples as joint messages" do
-        expect(subject.chat(messages: [{role: "user", content: prompt}], context: context, examples: examples).to_s).to eq(answer)
+        response = subject.chat(messages: [{role: "user", content: prompt}], context: context, examples: examples)
+
+        expect(response.chat_completion).to eq(answer)
       end
 
       context "with prompt, messages, context and examples" do
@@ -342,7 +406,9 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "sends context, prompt, messages and examples as joint messages" do
-          expect(subject.chat(prompt: prompt, messages: messages, context: context, examples: examples)).to eq(answer)
+          response = subject.chat(prompt: prompt, messages: messages, context: context, examples: examples)
+
+          expect(response.chat_completion).to eq(answer)
         end
       end
 
@@ -365,7 +431,9 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it overrides system message with context" do
-          expect(subject.chat(messages: messages, context: "You are a human being")).to eq(answer)
+          response = subject.chat(messages: messages, context: "You are a human being")
+
+          expect(response.chat_completion).to eq(answer)
         end
       end
 
@@ -388,7 +456,9 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "it combines last message and prompt" do
-          expect(subject.chat(prompt: prompt, messages: messages)).to eq(answer)
+          response = subject.chat(prompt: prompt, messages: messages)
+
+          expect(response.chat_completion).to eq(answer)
         end
       end
     end
@@ -398,7 +468,9 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:model) { "gpt-3.5-turbo-0301" }
 
       it "sends prompt as message and additional params and returns a response message" do
-        expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to eq(answer)
+        response = subject.chat(prompt: prompt, model: model, temperature: temperature)
+
+        expect(response.chat_completion).to eq(answer)
       end
 
       context "with multiple choices" do
@@ -419,7 +491,9 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "returns multiple response messages" do
-          expect(subject.chat(prompt: prompt, model: model, temperature: temperature, n: 2)).to eq([answer, answer_2])
+          response = subject.chat(prompt: prompt, model: model, temperature: temperature, n: 2)
+
+          expect(response.completions).to eq(choices)
         end
       end
 
@@ -428,7 +502,9 @@ RSpec.describe Langchain::LLM::OpenAI do
 
         it "functions will be passed on options as accessor" do
           subject.functions = [{foo: :bar}]
-          expect(subject.chat(prompt: prompt, model: model, temperature: temperature)).to eq(answer)
+          response = subject.chat(prompt: prompt, model: model, temperature: temperature)
+
+          expect(response.chat_completion).to eq(answer)
         end
       end
     end

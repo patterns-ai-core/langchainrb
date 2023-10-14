@@ -14,8 +14,19 @@ RSpec.describe Langchain::LLM::GooglePalm do
       )
     end
 
+    it "returns valid llm response object" do
+      response = subject.embed(text: "Hello world")
+
+      expect(response).to be_a(Langchain::LLM::GooglePalmResponse)
+      expect(response.model).to eq("embedding-gecko-001")
+      expect(response.embedding).to eq(embedding)
+      # expect(response.prompt_tokens).to eq(nil)
+    end
+
     it "returns an embedding" do
-      expect(subject.embed(text: "Hello world")).to eq(embedding)
+      response = subject.embed(text: "Hello world")
+
+      expect(response.embedding).to eq(embedding)
     end
   end
 
@@ -30,8 +41,19 @@ RSpec.describe Langchain::LLM::GooglePalm do
       )
     end
 
+    it "returns valid llm response object" do
+      response = subject.complete(prompt: completion)
+
+      expect(response).to be_a(Langchain::LLM::GooglePalmResponse)
+      expect(response.model).to eq("text-bison-001")
+      expect(response.completion).to eq("A man walks into a library and asks for books about paranoia. The librarian whispers, \"They're right behind you!\"")
+      # expect(response.prompt_tokens).to eq(nil)
+    end
+
     it "returns a completion" do
-      expect(subject.complete(prompt: completion)).to eq("A man walks into a library and asks for books about paranoia. The librarian whispers, \"They're right behind you!\"")
+      response = subject.complete(prompt: completion)
+
+      expect(response.completion).to eq("A man walks into a library and asks for books about paranoia. The librarian whispers, \"They're right behind you!\"")
     end
 
     context "with custom default_options" do
@@ -91,8 +113,20 @@ RSpec.describe Langchain::LLM::GooglePalm do
         )
       end
 
+      it "returns valid llm response object" do
+        response = subject.chat(prompt: completion)
+
+        expect(response).to be_a(Langchain::LLM::GooglePalmResponse)
+        expect(response.model).to eq("chat-bison-001")
+        expect(response.chat_completion).to eq("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?")
+        # TODO: Fix this
+        # expect(response.prompt_tokens).to eq(nil)
+      end
+
       it "returns a message" do
-        expect(subject.chat(prompt: completion)).to eq("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?")
+        response = subject.chat(prompt: completion)
+
+        expect(response.chat_completion).to eq("I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?")
       end
 
       context "with custom default_options" do
@@ -140,13 +174,13 @@ RSpec.describe Langchain::LLM::GooglePalm do
       end
 
       it "returns a message" do
-        expect(
-          subject.chat(messages: [
-            {role: "user", content: completion},
-            {role: "assistant", content: "I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?"},
-            {role: "user", content: "I'm doing great. What are you up to?"}
-          ])
-        ).to eq("I am currently working on a project to help people with their tasks. I am also learning more about the world and how to interact with people. I am excited to be able to help people and to learn more about the world.\r\n\r\nWhat are you up to today?")
+        response = subject.chat(messages: [
+          {role: "user", content: completion},
+          {role: "assistant", content: "I am doing well, thank you for asking! I am excited to be able to help people with their tasks and to learn more about the world. How are you doing today?"},
+          {role: "user", content: "I'm doing great. What are you up to?"}
+        ])
+
+        expect(response.chat_completion).to eq("I am currently working on a project to help people with their tasks. I am also learning more about the world and how to interact with people. I am excited to be able to help people and to learn more about the world.\r\n\r\nWhat are you up to today?")
       end
     end
   end
