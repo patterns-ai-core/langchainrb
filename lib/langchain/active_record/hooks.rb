@@ -92,6 +92,20 @@ module Langchain
           ids = records.map { |record| record.dig("id") || record.dig("__id") }
           where(id: ids)
         end
+
+        # Ask a question and return the answer
+        #
+        # @param question [String] The question to ask
+        # @param k [Integer] The number of results to have in context
+        # @yield [String] Stream responses back one String at a time
+        # @return [String] The answer to the question
+        def ask(question:, k: 4, &block)
+          class_variable_get(:@@provider).ask(
+            question: question,
+            k: k,
+            &block
+          )
+        end
       end
     end
   end

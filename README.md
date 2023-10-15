@@ -128,6 +128,21 @@ class Product < ActiveRecord::Base
 end
 ```
 
+### Exposed ActiveRecord methods
+```ruby
+# Retrieve similar products based on the query string passed in
+Product.similarity_search(
+    query:,
+    k:       # number of results to be retrieved
+)
+```
+```ruby
+# Q&A-style querying based on the question passed in
+Product.ask(
+    question:
+)
+```
+
 Additional info [here](https://github.com/andreibondarev/langchainrb/blob/main/lib/langchain/active_record/hooks.rb#L10-L38).
 
 ### Using Standalone LLMs 🗣️
