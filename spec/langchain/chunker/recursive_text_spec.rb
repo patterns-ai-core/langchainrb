@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Chunker::RecursiveText do
-  let(:source) { "spec/fixtures/loaders/example.txt" }
+  let(:source) { "spec/fixtures/loaders/random_facts.txt" }
   let(:text) { File.read(source) }
 
   subject {
@@ -23,7 +23,8 @@ RSpec.describe Langchain::Chunker::RecursiveText do
         .with(text)
         .and_call_original
 
-      subject.chunks
+      chunks = subject.chunks
+      expect(chunks.dig(1, :text)).to include(chunks.dig(0, :text)[-199..])
     end
   end
 end
