@@ -79,6 +79,7 @@ module Langchain::LLM
 
     private
 
+    # @return [Faraday::Connection] Faraday client
     def client
       @client ||= Faraday.new(url: url) do |conn|
         conn.request :json
