@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [0.6.18] - 2023-10-16
+- Introduce `Langchain::LLM::Response`` object
+- Introduce `Langchain::Chunk` object
+- Add the ask() method to the Langchain::ActiveRecord::Hooks
+
+## [0.6.17] - 2023-10-10
+- Bump weaviate and chroma-db deps
+- `Langchain::Chunker::Semantic` chunker
+- Re-structure Conversations class
+- Bug fixes
+
 ## [0.6.16] - 2023-10-02
 - HyDE-style similarity search
 - `Langchain::Chunker::Sentence` chunker
