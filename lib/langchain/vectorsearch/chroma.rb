@@ -28,7 +28,7 @@ module Langchain::Vectorsearch
     end
 
     # Add a list of texts to the index
-    # @param texts [Array] The list of texts to add
+    # @param texts [Array<String>] The list of texts to add
     # @return [Hash] The response from the server
     def add_texts(texts:, ids: [])
       embeddings = Array(texts).map.with_index do |text, i|
@@ -94,7 +94,7 @@ module Langchain::Vectorsearch
     end
 
     # Search for similar texts by embedding
-    # @param embedding [Array] The embedding to search for
+    # @param embedding [Array<Float>] The embedding to search for
     # @param k [Integer] The number of results to return
     # @return [Chroma::Resources::Embedding] The response from the server
     def similarity_search_by_vector(

@@ -13,6 +13,10 @@ module Langchain
     # - {Langchain::Chunker::Semantic}
     # - {Langchain::Chunker::Sentence}
     class Base
+      # @return [Array<Langchain::Chunk>]
+      def chunks
+        raise NotImplementedError
+      end
     end
   end
 end

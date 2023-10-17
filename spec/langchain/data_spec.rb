@@ -9,9 +9,12 @@ RSpec.describe Langchain::Data do
   describe "#chunks" do
     it "returns an array of chunks" do
       chunks = subject.chunks
-      expect(chunks[0]).to have_key(:text)
-      expect(chunks[1]).to have_key(:text)
-      expect(chunks[2]).to have_key(:text)
+      split_data = data.split("\n\n")
+
+      expect(chunks).to all(be_a(Langchain::Chunk))
+      expect(chunks[0].text).to eq(split_data[0])
+      expect(chunks[1].text).to eq(split_data[1])
+      expect(chunks[2].text).to eq(split_data[2])
     end
   end
 end

@@ -29,7 +29,7 @@ module Langchain::Vectorsearch
     end
 
     # Find records by ids
-    # @param ids [Array] The ids to find
+    # @param ids [Array<Integer>] The ids to find
     # @return [Hash] The response from the server
     def find(ids: [])
       client.points.get_all(
@@ -41,7 +41,7 @@ module Langchain::Vectorsearch
     end
 
     # Add a list of texts to the index
-    # @param texts [Array] The list of texts to add
+    # @param texts [Array<String>] The list of texts to add
     # @return [Hash] The response from the server
     def add_texts(texts:, ids: [])
       batch = {ids: [], vectors: [], payloads: []}
@@ -104,7 +104,7 @@ module Langchain::Vectorsearch
     end
 
     # Search for similar texts by embedding
-    # @param embedding [Array] The embedding to search for
+    # @param embedding [Array<Float>] The embedding to search for
     # @param k [Integer] The number of results to return
     # @return [Hash] The response from the server
     def similarity_search_by_vector(

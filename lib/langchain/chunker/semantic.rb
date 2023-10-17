@@ -23,7 +23,7 @@ module Langchain
         @prompt_template = prompt_template || default_prompt_template
       end
 
-      # @return [Array<String>]
+      # @return [Array<Langchain::Chunk>]
       def chunks
         prompt = prompt_template.format(text: text)
 
@@ -34,6 +34,9 @@ module Langchain
           .split("---")
           .map(&:strip)
           .reject(&:empty?)
+          .map do |chunk|
+            Langchain::Chunk.new(text: chunk)
+          end
       end
 
       private

@@ -31,7 +31,7 @@ module Langchain::Vectorsearch
     end
 
     # Find records by ids
-    # @param ids [Array] The ids to find
+    # @param ids [Array<Integer>] The ids to find
     # @param namespace String The namespace to search through
     # @return [Hash] The response from the server
     def find(ids: [], namespace: "")
@@ -44,8 +44,8 @@ module Langchain::Vectorsearch
     end
 
     # Add a list of texts to the index
-    # @param texts [Array] The list of texts to add
-    # @param ids [Array] The list of IDs to add
+    # @param texts [Array<String>] The list of texts to add
+    # @param ids [Array<Integer>] The list of IDs to add
     # @param namespace [String] The namespace to add the texts to
     # @param metadata [Hash] The metadata to use for the texts
     # @return [Hash] The response from the server
@@ -70,7 +70,7 @@ module Langchain::Vectorsearch
         .flatten
         .map do |path|
           data = Langchain::Loader.new(path)&.load&.chunks
-          data.map { |chunk| chunk[:text] }
+          data.map { |chunk| chunk.text }
         end
 
       texts.flatten!
@@ -79,8 +79,8 @@ module Langchain::Vectorsearch
     end
 
     # Update a list of texts in the index
-    # @param texts [Array] The list of texts to update
-    # @param ids [Array] The list of IDs to update
+    # @param texts [Array<String>] The list of texts to update
+    # @param ids [Array<Integer>] The list of IDs to update
     # @param namespace [String] The namespace to update the texts in
     # @param metadata [Hash] The metadata to use for the texts
     # @return [Array] The response from the server
@@ -141,7 +141,7 @@ module Langchain::Vectorsearch
     end
 
     # Search for similar texts by embedding
-    # @param embedding [Array] The embedding to search for
+    # @param embedding [Array<Float>] The embedding to search for
     # @param k [Integer] The number of results to return
     # @param namespace [String] The namespace to search in
     # @param filter [String] The filter to use
