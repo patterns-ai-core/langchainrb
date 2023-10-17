@@ -19,11 +19,11 @@ Langchain.rb is a library that's an abstraction layer on top many emergent AI, M
 
 Install the gem and add to the application's Gemfile by executing:
 
-    $ bundle add langchainrb
+    bundle add langchainrb
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
-    $ gem install langchainrb
+    gem install langchainrb
 
 ## Usage
 
