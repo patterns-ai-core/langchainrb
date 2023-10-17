@@ -19,10 +19,12 @@ module Langchain
         @text = text
       end
 
-      # @return [Array<String>]
+      # @return [Array<Langchain::Chunk>]
       def chunks
         ps = PragmaticSegmenter::Segmenter.new(text: text)
-        ps.segment
+        ps.segment.map do |chunk|
+          Langchain::Chunk.new(text: chunk)
+        end
       end
     end
   end

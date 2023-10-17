@@ -184,7 +184,7 @@ module Langchain::Vectorsearch
         .flatten
         .map do |path|
           data = Langchain::Loader.new(path)&.load&.chunks
-          data.map { |chunk| chunk[:text] }
+          data.map { |chunk| chunk.text }
         end
 
       texts.flatten!

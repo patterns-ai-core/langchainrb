@@ -28,7 +28,7 @@ module Langchain
 
       # Return the first embedding
       #
-      # @return [Array]
+      # @return [Array<Float>]
       def embedding
         raise NotImplementedError
       end
@@ -49,7 +49,7 @@ module Langchain
 
       # Return the embeddings
       #
-      # @return [Array[]]
+      # @return [Array<Array>]
       def embeddings
         raise NotImplementedError
       end

@@ -32,7 +32,7 @@ module Langchain::Vectorsearch
     end
 
     # Add a list of texts to the index
-    # @param texts [Array] The list of texts to add
+    # @param texts [Array<String>] The list of texts to add
     # @return [Hash] The response from the server
     def add_texts(texts:, ids: [])
       client.objects.batch_create(
@@ -41,7 +41,7 @@ module Langchain::Vectorsearch
     end
 
     # Update a list of texts in the index
-    # @param texts [Array] The list of texts to update
+    # @param texts [Array<String>] The list of texts to update
     # @return [Hash] The response from the server
     def update_texts(texts:, ids:)
       uuids = []
@@ -107,7 +107,7 @@ module Langchain::Vectorsearch
     end
 
     # Return documents similar to the vector
-    # @param embedding [Array] The vector to search for
+    # @param embedding [Array<Float>] The vector to search for
     # @param k [Integer|String] The number of results to return
     # @return [Hash] The search results
     def similarity_search_by_vector(embedding:, k: 4)

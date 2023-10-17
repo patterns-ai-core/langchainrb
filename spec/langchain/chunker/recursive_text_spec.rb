@@ -24,7 +24,8 @@ RSpec.describe Langchain::Chunker::RecursiveText do
         .and_call_original
 
       chunks = subject.chunks
-      expect(chunks.dig(1, :text)).to include(chunks.dig(0, :text)[-199..])
+      expect(chunks).to all(be_a(Langchain::Chunk))
+      expect(chunks[1].text).to include(chunks[0].text[-199..])
     end
   end
 end
