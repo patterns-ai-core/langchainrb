@@ -22,7 +22,7 @@ module Langchain::LLM
     def initialize(api_key, default_options={})
       depends_on "cohere-ruby", req: "cohere"
 
-      @client = ::Cohere::Client.new(api_key: api_key)
+      @client = ::Cohere::Client.new(api_key)
       @defaults = DEFAULTS.merge(default_options)
     end
 
