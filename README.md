@@ -19,11 +19,11 @@ Langchain.rb is a library that's an abstraction layer on top many emergent AI, M
 
 Install the gem and add to the application's Gemfile by executing:
 
-    $ bundle add langchainrb
+    bundle add langchainrb
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
-    $ gem install langchainrb
+    gem install langchainrb
 
 ## Usage
 
@@ -126,6 +126,21 @@ class Product < ActiveRecord::Base
 
   after_save :upsert_to_vectorsearch
 end
+```
+
+### Exposed ActiveRecord methods
+```ruby
+# Retrieve similar products based on the query string passed in
+Product.similarity_search(
+    query:,
+    k:       # number of results to be retrieved
+)
+```
+```ruby
+# Q&A-style querying based on the question passed in
+Product.ask(
+    question:
+)
 ```
 
 Additional info [here](https://github.com/andreibondarev/langchainrb/blob/main/lib/langchain/active_record/hooks.rb#L10-L38).

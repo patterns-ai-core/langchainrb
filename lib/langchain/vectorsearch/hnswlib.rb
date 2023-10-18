@@ -35,8 +35,8 @@ module Langchain::Vectorsearch
     #
     # Add a list of texts and corresponding IDs to the index
     #
-    # @param texts [Array] The list of texts to add
-    # @param ids [Array] The list of corresponding IDs (integers) to the texts
+    # @param texts [Array<String>] The list of texts to add
+    # @param ids [Array<Integer>] The list of corresponding IDs (integers) to the texts
     # @return [Boolean] The response from the HNSW library
     #
     def add_texts(texts:, ids:)
@@ -75,7 +75,7 @@ module Langchain::Vectorsearch
     #
     # Search for the K nearest neighbors of a given vector
     #
-    # @param embedding [Array] The embedding to search for
+    # @param embedding [Array<Float>] The embedding to search for
     # @param k [Integer] The number of results to return
     # @return [Array] Results in the format `[[id1, distance3], [id2, distance2]]`
     #

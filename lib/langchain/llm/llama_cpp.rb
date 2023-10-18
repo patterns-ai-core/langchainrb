@@ -34,7 +34,7 @@ module Langchain::LLM
 
     # @param text [String] The text to embed
     # @param n_threads [Integer] The number of CPU threads to use
-    # @return [Array] The embedding
+    # @return [Array<Float>] The embedding
     def embed(text:, n_threads: nil)
       # contexts are kinda stateful when it comes to embeddings, so allocate one each time
       context = embedding_context
