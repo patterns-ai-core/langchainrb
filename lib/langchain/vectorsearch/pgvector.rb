@@ -5,10 +5,12 @@ module Langchain::Vectorsearch
     #
     # The PostgreSQL vector search adapter
     #
-    # Gem requirements: gem "pgvector", "~> 0.2"
+    # Gem requirements:
+    #     gem "sequel", "~> 5.68.0"
+    #     gem "pgvector", "~> 0.2"
     #
     # Usage:
-    # pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace: nil)
+    #     pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace: nil)
     #
 
     # The operators supported by the PostgreSQL vector search adapter
@@ -150,3 +152,7 @@ module Langchain::Vectorsearch
     end
   end
 end
+
+# Rails connection when configuring vectorsearch
+# Update READMEs
+# Rails migration to create a migration

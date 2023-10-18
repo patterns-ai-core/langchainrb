@@ -5,7 +5,8 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Chroma DB
     #
-    # Gem requirements: gem "chroma-db", "~> 0.6.0"
+    # Gem requirements:
+    #     gem "chroma-db", "~> 0.6.0"
     #
     # Usage:
     # chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, llm_api_key:, api_key: nil)
