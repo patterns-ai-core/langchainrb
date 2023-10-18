@@ -46,11 +46,17 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
   let(:embedding) { [0.1, 0.2, 0.3] }
   let(:count) { 1 }
   let(:query) { "Greetings Earth" }
+  let(:metadata) do
+    {
+      "foo" => "bar",
+      "meaningful" => "data"
+    }
+  end
   let(:results) {
     Array(Chroma::Resources::Embedding.new(
       id: SecureRandom.uuid,
       document: text,
-      metadata: nil,
+      metadata: metadata,
       embedding: nil,
       distance: 0.5068268179893494
     ))
@@ -71,6 +77,12 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
         expect(subject.add_texts(texts: [text], ids: ["123"])).to eq(true)
       end
     end
+
+    context "when metadatas are provided" do
+      it "adds texts" do
+        expect(subject.add_texts(texts: [text], ids: ["123"], metadatas: [metadata])).to eq(true)
+      end
+    end
   end
 
   describe "update_texts" do
@@ -81,6 +93,12 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
 
     it "updates texts" do
       expect(subject.update_texts(texts: [text], ids: [1])).to eq(true)
+    end
+
+    context "when metadatas are provided" do
+      it "updates texts" do
+        expect(subject.update_texts(texts: [text], ids: [1], metadatas: [metadata])).to eq(true)
+      end
     end
   end
 
