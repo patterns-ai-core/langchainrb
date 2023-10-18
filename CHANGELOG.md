@@ -1,4 +1,5 @@
 ## [Unreleased]
+- Elasticsearch vector search support
 
 ## [0.6.18] - 2023-10-16
 - Introduce `Langchain::LLM::Response`` object
