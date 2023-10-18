@@ -70,7 +70,7 @@ module Langchain::Vectorsearch
             type_params: [
               {
                 key: "dim",
-                value: default_dimension.to_s
+                value: llm.default_dimension.to_s
               }
             ]
           }
