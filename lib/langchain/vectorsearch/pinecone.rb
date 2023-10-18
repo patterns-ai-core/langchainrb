@@ -5,10 +5,11 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Pinecone API.
     #
-    # Gem requirements: gem "pinecone", "~> 0.1.6"
+    # Gem requirements:
+    #     gem "pinecone", "~> 0.1.6"
     #
     # Usage:
-    # pinecone = Langchain::Vectorsearch::Pinecone.new(environment:, api_key:, index_name:, llm:, llm_api_key:)
+    #     pinecone = Langchain::Vectorsearch::Pinecone.new(environment:, api_key:, index_name:, llm:, llm_api_key:)
     #
 
     # Initialize the Pinecone client

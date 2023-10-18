@@ -5,7 +5,8 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Milvus REST APIs.
     #
-    # Gem requirements: gem "milvus", "~> 0.9.2"
+    # Gem requirements:
+    #     gem "milvus", "~> 0.9.2"
     #
     # Usage:
     # milvus = Langchain::Vectorsearch::Milvus.new(url:, index_name:, llm:, api_key:)
