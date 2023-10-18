@@ -13,7 +13,7 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   }
 
   before do
-    allow(llm).to receive(:embed).and_return([0.1, 0.2, 0.3])
+    allow(subject.llm).to receive_message_chain(:embed, :embedding).and_return([0.1, 0.2, 0.3])
   end
 
   describe "#add_texts" do
@@ -31,9 +31,14 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   end
 
   describe "#update_texts" do
-    it "updates respective document" do
-      allow(llm).to receive(:embed).and_return([0.1, 0.2, 0.3, 0.4])
+    before do
+      allow(subject.llm).to receive_message_chain(:embed, :embedding)
+        .with(text: "updated text")
+        .with(no_args)
+        .and_return([0.1, 0.2, 0.3, 0.4])
+    end
 
+    it "updates respective document" do
       es_body = [
         {index: {_index: "langchain", _id: 1}},
         {input: "updated text", input_vector: [0.1, 0.2, 0.3, 0.4]}
