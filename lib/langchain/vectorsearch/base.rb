@@ -150,9 +150,6 @@ module Langchain::Vectorsearch
       raise NotImplementedError, "#{self.class.name} does not support asking questions"
     end
 
-    def_delegators :llm,
-      :default_dimension
-
     # HyDE-style prompt
     #
     # @param [String] User's question

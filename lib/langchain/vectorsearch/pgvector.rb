@@ -91,7 +91,7 @@ module Langchain::Vectorsearch
     def create_default_schema
       db.run "CREATE EXTENSION IF NOT EXISTS vector"
       namespace_column = @namespace_column
-      vector_dimension = default_dimension
+      vector_dimension = llm.default_dimension
       db.create_table? table_name.to_sym do
         primary_key :id
         text :content
