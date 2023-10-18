@@ -46,6 +46,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "chroma-db", "~> 0.6.0"
   spec.add_development_dependency "cohere-ruby", "~> 0.9.6"
   spec.add_development_dependency "docx", "~> 0.8.0"
+  spec.add_development_dependency "elasticsearch", "~> 8.0.0"
   spec.add_development_dependency "eqn", "~> 1.6.5"
   spec.add_development_dependency "google_palm_api", "~> 0.1.3"
   spec.add_development_dependency "google_search_results", "~> 2.0.0"
@@ -67,5 +68,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "sequel", "~> 5.68.0"
   spec.add_development_dependency "weaviate-ruby", "~> 0.8.9"
   spec.add_development_dependency "wikipedia-client", "~> 1.17.0"
-  spec.add_development_dependency "elasticsearch", "~> 8.0.0"
 end
