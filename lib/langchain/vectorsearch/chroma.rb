@@ -37,7 +37,7 @@ module Langchain::Vectorsearch
         ::Chroma::Resources::Embedding.new(
           id: ids[i] ? ids[i].to_s : SecureRandom.uuid,
           embedding: llm.embed(text: text).embedding,
-          metadata: metadatas[i] ? metadatas[i] : {},
+          metadata: metadatas[i] || {},
           document: text # Do we actually need to store the whole original document?
         )
       end
@@ -51,7 +51,7 @@ module Langchain::Vectorsearch
         ::Chroma::Resources::Embedding.new(
           id: ids[i].to_s,
           embedding: llm.embed(text: text).embedding,
-          metadata: metadatas[i] ? metadatas[i] : {},
+          metadata: metadatas[i] || {},
           document: text # Do we actually need to store the whole original document?
         )
       end
