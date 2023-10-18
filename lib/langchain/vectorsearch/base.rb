@@ -9,11 +9,13 @@ module Langchain::Vectorsearch
   # == Available vector databases
   #
   # - {Langchain::Vectorsearch::Chroma}
+  # - {Langchain::Vectorsearch::Elasticsearch}
+  # - {Langchain::Vectorsearch::Hnswlib}
   # - {Langchain::Vectorsearch::Milvus}
+  # - {Langchain::Vectorsearch::Pgvector}
   # - {Langchain::Vectorsearch::Pinecone}
   # - {Langchain::Vectorsearch::Qdrant}
   # - {Langchain::Vectorsearch::Weaviate}
-  # - {Langchain::Vectorsearch::Pgvector}
   #
   # == Usage
   #
