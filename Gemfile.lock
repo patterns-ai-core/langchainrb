@@ -16,7 +16,7 @@ PATH
       json-schema (~> 4.0.0)
       pragmatic_segmenter (~> 0.3.0)
       tiktoken_ruby (~> 0.0.5)
-      zeitwerk (= 2.6.11)
+      zeitwerk (~> 2.5)
 
 GEM
   remote: https://rubygems.org/
