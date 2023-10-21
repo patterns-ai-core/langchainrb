@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+Langchain.configure do |config|
+  config.vectorsearch = Langchain::Vectorsearch::Pgvector.new(
+    llm: <%= llm_class %>.new(api_key: ENV["OPENAI_API_KEY"])
+  )
+end

@@ -6,6 +6,7 @@ require "colorize"
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
 loader.ignore("#{__dir__}/langchainrb.rb")
+loader.ignore("#{__dir__}/generators")
 loader.inflector.inflect(
   "ai21" => "AI21",
   "ai21_response" => "AI21Response",
@@ -71,14 +72,32 @@ module Langchain
     # @return [ContextualLogger]
     attr_reader :logger
 
+    # @return [Pathname]
+    attr_reader :root
+
     # @param logger [Logger]
     # @return [ContextualLogger]
     def logger=(logger)
       @logger = ContextualLogger.new(logger)
     end
 
-    # @return [Pathname]
-    attr_reader :root
+    # Configures global settings for Langchain
+    #     Langchain.configure do |config|
+    #       config.vectorsearch = Langchain::Vectorsearch::Weaviate.new(
+    #         api_key: ENV["WEAVIATE_API_KEY"],
+    #         url: ENV["WEAVIATE_URL"],
+    #         index_name: "docs",
+    #         llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+    #       )
+    #     end
+    def configure
+      yield(config)
+    end
+
+    # @return [Config] The global configuration object
+    def config
+      @_config ||= Config.new
+    end
   end
 
   self.logger ||= ::Logger.new($stdout, level: :warn)

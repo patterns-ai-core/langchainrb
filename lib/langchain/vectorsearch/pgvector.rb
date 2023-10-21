@@ -6,105 +6,63 @@ module Langchain::Vectorsearch
     # The PostgreSQL vector search adapter
     #
     # Gem requirements:
-    #     gem "sequel", "~> 5.68.0"
     #     gem "pgvector", "~> 0.2"
     #
     # Usage:
-    #     pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace: nil)
+    #     pgvector = Langchain::Vectorsearch::Pgvector.new(llm:, model_name:)
     #
 
     # The operators supported by the PostgreSQL vector search adapter
-    OPERATORS = {
-      "cosine_distance" => "cosine",
-      "euclidean_distance" => "euclidean"
-    }
-    DEFAULT_OPERATOR = "cosine_distance"
+    OPERATORS = [
+      "cosine",
+      "euclidean",
+      "inner_product"
+    ]
+    DEFAULT_OPERATOR = "cosine"
 
-    attr_reader :db, :operator, :table_name, :namespace_column, :namespace, :documents_table
+    attr_reader :db, :operator, :llm
+    attr_accessor :model
 
     # @param url [String] The URL of the PostgreSQL database
     # @param index_name [String] The name of the table to use for the index
     # @param llm [Object] The LLM client to use
     # @param namespace [String] The namespace to use for the index when inserting/querying
-    def initialize(url:, index_name:, llm:, namespace: nil)
-      depends_on "sequel"
+    def initialize(llm:)
       depends_on "pgvector"
+      depends_on "neighbor"
 
-      @db = Sequel.connect(url)
-
-      @table_name = index_name
-
-      @namespace_column = "namespace"
-      @namespace = namespace
-      @operator = OPERATORS[DEFAULT_OPERATOR]
+      @operator = DEFAULT_OPERATOR
 
       super(llm: llm)
-    end
-
-    def documents_model
-      Class.new(Sequel::Model(table_name.to_sym)) do
-        plugin :pgvector, :vectors
-      end
-    end
-
-    # Upsert a list of texts to the index
-    # @param texts [Array<String>] The texts to add to the index
-    # @param ids [Array<Integer>] The ids of the objects to add to the index, in the same order as the texts
-    # @return [PG::Result] The response from the database including the ids of
-    # the added or updated texts.
-    def upsert_texts(texts:, ids:)
-      data = texts.zip(ids).flat_map do |(text, id)|
-        {id: id, content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace}
-      end
-      # @db[table_name.to_sym].multi_insert(data, return: :primary_key)
-      @db[table_name.to_sym]
-        .insert_conflict(
-          target: :id,
-          update: {content: Sequel[:excluded][:content], vectors: Sequel[:excluded][:vectors]}
-        )
-        .multi_insert(data, return: :primary_key)
     end
 
     # Add a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
     # @return [Array<Integer>] The the ids of the added texts.
-    def add_texts(texts:, ids: nil)
-      if ids.nil? || ids.empty?
-        data = texts.map do |text|
-          {content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace}
-        end
+    def add_texts(texts:, ids:)
+      embeddings = texts.map do |text|
+        llm.embed(text: text).embedding
+      end
 
-        @db[table_name.to_sym].multi_insert(data, return: :primary_key)
-      else
-        upsert_texts(texts: texts, ids: ids)
+      model.find_each.with_index do |record, i|
+        record.update_column(:embedding, embeddings[i])
       end
     end
 
-    # Update a list of ids and corresponding texts to the index
-    # @param texts [Array<String>] The texts to add to the index
-    # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
-    # @return [Array<Integer>] The ids of the updated texts.
     def update_texts(texts:, ids:)
-      upsert_texts(texts: texts, ids: ids)
+      add_texts(texts: texts, ids: ids)
     end
 
-    # Create default schema
+    # Invoke a rake task that will create an initializer (`config/initializers/langchain.rb`) file
+    # and db/migrations/* files
     def create_default_schema
-      db.run "CREATE EXTENSION IF NOT EXISTS vector"
-      namespace_column = @namespace_column
-      vector_dimension = llm.default_dimension
-      db.create_table? table_name.to_sym do
-        primary_key :id
-        text :content
-        column :vectors, "vector(#{vector_dimension})"
-        text namespace_column.to_sym, default: nil
-      end
+      Rake::Task["pgvector"].invoke
     end
 
     # Destroy default schema
     def destroy_default_schema
-      db.drop_table? table_name.to_sym
+      # Tell the user to rollback the migration
     end
 
     # Search for similar texts in the index
@@ -126,11 +84,9 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of top results to return
     # @return [Array<Hash>] The results of the search
     def similarity_search_by_vector(embedding:, k: 4)
-      db.transaction do # BEGIN
-        documents_model
-          .nearest_neighbors(:vectors, embedding, distance: operator).limit(k)
-          .where(namespace_column.to_sym => namespace)
-      end
+      model
+        .nearest_neighbors(:embedding, embedding, distance: operator)
+        .limit(k)
     end
 
     # Ask a question and return the answer
@@ -142,7 +98,7 @@ module Langchain::Vectorsearch
       search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
-        result.content.to_s
+        result.as_vector
       end
       context = context.join("\n---\n")
 

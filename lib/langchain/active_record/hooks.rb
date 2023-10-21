@@ -66,15 +66,21 @@ module Langchain
       #
       # @return [String] the text representation of the model
       def as_vector
-        to_json
+        to_json(except: :embedding)
       end
 
       module ClassMethods
         # Set the vector search provider
         #
         # @param provider [Object] The `Langchain::Vectorsearch::*` instance
-        def vectorsearch(provider:)
-          class_variable_set(:@@provider, provider)
+        def vectorsearch
+          # Pgvector-specific configuration
+          if Langchain.config.vectorsearch.is_a?(Langchain::Vectorsearch::Pgvector)
+            has_neighbors(:embedding)
+          end
+
+          Langchain.config.vectorsearch.model = self
+          class_variable_set(:@@provider, Langchain.config.vectorsearch)
         end
 
         # Search for similar texts
@@ -89,7 +95,7 @@ module Langchain
           )
 
           # We use "__id" when Weaviate is the provider
-          ids = records.map { |record| record.dig("id") || record.dig("__id") }
+          # ids = records.map { |record| record.dig("id") || record.dig("__id") }
           where(id: ids)
         end
 
