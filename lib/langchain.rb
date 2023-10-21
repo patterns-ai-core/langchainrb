@@ -83,10 +83,7 @@ module Langchain
 
     # Configures global settings for Langchain
     #     Langchain.configure do |config|
-    #       config.vectorsearch = Langchain::Vectorsearch::Weaviate.new(
-    #         api_key: ENV["WEAVIATE_API_KEY"],
-    #         url: ENV["WEAVIATE_URL"],
-    #         index_name: "docs",
+    #       config.vectorsearch = Langchain::Vectorsearch::Pgvector.new(
     #         llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
     #       )
     #     end

@@ -2,8 +2,12 @@ require "rails/generators/active_record"
 
 module Langchain
   module Generators
+    #
+    # Usage:
+    #     rails g langchain:pgvector -model=Product -llm=openai
+    #
     class PgvectorGenerator < Rails::Generators::Base
-      desc "TODO: Add description"
+      desc "This generator adds Pgvector vectorsearch integration to your ActiveRecord model"
 
       include ::ActiveRecord::Generators::Migration
       source_root File.join(__dir__, "templates")
@@ -42,22 +46,27 @@ module Langchain
 
       private
 
+      # @return [String] Name of the model
       def model_name
         options["model"]
       end
 
+      # @return [String] Table name of the model
       def table_name
         model_name.downcase.pluralize
       end
 
+      # @return [String] LLM provider to use
       def llm
         options["llm"]
       end
 
+      # @return [Langchain::LLM::*] LLM class
       def llm_class
         Langchain::LLM.const_get(LLMS[llm])
       end
 
+      # @return [Integer] Dimension of the vector to be used
       def vector_dimension
         llm_class.default_dimension
       end
