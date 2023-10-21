@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "colorize", "~> 0.8.1"
   spec.add_dependency "tiktoken_ruby", "~> 0.0.5"
   spec.add_dependency "json-schema", "~> 4.0.0"
-  spec.add_dependency "zeitwerk", "2.6.11"
+  spec.add_dependency "zeitwerk", "~> 2.5"
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
 
   # development dependencies
