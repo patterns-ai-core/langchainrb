@@ -94,9 +94,13 @@ module Langchain
             k: k
           )
 
-          # We use "__id" when Weaviate is the provider
-          # ids = records.map { |record| record.dig("id") || record.dig("__id") }
-          where(id: ids)
+          if records.is_a?(::ActiveRecord::Relation)
+            records
+          else
+            # We use "__id" when Weaviate is the provider
+            ids = records.map { |record| record.dig("id") || record.dig("__id") }
+            where(id: ids)
+          end
         end
 
         # Ask a question and return the answer
