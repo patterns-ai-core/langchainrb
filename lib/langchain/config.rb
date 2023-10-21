@@ -2,12 +2,11 @@
 
 module Langchain
   class Config
-    # Configuring the vectorsearch property to the used in the Rails apps
+    # This class is used to configure the Langchain.rb gem inside Rails apps, in the `config/initializers/langchain.rb` file.
+    #
+    # Langchain is configured in the following way:
     #     Langchain.configure do |config|
-    #       config.vectorsearch = Langchain::Vectorsearch::Weaviate.new(
-    #         api_key: ENV["WEAVIATE_API_KEY"],
-    #         url: ENV["WEAVIATE_URL"],
-    #         index_name: "docs",
+    #       config.vectorsearch = Langchain::Vectorsearch::Pgvector.new(
     #         llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
     #       )
     #     end
@@ -19,4 +18,3 @@ module Langchain
     end
   end
 end
-
