@@ -89,5 +89,3 @@ module Langchain
     class BaseError < StandardError; end
   end
 end
-
-require "langchain/railtie" if defined?(Rails)

@@ -152,7 +152,3 @@ module Langchain::Vectorsearch
     end
   end
 end
-
-# Rails connection when configuring vectorsearch
-# Update READMEs
-# Rails migration to create a migration
