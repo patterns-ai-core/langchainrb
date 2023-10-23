@@ -25,8 +25,7 @@ module Langchain::Vectorsearch
   #       url:         ENV["WEAVIATE_URL"],
   #       api_key:     ENV["WEAVIATE_API_KEY"],
   #       index_name:  "Documents",
-  #       llm:         :openai,              # or :cohere, :hugging_face, :google_palm, or :replicate
-  #       llm_api_key: ENV["OPENAI_API_KEY"] # API key for the selected LLM
+  #       llm:         Langchain::LLM::OpenAI.new(api_key:)
   #     )
   #
   #     # You can instantiate other supported vector databases the same way:

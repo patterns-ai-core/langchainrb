@@ -9,7 +9,7 @@ module Langchain::Vectorsearch
     #     gem "pinecone", "~> 0.1.6"
     #
     # Usage:
-    #     pinecone = Langchain::Vectorsearch::Pinecone.new(environment:, api_key:, index_name:, llm:, llm_api_key:)
+    #     pinecone = Langchain::Vectorsearch::Pinecone.new(environment:, api_key:, index_name:, llm:)
     #
 
     # Initialize the Pinecone client

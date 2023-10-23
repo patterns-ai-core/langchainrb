@@ -9,7 +9,7 @@ module Langchain::Vectorsearch
     #     gem "chroma-db", "~> 0.6.0"
     #
     # Usage:
-    # chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, llm_api_key:, api_key: nil)
+    # chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, api_key: nil)
     #
 
     # Initialize the Chroma client
