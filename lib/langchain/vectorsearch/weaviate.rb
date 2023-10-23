@@ -9,7 +9,7 @@ module Langchain::Vectorsearch
     #     gem "weaviate-ruby", "~> 0.8.3"
     #
     # Usage:
-    #     weaviate = Langchain::Vectorsearch::Weaviate.new(url:, api_key:, index_name:, llm:, llm_api_key:)
+    #     weaviate = Langchain::Vectorsearch::Weaviate.new(url:, api_key:, index_name:, llm:)
     #
 
     # Initialize the Weaviate adapter
