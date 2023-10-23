@@ -136,8 +136,6 @@ module Langchain::LLM
 
       response = with_api_error_handling { client.chat(parameters: parameters) }
 
-      return if block
-
       Langchain::LLM::OpenAIResponse.new(response)
     end
 

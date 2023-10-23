@@ -509,6 +509,18 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
     end
 
+    context "with block" do
+      let(:block) { proc { |chunk| p chunk } }
+      let(:parameters) { {parameters: {n: 1, messages: history, model: model, temperature: temperature, max_tokens: be_between(4014, 4096), stream: block}} }
+
+      it "yields a block and returns response" do
+        result = subject.chat(prompt: prompt, &block)
+
+        expect(result).to be_a(Langchain::LLM::OpenAIResponse)
+        expect(result.chat_completion).to eq(answer)
+      end
+    end
+
     context "with failed API call" do
       let(:response) do
         {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
