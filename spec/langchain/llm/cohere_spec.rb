@@ -3,7 +3,7 @@
 require "cohere"
 
 RSpec.describe Langchain::LLM::Cohere do
-  let(:subject) { described_class.new(api_key: "123") }
+  let(:subject) { described_class.new("123") }
 
   describe "#embed" do
     before do
