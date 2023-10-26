@@ -12,6 +12,14 @@ module Langchain
           @llm = llm
         end
 
+        # Returns the RAGAS scores, e.g.:
+        # {
+        #   ragas_score: 0.6601257446503674,
+        #   answer_relevance_score: 0.9573145866787608,
+        #   context_relevance_score: 0.6666666666666666,
+        #   faithfulness_score: 0.5
+        # }
+        #
         # @param question [String] Question
         # @param answer [String] Answer
         # @param context [String] Context
