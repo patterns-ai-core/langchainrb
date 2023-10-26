@@ -519,6 +519,32 @@ Langchain::Loader.load('https://www.example.com/file.pdf')
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
 
+## Evaluations (Evals)
+The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
+
+### RAGAS
+Ragas is helps you evaluate your Retrieval Augmented Generation (RAG) pipelines. The implementation is based on this [paper](https://arxiv.org/abs/2309.15217) and the original Python [repo](https://github.com/explodinggradients/ragas). Ragas tracks the 3 following metrics and assigns the 0.0 - 1.0 scores:
+* Faithfulness - the answer is grounded in the given context
+* Context Relevance - the retrieved context is focused, containing as little irrelevant information as possible
+* Answer Relevance - the generated answer addresses the actual question that was provided
+
+```ruby
+# We recommend using Langchain::LLM::OpenAI as your llm for Ragas
+ragas = Langchain::Evals::Ragas::Main.new(llm: llm) 
+
+# The answer that the LLM generated
+# The question (or the original prompt) that was asked
+# The context that was retrieved (usually from a vectorsearch database)
+ragas.score(answer: "", question: "", context: "")
+# =>
+# {
+#   ragas_score: 0.6601257446503674,
+#   answer_relevance_score: 0.9573145866787608,
+#   context_relevance_score: 0.6666666666666666,
+#   faithfulness_score: 0.5
+# }
+```
+
 ## Logging
 
 LangChain.rb uses standard logging mechanisms and defaults to `:warn` level. Most messages are at info level, but we will add debug or warn statements as needed.
