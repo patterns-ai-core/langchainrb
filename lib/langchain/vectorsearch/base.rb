@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "forwardable"
-
 module Langchain::Vectorsearch
   # = Vector Databases
   # A vector database a type of database that stores data as high-dimensional vectors, which are mathematical representations of features or attributes. Each vector has a certain number of dimensions, which can range from tens to thousands, depending on the complexity and granularity of the data.
@@ -9,11 +7,13 @@ module Langchain::Vectorsearch
   # == Available vector databases
   #
   # - {Langchain::Vectorsearch::Chroma}
+  # - {Langchain::Vectorsearch::Elasticsearch}
+  # - {Langchain::Vectorsearch::Hnswlib}
   # - {Langchain::Vectorsearch::Milvus}
+  # - {Langchain::Vectorsearch::Pgvector}
   # - {Langchain::Vectorsearch::Pinecone}
   # - {Langchain::Vectorsearch::Qdrant}
   # - {Langchain::Vectorsearch::Weaviate}
-  # - {Langchain::Vectorsearch::Pgvector}
   #
   # == Usage
   #
@@ -25,8 +25,7 @@ module Langchain::Vectorsearch
   #       url:         ENV["WEAVIATE_URL"],
   #       api_key:     ENV["WEAVIATE_API_KEY"],
   #       index_name:  "Documents",
-  #       llm:         :openai,              # or :cohere, :hugging_face, :google_palm, or :replicate
-  #       llm_api_key: ENV["OPENAI_API_KEY"] # API key for the selected LLM
+  #       llm:         Langchain::LLM::OpenAI.new(api_key:)
   #     )
   #
   #     # You can instantiate other supported vector databases the same way:
@@ -149,9 +148,6 @@ module Langchain::Vectorsearch
     def ask(...)
       raise NotImplementedError, "#{self.class.name} does not support asking questions"
     end
-
-    def_delegators :llm,
-      :default_dimension
 
     # HyDE-style prompt
     #

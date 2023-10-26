@@ -5,10 +5,11 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Chroma DB
     #
-    # Gem requirements: gem "chroma-db", "~> 0.6.0"
+    # Gem requirements:
+    #     gem "chroma-db", "~> 0.6.0"
     #
     # Usage:
-    # chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, llm_api_key:, api_key: nil)
+    # chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, api_key: nil)
     #
 
     # Initialize the Chroma client
@@ -29,14 +30,15 @@ module Langchain::Vectorsearch
 
     # Add a list of texts to the index
     # @param texts [Array<String>] The list of texts to add
+    # @param ids [Array<String>] The list of ids to use for the texts (optional)
+    # @param metadatas [Array<Hash>] The list of metadata to use for the texts (optional)
     # @return [Hash] The response from the server
-    def add_texts(texts:, ids: [])
+    def add_texts(texts:, ids: [], metadatas: [])
       embeddings = Array(texts).map.with_index do |text, i|
         ::Chroma::Resources::Embedding.new(
           id: ids[i] ? ids[i].to_s : SecureRandom.uuid,
           embedding: llm.embed(text: text).embedding,
-          # TODO: Add support for passing metadata
-          metadata: {}, # metadatas[index],
+          metadata: metadatas[i] || {},
           document: text # Do we actually need to store the whole original document?
         )
       end
@@ -45,13 +47,12 @@ module Langchain::Vectorsearch
       collection.add(embeddings)
     end
 
-    def update_texts(texts:, ids:)
+    def update_texts(texts:, ids:, metadatas: [])
       embeddings = Array(texts).map.with_index do |text, i|
         ::Chroma::Resources::Embedding.new(
           id: ids[i].to_s,
           embedding: llm.embed(text: text).embedding,
-          # TODO: Add support for passing metadata
-          metadata: [], # metadatas[index],
+          metadata: metadatas[i] || {},
           document: text # Do we actually need to store the whole original document?
         )
       end

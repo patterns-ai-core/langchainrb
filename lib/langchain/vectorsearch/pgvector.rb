@@ -5,10 +5,12 @@ module Langchain::Vectorsearch
     #
     # The PostgreSQL vector search adapter
     #
-    # Gem requirements: gem "pgvector", "~> 0.2"
+    # Gem requirements:
+    #     gem "sequel", "~> 5.68.0"
+    #     gem "pgvector", "~> 0.2"
     #
     # Usage:
-    # pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace: nil)
+    #     pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace: nil)
     #
 
     # The operators supported by the PostgreSQL vector search adapter
@@ -91,7 +93,7 @@ module Langchain::Vectorsearch
     def create_default_schema
       db.run "CREATE EXTENSION IF NOT EXISTS vector"
       namespace_column = @namespace_column
-      vector_dimension = default_dimension
+      vector_dimension = llm.default_dimension
       db.create_table? table_name.to_sym do
         primary_key :id
         text :content

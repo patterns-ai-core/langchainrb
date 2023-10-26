@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.7.0] - 2023-10-22
+- BREAKING: Moving Rails-specific code to `langchainrb_rails` gem
+
+## [0.6.19] - 2023-10-18
+- Elasticsearch vector search support
+- Fix `lib/langchain/railtie.rb` not being loaded with the gem
+
 ## [0.6.18] - 2023-10-16
 - Introduce `Langchain::LLM::Response`` object
 - Introduce `Langchain::Chunk` object

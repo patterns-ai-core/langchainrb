@@ -4,8 +4,6 @@
 
 👨‍💻👩‍💻 CURRENTLY SEEKING PEOPLE TO FORM THE CORE GROUP OF MAINTAINERS WITH
 
-:warning: UNDER ACTIVE AND RAPID DEVELOPMENT (MAY BE BUGGY AND UNTESTED)
-
 ![Tests status](https://github.com/andreibondarev/langchainrb/actions/workflows/ci.yml/badge.svg?branch=main)
 [![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
 [![Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/gems/langchainrb)
@@ -19,11 +17,11 @@ Langchain.rb is a library that's an abstraction layer on top many emergent AI, M
 
 Install the gem and add to the application's Gemfile by executing:
 
-    $ bundle add langchainrb
+    bundle add langchainrb
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
-    $ gem install langchainrb
+    gem install langchainrb
 
 ## Usage
 
@@ -37,7 +35,7 @@ require "langchain"
 | -------- |:------------------:| -------:| -----------------:| -------:| -----------------:|
 | [Chroma](https://trychroma.com/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
 | [Hnswlib](https://github.com/nmslib/hnswlib/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
-| [Milvus](https://milvus.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | WIP               |
+| [Milvus](https://milvus.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
 | [Pinecone](https://www.pinecone.io/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
 | [Pgvector](https://github.com/pgvector/pgvector) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
 | [Qdrant](https://qdrant.tech/) | :white_check_mark: | :white_check_mark: | :white_check_mark: | WIP     | :white_check_mark: |
