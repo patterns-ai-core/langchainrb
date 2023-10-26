@@ -1,0 +1,10 @@
+_type: prompt
+input_variables:
+  - question
+  - context
+template: |
+  Please extract relevant sentences from the provided context that is absolutely required answer the following question. If no relevant sentences are found, or if you believe the question cannot be answered from the given context, return the phrase "Insufficient Information".  While extracting candidate sentences you're not allowed to make any changes to sentences from given context.
+
+  question:{question}
+  context:\n{context}
+  candidate sentences:\n

@@ -3,6 +3,7 @@
 require "logger"
 require "pathname"
 require "colorize"
+require "to_bool"
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
 loader.ignore("#{__dir__}/langchainrb.rb")
