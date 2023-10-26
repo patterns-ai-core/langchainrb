@@ -5,7 +5,7 @@ require "matrix"
 module Langchain
   module Evals
     module Ragas
-      # Relevance refers to the idea that the generated answer should address the actual question that was provided.
+      # Answer Relevance refers to the idea that the generated answer should address the actual question that was provided.
       # This metric evaluates how closely the generated answer aligns with the initial question or instruction.
       class AnswerRelevance
         attr_reader :llm, :batch_size
