@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.7.1] - 2023-10-26
+- Ragas evals tool to evaluate Retrieval Augmented Generation (RAG) pipelines
+
 ## [0.7.0] - 2023-10-22
 - BREAKING: Moving Rails-specific code to `langchainrb_rails` gem
 
