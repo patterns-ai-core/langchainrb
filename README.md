@@ -13,6 +13,22 @@
 
 Langchain.rb is a library that's an abstraction layer on top many emergent AI, ML and other DS tools. The goal is to abstract complexity and difficult concepts to make building AI/ML-supercharged applications approachable for traditional software engineers.
 
+## Explore Langchain.rb
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Vector Search Databases](#using-vector-search-databases-)
+- [Standalone LLMs](#using-standalone-llms-️)
+- [Prompts](#using-prompts-)
+- [Output Parsers](#using-output-parsers)
+- [Agents](#using-agents-)
+- [Loaders](#loaders-)
+- [Examples](#examples)
+- [Evaluations](#evaluations-evals)
+- [Logging](#logging)
+- [Development](#development)
+- [Discord](#discord)
+
 ## Installation
 
 Install the gem and add to the application's Gemfile by executing:
