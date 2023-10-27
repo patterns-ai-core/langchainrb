@@ -523,10 +523,10 @@ Additional examples available: [/examples](https://github.com/andreibondarev/lan
 The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
 
 ### RAGAS
-Ragas is helps you evaluate your Retrieval Augmented Generation (RAG) pipelines. The implementation is based on this [paper](https://arxiv.org/abs/2309.15217) and the original Python [repo](https://github.com/explodinggradients/ragas). Ragas tracks the 3 following metrics and assigns the 0.0 - 1.0 scores:
-* Faithfulness - the answer is grounded in the given context
-* Context Relevance - the retrieved context is focused, containing as little irrelevant information as possible
-* Answer Relevance - the generated answer addresses the actual question that was provided
+Ragas helps you evaluate your Retrieval Augmented Generation (RAG) pipelines. The implementation is based on this [paper](https://arxiv.org/abs/2309.15217) and the original Python [repo](https://github.com/explodinggradients/ragas). Ragas tracks the following 3 metrics and assigns the 0.0 - 1.0 scores:
+* Faithfulness - the answer is grounded in the given context.
+* Context Relevance - the retrieved context is focused, containing little to no irrelevant information.
+* Answer Relevance - the generated answer addresses the actual question that was provided.
 
 ```ruby
 # We recommend using Langchain::LLM::OpenAI as your llm for Ragas
