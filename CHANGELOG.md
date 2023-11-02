@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.7.2] - 2023-11-02
+- Azure OpenAI LLM support
+
 ## [0.7.1] - 2023-10-26
 - Ragas evals tool to evaluate Retrieval Augmented Generation (RAG) pipelines
 
