@@ -1,8 +1,10 @@
-💎🔗 LangChain.rb
+💎🔗 Langchain.rb
 ---
 ⚡ Building applications with LLMs through composability ⚡
 
 For deep Rails integration see: [langchainrb_rails](https://github.com/andreibondarev/langchainrb_rails) gem.
+
+Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.io).
 
 ![Tests status](https://github.com/andreibondarev/langchainrb/actions/workflows/ci.yml/badge.svg?branch=main)
 [![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
