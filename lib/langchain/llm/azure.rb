@@ -21,7 +21,6 @@ module Langchain::LLM
       chat_deployment_url: nil
     )
       depends_on "ruby-openai", req: "openai"
-
       @embed_client = ::OpenAI::Client.new(
         access_token: api_key,
         uri_base: embedding_deployment_url,

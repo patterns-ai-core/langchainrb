@@ -19,8 +19,8 @@ RSpec.describe Langchain::LLM::OpenAI do
 
       it "passes correct options to the client" do
         # openai-ruby sets global configuration options here: https://github.com/alexrudall/ruby-openai/blob/main/lib/openai/client.rb
-        subject
-        expect(OpenAI.configuration.uri_base).to eq("http://localhost:1234")
+        result = subject
+        expect(result.client.uri_base).to eq("http://localhost:1234")
       end
     end
   end
