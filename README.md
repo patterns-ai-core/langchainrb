@@ -198,7 +198,7 @@ client.llm.functions = functions
 ```
 
 #### Azure
-Add `gem "ruby-openai", "~> 4.0.0"` to your Gemfile.
+Add `gem "ruby-openai", "~> 5.2.0"` to your Gemfile.
 
 ```ruby
 azure = Langchain::LLM::Azure.new(
