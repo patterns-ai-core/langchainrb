@@ -197,6 +197,42 @@ qdrant:
 client.llm.functions = functions
 ```
 
+#### Azure
+Add `gem "ruby-openai", "~> 5.2.0"` to your Gemfile.
+
+```ruby
+azure = Langchain::LLM::Azure.new(
+  api_key: ENV["AZURE_API_KEY"],
+  llm_options: {
+    api_type: :azure,
+    api_version: "2023-03-15-preview"
+  },
+  embedding_deployment_url: ENV.fetch("AZURE_EMBEDDING_URI"),
+  chat_deployment_url: ENV.fetch("AZURE_CHAT_URI")
+)
+```
+where `AZURE_EMBEDDING_URI` is e.g. `https://custom-domain.openai.azure.com/openai/deployments/gpt-35-turbo` and `AZURE_CHAT_URI` is e.g. `https://custom-domain.openai.azure.com/openai/deployments/ada-2`
+
+You can pass additional parameters to the constructor, it will be passed to the Azure client:
+```ruby
+azure = Langchain::LLM::Azure.new(
+  api_key: ENV["AZURE_API_KEY"],
+  llm_options: {
+    api_type: :azure,
+    api_version: "2023-03-15-preview",
+    request_timeout: 240 # Optional
+  },
+  embedding_deployment_url: ENV.fetch("AZURE_EMBEDDING_URI"),
+  chat_deployment_url: ENV.fetch("AZURE_CHAT_URI")
+)
+```
+```ruby
+azure.embed(text: "foo bar")
+```
+```ruby
+azure.complete(prompt: "What is the meaning of life?")
+```
+
 #### Cohere
 Add `gem "cohere-ruby", "~> 0.9.6"` to your Gemfile.
 
@@ -348,7 +384,7 @@ prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/promp
 prompt.input_variables #=> ["adjective", "content"]
 ```
 
-### Using Output Parsers 
+### Using Output Parsers
 
 Parse LLM text responses into structured output, such as JSON.
 
@@ -547,7 +583,7 @@ Ragas helps you evaluate your Retrieval Augmented Generation (RAG) pipelines. Th
 
 ```ruby
 # We recommend using Langchain::LLM::OpenAI as your llm for Ragas
-ragas = Langchain::Evals::Ragas::Main.new(llm: llm) 
+ragas = Langchain::Evals::Ragas::Main.new(llm: llm)
 
 # The answer that the LLM generated
 # The question (or the original prompt) that was asked
