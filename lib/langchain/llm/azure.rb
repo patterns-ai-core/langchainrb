@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Langchain::LLM
-  # LLM interface for OpenAI APIs: https://platform.openai.com/overview
+  # LLM interface for Azure OpenAI Service APIs: https://learn.microsoft.com/en-us/azure/ai-services/openai/
   #
   # Gem requirements:
   #    gem "ruby-openai", "~> 4.0.0"
