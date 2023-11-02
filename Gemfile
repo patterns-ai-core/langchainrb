@@ -15,3 +15,5 @@ gem "rubocop"
 
 # Temporary fix until https://github.com/github/graphql-client/pull/314 is merged
 gem "graphql-client", git: "https://github.com/rmosolgo/graphql-client.git", branch: "start-migrating"
+
+gem 'tiktoken_ruby', git: 'https://github.com/sahilbansal11/tiktoken_ruby.git', branch: 'ruby-2.5.9'
