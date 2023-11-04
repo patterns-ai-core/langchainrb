@@ -16,7 +16,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 ## Use Cases
 * Retrieval Augmented Generation (RAG) and vector search
 * Chat bots
-* AI agents
+* [AI agents](https://github.com/andreibondarev/langchainrb/tree/main/lib/langchain/agent/agents.md)
 
 ## Table of Contents
 
@@ -426,13 +426,10 @@ chat = Langchain::Conversation.new(llm: llm) do |chunk|
 end
 ```
 
-##### Open AI Function calls support
+Open AI Functions support
 ```ruby
 chat.set_functions(functions)
 ```
-
-## Examples
-Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
 
 ## Evaluations (Evals)
 The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
@@ -459,6 +456,9 @@ ragas.score(answer: "", question: "", context: "")
 #   faithfulness_score: 0.5
 # }
 ```
+
+## Examples
+Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
 
 ## Logging
 
