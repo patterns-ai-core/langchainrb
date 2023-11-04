@@ -23,16 +23,11 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 - [Usage](#usage)
 - [Large Language Models (LLMs)](#large-language-models-llms)
 - [Prompt Management](#prompt-management)
+- [Output Parsers](#using-output-parsers)
 - [Building RAG](#building-rag)
 - [Building chat bot](#building-chat-bot)
-
-
-- [Vector Search Databases](#using-vector-search-databases-)
-- [Output Parsers](#using-output-parsers)
-- [Agents](#using-agents-)
-- [Loaders](#loaders-)
-- [Examples](#examples)
 - [Evaluations](#evaluations-evals)
+- [Examples](#examples)
 - [Logging](#logging)
 - [Development](#development)
 - [Discord](#discord)
@@ -210,7 +205,7 @@ Langchain.rb provides a convinient unified interface on top of supported vectors
 
 ### Using Vector Search Databases 🔍
 
-Choose and instantiate the LLM provider you'll be using
+Choose and instantiate the LLM provider you'll be using to generate embeddings
 ```ruby
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 ```
@@ -229,7 +224,7 @@ client = Langchain::Vectorsearch::Weaviate.new(
 )
 ```
 
-# You can instantiate any other supported vector search database:
+You can instantiate any other supported vector search database:
 ```ruby
 client = Langchain::Vectorsearch::Chroma.new(...) # `gem "chroma-db", "~> 0.6.0"`
 client = Langchain::Vectorsearch::Hnswlib.new(...) # `gem "hnswlib", "~> 0.8.1"`
