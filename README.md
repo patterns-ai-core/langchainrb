@@ -24,8 +24,8 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 - [Usage](#usage)
 - [Large Language Models (LLMs)](#large-language-models-llms)
 - [Prompt Management](#prompt-management)
-- [Output Parsers](#using-output-parsers)
-- [Building RAG](#building-retrieval-augment-generation-)
+- [Output Parsers](#output-parsers)
+- [Building RAG](#building-retrieval-augment-generation-rag-system)
 - [Building chat bots](#building-chat-bots)
 - [Evaluations](#evaluations-evals)
 - [Examples](#examples)
@@ -396,25 +396,39 @@ client.ask(
 )
 ```
 
-## Building chat bot
-[TODO: Add info about the conversation class]
+## Building chat bots
+
+### Conversation class
+
+Choose and instantiate the LLM provider you'll be using:
+```ruby
+llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+```
+Instantiate the Conversation class:
+```ruby
+chat = Langchain::Conversation.new(llm: llm)
+```
+
+(Optional) Set the conversation context:
+```ruby
+chat.set_context("You are a chatbot from the future")
+```
+
+Exchange messages with the LLM
+```ruby
+chat.message("Tell me about future technologies")
+```
+
+To stream the chat response:
+```ruby
+chat = Langchain::Conversation.new(llm: llm) do |chunk|
+  print(chunk)
+end
+```
 
 ##### Open AI Function calls support
-
-Conversation support
-
 ```ruby
-chat = Langchain::Conversation.new(llm: openai)
-```
-```ruby
-chat.set_context("You are the climate bot")
 chat.set_functions(functions)
-```
-
-qdrant:
-
-```ruby
-client.llm.functions = functions
 ```
 
 ## Examples
