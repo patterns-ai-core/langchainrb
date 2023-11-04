@@ -25,8 +25,8 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 - [Large Language Models (LLMs)](#large-language-models-llms)
 - [Prompt Management](#prompt-management)
 - [Output Parsers](#using-output-parsers)
-- [Building RAG](#building-rag)
-- [Building chat bot](#building-chat-bot)
+- [Building RAG](#building-retrieval-augment-generation-)
+- [Building chat bots](#building-chat-bots)
 - [Evaluations](#evaluations-evals)
 - [Examples](#examples)
 - [Logging](#logging)
@@ -103,7 +103,7 @@ You can use any other LLM by invoking the same interface:
 llm = Langchain::LLM::GooglePalm.new(...)
 ```
 
-### Prompt Management 📋
+### Prompt Management
 
 #### Prompt Templates
 
@@ -187,6 +187,107 @@ Loading a new prompt template using a YAML file:
 prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.yaml")
 prompt.input_variables #=> ["adjective", "content"]
 ```
+
+
+### Using Output Parsers
+
+Parse LLM text responses into structured output, such as JSON.
+
+#### Structured Output Parser
+
+You can use the `StructuredOutputParser` to generate a prompt that instructs the LLM to provide a JSON response adhering to a specific JSON schema:
+
+```ruby
+json_schema = {
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+      description: "Persons name"
+    },
+    age: {
+      type: "number",
+      description: "Persons age"
+    },
+    interests: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          interest: {
+            type: "string",
+            description: "A topic of interest"
+          },
+          levelOfInterest: {
+            type: "number",
+            description: "A value between 0 and 100 of how interested the person is in this interest"
+          }
+        },
+        required: ["interest", "levelOfInterest"],
+        additionalProperties: false
+      },
+      minItems: 1,
+      maxItems: 3,
+      description: "A list of the person's interests"
+    }
+  },
+  required: ["name", "age", "interests"],
+  additionalProperties: false
+}
+parser = Langchain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
+prompt = Langchain::Prompt::PromptTemplate.new(template: "Generate details of a fictional character.\n{format_instructions}\nCharacter description: {description}", input_variables: ["description", "format_instructions"])
+prompt_text = prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)
+# Generate details of a fictional character.
+# You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
+# ...
+```
+
+Then parse the llm response:
+
+```ruby
+llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+llm_response = llm.chat(prompt: prompt_text)
+parser.parse(llm_response)
+# {
+#   "name" => "Kim Ji-hyun",
+#   "age" => 22,
+#   "interests" => [
+#     {
+#       "interest" => "Organic Chemistry",
+#       "levelOfInterest" => 85
+#     },
+#     ...
+#   ]
+# }
+```
+
+If the parser fails to parse the LLM response, you can use the `OutputFixingParser`. It sends an error message, prior output, and the original prompt text to the LLM, asking for a "fixed" response:
+
+```ruby
+begin
+  parser.parse(llm_response)
+rescue Langchain::OutputParsers::OutputParserException => e
+  fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
+    llm: llm,
+    parser: parser
+  )
+  fix_parser.parse(llm_response)
+end
+```
+
+Alternatively, if you don't need to handle the `OutputParserException`, you can simplify the code:
+
+```ruby
+# we already have the `OutputFixingParser`:
+# parser = Langchain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
+fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
+  llm: llm,
+  parser: parser
+)
+fix_parser.parse(llm_response)
+```
+
+See [here](https://github.com/andreibondarev/langchainrb/tree/main/examples/create_and_manage_prompt_templates_using_structured_output_parser.rb) for a concrete example
 
 ## Building Retrieval Augment Generation (RAG) system
 RAG is a methodology that assists LLMs generate accurate and up-to-date information.
@@ -315,160 +416,6 @@ client.llm.functions = functions
 
 ## Building chat bot
 [TODO: Add info about the conversation class]
-
-### Using Output Parsers
-
-Parse LLM text responses into structured output, such as JSON.
-
-#### Structured Output Parser
-
-You can use the `StructuredOutputParser` to generate a prompt that instructs the LLM to provide a JSON response adhering to a specific JSON schema:
-
-```ruby
-json_schema = {
-  type: "object",
-  properties: {
-    name: {
-      type: "string",
-      description: "Persons name"
-    },
-    age: {
-      type: "number",
-      description: "Persons age"
-    },
-    interests: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          interest: {
-            type: "string",
-            description: "A topic of interest"
-          },
-          levelOfInterest: {
-            type: "number",
-            description: "A value between 0 and 100 of how interested the person is in this interest"
-          }
-        },
-        required: ["interest", "levelOfInterest"],
-        additionalProperties: false
-      },
-      minItems: 1,
-      maxItems: 3,
-      description: "A list of the person's interests"
-    }
-  },
-  required: ["name", "age", "interests"],
-  additionalProperties: false
-}
-parser = Langchain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
-prompt = Langchain::Prompt::PromptTemplate.new(template: "Generate details of a fictional character.\n{format_instructions}\nCharacter description: {description}", input_variables: ["description", "format_instructions"])
-prompt_text = prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)
-# Generate details of a fictional character.
-# You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
-# ...
-```
-
-Then parse the llm response:
-
-```ruby
-llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-llm_response = llm.chat(prompt: prompt_text)
-parser.parse(llm_response)
-# {
-#   "name" => "Kim Ji-hyun",
-#   "age" => 22,
-#   "interests" => [
-#     {
-#       "interest" => "Organic Chemistry",
-#       "levelOfInterest" => 85
-#     },
-#     ...
-#   ]
-# }
-```
-
-If the parser fails to parse the LLM response, you can use the `OutputFixingParser`. It sends an error message, prior output, and the original prompt text to the LLM, asking for a "fixed" response:
-
-```ruby
-begin
-  parser.parse(llm_response)
-rescue Langchain::OutputParsers::OutputParserException => e
-  fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
-    llm: llm,
-    parser: parser
-  )
-  fix_parser.parse(llm_response)
-end
-```
-
-Alternatively, if you don't need to handle the `OutputParserException`, you can simplify the code:
-
-```ruby
-# we already have the `OutputFixingParser`:
-# parser = Langchain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
-fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
-  llm: llm,
-  parser: parser
-)
-fix_parser.parse(llm_response)
-```
-
-See [here](https://github.com/andreibondarev/langchainrb/tree/main/examples/create_and_manage_prompt_templates_using_structured_output_parser.rb) for a concrete example
-
-### Using Agents 🤖
-Agents are semi-autonomous bots that can respond to user questions and use available to them Tools to provide informed replies. They break down problems into series of steps and define Actions (and Action Inputs) along the way that are executed and fed back to them as additional information. Once an Agent decides that it has the Final Answer it responds with it.
-
-#### ReAct Agent
-
-Add `gem "ruby-openai"`, `gem "eqn"`, and `gem "google_search_results"` to your Gemfile
-
-```ruby
-search_tool = Langchain::Tool::GoogleSearch.new(api_key: ENV["SERPAPI_API_KEY"])
-calculator = Langchain::Tool::Calculator.new
-
-openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-
-agent = Langchain::Agent::ReActAgent.new(
-  llm: openai,
-  tools: [search_tool, calculator]
-)
-```
-```ruby
-agent.run(question: "How many full soccer fields would be needed to cover the distance between NYC and DC in a straight line?")
-#=> "Approximately 2,945 soccer fields would be needed to cover the distance between NYC and DC in a straight line."
-```
-
-#### SQL-Query Agent
-
-Add `gem "sequel"` to your Gemfile
-
-```ruby
-database = Langchain::Tool::Database.new(connection_string: "postgres://user:password@localhost:5432/db_name")
-
-agent = Langchain::Agent::SQLQueryAgent.new(llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]), db: database)
-```
-```ruby
-agent.run(question: "How many users have a name with length greater than 5 in the users table?")
-#=> "14 users have a name with length greater than 5 in the users table."
-```
-
-#### Demo
-![May-12-2023 13-09-13](https://github.com/andreibondarev/langchainrb/assets/541665/6bad4cd9-976c-420f-9cf9-b85bf84f7eaf)
-
-![May-12-2023 13-07-45](https://github.com/andreibondarev/langchainrb/assets/541665/9aacdcc7-4225-4ea0-ab96-7ee48826eb9b)
-
-#### Available Tools 🛠️
-
-| Name         | Description                                        | ENV Requirements                                              | Gem Requirements                          |
-| ------------ | :------------------------------------------------: | :-----------------------------------------------------------: | :---------------------------------------: |
-| "calculator" | Useful for getting the result of a math expression |                                                               | `gem "eqn", "~> 1.6.5"`                   |
-| "database"   | Useful for querying a SQL database |                                                               | `gem "sequel", "~> 5.68.0"`                   |
-| "ruby_code_interpreter" | Interprets Ruby expressions             |                                                               | `gem "safe_ruby", "~> 1.0.4"`             |
-| "google_search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |
-| "weather"  | Calls Open Weather API to retrieve the current weather        |      `ENV["OPEN_WEATHER_API_KEY"]` (https://home.openweathermap.org/api_keys)               | `gem "open-weather-ruby-client", "~> 0.3.0"`    |
-| "wikipedia"  | Calls Wikipedia API to retrieve the summary        |                                                               | `gem "wikipedia-client", "~> 1.17.0"`     |
-
 
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
