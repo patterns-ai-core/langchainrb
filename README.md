@@ -75,7 +75,7 @@ llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 ```
 You can pass additional parameters to the constructor, it will be passed to the OpenAI client:
 ```ruby
-llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"], llm_options: {uri_base: "http://localhost:1234"}) )
+llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"], llm_options: { ... })
 ```
 
 Generate vector embeddings:
@@ -189,7 +189,7 @@ prompt.input_variables #=> ["adjective", "content"]
 ```
 
 
-### Using Output Parsers
+### Output Parsers
 
 Parse LLM text responses into structured output, such as JSON.
 
@@ -298,7 +298,7 @@ A typical RAG workflow follows the 3 steps below:
 Most common use-case for a RAG system is powering Q&A systems where users pose natural language questions and receive answers in natural language.
 
 ### Vector search databases
-Langchain.rb provides a convinient unified interface on top of supported vectorsearch databases that make it easy to configure your index, add data, query and retrieve from it.
+Langchain.rb provides a convenient unified interface on top of supported vectorsearch databases that make it easy to configure your index, add data, query and retrieve from it.
 
 #### Supported vector search databases and features:
 
@@ -314,14 +314,14 @@ Langchain.rb provides a convinient unified interface on top of supported vectors
 
 ### Using Vector Search Databases 🔍
 
+Pick the vector search database you'll be using, add the gem dependency and instantiate the client:
+```ruby
+gem "weaviate-ruby", "~> 0.8.9"
+```
+
 Choose and instantiate the LLM provider you'll be using to generate embeddings
 ```ruby
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-```
-
-Pick the vector search database you'll be using, add the gem dependency and instantiate the client:
-```ruby
-gem "weaviate-ruby", "~> 0.8.3"
 ```
 
 ```ruby
@@ -335,26 +335,26 @@ client = Langchain::Vectorsearch::Weaviate.new(
 
 You can instantiate any other supported vector search database:
 ```ruby
-client = Langchain::Vectorsearch::Chroma.new(...) # `gem "chroma-db", "~> 0.6.0"`
-client = Langchain::Vectorsearch::Hnswlib.new(...) # `gem "hnswlib", "~> 0.8.1"`
-client = Langchain::Vectorsearch::Milvus.new(...) # `gem "milvus", "~> 0.9.2"`
+client = Langchain::Vectorsearch::Chroma.new(...)   # `gem "chroma-db", "~> 0.6.0"`
+client = Langchain::Vectorsearch::Hnswlib.new(...)  # `gem "hnswlib", "~> 0.8.1"`
+client = Langchain::Vectorsearch::Milvus.new(...)   # `gem "milvus", "~> 0.9.2"`
 client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
 client = Langchain::Vectorsearch::Pgvector.new(...) # `gem "pgvector", "~> 0.2"`
-client = Langchain::Vectorsearch::Qdrant.new(...) # `gem"qdrant-ruby", "~> 0.9.3"`
+client = Langchain::Vectorsearch::Qdrant.new(...)   # `gem"qdrant-ruby", "~> 0.9.3"`
 ```
 
+Create the default schema:
 ```ruby
-# Creating the default schema
 client.create_default_schema
 ```
 
 Add plain text data to your vector search database:
 ```ruby
 client.add_texts(
-    texts: [
-        "Begin by preheating your oven to 375°F (190°C). Prepare four boneless, skinless chicken breasts by cutting a pocket into the side of each breast, being careful not to cut all the way through. Season the chicken with salt and pepper to taste. In a large skillet, melt 2 tablespoons of unsalted butter over medium heat. Add 1 small diced onion and 2 minced garlic cloves, and cook until softened, about 3-4 minutes. Add 8 ounces of fresh spinach and cook until wilted, about 3 minutes. Remove the skillet from heat and let the mixture cool slightly.",
-        "In a bowl, combine the spinach mixture with 4 ounces of softened cream cheese, 1/4 cup of grated Parmesan cheese, 1/4 cup of shredded mozzarella cheese, and 1/4 teaspoon of red pepper flakes. Mix until well combined. Stuff each chicken breast pocket with an equal amount of the spinach mixture. Seal the pocket with a toothpick if necessary. In the same skillet, heat 1 tablespoon of olive oil over medium-high heat. Add the stuffed chicken breasts and sear on each side for 3-4 minutes, or until golden brown."
-    ]
+  texts: [
+    "Begin by preheating your oven to 375°F (190°C). Prepare four boneless, skinless chicken breasts by cutting a pocket into the side of each breast, being careful not to cut all the way through. Season the chicken with salt and pepper to taste. In a large skillet, melt 2 tablespoons of unsalted butter over medium heat. Add 1 small diced onion and 2 minced garlic cloves, and cook until softened, about 3-4 minutes. Add 8 ounces of fresh spinach and cook until wilted, about 3 minutes. Remove the skillet from heat and let the mixture cool slightly.",
+      "In a bowl, combine the spinach mixture with 4 ounces of softened cream cheese, 1/4 cup of grated Parmesan cheese, 1/4 cup of shredded mozzarella cheese, and 1/4 teaspoon of red pepper flakes. Mix until well combined. Stuff each chicken breast pocket with an equal amount of the spinach mixture. Seal the pocket with a toothpick if necessary. In the same skillet, heat 1 tablespoon of olive oil over medium-high heat. Add the stuffed chicken breasts and sear on each side for 3-4 minutes, or until golden brown."
+  ]
 )
 ```
 
@@ -371,8 +371,8 @@ Supported file formats: docx, html, pdf, text, json, jsonl, csv, xlsx.
 Retrieve similar documents based on the query string passed in:
 ```ruby
 client.similarity_search(
-    query:,
-    k:       # number of results to be retrieved
+  query:,
+  k:       # number of results to be retrieved
 )
 ```
 
@@ -384,17 +384,20 @@ client.similarity_search_with_hyde()
 Retrieve similar documents based on the embedding passed in:
 ```ruby
 client.similarity_search_by_vector(
-    embedding:,
-    k:       # number of results to be retrieved
+  embedding:,
+  k:       # number of results to be retrieved
 )
 ```
 
 RAG-based querying
 ```ruby
 client.ask(
-    question:
+  question:
 )
 ```
+
+## Building chat bot
+[TODO: Add info about the conversation class]
 
 ##### Open AI Function calls support
 
@@ -413,9 +416,6 @@ qdrant:
 ```ruby
 client.llm.functions = functions
 ```
-
-## Building chat bot
-[TODO: Add info about the conversation class]
 
 ## Examples
 Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
