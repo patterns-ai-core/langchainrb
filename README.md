@@ -64,43 +64,50 @@ Langchain.rb wraps all supported LLMs in a unified interface allowing you to eas
 | [Ollama](https://ollama.ai/)                     | :white_check_mark: | :white_check_mark: | ❌                  | ❌                 |                    |
 | [Replicate](https://replicate.com/)              | :white_check_mark: | :white_check_mark: | :white_check_mark:  | :white_check_mark: |                    |
 
-#### Using standalone LLMs
+#### Using standalone LLMs:
 
 #### OpenAI
 
 Add `gem "ruby-openai", "~> 5.2.0"` to your Gemfile.
 
 ```ruby
-openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 ```
 You can pass additional parameters to the constructor, it will be passed to the OpenAI client:
 ```ruby
-openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"], llm_options: {uri_base: "http://localhost:1234"}) )
+llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"], llm_options: {uri_base: "http://localhost:1234"}) )
 ```
+
+Generate vector embeddings:
 ```ruby
-openai.embed(text: "foo bar")
+llm.embed(text: "foo bar")
 ```
+
+Generate a text completion:
 ```ruby
-openai.complete(prompt: "What is the meaning of life?")
+llm.complete(prompt: "What is the meaning of life?")
+```
+
+Generate a chat completion:
+```ruby
+llm.chat(prompt: "Hey! How are you?")
+```
+
+Summarize the text:
+```ruby
+llm.complete(text: "...")
 ```
 
 You can use any other LLM by invoking the same interface:
 ```ruby
-llm = Langchain::LLM::[LLM-provider-name].new(...)
+llm = Langchain::LLM::GooglePalm.new(...)
 ```
 
 ### Prompt Management 📋
 
 #### Prompt Templates
 
-Create a prompt with one input variable:
-
-```ruby
-prompt = Langchain::Prompt::PromptTemplate.new(template: "Tell me a {adjective} joke.", input_variables: ["adjective"])
-prompt.format(adjective: "funny") # "Tell me a funny joke."
-```
-
-Create a prompt with multiple input variables:
+Create a prompt with input variables:
 
 ```ruby
 prompt = Langchain::Prompt::PromptTemplate.new(template: "Tell me a {adjective} joke about {content}.", input_variables: ["adjective", "content"])
