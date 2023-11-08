@@ -29,6 +29,8 @@ module Langchain
           "gpt-4-32k" => 32768,
           "gpt-4-32k-0314" => 32768,
           "gpt-4-32k-0613" => 32768,
+          "gpt-4-1106-preview" => 128000,
+          "gpt-4-vision-preview" => 128000,
           "text-curie-001" => 2049,
           "text-babbage-001" => 2049,
           "text-ada-001" => 2049,
