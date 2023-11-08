@@ -119,6 +119,7 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
     let(:question) { 'How many times is "lorem" mentioned in this text?' }
     let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
     let(:answer) { "5 times" }
+    let(:response) { double(completion: answer) }
     let(:k) { 4 }
 
     before do
@@ -127,11 +128,12 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
 
     context "without block" do
       before do
-        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
+        expect(response).to receive(:context=).with(text)
       end
 
       it "asks a question and returns the answer" do
-        expect(subject.ask(question: question)).to eq(answer)
+        expect(subject.ask(question: question).completion).to eq(answer)
       end
     end
 

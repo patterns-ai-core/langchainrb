@@ -137,7 +137,9 @@ module Langchain::Vectorsearch
 
       prompt = generate_rag_prompt(question: question, context: context)
 
-      llm.chat(prompt: prompt, &block)
+      response = llm.chat(prompt: prompt, &block)
+      response.context = context
+      response
     end
   end
 end
