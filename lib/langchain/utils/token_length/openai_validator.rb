@@ -10,6 +10,14 @@ module Langchain
       # It is used to validate the token length before the API call is made
       #
       class OpenAIValidator < BaseValidator
+        COMPLETION_TOKEN_LIMITS = {
+          # GPT-4 Turbo has a separate token limit for completion
+          # Source:
+          # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
+          "gpt-4-1106-preview" => 4096,
+          "gpt-4-vision-preview" => 4096
+        }
+
         TOKEN_LIMITS = {
           # Source:
           # https://platform.openai.com/docs/api-reference/embeddings
@@ -54,6 +62,10 @@ module Langchain
 
         def self.token_limit(model_name)
           TOKEN_LIMITS[model_name]
+        end
+
+        def self.completion_token_limit(model_name)
+          COMPLETION_TOKEN_LIMITS[model_name] || token_limit(model_name)
         end
       end
     end
