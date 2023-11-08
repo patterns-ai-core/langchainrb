@@ -46,7 +46,7 @@ module Langchain
         def self.token_limit(model_name)
           TOKEN_LIMITS.dig(model_name, "input_token_limit")
         end
-        alias_method :completion_token_limit, :token_limit
+        singleton_class.alias_method :completion_token_limit, :token_limit
       end
     end
   end
