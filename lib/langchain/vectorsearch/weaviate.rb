@@ -6,7 +6,7 @@ module Langchain::Vectorsearch
     # Wrapper around Weaviate
     #
     # Gem requirements:
-    #     gem "weaviate-ruby", "~> 0.8.3"
+    #     gem "weaviate-ruby", "~> 0.8.9"
     #
     # Usage:
     #     weaviate = Langchain::Vectorsearch::Weaviate.new(url:, api_key:, index_name:, llm:)
