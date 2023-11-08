@@ -129,7 +129,7 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
     context "without block" do
       before do
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
-        expect(response).to receive("context=").with(text)
+        expect(response).to receive(:context=).with(text)
       end
 
       it "asks a question and returns the answer" do

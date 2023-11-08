@@ -363,7 +363,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
           query: question, namespace: "", filter: nil, k: k
         ).and_return(matches)
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
-        expect(response).to receive("context=").with(metadata.to_s)
+        expect(response).to receive(:context=).with(metadata.to_s)
       end
 
       it "asks a question" do
@@ -377,7 +377,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
           query: question, namespace: namespace, filter: nil, k: k
         ).and_return(matches)
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
-        expect(response).to receive("context=").with(metadata.to_s)
+        expect(response).to receive(:context=).with(metadata.to_s)
       end
 
       it "asks a question" do
@@ -391,7 +391,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
           query: question, namespace: "", filter: filter, k: k
         ).and_return(matches)
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
-        expect(response).to receive("context=").with(metadata.to_s)
+        expect(response).to receive(:context=).with(metadata.to_s)
       end
 
       it "asks a question" do

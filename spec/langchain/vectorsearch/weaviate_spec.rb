@@ -189,7 +189,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     context "without block" do
       before do
         allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
-        expect(response).to receive("context=").with(matches[0]["content"])
+        expect(response).to receive(:context=).with(matches[0]["content"])
       end
 
       it "asks a question and returns the answer" do
