@@ -5,6 +5,9 @@ module Langchain
     class BaseResponse
       attr_reader :raw_response, :model
 
+      # Save context in the response when doing RAG workflow vectorsearch#ask()
+      attr_accessor :context
+
       def initialize(raw_response, model: nil)
         @raw_response = raw_response
         @model = model
