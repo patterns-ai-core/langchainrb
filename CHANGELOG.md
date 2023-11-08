@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.7.3] - 2023-11-08
+- LLM response passes through the context in RAG cases 
+- Fix gpt-4 token length validation
+
 ## [0.7.2] - 2023-11-02
 - Azure OpenAI LLM support
 
