@@ -47,11 +47,11 @@ module Langchain::LLM
 
     SUPPORTED_COMPLETION_PROVIDERS = %i[anthropic cohere ai21].freeze
 
-    def initialize(llm_options: {}, default_options: {})
+    def initialize(model: DEFAULTS[:completion_model_name], aws_client_options: {}, default_options: {})
       depends_on "aws-sdk-bedrockruntime", req: "aws-sdk-bedrockruntime"
 
-      @client = ::Aws::BedrockRuntime::Client.new(**llm_options)
-      @defaults = DEFAULTS.merge(default_options)
+      @client = ::Aws::BedrockRuntime::Client.new(**aws_client_options)
+      @defaults = DEFAULTS.merge(default_options).merge(completion_model_name: model)
     end
 
     #
