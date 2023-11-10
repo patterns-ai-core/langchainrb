@@ -45,6 +45,7 @@ Gem::Specification.new do |spec|
   # optional dependencies
   spec.add_development_dependency "ai21", "~> 0.2.1"
   spec.add_development_dependency "anthropic", "~> 0.1.0"
+  spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.1"
   spec.add_development_dependency "chroma-db", "~> 0.6.0"
   spec.add_development_dependency "cohere-ruby", "~> 0.9.7"
   spec.add_development_dependency "docx", "~> 0.8.0"
