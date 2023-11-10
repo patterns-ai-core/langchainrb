@@ -5,6 +5,10 @@ require "aws-sdk-bedrockruntime"
 RSpec.describe Langchain::LLM::AwsBedrock do
   let(:subject) { described_class.new }
 
+  before do
+    stub_const("ENV", ENV.to_hash.merge(AWS_REGION: "us-east-1"))
+  end
+
   describe "#complete" do
     context "with anthropic provider" do
       let(:response) do
