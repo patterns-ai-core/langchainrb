@@ -12,6 +12,7 @@ module Langchain::LLM
   class AwsBedrock < Base
     DEFAULTS = {
       completion_model_name: "anthropic.claude-v2",
+      embedding_model_name: "amazon.titan-embed-text-v1",
       max_tokens_to_sample: 300,
       temperature: 1,
       top_k: 250,
@@ -46,12 +47,38 @@ module Langchain::LLM
     }.freeze
 
     SUPPORTED_COMPLETION_PROVIDERS = %i[anthropic cohere ai21].freeze
+    SUPPORTED_EMBEDDING_PROVIDERS = %i[amazon].freeze
 
-    def initialize(model: DEFAULTS[:completion_model_name], aws_client_options: {}, default_options: {})
+    def initialize(completion_model: DEFAULTS[:completion_model_name], embedding_model: DEFAULTS[:embedding_model_name], aws_client_options: {}, default_options: {})
       depends_on "aws-sdk-bedrockruntime", req: "aws-sdk-bedrockruntime"
 
       @client = ::Aws::BedrockRuntime::Client.new(**aws_client_options)
-      @defaults = DEFAULTS.merge(default_options).merge(completion_model_name: model)
+      @defaults = DEFAULTS.merge(default_options)
+        .merge(completion_model_name: completion_model)
+        .merge(embedding_model_name: embedding_model)
+    end
+
+    #
+    # Generate an embedding for a given text
+    #
+    # @param text [String] The text to generate an embedding for
+    # @param params extra parameters passed to Aws::BedrockRuntime::Client#invoke_model
+    # @return [Langchain::LLM::AwsTitanResponse] Response object
+    #
+    def embed(text:, **params)
+      raise "Completion provider #{embedding_provider} is not supported." unless SUPPORTED_EMBEDDING_PROVIDERS.include?(embedding_provider)
+
+      parameters = {inputText: text}
+      parameters = parameters.merge(params)
+
+      response = client.invoke_model({
+        model_id: @defaults[:embedding_model_name],
+        body: parameters.to_json,
+        content_type: "application/json",
+        accept: "application/json"
+      })
+
+      Langchain::LLM::AwsTitanResponse.new(JSON.parse(response.body.string))
     end
 
     #
@@ -84,6 +111,10 @@ module Langchain::LLM
 
     def completion_provider
       @defaults[:completion_model_name].split(".").first.to_sym
+    end
+
+    def embedding_provider
+      @defaults[:embedding_model_name].split(".").first.to_sym
     end
 
     def wrap_prompt(prompt)
