@@ -58,6 +58,7 @@ Langchain.rb wraps all supported LLMs in a unified interface allowing you to eas
 | [OpenAI](https://openai.com/)                    | :white_check_mark: | :white_check_mark: | :white_check_mark:  | ❌                 | Including Azure OpenAI |
 | [AI21](https://ai21.com/)                        | ❌                 | :white_check_mark: | ❌                  | :white_check_mark: |                    |
 | [Anthropic](https://milvus.io/)                  | ❌                 | :white_check_mark: | ❌                  | ❌                 |                    |
+| [AWS Bedrock](https://aws.amazon.com/bedrock)    | :white_check_mark: | :white_check_mark: | ❌                  | ❌                 | Provides AWS, Cohere, AI21, Antropic and Stability AI models |
 | [Cohere](https://www.pinecone.io/)               | :white_check_mark: | :white_check_mark: | :white_check_mark:  | :white_check_mark: |                    |
 | [GooglePalm](https://ai.google/discover/palm2/) | :white_check_mark: | :white_check_mark: | :white_check_mark:  | :white_check_mark: |                    |
 | [HuggingFace](https://huggingface.co/)          | :white_check_mark: | ❌                 | ❌                  | ❌                 |                    |
