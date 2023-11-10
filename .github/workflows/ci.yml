@@ -11,6 +11,7 @@ jobs:
   tests:
     env:
       POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      AWS_REGION: us-east-2
 
     runs-on: ubuntu-latest
     strategy:
