@@ -94,8 +94,6 @@ module Langchain::LLM
       parameters = compose_parameters params
 
       parameters[:prompt] = wrap_prompt prompt
-      # TODO Validate Max Tokens
-      # parameters[max_tokens_key] = validate_max_tokens(prompt, parameters[:completion_model_name])
 
       response = client.invoke_model({
         model_id: @defaults[:completion_model_name],
@@ -152,21 +150,6 @@ module Langchain::LLM
         Langchain::LLM::CohereResponse.new(JSON.parse(response.body.string))
       elsif completion_provider == :ai21
         Langchain::LLM::AI21Response.new(JSON.parse(response.body.string, symbolize_names: true))
-      end
-    end
-
-    def validate_max_tokens(prompt, model_name)
-      if completion_provider == :anthropic
-        # TODO: Implement token length validator for Anthropic
-        # Langchain::Utils::TokenLength::AnthropicValidator.validate_max_tokens!(prompt, model_name, client)
-      elsif completion_provider == :cohere
-        cohere_client = ::Cohere::Client.new("")
-        Langchain::Utils::TokenLength::CohereValidator.validate_max_tokens!(prompt, model_name, cohere_client)
-      elsif completion_provider == :ai21
-        ai21_client = ::AI21::Client.new("")
-        Langchain::Utils::TokenLength::AI21Validator.validate_max_tokens!(prompt, model_name, ai21_client)
-      else
-        raise NotImplementedError, "Completion provider #{completion_provider} is not supported."
       end
     end
 
