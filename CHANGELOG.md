@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.7.4] - 2023-11-10
+- AWS Bedrock is available as an LLM provider. Available models from AI21, Cohere, AWS, and Anthropic.
+
 ## [0.7.3] - 2023-11-08
 - LLM response passes through the context in RAG cases 
 - Fix gpt-4 token length validation
