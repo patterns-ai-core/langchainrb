@@ -317,6 +317,4 @@ RSpec.describe Langchain::Conversation do
       expect(chat_chunks).to include(response_chunk)
     end
   end
-
-
 end
