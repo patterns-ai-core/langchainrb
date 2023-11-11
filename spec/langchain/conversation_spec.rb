@@ -39,13 +39,13 @@ RSpec.describe Langchain::Conversation do
       let(:block) { proc { |chunk| chunk } }
       let(:conversation) { described_class.new(llm: llm, &block) }
       let(:response_chunks) { ["I'm doing well. ", "How about you?"] }
-  
+
       before do
         allow(llm).to receive(:chat) do |&block|
           response_chunks.each { |chunk| block.call(chunk) }
         end
       end
-  
+
       it "messages the model and yields the response" do
         ai_response = conversation.message(prompt)
         expect(ai_response).to eq(Langchain::Conversation::Response.new(response.chat_completion))
@@ -297,5 +297,5 @@ RSpec.describe Langchain::Conversation do
         expect(subject.message(prompt).content).to eq("I'm doing well. How about you?")
       end
     end
-  end  
+  end
 end
