@@ -58,7 +58,18 @@ module Langchain
     # @return [Response] The response from the model
     def message(message)
       @memory.append_message ::Langchain::Conversation::Prompt.new(message)
-      ai_message = ::Langchain::Conversation::Response.new(llm_response.chat_completion)
+
+      if @block
+        response_content = []
+        @llm.chat(messages: @memory.messages.map(&:to_h), context: @memory.context&.to_s, examples: @memory.examples.map(&:to_h), **@options) do |chunk|
+          response_content << chunk
+          @block.call(chunk)
+        end
+        ai_message_content = response_content.join
+      else
+        ai_message_content = llm_response.chat_completion
+      end
+      ai_message = ::Langchain::Conversation::Response.new(ai_message_content)
       @memory.append_message(ai_message)
       ai_message
     end

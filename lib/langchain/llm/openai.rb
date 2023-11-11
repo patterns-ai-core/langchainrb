@@ -182,7 +182,7 @@ module Langchain::LLM
 
       if block
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk.dig("choices", 0)
+          yield chunk.dig("choices", 0, "delta", "content")
         end
       end
 

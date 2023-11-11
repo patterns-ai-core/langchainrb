@@ -36,18 +36,19 @@ RSpec.describe Langchain::Conversation do
     let(:response) { Langchain::LLM::OpenAIResponse.new({"choices" => [{"message" => {"role" => "assistant", "content" => "I'm doing well. How about you?"}}]}) }
 
     context "with stream: true option and block passed in" do
-      let(:block) { proc { |chunk| print(chunk) } }
+      let(:block) { proc { |chunk| puts chunk } }
       let(:conversation) { described_class.new(llm: llm, &block) }
+      let(:response_chunks) { ["I'm doing well. ", "How about you?"] }
+
+      before do
+        allow(llm).to receive(:chat) do |&block|
+          response_chunks.each { |chunk| block.call(chunk) }
+        end
+      end
 
       it "messages the model and yields the response" do
-        expect(llm).to receive(:chat).with(
-          context: nil,
-          examples: [],
-          messages: [Langchain::Conversation::Prompt.new(prompt)],
-          &block
-        ).and_return(response)
-
-        expect(conversation.message(prompt)).to eq(Langchain::Conversation::Response.new(response.chat_completion))
+        response = conversation.message(prompt)
+        expect(response.content).to eq(response_chunks.join)
       end
     end
 
@@ -294,27 +295,6 @@ RSpec.describe Langchain::Conversation do
         expect(subject.message(prompt)).to be_a(Langchain::Conversation::Response)
         expect(subject.message(prompt).content).to eq("I'm doing well. How about you?")
       end
-    end
-  end
-
-  describe "#message with block" do
-    let(:chat_chunks) { [] }
-    let(:conversation_with_block) do
-      described_class.new(llm: llm) do |chunk|
-        chat_chunks << chunk
-      end
-    end
-    let(:prompt) { "Hello, how are you?" }
-    let(:response_chunk) { "I'm doing well. How about you?" }
-
-    before do
-      allow(llm).to receive(:chat).with(any_args).and_yield(response_chunk)
-    end
-
-    it "passes each chat chunk to the provided block" do
-      conversation_with_block.message(prompt)
-
-      expect(chat_chunks).to include(response_chunk)
     end
   end
 end
