@@ -36,16 +36,16 @@ RSpec.describe Langchain::Conversation do
     let(:response) { Langchain::LLM::OpenAIResponse.new({"choices" => [{"message" => {"role" => "assistant", "content" => "I'm doing well. How about you?"}}]}) }
 
     context "with stream: true option and block passed in" do
-      let(:block) { proc { |chunk| puts chunk } }
+      let(:block) { proc { |chunk| chunk } }
       let(:conversation) { described_class.new(llm: llm, &block) }
       let(:response_chunks) { ["I'm doing well. ", "How about you?"] }
-
+  
       before do
         allow(llm).to receive(:chat) do |&block|
           response_chunks.each { |chunk| block.call(chunk) }
         end
       end
-
+  
       it "messages the model and yields the response" do
         response = conversation.message(prompt)
         expect(response.content).to eq(response_chunks.join)
@@ -296,5 +296,5 @@ RSpec.describe Langchain::Conversation do
         expect(subject.message(prompt).content).to eq("I'm doing well. How about you?")
       end
     end
-  end
+  end  
 end
