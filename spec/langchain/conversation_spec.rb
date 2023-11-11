@@ -296,4 +296,27 @@ RSpec.describe Langchain::Conversation do
       end
     end
   end
+
+  describe "#message with block" do
+    let(:chat_chunks) { [] }
+    let(:conversation_with_block) do
+      described_class.new(llm: llm) do |chunk|
+        chat_chunks << chunk
+      end
+    end
+    let(:prompt) { "Hello, how are you?" }
+    let(:response_chunk) { "I'm doing well. How about you?" }
+
+    before do
+      allow(llm).to receive(:chat).with(any_args).and_yield(response_chunk)
+    end
+
+    it "passes each chat chunk to the provided block" do
+      conversation_with_block.message(prompt)
+
+      expect(chat_chunks).to include(response_chunk)
+    end
+  end
+
+
 end
