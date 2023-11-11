@@ -47,8 +47,9 @@ RSpec.describe Langchain::Conversation do
       end
   
       it "messages the model and yields the response" do
-        response = conversation.message(prompt)
-        expect(response.content).to eq(response_chunks.join)
+        ai_response = conversation.message(prompt)
+        expect(ai_response).to eq(Langchain::Conversation::Response.new(response.chat_completion))
+        expect(ai_response.content).to eq(response_chunks.join)
       end
     end
 
