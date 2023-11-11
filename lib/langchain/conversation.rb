@@ -69,6 +69,7 @@ module Langchain
       else
         ai_message_content = llm_response.chat_completion
       end
+
       ai_message = ::Langchain::Conversation::Response.new(ai_message_content)
       @memory.append_message(ai_message)
       ai_message
