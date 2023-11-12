@@ -67,6 +67,12 @@ module Langchain
         def self.completion_token_limit(model_name)
           COMPLETION_TOKEN_LIMITS[model_name] || token_limit(model_name)
         end
+
+        # If :max_tokens is passed in, take the lower of it and the calculated max_tokens
+        def self.validate_max_tokens!(content, model_name, options = {})
+          max_tokens = super(content, model_name, options)
+          [options[:max_tokens], max_tokens].reject(&:nil?).min
+        end
       end
     end
   end
