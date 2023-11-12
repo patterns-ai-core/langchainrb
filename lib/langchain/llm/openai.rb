@@ -137,9 +137,6 @@ module Langchain::LLM
 
       response = with_api_error_handling { client.chat(parameters: parameters) }
       response = response_from_chunks if block
-      if block
-        puts "response: #{response.inspect}"
-      end
       Langchain::LLM::OpenAIResponse.new(response)
     end
 
