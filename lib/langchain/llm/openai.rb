@@ -29,6 +29,8 @@ module Langchain::LLM
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
 
     attr_accessor :functions
+    attr_accessor :response_chunks
+    attr_accessor :response_metadata
 
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai", req: "openai"
@@ -135,8 +137,7 @@ module Langchain::LLM
       end
 
       response = with_api_error_handling { client.chat(parameters: parameters) }
-
-      return if block
+      response = response_from_chunks if block
 
       Langchain::LLM::OpenAIResponse.new(response)
     end
@@ -181,8 +182,11 @@ module Langchain::LLM
       parameters = default_params.merge(params)
 
       if block
+        @response_chunks = []
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk.dig("choices", 0, "delta", "content")
+          chunk_content = chunk.dig("choices", 0)
+          @response_chunks << chunk
+          yield chunk_content
         end
       end
 
@@ -238,5 +242,23 @@ module Langchain::LLM
       results = response.dig("choices").map { |choice| choice.dig("message", "content") }
       (results.size == 1) ? results.first : results
     end
+    
+    def response_from_chunks
+      {
+        id: @response_chunks.first&.dig("id"),
+        object: @response_chunks.first&.dig("object"),
+        created: @response_chunks.first&.dig("created"),
+        model: @response_chunks.first&.dig("model"),
+        choices: [
+          {
+            message: {
+              role: "assistant",
+              content: @response_chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
+            }
+          }
+        ]        
+      }
+    end
+
   end
 end
