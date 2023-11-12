@@ -242,7 +242,7 @@ module Langchain::LLM
       results = response.dig("choices").map { |choice| choice.dig("message", "content") }
       (results.size == 1) ? results.first : results
     end
-    
+
     def response_from_chunks
       {
         id: @response_chunks.first&.dig("id"),
@@ -256,9 +256,8 @@ module Langchain::LLM
               content: @response_chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
             }
           }
-        ]        
+        ]
       }
     end
-
   end
 end
