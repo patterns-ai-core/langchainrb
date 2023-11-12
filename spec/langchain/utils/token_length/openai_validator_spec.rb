@@ -77,6 +77,28 @@ RSpec.describe Langchain::Utils::TokenLength::OpenAIValidator do
           expect(subject).to eq(0)
         end
       end
+
+      context "when :max_tokens is passed in" do
+        context "when :max_tokens is lower than the leftover tokens" do
+          subject { described_class.validate_max_tokens!(content, model, max_tokens: 10) }
+          let(:content) { "lorem ipsum" * 100 }
+          let(:model) { "gpt-4" }
+
+          it "returns the correct max_tokens" do
+            expect(subject).to eq(10)
+          end
+        end
+
+        context "when :max_tokens is greater than the leftover tokens" do
+          subject { described_class.validate_max_tokens!(content, model, max_tokens: 8000) }
+          let(:content) { "lorem ipsum" * 100 }
+          let(:model) { "gpt-4" }
+
+          it "returns the correct max_tokens" do
+            expect(subject).to eq(7892)
+          end
+        end
+      end
     end
 
     context "with array argument" do

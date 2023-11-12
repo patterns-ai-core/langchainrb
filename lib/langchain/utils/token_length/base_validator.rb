@@ -20,16 +20,22 @@ module Langchain
           end
 
           leftover_tokens = token_limit(model_name) - text_token_length
-          # Some models have a separate token limit for completion (e.g. GPT-4 Turbo)
+
+          # Some models have a separate token limit for completions (e.g. GPT-4 Turbo)
           # We want the lower of the two limits
-          leftover_tokens = [leftover_tokens, completion_token_limit(model_name)].min
+          max_tokens = [leftover_tokens, completion_token_limit(model_name)].min
+
+          # If :max_tokens is passed in, take the lower of it and the calculated max_tokens
+          unless options[:max_tokens].nil?
+            max_tokens = [max_tokens, options[:max_tokens]].min
+          end
 
           # Raise an error even if whole prompt is equal to the model's token limit (leftover_tokens == 0)
-          if leftover_tokens < 0
+          if max_tokens < 0
             raise limit_exceeded_exception(token_limit(model_name), text_token_length)
           end
 
-          leftover_tokens
+          max_tokens
         end
 
         def self.limit_exceeded_exception(limit, length)
