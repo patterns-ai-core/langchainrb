@@ -30,7 +30,6 @@ module Langchain::LLM
 
     attr_accessor :functions
     attr_accessor :response_chunks
-    attr_accessor :response_metadata
 
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai", req: "openai"
@@ -245,15 +244,15 @@ module Langchain::LLM
 
     def response_from_chunks
       {
-        id: @response_chunks.first&.dig("id"),
-        object: @response_chunks.first&.dig("object"),
-        created: @response_chunks.first&.dig("created"),
-        model: @response_chunks.first&.dig("model"),
-        choices: [
+        "id" => @response_chunks.first&.dig("id"),
+        "object" => @response_chunks.first&.dig("object"),
+        "created" => @response_chunks.first&.dig("created"),
+        "model" => @response_chunks.first&.dig("model"),
+        "choices" => [
           {
-            message: {
-              role: "assistant",
-              content: @response_chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
+            "message" => {
+              "role" => "assistant",
+              "content" => @response_chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
             }
           }
         ]
