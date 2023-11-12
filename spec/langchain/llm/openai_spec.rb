@@ -517,18 +517,16 @@ RSpec.describe Langchain::LLM::OpenAI do
           "choices" => [{"index" => 0, "delta" => {"content" => answer}, "finish_reason" => nil}]
         }
       end
-    
       it "handles streaming responses correctly" do
         allow(subject.client).to receive(:chat) do |parameters|
-          streamed_content << streamed_response_chunk
+          parameters[:parameters][:stream].call(streamed_response_chunk)
           streamed_response_chunk
         end
         response = subject.chat(prompt: prompt) do |chunk|
-          streamed_content << chunk
+          chunk
         end
         expect(response).to be_a(Langchain::LLM::OpenAIResponse)
-        aggregated_content = streamed_content.map { |chunk| chunk["choices"][0]["delta"]["content"] }.join
-        expect(aggregated_content).to include(answer)
+        expect(response.chat_completion).to eq(answer)
       end
     end
 
