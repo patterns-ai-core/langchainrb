@@ -44,14 +44,14 @@ module Langchain::Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array<String>] The list of texts to add
     # @return [Hash] The response from the server
-    def add_texts(texts:, ids: [], payloads: [])
+    def add_texts(texts:, ids: [], payload: {})
       batch = {ids: [], vectors: [], payloads: []}
 
       Array(texts).each_with_index do |text, i|
         id = ids[i] || SecureRandom.uuid
         batch[:ids].push(id)        
         batch[:vectors].push(llm.embed(text: text).embedding)
-        batch[:payloads].push(payloads[i] ? {content: text}.merge(payloads[i]) : {content: text})
+        batch[:payloads].push(payload.present? ? {content: text}.merge!(payload) : {content: text})
       end
 
       client.points.upsert(
