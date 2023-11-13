@@ -509,6 +509,27 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
     end
 
+    context "with streaming" do
+      let(:streamed_content) { [] }
+      let(:streamed_response_chunk) do
+        {
+          "id" => "chatcmpl-7Hcl1sXOtsaUBKJGGhNujEIwhauaD",
+          "choices" => [{"index" => 0, "delta" => {"content" => answer}, "finish_reason" => nil}]
+        }
+      end
+      it "handles streaming responses correctly" do
+        allow(subject.client).to receive(:chat) do |parameters|
+          parameters[:parameters][:stream].call(streamed_response_chunk)
+          streamed_response_chunk
+        end
+        response = subject.chat(prompt: prompt) do |chunk|
+          chunk
+        end
+        expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+        expect(response.chat_completion).to eq(answer)
+      end
+    end
+
     context "with failed API call" do
       let(:response) do
         {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
