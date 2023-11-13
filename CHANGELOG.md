@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.7.5] - 2023-11-13
+- Fixes
+
 ## [0.7.4] - 2023-11-10
 - AWS Bedrock is available as an LLM provider. Available models from AI21, Cohere, AWS, and Anthropic.
 

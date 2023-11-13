@@ -10,7 +10,7 @@ GIT
 PATH
   remote: .
   specs:
-    langchainrb (0.7.4)
+    langchainrb (0.7.5)
       baran (~> 0.1.9)
       colorize (~> 0.8.1)
       json-schema (~> 4.0.0)
