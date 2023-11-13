@@ -1,5 +1,15 @@
 ## [Unreleased]
 
+## [0.7.4] - 2023-11-10
+- AWS Bedrock is available as an LLM provider. Available models from AI21, Cohere, AWS, and Anthropic.
+
+## [0.7.3] - 2023-11-08
+- LLM response passes through the context in RAG cases 
+- Fix gpt-4 token length validation
+
+## [0.7.2] - 2023-11-02
+- Azure OpenAI LLM support
+
 ## [0.7.1] - 2023-10-26
 - Ragas evals tool to evaluate Retrieval Augmented Generation (RAG) pipelines
 

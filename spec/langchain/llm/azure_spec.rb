@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::LLM::OpenAI do
-  let(:subject) { described_class.new(api_key: "123") }
+RSpec.describe Langchain::LLM::Azure do
+  let(:subject) do
+    described_class.new(
+      api_key: "123",
+      embedding_deployment_url: "http://localhost:1234/deployments/embedding",
+      chat_deployment_url: "http://localhost:1234/deployments/chat"
+    )
+  end
 
   describe "#initialize" do
     context "when only required options are passed" do
@@ -11,7 +17,14 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     context "when llm_options are passed" do
-      let(:subject) { described_class.new(api_key: "123", llm_options: {uri_base: "http://localhost:1234"}) }
+      let(:subject) do
+        described_class.new(
+          api_key: "123",
+          llm_options: {api_type: :azure},
+          embedding_deployment_url: "http://localhost:1234/deployments/embedding",
+          chat_deployment_url: "http://localhost:1234/deployments/chat"
+        )
+      end
 
       it "initializes the client without any errors" do
         expect { subject }.not_to raise_error
@@ -20,7 +33,8 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "passes correct options to the client" do
         # openai-ruby sets global configuration options here: https://github.com/alexrudall/ruby-openai/blob/main/lib/openai/client.rb
         result = subject
-        expect(result.client.uri_base).to eq("http://localhost:1234")
+        expect(result.embed_client.api_type).to eq(:azure)
+        expect(result.chat_client.api_type).to eq(:azure)
       end
     end
   end
@@ -49,7 +63,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     before do
-      allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
+      allow(subject.embed_client).to receive(:embeddings).with(parameters).and_return(response)
     end
 
     it "returns valid llm response object" do
@@ -112,8 +126,8 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     before do
-      allow(subject.client).to receive(:chat).with(parameters).and_return(response)
-      allow(subject.client).to receive(:completions).with(parameters).and_return(response)
+      allow(subject.chat_client).to receive(:chat).with(parameters).and_return(response)
+      allow(subject.chat_client).to receive(:completions).with(parameters).and_return(response)
     end
 
     context "with default parameters" do
@@ -171,30 +185,6 @@ RSpec.describe Langchain::LLM::OpenAI do
             }
           }
         end
-
-        before do
-          allow(Langchain).to receive(:logger).and_return(logger)
-          allow(logger).to receive(:warn)
-        end
-
-        it "passes correct options to the completions method" do
-          expect(subject.client).to receive(:completions).with({
-            parameters: {
-              n: 1,
-              max_tokens: 4095,
-              model: "text-davinci-003",
-              prompt: "Hello World",
-              temperature: 0.0
-            }
-          }).and_return(response)
-          subject.complete(prompt: "Hello World")
-        end
-
-        it "logs a deprecation warning" do
-          expect(Langchain.logger).to receive(:warn).with("DEPRECATION WARNING: The model text-davinci-003 is deprecated. Please use gpt-3.5-turbo instead. Details: https://platform.openai.com/docs/deprecations/2023-07-06-gpt-and-embeddings")
-
-          subject.complete(prompt: "Hello World")
-        end
       end
 
       context "with new model" do
@@ -218,7 +208,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "passes correct options to the chat method" do
-          expect(subject.client).to receive(:chat).with({
+          expect(subject.chat_client).to receive(:chat).with({
             parameters: {
               n: 1,
               max_tokens: 16374,
@@ -303,7 +293,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     before do
-      allow(subject.client).to receive(:chat).with(parameters).and_return(response)
+      allow(subject.chat_client).to receive(:chat).with(parameters).and_return(response)
     end
 
     it "returns valid llm response object" do

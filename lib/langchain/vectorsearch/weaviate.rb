@@ -6,7 +6,7 @@ module Langchain::Vectorsearch
     # Wrapper around Weaviate
     #
     # Gem requirements:
-    #     gem "weaviate-ruby", "~> 0.8.3"
+    #     gem "weaviate-ruby", "~> 0.8.9"
     #
     # Usage:
     #     weaviate = Langchain::Vectorsearch::Weaviate.new(url:, api_key:, index_name:, llm:)
@@ -137,7 +137,9 @@ module Langchain::Vectorsearch
 
       prompt = generate_rag_prompt(question: question, context: context)
 
-      llm.chat(prompt: prompt, &block)
+      response = llm.chat(prompt: prompt, &block)
+      response.context = context
+      response
     end
 
     private

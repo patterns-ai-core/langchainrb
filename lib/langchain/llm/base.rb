@@ -8,6 +8,7 @@ module Langchain::LLM
   # Langchain.rb provides a common interface to interact with all supported LLMs:
   #
   # - {Langchain::LLM::AI21}
+  # - {Langchain::LLM::Azure}
   # - {Langchain::LLM::Cohere}
   # - {Langchain::LLM::GooglePalm}
   # - {Langchain::LLM::HuggingFace}

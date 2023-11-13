@@ -353,6 +353,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
   describe "#ask" do
     let(:question) { "How many times is \"lorem\" mentioned in this text?" }
     let(:prompt) { "Context:\n#{metadata}\n---\nQuestion: #{question}\n---\nAnswer:" }
+    let(:response) { double(completion: answer) }
     let(:answer) { "5 times" }
     let(:k) { 4 }
 
@@ -361,11 +362,12 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         allow(subject).to receive(:similarity_search).with(
           query: question, namespace: "", filter: nil, k: k
         ).and_return(matches)
-        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
+        expect(response).to receive(:context=).with(metadata.to_s)
       end
 
       it "asks a question" do
-        expect(subject.ask(question: question)).to eq(answer)
+        expect(subject.ask(question: question).completion).to eq(answer)
       end
     end
 
@@ -374,11 +376,12 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         allow(subject).to receive(:similarity_search).with(
           query: question, namespace: namespace, filter: nil, k: k
         ).and_return(matches)
-        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
+        expect(response).to receive(:context=).with(metadata.to_s)
       end
 
       it "asks a question" do
-        expect(subject.ask(question: question, namespace: namespace)).to eq(answer)
+        expect(subject.ask(question: question, namespace: namespace).completion).to eq(answer)
       end
     end
 
@@ -387,11 +390,12 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         allow(subject).to receive(:similarity_search).with(
           query: question, namespace: "", filter: filter, k: k
         ).and_return(matches)
-        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(answer)
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
+        expect(response).to receive(:context=).with(metadata.to_s)
       end
 
       it "asks a question" do
-        expect(subject.ask(question: question, filter: filter)).to eq(answer)
+        expect(subject.ask(question: question, filter: filter).completion).to eq(answer)
       end
     end
 
