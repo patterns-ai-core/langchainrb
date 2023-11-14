@@ -4,7 +4,7 @@ module Langchain::LLM
   # LLM interface for OpenAI APIs: https://platform.openai.com/overview
   #
   # Gem requirements:
-  #    gem "ruby-openai", "~> 5.2.0"
+  #    gem "ruby-openai", "~> 6.1.0"
   #
   # Usage:
   #    openai = Langchain::LLM::OpenAI.new(api_key:, llm_options: {})

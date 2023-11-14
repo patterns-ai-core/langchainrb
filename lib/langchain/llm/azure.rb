@@ -4,7 +4,7 @@ module Langchain::LLM
   # LLM interface for Azure OpenAI Service APIs: https://learn.microsoft.com/en-us/azure/ai-services/openai/
   #
   # Gem requirements:
-  #    gem "ruby-openai", "~> 5.2.0"
+  #    gem "ruby-openai", "~> 6.1.0"
   #
   # Usage:
   #    openai = Langchain::LLM::Azure.new(api_key:, llm_options: {}, embedding_deployment_url: chat_deployment_url:)
