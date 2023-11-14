@@ -29,7 +29,6 @@ module Langchain::LLM
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
 
     attr_accessor :functions
-    attr_accessor :response_chunks
 
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai", req: "openai"
@@ -137,6 +136,7 @@ module Langchain::LLM
 
       response = with_api_error_handling { client.chat(parameters: parameters) }
       response = response_from_chunks if block
+      reset_response_chunks
       Langchain::LLM::OpenAIResponse.new(response)
     end
 
@@ -157,6 +157,12 @@ module Langchain::LLM
     end
 
     private
+
+    attr_reader :response_chunks
+
+    def reset_response_chunks
+      @response_chunks = []
+    end
 
     def is_legacy_model?(model)
       LEGACY_COMPLETION_MODELS.any? { |legacy_model| model.include?(legacy_model) }
