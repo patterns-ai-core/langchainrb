@@ -242,18 +242,18 @@ module Langchain::LLM
     end
 
     def response_from_chunks
-      @response_chunks.first&.slice("id", "object", "created", "model")&.merge(
+      grouped_chunks = @response_chunks.group_by { |chunk| chunk.dig("choices", 0, "index") }
+      final_choices = grouped_chunks.map do |index, chunks|
         {
-          "choices" => [
-            {
-              "message" => {
-                "role" => "assistant",
-                "content" => @response_chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
-              }
-            }
-          ]
+          "index" => index,
+          "message" => {
+            "role" => "assistant",
+            "content" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
+          },
+          "finish_reason" => chunks.last.dig("choices", 0, "finish_reason")
         }
-      )
+      end
+      @response_chunks.first&.slice("id", "object", "created", "model")&.merge({"choices" => final_choices})
     end
   end
 end

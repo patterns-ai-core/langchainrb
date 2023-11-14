@@ -530,6 +530,42 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
     end
 
+    context "with streaming and multiple choices n=2" do
+      let(:streamed_content) { [] }
+      let(:answer) { "Hello how are you?" }
+      let(:answer_2) { "Alternative answer" }
+      let(:streamed_response_chunk) do
+        {
+          "id" => "chatcmpl-7Hcl1sXOtsaUBKJGGhNujEIwhauaD",
+          "choices" => [{"index" => 0, "delta" => {"content" => answer}, "finish_reason" => "stop"}]
+        }
+      end
+      let(:streamed_response_chunk_2) do
+        {
+          "id" => "chatcmpl-7Hcl1sXOtsaUBKJGGhNujEIwhauaD",
+          "choices" => [{"index" => 1, "delta" => {"content" => answer_2}, "finish_reason" => "stop"}]
+        }
+      end
+
+      it "handles streaming responses correctly" do
+        allow(subject.client).to receive(:chat) do |parameters|
+          parameters[:parameters][:stream].call(streamed_response_chunk)
+          parameters[:parameters][:stream].call(streamed_response_chunk_2)
+          streamed_response_chunk
+        end
+        response = subject.chat(prompt: prompt, n: 2) do |chunk|
+          chunk
+        end
+        expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+        expect(response.completions).to eq(
+          [
+            {"index" => 0, "message" => {"role" => "assistant", "content" => answer}, "finish_reason" => "stop"},
+            {"index" => 1, "message" => {"role" => "assistant", "content" => answer_2}, "finish_reason" => "stop"}
+          ]
+        )
+      end
+    end
+
     context "with failed API call" do
       let(:response) do
         {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
