@@ -29,7 +29,6 @@ module Langchain::LLM
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
 
     attr_accessor :functions
-    attr_accessor :response_chunks
 
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai", req: "openai"
@@ -137,6 +136,7 @@ module Langchain::LLM
 
       response = with_api_error_handling { client.chat(parameters: parameters) }
       response = response_from_chunks if block
+      reset_response_chunks
       Langchain::LLM::OpenAIResponse.new(response)
     end
 
@@ -157,6 +157,12 @@ module Langchain::LLM
     end
 
     private
+
+    attr_reader :response_chunks
+
+    def reset_response_chunks
+      @response_chunks = []
+    end
 
     def is_legacy_model?(model)
       LEGACY_COMPLETION_MODELS.any? { |legacy_model| model.include?(legacy_model) }
@@ -242,18 +248,18 @@ module Langchain::LLM
     end
 
     def response_from_chunks
-      @response_chunks.first&.slice("id", "object", "created", "model")&.merge(
+      grouped_chunks = @response_chunks.group_by { |chunk| chunk.dig("choices", 0, "index") }
+      final_choices = grouped_chunks.map do |index, chunks|
         {
-          "choices" => [
-            {
-              "message" => {
-                "role" => "assistant",
-                "content" => @response_chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
-              }
-            }
-          ]
+          "index" => index,
+          "message" => {
+            "role" => "assistant",
+            "content" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
+          },
+          "finish_reason" => chunks.last.dig("choices", 0, "finish_reason")
         }
-      )
+      end
+      @response_chunks.first&.slice("id", "object", "created", "model")&.merge({"choices" => final_choices})
     end
   end
 end
