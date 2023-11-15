@@ -1,3 +1,6 @@
+# Please fill out the [Ruby AI Survey 2023](https://docs.google.com/forms/d/1dH_0js1wpEyh1YqPTOxU3b5fXj76sb5lYp12lVoNNZE/edit).
+Results will be anonymized and shared!
+
 💎🔗 Langchain.rb
 ---
 ⚡ Building LLM-powered applications in Ruby ⚡
