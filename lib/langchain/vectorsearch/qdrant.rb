@@ -49,9 +49,9 @@ module Langchain::Vectorsearch
 
       Array(texts).each_with_index do |text, i|
         id = ids[i] || SecureRandom.uuid
-        batch[:ids].push(id)        
+        batch[:ids].push(id)
         batch[:vectors].push(llm.embed(text: text).embedding)
-        batch[:payloads].push(payload.present? ? {content: text}.merge!(payload) : {content: text})
+        batch[:payloads].push({content: text}.merge(payload))
       end
 
       client.points.upsert(
