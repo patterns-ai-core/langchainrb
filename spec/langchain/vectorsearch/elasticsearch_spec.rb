@@ -245,7 +245,7 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
 
     before do
       response = [
-        {_id: 1, input: text, input_vector: [0.1, 0.5, 0.6]},
+        {_id: 1, input: text, input_vector: [0.1, 0.5, 0.6]}
       ]
       allow(subject).to receive(:similarity_search).with(query: question, k: 4).and_return(response)
     end
