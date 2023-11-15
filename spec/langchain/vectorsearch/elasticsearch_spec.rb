@@ -234,4 +234,52 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
       expect { subject.similarity_search_by_vector }.to raise_error("Either embedding or query should pass as an argument")
     end
   end
+
+  describe "#ask" do
+    let(:question) { "How many times is 'lorem' mentioned in this text?" }
+    let(:text) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor." }
+    let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
+    let(:response) { double(completion: answer) }
+    let(:answer) { "5 times" }
+    let(:k) { 4 }
+
+    before do
+      response = [
+        {_id: 1, input: text, input_vector: [0.1, 0.5, 0.6]}
+      ]
+      allow(subject).to receive(:similarity_search).with(query: question, k: 4).and_return(response)
+    end
+
+    context "without block" do
+      before do
+        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
+        expect(response).to receive(:context=).with(text)
+      end
+
+      it "asks a question and returns the answer" do
+        expect(subject.ask(question: question, k: 4).completion).to eq(answer)
+      end
+    end
+
+    context "with block" do
+      let(:block) { proc { |chunk| puts "Received chunk: #{chunk}" } }
+
+      before do
+        allow(subject.llm).to receive(:chat) do |parameters|
+          if parameters[:prompt] == prompt && parameters[:stream].is_a?(Proc)
+            parameters[:stream].call("Received chunk from llm.chat")
+          end
+        end
+      end
+
+      it "asks a question and yields the chunk to the block" do
+        expect do
+          captured_output = capture(:stdout) do
+            subject.ask(question: question, &block)
+          end
+          expect(captured_output).to match(/Received chunk from llm.chat/)
+        end
+      end
+    end
+  end
 end
