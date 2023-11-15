@@ -4,7 +4,7 @@ module Langchain::LLM
   # LLM interface for OpenAI APIs: https://platform.openai.com/overview
   #
   # Gem requirements:
-  #    gem "ruby-openai", "~> 5.2.0"
+  #    gem "ruby-openai", "~> 6.1.0"
   #
   # Usage:
   #    openai = Langchain::LLM::OpenAI.new(api_key:, llm_options: {})
@@ -135,9 +135,8 @@ module Langchain::LLM
       end
 
       response = with_api_error_handling { client.chat(parameters: parameters) }
-
-      return if block
-
+      response = response_from_chunks if block
+      reset_response_chunks
       Langchain::LLM::OpenAIResponse.new(response)
     end
 
@@ -158,6 +157,12 @@ module Langchain::LLM
     end
 
     private
+
+    attr_reader :response_chunks
+
+    def reset_response_chunks
+      @response_chunks = []
+    end
 
     def is_legacy_model?(model)
       LEGACY_COMPLETION_MODELS.any? { |legacy_model| model.include?(legacy_model) }
@@ -181,8 +186,11 @@ module Langchain::LLM
       parameters = default_params.merge(params)
 
       if block
+        @response_chunks = []
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk.dig("choices", 0)
+          chunk_content = chunk.dig("choices", 0)
+          @response_chunks << chunk
+          yield chunk_content
         end
       end
 
@@ -237,6 +245,21 @@ module Langchain::LLM
     def extract_response(response)
       results = response.dig("choices").map { |choice| choice.dig("message", "content") }
       (results.size == 1) ? results.first : results
+    end
+
+    def response_from_chunks
+      grouped_chunks = @response_chunks.group_by { |chunk| chunk.dig("choices", 0, "index") }
+      final_choices = grouped_chunks.map do |index, chunks|
+        {
+          "index" => index,
+          "message" => {
+            "role" => "assistant",
+            "content" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
+          },
+          "finish_reason" => chunks.last.dig("choices", 0, "finish_reason")
+        }
+      end
+      @response_chunks.first&.slice("id", "object", "created", "model")&.merge({"choices" => final_choices})
     end
   end
 end
