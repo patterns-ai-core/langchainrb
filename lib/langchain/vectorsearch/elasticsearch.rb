@@ -125,13 +125,14 @@ module Langchain::Vectorsearch
       search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
-        result.content.to_s
-      end
-      context = context.join("\n---\n")
+        result[:input]
+      end.join("\n---\n")
 
       prompt = generate_rag_prompt(question: question, context: context)
 
-      llm.chat(prompt: prompt, &block)
+      response = llm.chat(prompt: prompt, &block)
+      response.context = context
+      response
     end
 
     def similarity_search(text: "", k: 10, query: {})
