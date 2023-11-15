@@ -46,6 +46,9 @@ module Langchain::Vectorsearch
       super(llm: llm)
     end
 
+    # Add a list of texts to the index
+    # @param texts [Array<String>] The list of texts to add
+    # @return [Elasticsearch::Response] from the Elasticsearch server
     def add_texts(texts: [])
       body = texts.map do |text|
         [
@@ -57,6 +60,10 @@ module Langchain::Vectorsearch
       es_client.bulk(body: body)
     end
 
+    # Add a list of texts to the index
+    # @param texts [Array<String>] The list of texts to update
+    # @param texts [Array<Integer>] The list of texts to update
+    # @return [Elasticsearch::Response] from the Elasticsearch server
     def update_texts(texts: [], ids: [])
       body = texts.map.with_index do |text, i|
         [
@@ -68,6 +75,8 @@ module Langchain::Vectorsearch
       es_client.bulk(body: body)
     end
 
+    # Create the index with the default schema
+    # @return [Elasticsearch::Response] Index creation
     def create_default_schema
       es_client.indices.create(
         index: index_name,
@@ -75,6 +84,8 @@ module Langchain::Vectorsearch
       )
     end
 
+    # Deletes the default schema
+    # @return [Elasticsearch::Response] Index deletion
     def delete_default_schema
       es_client.indices.delete(
         index: index_name
@@ -135,6 +146,11 @@ module Langchain::Vectorsearch
       response
     end
 
+    # Search for similar texts
+    # @param text [String] The text to search for
+    # @param k [Integer] The number of results to return
+    # @param query [Hash] Elasticsearch query that needs to be used while searching (Optional)
+    # @return [Elasticsearch::Response] The response from the server
     def similarity_search(text: "", k: 10, query: {})
       if text.empty? && query.empty?
         raise "Either text or query should pass as an argument"
@@ -149,6 +165,11 @@ module Langchain::Vectorsearch
       es_client.search(body: {query: query, size: k}).body
     end
 
+    # Search for similar texts by embedding
+    # @param embedding [Array<Float>] The embedding to search for
+    # @param k [Integer] The number of results to return
+    # @param query [Hash] Elasticsearch query that needs to be used while searching (Optional)
+    # @return [Elasticsearch::Response] The response from the server
     def similarity_search_by_vector(embedding: [], k: 10, query: {})
       if embedding.empty? && query.empty?
         raise "Either embedding or query should pass as an argument"

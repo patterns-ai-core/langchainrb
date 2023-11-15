@@ -312,6 +312,7 @@ Langchain.rb provides a convenient unified interface on top of supported vectors
 | [Pgvector](https://github.com/pgvector/pgvector) | :white_check_mark: | :white_check_mark: |
 | [Qdrant](https://qdrant.tech/)                   | :white_check_mark: | :white_check_mark: |
 | [Weaviate](https://weaviate.io/)                 | :white_check_mark: | :white_check_mark: |
+| [Elasticsearch](https://www.elastic.co/)         | :white_check_mark: | :white_check_mark: |
 
 ### Using Vector Search Databases 🔍
 
@@ -341,7 +342,8 @@ client = Langchain::Vectorsearch::Hnswlib.new(...)  # `gem "hnswlib", "~> 0.8.1"
 client = Langchain::Vectorsearch::Milvus.new(...)   # `gem "milvus", "~> 0.9.2"`
 client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
 client = Langchain::Vectorsearch::Pgvector.new(...) # `gem "pgvector", "~> 0.2"`
-client = Langchain::Vectorsearch::Qdrant.new(...)   # `gem"qdrant-ruby", "~> 0.9.3"`
+client = Langchain::Vectorsearch::Qdrant.new(...)   # `gem "qdrant-ruby", "~> 0.9.3"`
+client = Langchain::Vectorsearch::Elasticsearch.new(...)   # `gem "elasticsearch", "~> 8.2.0"`
 ```
 
 Create the default schema:
