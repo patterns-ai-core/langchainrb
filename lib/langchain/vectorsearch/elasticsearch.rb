@@ -116,9 +116,24 @@ module Langchain::Vectorsearch
       }
     end
 
-    # TODO: Implement this
-    # def ask()
-    # end
+    # Ask a question and return the answer
+    # @param question [String] The question to ask
+    # @param k [Integer] The number of results to have in context
+    # @yield [String] Stream responses back one String at a time
+    # @return [String] The answer to the question
+    def ask(question:, k: 4, &block)
+      search_results = similarity_search(query: question, k: k)
+
+      context = search_results.map do |result|
+        result[:input]
+      end.join("\n---\n")
+
+      prompt = generate_rag_prompt(question: question, context: context)
+
+      response = llm.chat(prompt: prompt, &block)
+      response.context = context
+      response
+    end
 
     def similarity_search(text: "", k: 10, query: {})
       if text.empty? && query.empty?
