@@ -78,7 +78,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     context "when merging provided payload with default payload" do
       let(:provided_payload) { {author: "Test Author", extra: "Extra Data"} }
       let(:expected_payload) { [{content: text}.merge(provided_payload)] }
-  
+
       it "merges provided payload into default" do
         expect(subject.client.points).to receive(:upsert).with(
           hash_including(
@@ -87,7 +87,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
             )
           )
         ).and_return(true)
-  
+
         result = subject.add_texts(texts: [text], ids: [1], payload: provided_payload)
         expect(result).to eq(true)
       end
