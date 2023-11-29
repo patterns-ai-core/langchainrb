@@ -167,7 +167,7 @@ GEM
       addressable (>= 2.8)
     language_server-protocol (3.17.0.3)
     lint_roller (1.0.0)
-    llama_cpp (0.3.7)
+    llama_cpp (0.9.4)
     loofah (2.21.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -360,7 +360,7 @@ DEPENDENCIES
   hnswlib (~> 0.8.1)
   hugging-face (~> 0.3.4)
   langchainrb!
-  llama_cpp (~> 0.3.7)
+  llama_cpp (~> 0.9.4)
   milvus (~> 0.9.2)
   nokogiri (~> 1.13)
   open-weather-ruby-client (~> 0.4.0)
