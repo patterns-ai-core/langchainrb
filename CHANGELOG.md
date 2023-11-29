@@ -2,6 +2,7 @@
 
 ## [0.8.0]
 - [BREAKING] Updated llama_cpp.rb to 0.9.4. The model file format used by the underlying llama.cpp library has changed to GGUF. llama.cpp ships with scripts to convert existing files and GGUF format models can be downloaded from HuggingFace.
+- Introducing Langchain::LLM::GoogleVertexAi LLM provider
 
 ## [0.7.5] - 2023-11-13
 - Fixes
