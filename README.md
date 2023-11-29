@@ -307,16 +307,16 @@ Langchain.rb provides a convenient unified interface on top of supported vectors
 
 #### Supported vector search databases and features:
 
-| Database                                         | Open-source        | Cloud offering     |
-| --------                                         |:------------------:| :------------:     |
-| [Chroma](https://trychroma.com/)                 | ✅ | ✅ |
-| [Hnswlib](https://github.com/nmslib/hnswlib/)    | ✅ | ❌                 |
-| [Milvus](https://milvus.io/)                     | ✅ | ✅ Zilliz Cloud |
-| [Pinecone](https://www.pinecone.io/)             | ❌                 | ✅ |
-| [Pgvector](https://github.com/pgvector/pgvector) | ✅ | ✅ |
-| [Qdrant](https://qdrant.tech/)                   | ✅ | ✅ |
-| [Weaviate](https://weaviate.io/)                 | ✅ | ✅ |
-| [Elasticsearch](https://www.elastic.co/)         | ✅ | ✅ |
+| Database                                                                                   | Open-source        | Cloud offering     |
+| --------                                                                                   |:------------------:| :------------:     |
+| [Chroma](https://trychroma.com/?utm_source=langchainrb&utm_medium=github)                  | ✅                 | ✅                 |
+| [Hnswlib](https://github.com/nmslib/hnswlib/?utm_source=langchainrb&utm_medium=github)     | ✅                 | ❌                 |
+| [Milvus](https://milvus.io/?utm_source=langchainrb&utm_medium=github)                      | ✅                 | ✅ Zilliz Cloud    |
+| [Pinecone](https://www.pinecone.io/?utm_source=langchainrb&utm_medium=github)              | ❌                 | ✅                 |
+| [Pgvector](https://github.com/pgvector/pgvector/?utm_source=langchainrb&utm_medium=github) | ✅                 | ✅                 |
+| [Qdrant](https://qdrant.tech/?utm_source=langchainrb&utm_medium=github)                    | ✅                 | ✅                 |
+| [Weaviate](https://weaviate.io/?utm_source=langchainrb&utm_medium=github)                  | ✅                 | ✅                 |
+| [Elasticsearch](https://www.elastic.co/?utm_source=langchainrb&utm_medium=github)          | ✅                 | ✅                 |
 
 ### Using Vector Search Databases 🔍
 
