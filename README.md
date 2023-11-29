@@ -56,17 +56,18 @@ require "langchain"
 Langchain.rb wraps all supported LLMs in a unified interface allowing you to easily swap out and test out different models.
 
 #### Supported LLMs and features:
-| LLM providers                                    | embed()            | complete()         | chat()              | summarize()        | Notes              |
-| --------                                         |:------------------:| :-------:          | :-----------------: | :-------:          | :----------------- |
-| [OpenAI](https://openai.com/)                    | :white_check_mark: | :white_check_mark: | :white_check_mark:  | ❌                 | Including Azure OpenAI |
-| [AI21](https://ai21.com/)                        | ❌                 | :white_check_mark: | ❌                  | :white_check_mark: |                    |
-| [Anthropic](https://www.anthropic.com/)                  | ❌                 | :white_check_mark: | ❌                  | ❌                 |                    |
-| [AWS Bedrock](https://aws.amazon.com/bedrock)    | :white_check_mark: | :white_check_mark: | ❌                  | ❌                 | Provides AWS, Cohere, AI21, Antropic and Stability AI models |
-| [Cohere](https://cohere.com/)               | :white_check_mark: | :white_check_mark: | :white_check_mark:  | :white_check_mark: |                    |
-| [GooglePalm](https://ai.google/discover/palm2/) | :white_check_mark: | :white_check_mark: | :white_check_mark:  | :white_check_mark: |                    |
-| [HuggingFace](https://huggingface.co/)          | :white_check_mark: | ❌                 | ❌                  | ❌                 |                    |
-| [Ollama](https://ollama.ai/)                     | :white_check_mark: | :white_check_mark: | ❌                  | ❌                 |                    |
-| [Replicate](https://replicate.com/)              | :white_check_mark: | :white_check_mark: | :white_check_mark:  | :white_check_mark: |                    |
+| LLM providers                                                                                   | embed()            | complete()         | chat()              | summarize()        | Notes              |
+| --------                                                                                        |:------------------:| :-------:          | :-----------------: | :-------:          | :----------------- |
+| [OpenAI](https://openai.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ❌                 | Including Azure OpenAI |
+| [AI21](https://ai21.com/?utm_source=langchainrb&utm_medium=github)                              | ❌                 | ✅                 | ❌                  | ✅                 |                    |
+| [Anthropic](https://anthropic.com/?utm_source=langchainrb&utm_medium=github)                        | ❌                 | ✅                 | ❌                  | ❌                 |                    |
+| [AWS Bedrock](https://aws.amazon.com/bedrock?utm_source=langchainrb&utm_medium=github)          | ✅                 | ✅                 | ❌                  | ❌                 | Provides AWS, Cohere, AI21, Antropic and Stability AI models |
+| [Cohere](https://cohere.com/?utm_source=langchainrb&utm_medium=github)                     | ✅                 | ✅                 | ✅                  | ✅                 |                    |
+| [GooglePalm](https://ai.google/discover/palm2?utm_source=langchainrb&utm_medium=github)         | ✅                 | ✅                 | ✅                  | ✅                 |                    |
+| [Google Vertex AI](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ❌                 | ❌                  | ❌                 |                    |
+| [HuggingFace](https://huggingface.co/?utm_source=langchainrb&utm_medium=github)                 | ✅                 | ❌                 | ❌                  | ❌                 |                    |
+| [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ❌                  | ❌                 |                    |
+| [Replicate](https://replicate.com/?utm_source=langchainrb&utm_medium=github)                    | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 
 #### Using standalone LLMs:
 
@@ -308,14 +309,14 @@ Langchain.rb provides a convenient unified interface on top of supported vectors
 
 | Database                                         | Open-source        | Cloud offering     |
 | --------                                         |:------------------:| :------------:     |
-| [Chroma](https://trychroma.com/)                 | :white_check_mark: | :white_check_mark: |
-| [Hnswlib](https://github.com/nmslib/hnswlib/)    | :white_check_mark: | ❌                 |
-| [Milvus](https://milvus.io/)                     | :white_check_mark: | :white_check_mark: Zilliz Cloud |
-| [Pinecone](https://www.pinecone.io/)             | ❌                 | :white_check_mark: |
-| [Pgvector](https://github.com/pgvector/pgvector) | :white_check_mark: | :white_check_mark: |
-| [Qdrant](https://qdrant.tech/)                   | :white_check_mark: | :white_check_mark: |
-| [Weaviate](https://weaviate.io/)                 | :white_check_mark: | :white_check_mark: |
-| [Elasticsearch](https://www.elastic.co/)         | :white_check_mark: | :white_check_mark: |
+| [Chroma](https://trychroma.com/)                 | ✅ | ✅ |
+| [Hnswlib](https://github.com/nmslib/hnswlib/)    | ✅ | ❌                 |
+| [Milvus](https://milvus.io/)                     | ✅ | ✅ Zilliz Cloud |
+| [Pinecone](https://www.pinecone.io/)             | ❌                 | ✅ |
+| [Pgvector](https://github.com/pgvector/pgvector) | ✅ | ✅ |
+| [Qdrant](https://qdrant.tech/)                   | ✅ | ✅ |
+| [Weaviate](https://weaviate.io/)                 | ✅ | ✅ |
+| [Elasticsearch](https://www.elastic.co/)         | ✅ | ✅ |
 
 ### Using Vector Search Databases 🔍
 
