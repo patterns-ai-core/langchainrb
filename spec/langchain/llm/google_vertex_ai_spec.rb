@@ -10,6 +10,10 @@ RSpec.describe Langchain::LLM::GoogleVertexAi do
     let(:raw_embedding_response) { JSON.parse(File.read("spec/fixtures/llm/google_vertex_ai/embed.json"), symbolize_names: true) }
 
     before do
+      allow(Google::Auth).to receive(:get_application_default).and_return(
+        double("Google::Auth::UserRefreshCredentials")
+      )
+
       allow(subject.client).to receive(:predict_project_location_publisher_model).and_return(
         double("Google::Apis::AiplatformV1::GoogleCloudAiplatformV1PredictResponse", to_h: raw_embedding_response)
       )
