@@ -235,7 +235,7 @@ RSpec.describe Langchain::LLM::Azure do
           max_tokens: 16 # `max_tokens` can be passed in and overwritten.
         )
 
-        expect(response.completion_tokens).to eq(17)
+        expect(response.completion_tokens).to eq(16)
         expect(response.completion).to eq("The meaning of life is subjective and can vary from person to person.")
       end
     end
