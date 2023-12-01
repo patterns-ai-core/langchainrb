@@ -3,6 +3,7 @@
 require "securerandom"
 require "json"
 require "timeout"
+require "uri"
 
 module Langchain::Vectorsearch
   class Epsilla < Base
@@ -13,18 +14,21 @@ module Langchain::Vectorsearch
     #     gem "epsilla-ruby", "~> 0.0.3"
     #
     # Usage:
-    #     epsilla = Langchain::Vectorsearch::Epsilla.new(protocol:, host:, db_name:, db_path:, index_name:, llm:, port:)
+    #     epsilla = Langchain::Vectorsearch::Epsilla.new(url:, db_name:, db_path:, index_name:, llm:)
     #
     # Initialize Epsilla client
-    # @param protocol [String] The protocol to use, e.g. http or https
-    # @param host [String] The host to connect to
+    # @param url [String] URL to connect to the Epsilla db instance, protocol://host:port
     # @param db_name [String] The name of the database to use
     # @param db_path [String] The path to the database to use
     # @param index_name [String] The name of the Epsilla table to use
     # @param llm [Object] The LLM client to use
-    # @param port [Integer] The port to connect to, default 8888
-    def initialize(protocol:, host:, db_name:, db_path:, index_name:, llm:, port: 8888)
+    def initialize(url:, db_name:, db_path:, index_name:, llm:)
       depends_on "epsilla-ruby", req: "epsilla"
+
+      uri = URI.parse(url)
+      protocol = uri.scheme
+      host = uri.host
+      port = uri.port
 
       @client = ::Epsilla::Client.new(protocol, host, port)
 

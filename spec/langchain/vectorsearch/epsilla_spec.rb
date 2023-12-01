@@ -2,14 +2,13 @@
 
 require "epsilla"
 
-if ENV["EPSILLA_HOST"]
+if ENV["EPSILLA_URL"]
   RSpec.describe Langchain::Vectorsearch::Epsilla do
     let(:index_name) { "documents" }
 
     subject {
       described_class.new(
-        protocol: "http",
-        host: ENV["EPSILLA_HOST"],
+        url: ENV["EPSILLA_URL"],
         index_name: index_name,
         db_name: "langchainrb_tests",
         db_path: "/tmp/langchainrb_tests",

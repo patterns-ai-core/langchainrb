@@ -11,7 +11,7 @@ jobs:
   tests:
     env:
       POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
-      EPSILLA_HOST: 127.0.0.1
+      EPSILLA_URL: http://127.0.0.1:8888
 
     runs-on: ubuntu-latest
     strategy:
