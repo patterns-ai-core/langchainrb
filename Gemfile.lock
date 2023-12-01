@@ -133,6 +133,8 @@ GEM
       elasticsearch-api (= 8.2.2)
     elasticsearch-api (8.2.2)
       multi_json
+    epsilla-ruby (0.0.4)
+      faraday (>= 1)
     eqn (1.6.5)
       treetop (>= 1.2.0)
     erubi (1.12.0)
@@ -387,6 +389,7 @@ DEPENDENCIES
   docx (~> 0.8.0)
   dotenv-rails (~> 2.7.6)
   elasticsearch (~> 8.2.0)
+  epsilla-ruby (~> 0.0.4)
   eqn (~> 1.6.5)
   google-apis-aiplatform_v1 (~> 0.7)
   google_palm_api (~> 0.1.3)
