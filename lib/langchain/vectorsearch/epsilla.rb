@@ -73,9 +73,17 @@ module Langchain::Vectorsearch
 
     # Add a list of texts to the database
     # @param texts [Array<String>] The list of texts to add
-    def add_texts(texts:)
-      data = texts.map do |text|
-        {Doc: text, Embedding: llm.embed(text: text).embedding, ID: SecureRandom.uuid}
+    # @param ids [Array<String>] The unique ids to add to the index, in the same order as the texts; if nil, it will be random uuids
+    def add_texts(texts:, ids: nil)
+      validated_ids = ids
+      if ids.nil?
+        validated_ids = texts.map { SecureRandom.uuid }
+      elsif ids.length != texts.length
+        raise "The number of ids must match the number of texts"
+      end
+
+      data = texts.map.with_index do |text, idx|
+        {Doc: text, Embedding: llm.embed(text: text).embedding, ID: validated_ids[idx]}
       end
 
       status_code, response = @client.database.insert(@table_name, data)

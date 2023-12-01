@@ -73,6 +73,15 @@ if ENV["EPSILLA_HOST"]
         expect(result["statusCode"]).to eq(200)
       end
 
+      it "adds texts with IDs" do
+        result = subject.add_texts(texts: ["Hello World", "Hello World"], ids: [100, 101])
+        expect(result["statusCode"]).to eq(200)
+      end
+
+      it "raises when text and ids have different lengths" do
+        expect { subject.add_texts(texts: ["Hello World", "Hello World"], ids: [100]) }.to raise_error("The number of ids must match the number of texts")
+      end
+
       after do
         subject.destroy_default_schema
       end
