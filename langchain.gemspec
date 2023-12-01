@@ -50,6 +50,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "cohere-ruby", "~> 0.9.7"
   spec.add_development_dependency "docx", "~> 0.8.0"
   spec.add_development_dependency "elasticsearch", "~> 8.2.0"
+  spec.add_development_dependency "epsilla-ruby", "~> 0.0.4"
   spec.add_development_dependency "eqn", "~> 1.6.5"
   spec.add_development_dependency "google-apis-aiplatform_v1", "~> 0.7"
   spec.add_development_dependency "google_palm_api", "~> 0.1.3"
@@ -72,5 +73,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "sequel", "~> 5.68.0"
   spec.add_development_dependency "weaviate-ruby", "~> 0.8.9"
   spec.add_development_dependency "wikipedia-client", "~> 1.17.0"
-  spec.add_development_dependency "epsilla-ruby", "~> 0.0.4"
 end
