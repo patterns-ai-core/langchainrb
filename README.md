@@ -100,7 +100,7 @@ llm.chat(prompt: "Hey! How are you?").completion
 
 Summarize the text:
 ```ruby
-llm.complete(text: "...")
+llm.summarize(text: "...").completion
 ```
 
 You can use any other LLM by invoking the same interface:
