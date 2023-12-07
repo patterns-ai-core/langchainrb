@@ -33,7 +33,7 @@ module Langchain::Prompt
         when ".json"
           config = JSON.parse(File.read(file_path))
         when ".yaml", ".yml"
-          config = YAML.safe_load(File.read(file_path))
+          config = YAML.safe_load_file(file_path)
         else
           raise ArgumentError, "Got unsupported file type #{file_path.extname}"
         end

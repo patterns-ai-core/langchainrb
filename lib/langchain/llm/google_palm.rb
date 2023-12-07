@@ -131,7 +131,7 @@ module Langchain::LLM
         prompt: prompt,
         temperature: @defaults[:temperature],
         # Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
-        max_tokens: 2048
+        max_tokens: 256
       )
     end
 
