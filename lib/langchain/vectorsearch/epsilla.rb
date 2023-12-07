@@ -36,7 +36,11 @@ module Langchain::Vectorsearch
         status_code, response = @client.database.load_db(db_name, db_path)
 
         if status_code != 200
-          if status_code == 500 && response["message"].include?("already loaded")
+          if status_code == 409 || (status_code == 500 && response["message"].include?("already loaded"))
+            # When db is already loaded, Epsilla may return HTTP 409 Conflict.
+            # This behavior is changed in https://github.com/epsilla-cloud/vectordb/pull/95
+            # Old behavior (HTTP 500) is preserved for backwards compatibility.
+            # It does not prevent us from using the db.
             Langchain.logger.info("Database already loaded")
           else
             raise "Failed to load database: #{response}"
