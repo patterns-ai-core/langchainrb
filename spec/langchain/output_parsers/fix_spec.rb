@@ -149,36 +149,40 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
 
     it "when completion text is invalid, sends fix prompt to llm and parses fixing response" do
       parser = described_class.new(**kwargs_example.merge(prompt: fix_prompt_template_example))
-      allow(parser.llm).to receive(:chat).with(
-        prompt: match(fix_prompt_matcher_example)
-      ).and_return(json_text_response)
+      allow(parser.llm).to receive_message_chain(:chat, :completion)
+        .with(prompt: match(fix_prompt_matcher_example))
+        .with(no_args)
+        .and_return(json_text_response)
       expect(parser.parse("Whoops I don't understand")).to eq(json_response)
       expect(parser.llm).to have_received(:chat).once
     end
 
     it "if fixing prompt is not provided, uses the naive fix prompt by default" do
       parser = described_class.from_llm(llm: kwargs_example[:llm], parser: kwargs_example[:parser])
-      allow(parser.llm).to receive(:chat).with(
-        prompt: match(naive_fix_prompt_matcher_example)
-      ).and_return(json_text_response)
+      allow(parser.llm).to receive_message_chain(:chat, :completion)
+        .with(prompt: match(naive_fix_prompt_matcher_example))
+        .with(no_args)
+        .and_return(json_text_response)
       expect(parser.parse("Whoops I don't understand")).to eq(json_response)
       expect(parser.llm).to have_received(:chat).once
     end
 
     it "fails to parse llm fixing response if its borked" do
       parser = described_class.new(**kwargs_example.merge(prompt: fix_prompt_template_example))
-      allow(parser.llm).to receive(:chat).with(
-        prompt: match(fix_prompt_matcher_example)
-      ).and_return("I still don't understand, I'm only a large language model :)")
+      allow(parser.llm).to receive_message_chain(:chat, :completion)
+        .with(prompt: match(fix_prompt_matcher_example))
+        .with(no_args)
+        .and_return("I still don't understand, I'm only a large language model :)")
       expect { parser.parse("Whoops I don't understand") }.to raise_error(Langchain::OutputParsers::OutputParserException)
       expect(parser.llm).to have_received(:chat).once
     end
 
     it "fails to parse llm fixing response if the json does not conform to the schema" do
       parser = described_class.new(**kwargs_example.merge(prompt: fix_prompt_template_example))
-      allow(parser.llm).to receive(:chat).with(
-        prompt: match(fix_prompt_matcher_example)
-      ).and_return(invalid_schema_json_text_response)
+      allow(parser.llm).to receive_message_chain(:chat, :completion)
+        .with(prompt: match(fix_prompt_matcher_example))
+        .with(no_args)
+        .and_return(invalid_schema_json_text_response)
       expect { parser.parse("Whoops I don't understand") }.to raise_error(Langchain::OutputParsers::OutputParserException)
       expect(parser.llm).to have_received(:chat).once
     end
