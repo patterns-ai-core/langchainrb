@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.8.1]
+- Support for Epsilla vector DB
+- Fully functioning Google Vertex AI LLM
+- Bug fixes
+
 ## [0.8.0]
 - [BREAKING] Updated llama_cpp.rb to 0.9.4. The model file format used by the underlying llama.cpp library has changed to GGUF. llama.cpp ships with scripts to convert existing files and GGUF format models can be downloaded from HuggingFace.
 - Introducing Langchain::LLM::GoogleVertexAi LLM provider
