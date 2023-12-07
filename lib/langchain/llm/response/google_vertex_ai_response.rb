@@ -10,8 +10,8 @@ module Langchain::LLM
     end
 
     def completion
-      #completions&.dig(0, "output")
-      raw_response.predictions[0]['content']
+      # completions&.dig(0, "output")
+      raw_response.predictions[0]["content"]
     end
 
     def embedding
@@ -19,7 +19,7 @@ module Langchain::LLM
     end
 
     def completions
-      raw_response.predictions.map{|p| p['content'] }
+      raw_response.predictions.map { |p| p["content"] }
     end
 
     def total_tokens
@@ -32,7 +32,7 @@ module Langchain::LLM
 
     # easy output for summarize().
     def summary
-      raw_response.predictions[0]['content']
+      raw_response.predictions[0]["content"]
     end
   end
 end
