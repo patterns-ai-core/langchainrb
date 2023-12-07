@@ -58,7 +58,7 @@ module Langchain::OutputParsers
           completion: completion,
           error: e
         )
-      )
+      ).completion
       parser.parse(new_completion)
     end
 
