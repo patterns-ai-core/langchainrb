@@ -29,7 +29,7 @@ module Langchain::LLM
       depends_on "google-apis-aiplatform_v1"
 
       @project_id = project_id
-      @region = default_options.fetch :region, 'us-central1'
+      @region = default_options.fetch :region, "us-central1"
 
       @client = Google::Apis::AiplatformV1::AiplatformService.new
 
@@ -53,13 +53,12 @@ module Langchain::LLM
 
       api_path = "projects/#{@project_id}/locations/us-central1/publishers/google/models/#{@defaults[:embeddings_model_name]}"
 
-      #puts("api_path: #{api_path}")
+      # puts("api_path: #{api_path}")
 
       response = client.predict_project_location_publisher_model(api_path, request)
 
       Langchain::LLM::GoogleVertexAiResponse.new(response.to_h, model: @defaults[:embeddings_model_name])
     end
-
 
     #
     # Generate a completion for a given prompt
@@ -82,38 +81,31 @@ module Langchain::LLM
         default_params[:stop_sequences] = params.delete(:stop_sequences)
       end
 
-      # renamed :max_output_tokens to :max_output_token, I hope it doesnt break anything?
       if params[:max_output_tokens]
         default_params[:max_output_tokens] = params.delete(:max_output_tokens)
       end
 
-      #to be tested
+      # to be tested
       temperature = params.delete(:temperature) || @defaults[:temperature]
-      maxOutputTokens = default_params.fetch(:max_output_tokens, @defaults[:max_output_tokens])
+      max_output_tokens = default_params.fetch(:max_output_tokens, @defaults[:max_output_tokens])
 
       default_params.merge!(params)
 
-      #response = client.generate_text(**default_params)
+      # response = client.generate_text(**default_params)
       request = Google::Apis::AiplatformV1::GoogleCloudAiplatformV1PredictRequest.new \
         instances: [{
           prompt: prompt # key used to be :content, changed to :prompt
         }],
         parameters: {
           temperature: temperature,
-          maxOutputTokens: maxOutputTokens,
+          maxOutputTokens: max_output_tokens,
           topP: 0.8,
           topK: 40
         }
-      #puts '============================================='
-      #puts("projects/#{project_id}/locations/us-central1/publishers/google/models/#{ @defaults[:completion_model_name] }"      )
-      #puts(request.inspect)
-      response = client.predict_project_location_publisher_model \
-        "projects/#{project_id}/locations/us-central1/publishers/google/models/#{ @defaults[:completion_model_name] }",
-        request
 
-      # DEBUG
-      #puts("Response received: #{response}")
-      #puts("Response predictions: #{response.predictions}")
+      response = client.predict_project_location_publisher_model \
+        "projects/#{project_id}/locations/us-central1/publishers/google/models/#{@defaults[:completion_model_name]}",
+        request
 
       Langchain::LLM::GoogleVertexAiResponse.new(response, model: default_params[:model])
     end
@@ -131,7 +123,6 @@ module Langchain::LLM
       )
       prompt = prompt_template.format(text: text)
 
-      #puts('LLM summarize: prompt:'+ prompt)
       complete(
         prompt: prompt,
         # For best temperature, topP, topK, MaxTokens for summarization: see
@@ -152,8 +143,7 @@ module Langchain::LLM
       #       + "  \"topP\": 0.8,\n"
       #       + "  \"topK\": 40\n"
       #       + "}";
-      raise NotImplementedError, 'coming soon for Vertex AI..'
+      raise NotImplementedError, "coming soon for Vertex AI.."
     end
-
   end
 end

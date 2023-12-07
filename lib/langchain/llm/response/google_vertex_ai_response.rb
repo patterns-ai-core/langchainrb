@@ -29,10 +29,5 @@ module Langchain::LLM
     def embeddings
       [raw_response.dig(:predictions, 0, :embeddings, :values)]
     end
-
-    # easy output for summarize().
-    def summary
-      raw_response.predictions[0]["content"]
-    end
   end
 end
