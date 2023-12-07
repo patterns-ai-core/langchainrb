@@ -90,22 +90,22 @@ llm.embed(text: "foo bar")
 
 Generate a text completion:
 ```ruby
-llm.complete(prompt: "What is the meaning of life?")
+llm.complete(prompt: "What is the meaning of life?").completion
 ```
 
 Generate a chat completion:
 ```ruby
-llm.chat(prompt: "Hey! How are you?")
+llm.chat(prompt: "Hey! How are you?").completion
 ```
 
 Summarize the text:
 ```ruby
-llm.complete(text: "...")
+llm.summarize(text: "...").completion
 ```
 
 You can use any other LLM by invoking the same interface:
 ```ruby
-llm = Langchain::LLM::GooglePalm.new(...)
+llm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"], default_options: { ... })
 ```
 
 ### Prompt Management
@@ -251,7 +251,7 @@ Then parse the llm response:
 
 ```ruby
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-llm_response = llm.chat(prompt: prompt_text)
+llm_response = llm.chat(prompt: prompt_text).completion
 parser.parse(llm_response)
 # {
 #   "name" => "Kim Ji-hyun",
