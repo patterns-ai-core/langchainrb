@@ -82,6 +82,15 @@ module Langchain::Tool
     end
 
     #
+    # Output name and description that's consumed by Agents
+    #
+    # @return [String] name: description of the Tool
+    #
+    def name_and_description
+      "#{name}: #{description}"
+    end
+
+    #
     # Instantiates and executes the tool and returns the answer
     #
     # @param input [String] input to the tool

@@ -28,6 +28,8 @@ module Langchain::LLM
 
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
 
+    attr_reader :defaults
+
     attr_accessor :functions
 
     def initialize(api_key:, llm_options: {}, default_options: {})

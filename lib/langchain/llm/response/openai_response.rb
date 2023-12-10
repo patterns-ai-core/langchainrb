@@ -16,6 +16,10 @@ module Langchain::LLM
       completions&.dig(0, "message", "content")
     end
 
+    def role
+      completions&.dig(0, "message", "role")
+    end
+
     def chat_completion
       completion
     end

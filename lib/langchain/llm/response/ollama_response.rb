@@ -8,7 +8,7 @@ module Langchain::LLM
     end
 
     def completion
-      raw_response.first
+      completions.first
     end
 
     def completions
@@ -21,6 +21,10 @@ module Langchain::LLM
 
     def embeddings
       [raw_response&.dig("embedding")]
+    end
+
+    def role
+      "assistant"
     end
   end
 end
