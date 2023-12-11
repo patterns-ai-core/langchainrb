@@ -30,6 +30,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 - [Output Parsers](#output-parsers)
 - [Building RAG](#building-retrieval-augment-generation-rag-system)
 - [Building chat bots](#building-chat-bots)
+- [Assistants](#assistants)
 - [Evaluations](#evaluations-evals)
 - [Examples](#examples)
 - [Logging](#logging)
@@ -442,6 +443,68 @@ chat.set_functions(functions)
 
 ## Evaluations (Evals)
 The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
+
+## Assistants
+Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries. Assistants can be configured with an LLM of your choice (proprietary or open-source), any vector search database and easily extended with additional tools.
+
+### Creating an Assistant
+1. Instantiate an LLM of your choice
+```ruby
+llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+```
+2. Instantiate a Thread. Threads keep track of the messages in the Assistant conversation.
+```ruby
+thread = Langchain::Thread.new
+```
+3. Instantiate an Assistant
+```ruby
+assistant = Langchain::Assistant.new(
+  llm: llm,
+  thread: thread,
+  name: "Meteorologist",
+  instructions: "You are a helpful assistant that is able to pull the weather for any location",
+  tools: [
+    Langchain::Tool::GoogleSearch.new(api_key: ENV["SERPAPI_API_KEY"])
+  ]
+)
+```
+### Using an Assistant
+You can now add your message to an Assistant.
+```ruby
+assistant.add_message text: "What's the weather in New York City?"
+```
+
+Run the Assistant to generate a response. 
+```ruby
+assistant.run
+#=> [#<Langchain::Message:0x0000000113ab6c38 @role="user", @text="What's the weather in New York City?">,
+     #<Langchain::Message:0x0000000113bd6c58 @role="assistant", @text="<tool>weather</tool><tool_input>New York City, NY; metric</tool_input>">]
+```
+
+If a Tool is invoked you can manually submit an output.
+```ruby
+assistant.submit_tool_output output: "It's 70 degrees and sunny in New York City"
+#=> [#<Langchain::Message:0x0000000113ab6c38 @role="user", @text="What's the weather in New York City?">,
+     #<Langchain::Message:0x0000000113bd6c58 @role="assistant", @text="<tool>weather</tool><tool_input>New York City, NY; metric</tool_input>">,
+     #<Langchain::Message:0x000000011399def0 @role="tool_output", @text="It's 70 degrees and sunny in New York City">]
+```
+
+Or run the assistant with `auto_tool_execution: tool` to call Tools automatically.
+```ruby
+assistant.add_message text: "How about San Diego, CA?"
+assistant.run(auto_tool_execution: true)
+#=> [...
+     #<Langchain::Message:0x000000010f5e8d40 @role="user", @text="How about San Diego, CA?">,
+     #<Langchain::Message:0x000000010f71b690 @role="assistant", @text="It is currently mostly cloudy in San Diego, CA with a temperature of 51 degrees Fahrenheit. The precipitation is 0%, humidity is 41%, and wind speed is 3 mph.">]
+```
+
+### Assessing Thread messages
+You can access the messages in a Thread by calling `assistant.thread.messages`.
+```ruby
+assistant.thread.messages
+```
+
+The Assistant check the context window limits before every request to the LLM and remove oldest thread messages one by one if the context window is exceeded.
 
 ### RAGAS
 Ragas helps you evaluate your Retrieval Augmented Generation (RAG) pipelines. The implementation is based on this [paper](https://arxiv.org/abs/2309.15217) and the original Python [repo](https://github.com/explodinggradients/ragas). Ragas tracks the following 3 metrics and assigns the 0.0 - 1.0 scores:

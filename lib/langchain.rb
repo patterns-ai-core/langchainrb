@@ -83,7 +83,7 @@ module Langchain
     attr_reader :root
   end
 
-  self.logger ||= ::Logger.new($stdout, level: :warn)
+  self.logger ||= ::Logger.new($stdout, level: :debug)
 
   @root = Pathname.new(__dir__)
 

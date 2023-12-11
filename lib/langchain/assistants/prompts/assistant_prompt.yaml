@@ -12,10 +12,10 @@ template: |
 
   In order to use a tool, you can use <tool></tool> and <tool_input></tool_input> tags. The tool output will be provided to you in a follow-up chat message.
 
-  For example, if you have a tool called "search" that could run a Google search, in order to search for the weather in SF you would respond: <tool>search</tool><tool_input>weather in SF</tool_input>
+  For example, if you have a tool called "google_search" that could run a Google search, in order to search for the weather in SF you would respond: <tool>google_search</tool><tool_input>weather in SF</tool_input>
 
   user: What is the current weather in Boston, MA?
-  assistant: <tool>search</tool><tool_input>Boston, MA</tool_input>
+  assistant: <tool>google_search</tool><tool_input>Boston, MA</tool_input>
   tool_output: 64 degrees
   assistant: It is 64 degrees in SF
 
