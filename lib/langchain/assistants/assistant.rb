@@ -24,12 +24,12 @@ module Langchain
 
     def add_message(text:, role: "user")
       # Add the message to the thread
-      message = construct_message(role: role, text: text)
+      message = build_message(role: role, text: text)
       add_message_to_thread(message)
     end
 
     def run(auto_tool_execution: false)
-      prompt = construct_assistant_prompt(instructions: instructions, tools: tools, chat_history: chat_history)
+      prompt = build_assistant_prompt(instructions: instructions, tools: tools)
       response = llm.chat(prompt: prompt)
 
       add_message(text: response.completion, role: response.role)
@@ -52,11 +52,11 @@ module Langchain
         # Iterate over each tool and tool_input and submit tool output
         invoked_tools.each_with_index do |tool, index|
           tool_instance = tools.find { |t| t.name == tool }
-          observation = tool_instance.execute(input: tool_inputs[index])
+          output = tool_instance.execute(input: tool_inputs[index])
 
-          submit_tool_output(output: observation)
+          submit_tool_output(output: output)
 
-          prompt = construct_assistant_prompt(instructions: instructions, tools: tools, chat_history: chat_history)
+          prompt = build_assistant_prompt(instructions: instructions, tools: tools)
           response = llm.chat(prompt: prompt)
 
           add_message(text: response.completion, role: response.role)
@@ -68,7 +68,7 @@ module Langchain
       # "<observation>#{observation}</observation>"
       # Question: Should the role actually be named "tool_name", like "google_search_tool" or "calculator_tool", etc.?
       # This could help tell the LLM where the observation came from.
-      message = construct_message(role: "tool_output", text: output)
+      message = build_message(role: "tool_output", text: output)
       add_message_to_thread(message)
     end
 
@@ -79,7 +79,7 @@ module Langchain
       # TODO: Need better mechanism to find all tool calls that did not have tool output submitted
       # ...because there could be multiple tool calls.
 
-      # Find all instances of tool invocation
+      # Find all instances of tool invocations
       invoked_tools = completion.scan(/<tool>(.*)<\/tool>/).flatten
       tool_inputs = completion.scan(/<tool_input>(.*)<\/tool_input>/).flatten
 
@@ -88,18 +88,18 @@ module Langchain
 
     # TODO: Summarize or truncate the conversation when it exceeds the context window
     # Truncate the oldest messages when the context window is exceeded
-    def chat_history
+    def build_chat_history
       thread
         .messages
         .map(&:to_s)
         .join("\n")
     end
 
-    def construct_message(role:, text:)
+    def build_message(role:, text:)
       Message.new(role: role, text: text)
     end
 
-    def construct_assistant_prompt(instructions:, tools:, chat_history:)
+    def assistant_prompt(instructions:, tools:, chat_history:)
       prompt = Langchain::Prompt.load_from_path(file_path: "lib/langchain/assistants/prompts/assistant_prompt.yaml")
       prompt.format(
         instructions: instructions,
@@ -110,35 +110,31 @@ module Langchain
       )
     end
 
+    def build_assistant_prompt(instructions:, tools:)
+      prompt = assistant_prompt(instructions: instructions, tools: tools, chat_history: build_chat_history)
+
+      while (
+        # Check if the prompt exceeds the context window
+        begin
+          # Return false to exit the while loop
+          !llm.class.const_get("LENGTH_VALIDATOR").validate_max_tokens!(
+            prompt, llm.defaults[:chat_completion_model_name]
+          )
+        # Rescue error if context window is exceeded and return true to continue the while loop
+        rescue Langchain::Utils::TokenLength::TokenLimitExceeded
+          true
+        end
+      )
+        # Remove the oldest message from the thread
+        thread.messages.shift
+        prompt = assistant_prompt(instructions: instructions, tools: tools, chat_history: build_chat_history)
+      end
+
+      prompt
+    end
+
     def add_message_to_thread(message)
       thread.messages << message
     end
   end
 end
-
-# llm.client.assistants.create(
-#   parameters: {
-#     model: "gpt-4-1106-preview",
-#     name: "Meteorologist",
-#     instructions: "You are a helpful assistant that is able to pull the historic weather for any location",
-#     tools: [
-#       {type: "code_interpreter"},
-#       {
-#         type: "function",
-#         function: {
-#           description: "Get weather",
-#           name: "get_weather",
-#           parameters: {
-#             type: "object",
-#             properties: {
-#               location: {
-#                 type: "string",
-#                 description: "Location for the weather to be fetched"
-#               }
-#             }
-#           }
-#         }
-#       }
-#     ]
-#   }
-# )
