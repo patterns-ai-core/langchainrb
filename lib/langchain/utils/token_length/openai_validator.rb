@@ -83,7 +83,7 @@ module Langchain
         # @param model [String] The model name to validate against
         # @return [Integer] The token length of the messages
         #
-        def self.token_length_from_messages(messages, model_name, options)
+        def self.token_length_from_messages(messages, model_name, options = {})
           encoding = Tiktoken.encoding_for_model(model_name)
 
           if ["gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k-0613", "gpt-4-0314", "gpt-4-32k-0314", "gpt-4-0613", "gpt-4-32k-0613"].include?(model_name)
