@@ -8,7 +8,7 @@ module Langchain::LLM
     end
 
     def completion
-      raw_response.first
+      completions.first
     end
 
     def completions
