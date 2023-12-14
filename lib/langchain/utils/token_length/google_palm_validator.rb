@@ -43,6 +43,10 @@ module Langchain
           response.dig("tokenCount")
         end
 
+        def self.token_length_from_messages(messages, model_name, options)
+          messages.sum { |message| token_length(message.to_json, model_name, options) }
+        end
+
         def self.token_limit(model_name)
           TOKEN_LIMITS.dig(model_name, "input_token_limit")
         end
