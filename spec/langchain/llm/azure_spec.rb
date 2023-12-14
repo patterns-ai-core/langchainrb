@@ -138,7 +138,7 @@ RSpec.describe Langchain::LLM::Azure do
             model: "gpt-3.5-turbo",
             messages: [{content: "Hello World", role: "user"}],
             temperature: 0.0,
-            max_tokens: 4086
+            max_tokens: 4087
           }
         }
       end
@@ -202,7 +202,7 @@ RSpec.describe Langchain::LLM::Azure do
               model: "gpt-3.5-turbo",
               messages: [{content: "Hello World", role: "user"}],
               temperature: 0.0,
-              max_tokens: 4086
+              max_tokens: 4087
             }
           }
         end
@@ -211,7 +211,7 @@ RSpec.describe Langchain::LLM::Azure do
           expect(subject.chat_client).to receive(:chat).with({
             parameters: {
               n: 1,
-              max_tokens: 16374,
+              max_tokens: 16375,
               model: "gpt-3.5-turbo-16k",
               messages: [{content: "Hello World", role: "user"}],
               temperature: 0.0
@@ -224,7 +224,7 @@ RSpec.describe Langchain::LLM::Azure do
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 1.0, max_tokens: 4086}}
+        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 1.0, max_tokens: 4087}}
       end
 
       it "returns a completion" do
@@ -236,7 +236,7 @@ RSpec.describe Langchain::LLM::Azure do
 
     context "with failed API call" do
       let(:parameters) do
-        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 0.0, max_tokens: 4086}}
+        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 0.0, max_tokens: 4087}}
       end
       let(:response) do
         {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}

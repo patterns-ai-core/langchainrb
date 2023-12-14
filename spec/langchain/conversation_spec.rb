@@ -160,7 +160,7 @@ RSpec.describe Langchain::Conversation do
           it "should drop 2 first messages and call an API" do
             expect(client).to receive(:chat).with(
               parameters: {
-                max_tokens: 457,
+                max_tokens: 475,
                 messages: [
                   {role: "system", content: "You are a chatbot"},
                   {role: "user", content: "Hello"},
@@ -278,7 +278,7 @@ RSpec.describe Langchain::Conversation do
       it "should summarize previous messages" do
         expect(client).to receive(:chat).with(
           parameters: {
-            max_tokens: 2000,
+            max_tokens: 2012,
             messages: [
               {role: "system", content: "You are a chatbot\nJust chatting about life\nNothing interesting here"},
               {role: "user", content: "Hello"},

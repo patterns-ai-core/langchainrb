@@ -31,6 +31,10 @@ module Langchain
           TOKEN_LIMITS[model_name]
         end
         singleton_class.alias_method :completion_token_limit, :token_limit
+
+        def self.token_length_from_messages(messages, model_name, options)
+          messages.sum { |message| token_length(message.to_json, model_name, options) }
+        end
       end
     end
   end
