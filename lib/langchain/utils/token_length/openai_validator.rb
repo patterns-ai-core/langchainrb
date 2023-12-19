@@ -75,6 +75,47 @@ module Langchain
           max_tokens = super(content, model_name, options)
           [options[:max_tokens], max_tokens].reject(&:nil?).min
         end
+
+        # Copied from https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
+        # Return the number of tokens used by a list of messages
+        #
+        # @param messages [Array<Hash>] The messages to calculate the token length for
+        # @param model [String] The model name to validate against
+        # @return [Integer] The token length of the messages
+        #
+        def self.token_length_from_messages(messages, model_name, options = {})
+          encoding = Tiktoken.encoding_for_model(model_name)
+
+          if ["gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k-0613", "gpt-4-0314", "gpt-4-32k-0314", "gpt-4-0613", "gpt-4-32k-0613"].include?(model_name)
+            tokens_per_message = 3
+            tokens_per_name = 1
+          elsif model_name == "gpt-3.5-turbo-0301"
+            tokens_per_message = 4  # every message follows {role/name}\n{content}\n
+            tokens_per_name = -1  # if there's a name, the role is omitted
+          elsif model_name.include?("gpt-3.5-turbo")
+            puts "Warning: gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613."
+            return token_length_from_messages(messages, "gpt-3.5-turbo-0613", options)
+          elsif model_name.include?("gpt-4")
+            puts "Warning: gpt-4 may update over time. Returning num tokens assuming gpt-4-0613."
+            return token_length_from_messages(messages, "gpt-4-0613", options)
+          else
+            raise NotImplementedError.new(
+              "token_length_from_messages() is not implemented for model #{model_name}. See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens."
+            )
+          end
+
+          num_tokens = 0
+          messages.each do |message|
+            num_tokens += tokens_per_message
+            message.each do |key, value|
+              num_tokens += encoding.encode(value).length
+              num_tokens += tokens_per_name if ["name", :name].include?(key)
+            end
+          end
+
+          num_tokens += 3  # every reply is primed with assistant
+          num_tokens
+        end
       end
     end
   end

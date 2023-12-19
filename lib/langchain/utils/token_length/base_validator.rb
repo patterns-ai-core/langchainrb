@@ -14,9 +14,7 @@ module Langchain
       class BaseValidator
         def self.validate_max_tokens!(content, model_name, options = {})
           text_token_length = if content.is_a?(Array)
-            # TODO: This is probably a bug because the whole array is turned to to_json which is not how tokens are actually calculated.
-            # Need to only calculate it off the `content:`
-            content.sum { |item| token_length(item.to_json, model_name, options) }
+            token_length_from_messages(content, model_name, options)
           else
             token_length(content, model_name, options)
           end
