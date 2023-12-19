@@ -113,18 +113,17 @@ module Langchain
     def build_assistant_prompt(instructions:, tools:)
       prompt = assistant_prompt(instructions: instructions, tools: tools, chat_history: build_chat_history)
 
-      while (
+      while begin
+        # Return false to exit the while loop
+        !llm.class.const_get(:LENGTH_VALIDATOR).validate_max_tokens!(
+          prompt, llm.defaults[:chat_completion_model_name]
+        )
+      # Rescue error if context window is exceeded and return true to continue the while loop
+      rescue Langchain::Utils::TokenLength::TokenLimitExceeded
+        true
+      end
         # Check if the prompt exceeds the context window
-        begin
-          # Return false to exit the while loop
-          !llm.class.const_get("LENGTH_VALIDATOR").validate_max_tokens!(
-            prompt, llm.defaults[:chat_completion_model_name]
-          )
-        # Rescue error if context window is exceeded and return true to continue the while loop
-        rescue Langchain::Utils::TokenLength::TokenLimitExceeded
-          true
-        end
-      )
+
         # Remove the oldest message from the thread
         thread.messages.shift
         prompt = assistant_prompt(instructions: instructions, tools: tools, chat_history: build_chat_history)
