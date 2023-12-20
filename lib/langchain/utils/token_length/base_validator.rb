@@ -14,19 +14,23 @@ module Langchain
       class BaseValidator
         def self.validate_max_tokens!(content, model_name, options = {})
           text_token_length = if content.is_a?(Array)
-            content.sum { |item| token_length(item.to_json, model_name, options) }
+            token_length_from_messages(content, model_name, options)
           else
             token_length(content, model_name, options)
           end
 
           leftover_tokens = token_limit(model_name) - text_token_length
 
+          # Some models have a separate token limit for completions (e.g. GPT-4 Turbo)
+          # We want the lower of the two limits
+          max_tokens = [leftover_tokens, completion_token_limit(model_name)].min
+
           # Raise an error even if whole prompt is equal to the model's token limit (leftover_tokens == 0)
-          if leftover_tokens <= 0
+          if max_tokens < 0
             raise limit_exceeded_exception(token_limit(model_name), text_token_length)
           end
 
-          leftover_tokens
+          max_tokens
         end
 
         def self.limit_exceeded_exception(limit, length)

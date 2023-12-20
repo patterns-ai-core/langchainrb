@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "forwardable"
-
 module Langchain::Vectorsearch
   # = Vector Databases
   # A vector database a type of database that stores data as high-dimensional vectors, which are mathematical representations of features or attributes. Each vector has a certain number of dimensions, which can range from tens to thousands, depending on the complexity and granularity of the data.
@@ -9,11 +7,14 @@ module Langchain::Vectorsearch
   # == Available vector databases
   #
   # - {Langchain::Vectorsearch::Chroma}
+  # - {Langchain::Vectorsearch::Epsilla}
+  # - {Langchain::Vectorsearch::Elasticsearch}
+  # - {Langchain::Vectorsearch::Hnswlib}
   # - {Langchain::Vectorsearch::Milvus}
+  # - {Langchain::Vectorsearch::Pgvector}
   # - {Langchain::Vectorsearch::Pinecone}
   # - {Langchain::Vectorsearch::Qdrant}
   # - {Langchain::Vectorsearch::Weaviate}
-  # - {Langchain::Vectorsearch::Pgvector}
   #
   # == Usage
   #
@@ -25,15 +26,15 @@ module Langchain::Vectorsearch
   #       url:         ENV["WEAVIATE_URL"],
   #       api_key:     ENV["WEAVIATE_API_KEY"],
   #       index_name:  "Documents",
-  #       llm:         :openai,              # or :cohere, :hugging_face, :google_palm, or :replicate
-  #       llm_api_key: ENV["OPENAI_API_KEY"] # API key for the selected LLM
+  #       llm:         Langchain::LLM::OpenAI.new(api_key:)
   #     )
   #
   #     # You can instantiate other supported vector databases the same way:
+  #     epsilla  = Langchain::Vectorsearch::Epsilla.new(...)
   #     milvus   = Langchain::Vectorsearch::Milvus.new(...)
   #     qdrant   = Langchain::Vectorsearch::Qdrant.new(...)
   #     pinecone = Langchain::Vectorsearch::Pinecone.new(...)
-  #     chrome   = Langchain::Vectorsearch::Chroma.new(...)
+  #     chroma   = Langchain::Vectorsearch::Chroma.new(...)
   #     pgvector = Langchain::Vectorsearch::Pgvector.new(...)
   #
   # == Schema Creation
@@ -98,9 +99,19 @@ module Langchain::Vectorsearch
       @llm = llm
     end
 
+    # Method supported by Vectorsearch DB to retrieve a default schema
+    def get_default_schema
+      raise NotImplementedError, "#{self.class.name} does not support retrieving a default schema"
+    end
+
     # Method supported by Vectorsearch DB to create a default schema
     def create_default_schema
       raise NotImplementedError, "#{self.class.name} does not support creating a default schema"
+    end
+
+    # Method supported by Vectorsearch DB to delete the default schema
+    def destroy_default_schema
+      raise NotImplementedError, "#{self.class.name} does not support deleting a default schema"
     end
 
     # Method supported by Vectorsearch DB to add a list of texts to the index
@@ -108,9 +119,25 @@ module Langchain::Vectorsearch
       raise NotImplementedError, "#{self.class.name} does not support adding texts"
     end
 
+    # Method supported by Vectorsearch DB to update a list of texts to the index
+    def update_texts(...)
+      raise NotImplementedError, "#{self.class.name} does not support updating texts"
+    end
+
     # Method supported by Vectorsearch DB to search for similar texts in the index
     def similarity_search(...)
       raise NotImplementedError, "#{self.class.name} does not support similarity search"
+    end
+
+    # Paper: https://arxiv.org/abs/2212.10496
+    # Hypothetical Document Embeddings (HyDE)-augmented similarity search
+    #
+    # @param query [String] The query to search for
+    # @param k [Integer] The number of results to return
+    # @return [String] Response
+    def similarity_search_with_hyde(query:, k: 4)
+      hyde_completion = llm.complete(prompt: generate_hyde_prompt(question: query))
+      similarity_search(query: hyde_completion, k: k)
     end
 
     # Method supported by Vectorsearch DB to search for similar texts in the index by the passed in vector.
@@ -124,34 +151,41 @@ module Langchain::Vectorsearch
       raise NotImplementedError, "#{self.class.name} does not support asking questions"
     end
 
-    def_delegators :llm,
-      :default_dimension
-
-    def generate_prompt(question:, context:)
-      prompt_template = Langchain::Prompt::FewShotPromptTemplate.new(
-        prefix: "Context:",
-        suffix: "---\nQuestion: {question}\n---\nAnswer:",
-        example_prompt: Langchain::Prompt::PromptTemplate.new(
-          template: "{context}",
-          input_variables: ["context"]
-        ),
-        examples: [
-          {context: context}
-        ],
-        input_variables: ["question"],
-        example_separator: "\n"
+    # HyDE-style prompt
+    #
+    # @param [String] User's question
+    # @return [String] Prompt
+    def generate_hyde_prompt(question:)
+      prompt_template = Langchain::Prompt.load_from_path(
+        # Zero-shot prompt to generate a hypothetical document based on a given question
+        file_path: Langchain.root.join("langchain/vectorsearch/prompts/hyde.yaml")
       )
-
       prompt_template.format(question: question)
     end
 
+    # Retrieval Augmented Generation (RAG)
+    #
+    # @param question [String] User's question
+    # @param context [String] The context to synthesize the answer from
+    # @return [String] Prompt
+    def generate_rag_prompt(question:, context:)
+      prompt_template = Langchain::Prompt.load_from_path(
+        file_path: Langchain.root.join("langchain/vectorsearch/prompts/rag.yaml")
+      )
+      prompt_template.format(question: question, context: context)
+    end
+
     def add_data(paths:)
-      raise ArgumentError, "Paths must be provided" if paths.to_a.empty?
+      raise ArgumentError, "Paths must be provided" if Array(paths).empty?
 
       texts = Array(paths)
         .flatten
-        .map { |path| Langchain::Loader.new(path)&.load&.value }
-        .compact
+        .map do |path|
+          data = Langchain::Loader.new(path)&.load&.chunks
+          data.map { |chunk| chunk.text }
+        end
+
+      texts.flatten!
 
       add_texts(texts: texts)
     end

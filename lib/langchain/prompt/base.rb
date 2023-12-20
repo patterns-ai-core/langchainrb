@@ -34,7 +34,7 @@ module Langchain::Prompt
     # @return [void]
     #
     def validate(template:, input_variables:)
-      input_variables_set = @input_variables.uniq
+      input_variables_set = input_variables.uniq
       variables_from_template = Langchain::Prompt::Base.extract_variables_from_template(template)
 
       missing_variables = variables_from_template - input_variables_set

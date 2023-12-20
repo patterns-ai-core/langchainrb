@@ -37,12 +37,20 @@ module Langchain
         #
         def self.token_length(text, model_name = "chat-bison-001", options)
           response = options[:llm].client.count_message_tokens(model: model_name, prompt: text)
+
+          raise Langchain::LLM::ApiError.new(response["error"]["message"]) unless response["error"].nil?
+
           response.dig("tokenCount")
+        end
+
+        def self.token_length_from_messages(messages, model_name, options)
+          messages.sum { |message| token_length(message.to_json, model_name, options) }
         end
 
         def self.token_limit(model_name)
           TOKEN_LIMITS.dig(model_name, "input_token_limit")
         end
+        singleton_class.alias_method :completion_token_limit, :token_limit
       end
     end
   end

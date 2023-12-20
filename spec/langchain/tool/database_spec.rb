@@ -27,8 +27,19 @@ RSpec.describe Langchain::Tool::Database do
     end
 
     it "returns jobs and counts of users" do
-      # TODO: Try returning a multi-line table result with a header
       expect(subject.execute(input: "SELECT job, count(*) FROM users GROUP BY job")).to eq([{count: 5, job: "teacher"}, {count: 98, job: "cook"}])
+    end
+  end
+
+  describe "#dump_schema" do
+    before do
+      allow(subject.db).to receive(:tables).and_return([:users])
+      allow(subject.db).to receive(:schema).with(:users).and_return([[:id, {type: :integer, primary_key: true}], [:name, {type: :string}], [:job, {type: :string}]])
+      allow(subject.db).to receive(:foreign_key_list).with(:users).and_return([{columns: [:job], table: :jobs, key: [:job]}])
+    end
+
+    it "returns the schema" do
+      expect(subject.dump_schema).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs(job));\n")
     end
   end
 end

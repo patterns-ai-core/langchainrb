@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "billableCharacterCount": 4
+  },
+ "predictions": [
+    {
+      "embeddings": {
+        "statistics": {
+          "token_count": 3,
+          "truncated": false
+        },
+        "values": [
+          -0.00879860669374466,
+          0.007578692398965359,
+          0.021136576309800148
+        ]
+      }
+    }
+  ]
+}

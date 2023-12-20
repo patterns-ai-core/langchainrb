@@ -11,15 +11,33 @@ RSpec.describe Langchain::Vectorsearch::Base do
     end
   end
 
+  describe "#get_default_schema" do
+    it "raises an error" do
+      expect { subject.get_default_schema }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe "#create_default_schema" do
     it "raises an error" do
       expect { subject.create_default_schema }.to raise_error(NotImplementedError)
     end
   end
 
+  describe "#destroy_default_schema" do
+    it "raises an error" do
+      expect { subject.destroy_default_schema }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe "#add_texts" do
     it "raises an error" do
       expect { subject.add_texts }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe "#update_texts" do
+    it "raises an error" do
+      expect { subject.update_texts }.to raise_error(NotImplementedError)
     end
   end
 
@@ -35,10 +53,41 @@ RSpec.describe Langchain::Vectorsearch::Base do
     end
   end
 
-  describe "#generate_prompt" do
+  describe "#similarity_search_with_hyde" do
+    before do
+      allow(subject.llm).to receive(:complete).and_return("fictional passage")
+    end
+
+    it "raises an error" do
+      expect(subject).to receive(:similarity_search).once
+      subject.similarity_search_with_hyde(query: "sci-fi", k: 4)
+    end
+  end
+
+  describe "#ask" do
+    it "raises an error" do
+      expect { subject.ask }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe "#generate_hyde_prompt" do
     it "produces a prompt with the correct format" do
       expect(
-        subject.generate_prompt(question: "What is the meaning of life?", context: "41\n42\n43")
+        subject.generate_hyde_prompt(question: "What is the meaning of life?")
+      ).to eq <<~PROMPT.chomp
+        Please write a passage to answer the question
+
+        Question: What is the meaning of life?
+
+        Passage:
+      PROMPT
+    end
+  end
+
+  describe "#generate_rag_prompt" do
+    it "produces a prompt with the correct format" do
+      expect(
+        subject.generate_rag_prompt(question: "What is the meaning of life?", context: "41\n42\n43")
       ).to eq <<~PROMPT.chomp
         Context:
         41
@@ -60,21 +109,13 @@ RSpec.describe Langchain::Vectorsearch::Base do
         Langchain.root.join("../spec/fixtures/loaders/example.txt")
       ]
 
-      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 3)) # not sure I love doing this
+      expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14))
 
       subject.add_data(paths: paths)
     end
 
     it "requires paths" do
       expect { subject.add_data(paths: []) }.to raise_error(ArgumentError, /Paths must be provided/)
-    end
-
-    def array_with_strings_matcher(size:)
-      proc do |array|
-        array.is_a?(Array) &&
-          array.length == size &&
-          array.all? { |e| e.is_a?(String) }
-      end
     end
   end
 end

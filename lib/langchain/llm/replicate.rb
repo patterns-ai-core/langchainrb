@@ -32,58 +32,55 @@ module Langchain::LLM
     #
     # @param api_key [String] The API key to use
     #
-    def initialize(api_key:)
-      depends_on "replicate-ruby"
-      require "replicate"
+    def initialize(api_key:, default_options: {})
+      depends_on "replicate-ruby", req: "replicate"
 
       ::Replicate.configure do |config|
         config.api_token = api_key
       end
 
       @client = ::Replicate.client
+      @defaults = DEFAULTS.merge(default_options)
     end
 
     #
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Hash] The embedding
+    # @return [Langchain::LLM::ReplicateResponse] Response object
     #
     def embed(text:)
       response = embeddings_model.predict(input: text)
 
       until response.finished?
         response.refetch
-        sleep(1)
+        sleep(0.1)
       end
 
-      response.output
+      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:embeddings_model_name])
     end
 
     #
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
-    # @return [Hash] The completion
+    # @return [Langchain::LLM::ReplicateResponse] Reponse object
     #
     def complete(prompt:, **params)
       response = completion_model.predict(prompt: prompt)
 
       until response.finished?
         response.refetch
-        sleep(1)
+        sleep(0.1)
       end
 
-      # Response comes back as an array of strings, e.g.: ["Hi", "how ", "are ", "you?"]
-      # The first array element is missing a space at the end, so we add it manually
-      response.output[0] += " "
-
-      response.output.join
+      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:completion_model_name])
     end
 
     # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`
     def chat(...)
-      complete(...)
+      response_text = complete(...)
+      ::Langchain::Conversation::Response.new(response_text)
     end
 
     #
@@ -100,7 +97,7 @@ module Langchain::LLM
 
       complete(
         prompt: prompt,
-        temperature: DEFAULTS[:temperature],
+        temperature: @defaults[:temperature],
         # Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
         max_tokens: 2048
       )
@@ -111,11 +108,11 @@ module Langchain::LLM
     private
 
     def completion_model
-      @completion_model ||= client.retrieve_model(DEFAULTS[:completion_model_name]).latest_version
+      @completion_model ||= client.retrieve_model(@defaults[:completion_model_name]).latest_version
     end
 
     def embeddings_model
-      @embeddings_model ||= client.retrieve_model(DEFAULTS[:embeddings_model_name]).latest_version
+      @embeddings_model ||= client.retrieve_model(@defaults[:embeddings_model_name]).latest_version
     end
   end
 end
