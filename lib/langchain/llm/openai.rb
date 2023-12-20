@@ -7,7 +7,7 @@ module Langchain::LLM
   #    gem "ruby-openai", "~> 6.1.0"
   #
   # Usage:
-  #    openai = Langchain::LLM::OpenAI.new(api_key:, llm_options: {})
+  #    openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"], llm_options: {})
   #
   class OpenAI < Base
     DEFAULTS = {
@@ -241,7 +241,7 @@ module Langchain::LLM
     end
 
     def validate_max_tokens(messages, model, max_tokens = nil)
-      LENGTH_VALIDATOR.validate_max_tokens!(messages, model, max_tokens: max_tokens)
+      LENGTH_VALIDATOR.validate_max_tokens!(messages, model, max_tokens: max_tokens, llm: self)
     end
 
     def extract_response(response)

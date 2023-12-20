@@ -35,7 +35,7 @@ module Langchain
         # @option options [Langchain::LLM:GooglePalm] :llm The Langchain::LLM:GooglePalm instance
         # @return [Integer] The token length of the text
         #
-        def self.token_length(text, model_name = "chat-bison-001", options)
+        def self.token_length(text, model_name = "chat-bison-001", options = {})
           response = options[:llm].client.count_message_tokens(model: model_name, prompt: text)
 
           raise Langchain::LLM::ApiError.new(response["error"]["message"]) unless response["error"].nil?
@@ -43,7 +43,7 @@ module Langchain
           response.dig("tokenCount")
         end
 
-        def self.token_length_from_messages(messages, model_name, options)
+        def self.token_length_from_messages(messages, model_name, options = {})
           messages.sum { |message| token_length(message.to_json, model_name, options) }
         end
 

@@ -35,7 +35,7 @@ module Langchain::LLM
     def complete(prompt:, **params)
       parameters = complete_parameters params
 
-      parameters[:maxTokens] = LENGTH_VALIDATOR.validate_max_tokens!(prompt, parameters[:model], client)
+      parameters[:maxTokens] = LENGTH_VALIDATOR.validate_max_tokens!(prompt, parameters[:model], {llm: client})
 
       response = client.complete(prompt, parameters)
       Langchain::LLM::AI21Response.new response, model: parameters[:model]

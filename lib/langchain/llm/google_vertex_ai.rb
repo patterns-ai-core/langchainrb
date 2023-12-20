@@ -21,6 +21,9 @@ module Langchain::LLM
       embeddings_model_name: "textembedding-gecko"
     }.freeze
 
+    # TODO: Implement token length validation
+    # LENGTH_VALIDATOR = Langchain::Utils::TokenLength::...
+
     # Google Cloud has a project id and a specific region of deployment.
     # For GenAI-related things, a safe choice is us-central1.
     attr_reader :project_id, :client, :region
@@ -135,15 +138,14 @@ module Langchain::LLM
       )
     end
 
-    def chat(...)
-      # https://cloud.google.com/vertex-ai/docs/samples/aiplatform-sdk-chathat
-      # Chat params: https://cloud.google.com/vertex-ai/docs/samples/aiplatform-sdk-chat
-      # \"temperature\": 0.3,\n"
-      #       + "  \"maxDecodeSteps\": 200,\n"
-      #       + "  \"topP\": 0.8,\n"
-      #       + "  \"topK\": 40\n"
-      #       + "}";
-      raise NotImplementedError, "coming soon for Vertex AI.."
-    end
+    # def chat(...)
+    # https://cloud.google.com/vertex-ai/docs/samples/aiplatform-sdk-chathat
+    # Chat params: https://cloud.google.com/vertex-ai/docs/samples/aiplatform-sdk-chat
+    # \"temperature\": 0.3,\n"
+    #       + "  \"maxDecodeSteps\": 200,\n"
+    #       + "  \"topP\": 0.8,\n"
+    #       + "  \"topK\": 40\n"
+    #       + "}";
+    # end
   end
 end

@@ -10,10 +10,13 @@ module Langchain
       name:,
       llm:,
       thread:,
-      instructions:,
       tools: [],
+      instructions: nil,
       description: nil
     )
+      # Check that the LLM class implements the `chat()` instance method
+      raise ArgumentError, "LLM must implemented `chat()` method" unless llm.class.instance_methods(false).include?(:chat)
+
       @name = name
       @llm = llm
       @thread = thread
@@ -32,10 +35,10 @@ module Langchain
       prompt = build_assistant_prompt(instructions: instructions, tools: tools)
       response = llm.chat(prompt: prompt)
 
-      add_message(text: response.completion, role: response.role)
+      add_message(text: response.chat_completion, role: response.role)
 
       if auto_tool_execution
-        run_tools(response.completion)
+        run_tools(response.chat_completion)
       end
 
       thread.messages
@@ -59,7 +62,7 @@ module Langchain
           prompt = build_assistant_prompt(instructions: instructions, tools: tools)
           response = llm.chat(prompt: prompt)
 
-          add_message(text: response.completion, role: response.role)
+          add_message(text: response.chat_completion, role: response.role)
         end
       end
     end
@@ -100,14 +103,35 @@ module Langchain
     end
 
     def assistant_prompt(instructions:, tools:, chat_history:)
-      prompt = Langchain::Prompt.load_from_path(file_path: "lib/langchain/assistants/prompts/assistant_prompt.yaml")
-      prompt.format(
-        instructions: instructions,
-        tools: tools
-          .map(&:name_and_description)
-          .join("\n"),
-        chat_history: chat_history
-      )
+      prompts = []
+
+      prompts.push(instructions_prompt(instructions: instructions)) if !instructions.empty?
+      prompts.push(tools_prompt(tools: tools)) if tools.any?
+      prompts.push(chat_history_prompt(chat_history: chat_history))
+
+      prompts.join("\n\n")
+    end
+
+    def chat_history_prompt(chat_history:)
+      Langchain::Prompt
+        .load_from_path(file_path: "lib/langchain/assistants/prompts/chat_history_prompt.yaml")
+        .format(chat_history: chat_history)
+    end
+
+    def instructions_prompt(instructions:)
+      Langchain::Prompt
+        .load_from_path(file_path: "lib/langchain/assistants/prompts/instructions_prompt.yaml")
+        .format(instructions: instructions)
+    end
+
+    def tools_prompt(tools:)
+      Langchain::Prompt
+        .load_from_path(file_path: "lib/langchain/assistants/prompts/tools_prompt.yaml")
+        .format(
+          tools: tools
+            .map(&:name_and_description)
+            .join("\n")
+        )
     end
 
     def build_assistant_prompt(instructions:, tools:)
@@ -116,7 +140,9 @@ module Langchain
       while begin
         # Return false to exit the while loop
         !llm.class.const_get(:LENGTH_VALIDATOR).validate_max_tokens!(
-          prompt, llm.defaults[:chat_completion_model_name]
+          prompt,
+          llm.defaults[:chat_completion_model_name],
+          {llm: llm}
         )
       # Rescue error if context window is exceeded and return true to continue the while loop
       rescue Langchain::Utils::TokenLength::TokenLimitExceeded

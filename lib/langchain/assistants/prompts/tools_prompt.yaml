@@ -1,11 +1,7 @@
 _type: prompt
 input_variables:
-  - instructions
   - tools
-  - chat_history
-template: | 
-  {instructions}
-
+template: |
   You have access to the following tools:
 
   {tools}
@@ -18,6 +14,3 @@ template: |
   assistant: <tool>google_search</tool><tool_input>Boston, MA</tool_input>
   tool_output: 64 degrees
   assistant: It is 64 degrees in SF
-
-  Chat history:
-  {chat_history}
