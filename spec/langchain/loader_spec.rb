@@ -281,6 +281,19 @@ RSpec.describe Langchain::Loader do
       end
     end
 
+    context "with an optional chunker class" do
+      subject do
+        described_class.new(path, {chunker: Langchain::Chunker::RecursiveText})
+      end
+
+      let(:path) { "http://example.com/example.txt" }
+
+      it "passes an optional chunker class to Langchain::Data" do
+        expect(Langchain::Data).to receive(:new).with(instance_of(String), {chunker: Langchain::Chunker::RecursiveText})
+        subject.load
+      end
+    end
+
     context "Unsupported file type" do
       context "from local file" do
         let(:path) { "spec/fixtures/loaders/example.swf" }

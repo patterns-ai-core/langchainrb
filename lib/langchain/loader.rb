@@ -112,7 +112,7 @@ module Langchain
         processor_klass.new(@options).parse(@raw_data)
       end
 
-      Langchain::Data.new(result)
+      Langchain::Data.new(result, @options)
     end
 
     def processor_klass
