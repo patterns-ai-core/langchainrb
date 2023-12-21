@@ -113,7 +113,7 @@ RSpec.describe Langchain::Agent::ReActAgent do
         Today is May 12, 2023 and you can use tools to get new information. Answer the following questions as best you can using the following tools:
  
         calculator: Useful for getting the result of a math expression.  The input to this tool should be a valid mathematical expression that could be executed by a simple calculator. Usage:   Action Input: 1 + 1   Action Input: 3 * 2 / 4   Action Input: 9 - 7   Action Input: (4.1 + 2.3) / (2.0 - 5.6) * 3
-        google_search: A wrapper around SerpApi's Google Search API.  Useful for when you need to answer questions about current events. Always one of the first options when you need to find information on internet.  Input should be a search query.
+        google_search: A wrapper around SerpApi's Google Search API.  Useful for when you need to answer questions about current events. Always one of the first options when you need to find information on internet. Input should be a search query.
     
         Use the following format:
     
