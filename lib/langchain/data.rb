@@ -12,6 +12,7 @@ module Langchain
     def initialize(data, options = {})
       @source = options[:source]
       @data = data
+      @chunker_klass = options[:chunker] || Langchain::Chunker::Text
     end
 
     # @return [String]
@@ -22,7 +23,7 @@ module Langchain
     # @param opts [Hash] options passed to the chunker
     # @return [Array<String>]
     def chunks(opts = {})
-      Langchain::Chunker::Text.new(@data, **opts).chunks
+      @chunker_klass.new(@data, **opts).chunks
     end
   end
 end
