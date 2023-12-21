@@ -237,6 +237,26 @@ RSpec.describe Langchain::Loader do
       end
     end
 
+    context "Markdown" do
+      context "from local file" do
+        let(:path) { "spec/fixtures/loaders/example.md" }
+
+        it "loads markdown from file" do
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include("Lorem Ipsum")
+        end
+      end
+
+      context "from url" do
+        let(:path) { "http://example.com/example.md" }
+
+        it "loads markdown from URL" do
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq("Lorem Ipsum")
+        end
+      end
+    end
+
     context "Custom processor passed as block" do
       subject do
         described_class.new(path).load { |text| text.reverse }
