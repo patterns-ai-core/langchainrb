@@ -51,42 +51,44 @@ module Langchain
     end
 
     def run_tools(completion)
-      if (invoked_tools, tool_inputs = requires_action?(completion))
-        # Iterate over each tool and tool_input and submit tool output
-        invoked_tools.each_with_index do |tool, index|
-          tool_instance = tools.find { |t| t.name == tool }
-          output = tool_instance.execute(input: tool_inputs[index])
+      # Iterate over each tool and tool_input and submit tool output
+      find_tool_invocations(completion).each_with_index do |tool_invocation, _index|
+        tool_instance = tools.find { |t| t.name == tool_invocation[:tool_name] }
+        output = tool_instance.execute(input: tool_invocation[:tool_input])
 
-          submit_tool_output(output: output)
+        submit_tool_output(tool_name: tool_invocation[:tool_name], output: output)
 
-          prompt = build_assistant_prompt(instructions: instructions, tools: tools)
-          response = llm.chat(prompt: prompt)
+        prompt = build_assistant_prompt(instructions: instructions, tools: tools)
+        response = llm.chat(prompt: prompt)
 
-          add_message(text: response.chat_completion, role: response.role)
-        end
+        add_message(text: response.chat_completion, role: response.role)
       end
     end
 
-    def submit_tool_output(output:)
-      # "<observation>#{observation}</observation>"
-      # Question: Should the role actually be named "tool_name", like "google_search_tool" or "calculator_tool", etc.?
-      # This could help tell the LLM where the observation came from.
-      message = build_message(role: "tool_output", text: output)
+    def submit_tool_output(tool_name:, output:)
+      message = build_message(role: "#{tool_name}_output", text: output)
       add_message_to_thread(message)
     end
 
     private
 
     # Does it make sense to introduce a state machine so that :requires_action is one of the states for example?
-    def requires_action?(completion)
+    def find_tool_invocations(completion)
       # TODO: Need better mechanism to find all tool calls that did not have tool output submitted
       # ...because there could be multiple tool calls.
 
-      # Find all instances of tool invocations
-      invoked_tools = completion.scan(/<tool>(.*)<\/tool>/).flatten
-      tool_inputs = completion.scan(/<tool_input>(.*)<\/tool_input>/).flatten
+      invoked_tools = []
 
-      [invoked_tools, tool_inputs]
+      # Find all instances of tool invocations
+      tools.each do |tool|
+        completion.scan(/<#{tool.name}>(.*)<\/#{tool.name}>/m) # /./m - Any character (the m modifier enables multiline mode)
+          .flatten
+          .each do |tool_input|
+            invoked_tools.push({tool_name: tool.name, tool_input: tool_input})
+          end
+      end
+
+      invoked_tools
     end
 
     # TODO: Summarize or truncate the conversation when it exceeds the context window

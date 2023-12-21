@@ -93,10 +93,10 @@ module Langchain
             tokens_per_message = 4  # every message follows {role/name}\n{content}\n
             tokens_per_name = -1  # if there's a name, the role is omitted
           elsif model_name.include?("gpt-3.5-turbo")
-            puts "Warning: gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613."
+            # puts "Warning: gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613."
             return token_length_from_messages(messages, "gpt-3.5-turbo-0613", options)
           elsif model_name.include?("gpt-4")
-            puts "Warning: gpt-4 may update over time. Returning num tokens assuming gpt-4-0613."
+            # puts "Warning: gpt-4 may update over time. Returning num tokens assuming gpt-4-0613."
             return token_length_from_messages(messages, "gpt-4-0613", options)
           else
             raise NotImplementedError.new(
