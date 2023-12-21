@@ -5,4 +5,3 @@ RSpec.describe Langchain::Thread do
     expect { described_class.new(messages: [Langchain::Message.new, "foo"]) }.to raise_error(ArgumentError)
   end
 end
-
