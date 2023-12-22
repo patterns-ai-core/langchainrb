@@ -181,7 +181,7 @@ module Langchain::Vectorsearch
       texts = Array(paths)
         .flatten
         .map do |path|
-          data = Langchain::Loader.new(path, options, chunker:)&.load&.chunks
+          data = Langchain::Loader.new(path, options, chunker: chunker)&.load&.chunks
           data.map { |chunk| chunk.text }
         end
 
