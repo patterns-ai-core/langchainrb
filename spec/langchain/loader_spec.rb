@@ -283,13 +283,13 @@ RSpec.describe Langchain::Loader do
 
     context "with an optional chunker class" do
       subject do
-        described_class.new(path, {chunker: Langchain::Chunker::RecursiveText})
+        described_class.new(path, chunker: Langchain::Chunker::RecursiveText)
       end
 
       let(:path) { "http://example.com/example.txt" }
 
       it "passes an optional chunker class to Langchain::Data" do
-        expect(Langchain::Data).to receive(:new).with(instance_of(String), {chunker: Langchain::Chunker::RecursiveText})
+        expect(Langchain::Data).to receive(:new).with(instance_of(String), chunker: Langchain::Chunker::RecursiveText, source: nil)
         subject.load
       end
     end

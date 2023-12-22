@@ -175,13 +175,13 @@ module Langchain::Vectorsearch
       prompt_template.format(question: question, context: context)
     end
 
-    def add_data(paths:, options: {})
+    def add_data(paths:, options: {}, chunker: Langchain::Chunker::Text)
       raise ArgumentError, "Paths must be provided" if Array(paths).empty?
 
       texts = Array(paths)
         .flatten
         .map do |path|
-          data = Langchain::Loader.new(path, options)&.load&.chunks
+          data = Langchain::Loader.new(path, options, chunker:)&.load&.chunks
           data.map { |chunk| chunk.text }
         end
 

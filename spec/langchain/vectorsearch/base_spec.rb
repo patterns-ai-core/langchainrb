@@ -126,9 +126,9 @@ RSpec.describe Langchain::Vectorsearch::Base do
       let(:paths) { Langchain.root.join("../spec/fixtures/loaders/example.txt") }
 
       it "passes an optional chunker class to Langchain::Loader", :aggregate_failures do
-        expect(Langchain::Loader).to receive(:new).with(paths, {chunker: Langchain::Chunker::RecursiveText}).and_call_original
+        expect(Langchain::Loader).to receive(:new).with(paths, {}, chunker: Langchain::Chunker::RecursiveText).and_call_original
         # #add_data will raise NotImplementedError when it calls #add_texts, this is expected and ignored in this test
-        expect { subject.add_data(paths: paths, options: {chunker: Langchain::Chunker::RecursiveText}) }.to raise_error(NotImplementedError)
+        expect { subject.add_data(paths: paths, chunker: Langchain::Chunker::RecursiveText) }.to raise_error(NotImplementedError)
       end
     end
   end

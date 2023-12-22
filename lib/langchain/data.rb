@@ -9,10 +9,10 @@ module Langchain
 
     # @param data [String] data that was loaded
     # @option options [String] :source URL or Path of the data source
-    def initialize(data, options = {})
-      @source = options[:source]
+    def initialize(data, source: nil, chunker: Langchain::Chunker::Text)
+      @source = source
       @data = data
-      @chunker_klass = options[:chunker] || Langchain::Chunker::Text
+      @chunker_klass = chunker
     end
 
     # @return [String]
