@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.8.2]
+- Introducing new `Langchain::Chunker::Markdown` chunker (thanks @spikex)
+- Fixes
+
 ## [0.8.1]
 - Support for Epsilla vector DB
 - Fully functioning Google Vertex AI LLM
