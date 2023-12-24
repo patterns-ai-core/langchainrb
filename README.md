@@ -461,8 +461,7 @@ thread = Langchain::Thread.new
 assistant = Langchain::Assistant.new(
   llm: llm,
   thread: thread,
-  name: "Meteorologist",
-  instructions: "You are a helpful assistant that is able to pull the weather for any location",
+  instructions: "You are a Meteorologist Assistant that is able to pull the weather for any location",
   tools: [
     Langchain::Tool::GoogleSearch.new(api_key: ENV["SERPAPI_API_KEY"])
   ]
@@ -471,31 +470,23 @@ assistant = Langchain::Assistant.new(
 ### Using an Assistant
 You can now add your message to an Assistant.
 ```ruby
-assistant.add_message text: "What's the weather in New York City?"
+assistant.add_message content: "What's the weather in New York City?"
 ```
 
 Run the Assistant to generate a response. 
 ```ruby
 assistant.run
-#=> [#<Langchain::Message:0x0000000113ab6c38 @role="user", @text="What's the weather in New York City?">,
-     #<Langchain::Message:0x0000000113bd6c58 @role="assistant", @text="<tool>weather</tool><tool_input>New York City, NY; metric</tool_input>">]
 ```
 
 If a Tool is invoked you can manually submit an output.
 ```ruby
-assistant.submit_tool_output output: "It's 70 degrees and sunny in New York City"
-#=> [#<Langchain::Message:0x0000000113ab6c38 @role="user", @text="What's the weather in New York City?">,
-     #<Langchain::Message:0x0000000113bd6c58 @role="assistant", @text="<tool>weather</tool><tool_input>New York City, NY; metric</tool_input>">,
-     #<Langchain::Message:0x000000011399def0 @role="tool_output", @text="It's 70 degrees and sunny in New York City">]
+assistant.submit_tool_output tool_call_id: "...", output: "It's 70 degrees and sunny in New York City"
 ```
 
 Or run the assistant with `auto_tool_execution: tool` to call Tools automatically.
 ```ruby
-assistant.add_message text: "How about San Diego, CA?"
+assistant.add_message content: "How about San Diego, CA?"
 assistant.run(auto_tool_execution: true)
-#=> [...
-     #<Langchain::Message:0x000000010f5e8d40 @role="user", @text="How about San Diego, CA?">,
-     #<Langchain::Message:0x000000010f71b690 @role="assistant", @text="It is currently mostly cloudy in San Diego, CA with a temperature of 51 degrees Fahrenheit. The precipitation is 0%, humidity is 41%, and wind speed is 3 mph.">]
 ```
 
 ### Assessing Thread messages

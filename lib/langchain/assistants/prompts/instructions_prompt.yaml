@@ -1,5 +1,0 @@
-_type: prompt
-input_variables:
-  - instructions
-template: |
-  {instructions}

@@ -14,7 +14,7 @@ module Langchain::LLM
       n: 1,
       temperature: 0.0,
       completion_model_name: "gpt-3.5-turbo",
-      chat_completion_model_name: "gpt-3.5-turbo",
+      chat_completion_model_name: "gpt-3.5-turbo-1106",
       embeddings_model_name: "text-embedding-ada-002",
       dimension: 1536
     }.freeze
@@ -128,17 +128,21 @@ module Langchain::LLM
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
 
       parameters = compose_parameters @defaults[:chat_completion_model_name], options, &block
-      parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
+      parameters[:messages] = messages if messages.any?
 
       if functions
         parameters[:functions] = functions
       else
-        parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model], parameters[:max_tokens])
+        # parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model], parameters[:max_tokens])
       end
 
-      response = with_api_error_handling { client.chat(parameters: parameters) }
+      response = with_api_error_handling do
+        # TODO: max_tokens?
+        client.chat(parameters: parameters.except(:max_tokens))
+      end
       response = response_from_chunks if block
       reset_response_chunks
+
       Langchain::LLM::OpenAIResponse.new(response)
     end
 

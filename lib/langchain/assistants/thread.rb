@@ -10,5 +10,21 @@ module Langchain
 
       @messages = messages
     end
+
+    # @return [Array<Hash>] The thread as an OpenAI API-compatible array of hashes
+    def openai_messages
+      messages.map(&:to_openai_format)
+    end
+
+    # Add a message to the thread
+    #
+    # @param message [Langchain::Message] The message to add
+    # @return [Array<Langchain::Message>] The updated messages array
+    def add_message(message)
+      raise ArgumentError, "message must be a Langchain::Message instance" unless message.is_a?(Langchain::Message)
+
+      # Prepend the message to the thread
+      messages << message
+    end
   end
 end

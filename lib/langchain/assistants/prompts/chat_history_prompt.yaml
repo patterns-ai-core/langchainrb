@@ -1,6 +1,0 @@
-_type: prompt
-input_variables:
-  - chat_history
-template: |
-  Chat history:
-  {chat_history}

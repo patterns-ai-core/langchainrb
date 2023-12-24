@@ -100,6 +100,25 @@ module Langchain::Tool
       new.execute(input: input)
     end
 
+    def to_openai_tool
+      {
+        type: "function",
+        function: {
+          name: name,
+          description: description,
+          parameters: {
+            type: "object",
+            properties: {
+              input: {
+                type: "string",
+                description: "Input to the tool"
+              }
+            },
+            required: ["input"]
+          }
+        }
+      }
+    end
     #
     # Executes the tool and returns the answer
     #
