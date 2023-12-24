@@ -64,13 +64,13 @@ module Langchain::Vectorsearch
       index.upsert(vectors: vectors, namespace: namespace)
     end
 
-    def add_data(paths:, namespace: "")
+    def add_data(paths:, namespace: "", options: {}, chunker: Langchain::Chunker::Text)
       raise ArgumentError, "Paths must be provided" if Array(paths).empty?
 
       texts = Array(paths)
         .flatten
         .map do |path|
-          data = Langchain::Loader.new(path)&.load&.chunks
+          data = Langchain::Loader.new(path, options, chunker: chunker)&.load&.chunks
           data.map { |chunk| chunk.text }
         end
 
