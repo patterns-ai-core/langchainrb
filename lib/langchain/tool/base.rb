@@ -119,6 +119,7 @@ module Langchain::Tool
         }
       }
     end
+
     #
     # Executes the tool and returns the answer
     #
