@@ -210,6 +210,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     it "requires paths" do
       expect { subject.add_data(paths: []) }.to raise_error(ArgumentError, /Paths must be provided/)
     end
+
     it "allows namespaces" do
       paths = [
         Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
@@ -220,6 +221,16 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
       expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), namespace: "earthlings")
 
       subject.add_data(paths: paths, namespace: "earthlings")
+    end
+
+    context "with an optional chunker class" do
+      let(:paths) { Langchain.root.join("../spec/fixtures/loaders/example.txt") }
+
+      it "passes an optional chunker class to Langchain::Loader", :aggregate_failures do
+        expect(Langchain::Loader).to receive(:new).with(paths, {}, chunker: Langchain::Chunker::RecursiveText).and_call_original
+        expect(subject).to receive(:add_texts).and_return(true)
+        subject.add_data(paths: paths, chunker: Langchain::Chunker::RecursiveText)
+      end
     end
   end
 
