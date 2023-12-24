@@ -3,6 +3,7 @@ AllCops:
 
 require:
   - standard
+  - standard-custom
   - rubocop-performance
 
 inherit_gem:

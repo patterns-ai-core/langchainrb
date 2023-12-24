@@ -37,9 +37,10 @@ module Langchain
     # @param path [String | Pathname] path to file or URL
     # @param options [Hash] options passed to the processor class used to process the data
     # @return [Langchain::Loader] loader instance
-    def initialize(path, options = {})
+    def initialize(path, options = {}, chunker: Langchain::Chunker::Text)
       @options = options
       @path = path
+      @chunker = chunker
     end
 
     # Is the path a URL?
@@ -112,7 +113,7 @@ module Langchain
         processor_klass.new(@options).parse(@raw_data)
       end
 
-      Langchain::Data.new(result)
+      Langchain::Data.new(result, source: @options[:source], chunker: @chunker)
     end
 
     def processor_klass
