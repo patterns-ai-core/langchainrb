@@ -7,18 +7,17 @@ module Langchain
 
     # Create a new assistant
     #
-    # @param llm [Langchain::LLM::Base] The LLM instance to use for the assistant
-    # @param thread [Langchain::Thread] The thread to use for the assistant
-    # @param tools [Array<Langchain::Tool::Base>] The tools to use for the assistant
-    # @param instructions [String] The instructions to use for the assistant
+    # @param llm [Langchain::LLM::Base] LLM instance that the assistant will use
+    # @param thread [Langchain::Thread] The thread that'll keep track of the conversation
+    # @param tools [Array<Langchain::Tool::Base>] Tools that the assistant has access to
+    # @param instructions [String] The system instructions to include in the thread
     def initialize(
       llm:,
       thread:,
       tools: [],
       instructions: nil
     )
-      # Check that the LLM class implements the `chat()` instance method
-      raise ArgumentError, "LLM must implement `chat()` method" unless llm.class.instance_methods(false).include?(:chat)
+      raise ArgumentError, "Invalid LLM; currently only Langchain::LLM::OpenAI is supported" unless llm.instance_of?(Langchain::LLM::OpenAI)
       raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless thread.is_a?(Langchain::Thread)
       raise ArgumentError, "Tools must be an array of Langchain::Tool::Base instance(s)" unless tools.is_a?(Array) && tools.all? { |tool| tool.is_a?(Langchain::Tool::Base) }
 
@@ -27,15 +26,17 @@ module Langchain
       @tools = tools
       @instructions = instructions
 
+      # The first message in the thread should be the system instructions
       add_message(role: "system", content: instructions) if instructions
     end
 
     # Add a user message to the thread
     #
     # @param content [String] The content of the message
-    # @param role [String] The role of the message
+    # @param role [String] The role attribute of the message
     # @param tool_calls [Array<Hash>] The tool calls to include in the message
     # @param tool_call_id [String] The ID of the tool call to include in the message
+    # @return [Array<Langchain::Message>] The messages in the thread
     def add_message(content: nil, role: "user", tool_calls: [], tool_call_id: nil)
       message = build_message(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
       thread.add_message(message)
@@ -110,7 +111,6 @@ module Langchain
     # @return [Array<Langchain::Message>] The messages in the thread
     def submit_tool_output(tool_call_id:, output:)
       # TODO: Validate that `tool_call_id` is valid
-
       add_message(role: "tool", content: output, tool_call_id: tool_call_id)
     end
 
@@ -123,6 +123,7 @@ module Langchain
       llm.chat(
         messages: thread.openai_messages,
         tools: tools.map(&:to_openai_tool),
+        # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
         tool_choice: "auto"
       )
     end
@@ -132,7 +133,6 @@ module Langchain
     # @param tool_calls [Array<Hash>] The tool calls to run
     def run_tools(tool_calls)
       # Iterate over each function invocation and submit tool output
-      # We may need to run this in a while() loop to handle subsequent tool invocations
       tool_calls.each do |tool_call|
         tool_call_id = tool_call.dig("id")
         tool_name = tool_call.dig("function", "name")
@@ -167,25 +167,25 @@ module Langchain
       Message.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
     end
 
-    # TODO: Fix this:
-    def build_assistant_prompt(instructions:, tools:)
-      while begin
-        # Check if the prompt exceeds the context window
-        # Return false to exit the while loop
-        !llm.class.const_get(:LENGTH_VALIDATOR).validate_max_tokens!(
-          thread.messages,
-          llm.defaults[:chat_completion_model_name],
-          {llm: llm}
-        )
-      # Rescue error if context window is exceeded and return true to continue the while loop
-      rescue Langchain::Utils::TokenLength::TokenLimitExceeded
-        true
-      end
-        # Truncate the oldest messages when the context window is exceeded
-        thread.messages.shift
-      end
+    # # TODO: Fix the message truncation when context window is exceeded
+    # def build_assistant_prompt(instructions:, tools:)
+    #   while begin
+    #     # Check if the prompt exceeds the context window
+    #     # Return false to exit the while loop
+    #     !llm.class.const_get(:LENGTH_VALIDATOR).validate_max_tokens!(
+    #       thread.messages,
+    #       llm.defaults[:chat_completion_model_name],
+    #       {llm: llm}
+    #     )
+    #   # Rescue error if context window is exceeded and return true to continue the while loop
+    #   rescue Langchain::Utils::TokenLength::TokenLimitExceeded
+    #     true
+    #   end
+    #     # Truncate the oldest messages when the context window is exceeded
+    #     thread.messages.shift
+    #   end
 
-      prompt
-    end
+    #   prompt
+    # end
   end
 end

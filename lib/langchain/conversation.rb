@@ -25,6 +25,8 @@ module Langchain
     # @param options [Hash] Options to pass to the LLM, like temperature, top_k, etc.
     # @return [Langchain::Conversation] The Langchain::Conversation instance
     def initialize(llm:, **options, &block)
+      warn "[DEPRECATION] `Langchain::Conversation` is deprecated. Please use `Langchain::Assistant` instead."
+
       @llm = llm
       @context = nil
       @memory = ::Langchain::Conversation::Memory.new(

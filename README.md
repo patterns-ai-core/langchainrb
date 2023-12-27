@@ -406,46 +406,11 @@ client.ask(
 )
 ```
 
-## Building chat bots
-
-### Conversation class
-
-Choose and instantiate the LLM provider you'll be using:
-```ruby
-llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-```
-Instantiate the Conversation class:
-```ruby
-chat = Langchain::Conversation.new(llm: llm)
-```
-
-(Optional) Set the conversation context:
-```ruby
-chat.set_context("You are a chatbot from the future")
-```
-
-Exchange messages with the LLM
-```ruby
-chat.message("Tell me about future technologies")
-```
-
-To stream the chat response:
-```ruby
-chat = Langchain::Conversation.new(llm: llm) do |chunk|
-  print(chunk)
-end
-```
-
-Open AI Functions support
-```ruby
-chat.set_functions(functions)
-```
-
 ## Evaluations (Evals)
 The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
 
 ## Assistants
-Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries. Assistants can be configured with an LLM of your choice (proprietary or open-source), any vector search database and easily extended with additional tools.
+Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries. Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
 
 ### Creating an Assistant
 1. Instantiate an LLM of your choice

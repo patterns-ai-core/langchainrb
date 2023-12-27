@@ -13,13 +13,13 @@ module Langchain
 
     # @param role [String] The role of the message
     # @param content [String] The content of the message
-    # @param tool_calls [Array<Hash>] The tool calls to be made
+    # @param tool_calls [Array<Hash>] Tool calls to be made
     # @param tool_call_id [String] The ID of the tool call to be made
     def initialize(role:, content: nil, tool_calls: [], tool_call_id: nil) # TODO: Implement image_file: reference (https://platform.openai.com/docs/api-reference/messages/object#messages/object-content)
       raise ArgumentError, "Role must be one of #{ROLES.join(", ")}" unless ROLES.include?(role)
 
       @role = role
-      # Some Tools return content as a JSON.
+      # Some Tools return content as a JSON hence `.to_s`
       @content = content.to_s
       @tool_calls = tool_calls
       @tool_call_id = tool_call_id
