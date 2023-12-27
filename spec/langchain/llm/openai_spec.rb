@@ -123,8 +123,8 @@ RSpec.describe Langchain::LLM::OpenAI do
             n: 1,
             model: "gpt-3.5-turbo",
             messages: [{content: "Hello World", role: "user"}],
-            temperature: 0.0,
-            max_tokens: 4087
+            temperature: 0.0
+            # max_tokens: 4087
           }
         }
       end
@@ -166,8 +166,8 @@ RSpec.describe Langchain::LLM::OpenAI do
               n: 1,
               model: "text-davinci-003",
               prompt: "Hello World",
-              temperature: 0.0,
-              max_tokens: 4095
+              temperature: 0.0
+              # max_tokens: 4095
             }
           }
         end
@@ -181,7 +181,7 @@ RSpec.describe Langchain::LLM::OpenAI do
           expect(subject.client).to receive(:chat).with({
             parameters: {
               n: 1,
-              max_tokens: 4087,
+              # max_tokens: 4087,
               model: "gpt-3.5-turbo",
               messages: [{content: "Hello World", role: "user"}],
               temperature: 0.0
@@ -205,8 +205,8 @@ RSpec.describe Langchain::LLM::OpenAI do
               n: 1,
               model: "gpt-3.5-turbo",
               messages: [{content: "Hello World", role: "user"}],
-              temperature: 0.0,
-              max_tokens: 4086
+              temperature: 0.0 # ,
+              # max_tokens: 4086
             }
           }
         end
@@ -215,7 +215,7 @@ RSpec.describe Langchain::LLM::OpenAI do
           expect(subject.client).to receive(:chat).with({
             parameters: {
               n: 1,
-              max_tokens: 4087,
+              # max_tokens: 4087 ,
               model: "gpt-3.5-turbo",
               messages: [{content: "Hello World", role: "user"}],
               temperature: 0.0
@@ -228,7 +228,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 1.0, max_tokens: 4087}}
+        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 1.0}} # , max_tokens: 4087}}
       end
 
       it "returns a completion" do
@@ -240,7 +240,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with failed API call" do
       let(:parameters) do
-        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 0.0, max_tokens: 4087}}
+        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 0.0}} # , max_tokens: 4087}}
       end
       let(:response) do
         {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
@@ -266,7 +266,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     let(:temperature) { 0.0 }
     let(:n) { 1 }
     let(:history) { [content: prompt, role: "user"] }
-    let(:parameters) { {parameters: {n: n, messages: history, model: model, temperature: temperature, max_tokens: be_between(4014, 4096)}} }
+    let(:parameters) { {parameters: {n: n, messages: history, model: model, temperature: temperature}} }  # max_tokens: be_between(4014, 4096)}} }
     let(:answer) { "As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?" }
     let(:answer_2) { "Alternative answer" }
     let(:choices) do

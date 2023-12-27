@@ -119,7 +119,8 @@ module Langchain::LLM
       parameters[:logit_bias] = logit_bias if logit_bias
       parameters[:logprobs] = logprobs if logprobs
       parameters[:top_logprobs] = top_logprobs if top_logprobs
-      parameters[:max_tokens] = max_tokens || validate_max_tokens(parameters[:messages], parameters[:model])
+      # TODO: Fix max_tokens validation to account for tools/functions
+      parameters[:max_tokens] = max_tokens if max_tokens # || validate_max_tokens(parameters[:messages], parameters[:model])
       parameters[:n] = n if n
       parameters[:presence_penalty] = presence_penalty if presence_penalty
       parameters[:response_format] = response_format if response_format
