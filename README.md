@@ -74,7 +74,7 @@ Langchain.rb wraps all supported LLMs in a unified interface allowing you to eas
 
 #### OpenAI
 
-Add `gem "ruby-openai", "~> 6.1.0"` to your Gemfile.
+Add `gem "ruby-openai", "~> 6.3.0"` to your Gemfile.
 
 ```ruby
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])

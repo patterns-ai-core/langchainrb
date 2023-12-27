@@ -6,7 +6,6 @@ RSpec.describe Langchain::Assistant do
 
   subject {
     described_class.new(
-      name: "Test Assistant",
       llm: llm,
       thread: thread
     )
@@ -26,8 +25,8 @@ RSpec.describe Langchain::Assistant do
 
   describe "#add_message" do
     it "adds a message to the thread" do
-      subject.add_message(text: "foo")
-      expect(thread.messages.first.text).to eq("foo")
+      subject.add_message(content: "foo")
+      expect(thread.messages.first.content).to eq("foo")
     end
   end
 end
