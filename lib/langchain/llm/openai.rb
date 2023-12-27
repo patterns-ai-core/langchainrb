@@ -70,6 +70,7 @@ module Langchain::LLM
       Langchain::LLM::OpenAIResponse.new(response)
     end
 
+    # rubocop:disable Style/ArgumentsForwarding
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
@@ -80,6 +81,7 @@ module Langchain::LLM
       messages = [{role: "user", content: prompt}]
       chat(messages: messages, **params)
     end
+    # rubocop:enable Style/ArgumentsForwarding
 
     # Generate a chat completion for a given prompt or messages.
     #
