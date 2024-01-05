@@ -421,6 +421,10 @@ llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 ```ruby
 thread = Langchain::Thread.new
 ```
+You can pass old message from previously using the Assistant:
+```ruby
+thread.messages = messages
+```
 3. Instantiate an Assistant
 ```ruby
 assistant = Langchain::Assistant.new(
@@ -454,13 +458,13 @@ assistant.add_message content: "How about San Diego, CA?"
 assistant.run(auto_tool_execution: true)
 ```
 
-### Assessing Thread messages
+### Accessing Thread messages
 You can access the messages in a Thread by calling `assistant.thread.messages`.
 ```ruby
 assistant.thread.messages
 ```
 
-The Assistant check the context window limits before every request to the LLM and remove oldest thread messages one by one if the context window is exceeded.
+The Assistant checks the context window limits before every request to the LLM and remove oldest thread messages one by one if the context window is exceeded.
 
 ### RAGAS
 Ragas helps you evaluate your Retrieval Augmented Generation (RAG) pipelines. The implementation is based on this [paper](https://arxiv.org/abs/2309.15217) and the original Python [repo](https://github.com/explodinggradients/ragas). Ragas tracks the following 3 metrics and assigns the 0.0 - 1.0 scores:
