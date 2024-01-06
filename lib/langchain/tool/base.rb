@@ -91,7 +91,11 @@ module Langchain::Tool
       new.execute(input: input)
     end
 
+    # Returns the tool as an OpenAI tool
+    #
+    # @return [Hash] tool as an OpenAI tool
     def to_openai_tool
+      # TODO: This is hardcoded to def execute(input:) found in each tool, needs to be dynamic.
       {
         type: "function",
         function: {

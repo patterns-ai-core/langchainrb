@@ -27,13 +27,14 @@ module Langchain
       @instructions = instructions
 
       # The first message in the thread should be the system instructions
+      # TODO: What if the user added old messages and the system instructions are already in there? Should this overwrite the existing instructions?
       add_message(role: "system", content: instructions) if instructions
     end
 
     # Add a user message to the thread
     #
     # @param content [String] The content of the message
-    # @param role [String] The role attribute of the message
+    # @param role [String] The role attribute of the message. Default: "user"
     # @param tool_calls [Array<Hash>] The tool calls to include in the message
     # @param tool_call_id [String] The ID of the tool call to include in the message
     # @return [Array<Langchain::Message>] The messages in the thread
@@ -50,10 +51,9 @@ module Langchain
       running = true
 
       while running
-        # Do we need to determine if there's any unanswered tool calls?
+        # TODO: I think we need to look at all messages and not just the last one.
         case (last_message = thread.messages.last).role
         when "system"
-          # Raise error if there's only 1 message?
           # Do nothing
           running = false
         when "assistant"
@@ -61,9 +61,11 @@ module Langchain
             if auto_tool_execution
               run_tools(last_message.tool_calls)
             else
+              # Maybe log and tell the user that there's outstanding tool calls?
               running = false
             end
           else
+            # Last message was from the assistant without any tools calls.
             # Do nothing
             running = false
           end
@@ -72,9 +74,11 @@ module Langchain
           response = chat_with_llm
 
           if response.tool_calls
+            # Re-run the while(running) loop to process the tool calls
             running = true
             add_message(role: response.role, tool_calls: response.tool_calls)
           elsif response.chat_completion
+            # Stop the while(running) loop and add the assistant's response to the thread
             running = false
             add_message(role: response.role, content: response.chat_completion)
           end
@@ -179,6 +183,7 @@ module Langchain
     #     )
     #   # Rescue error if context window is exceeded and return true to continue the while loop
     #   rescue Langchain::Utils::TokenLength::TokenLimitExceeded
+    #     # Should be using `retry` instead of while()
     #     true
     #   end
     #     # Truncate the oldest messages when the context window is exceeded

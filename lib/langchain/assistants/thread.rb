@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Langchain
+  # Langchain::Thread keeps track of messages in a conversation
+  # Eventually we may want to add functionality to persist to the thread to disk, DB, storage, etc.
   class Thread
     attr_accessor :messages
 
@@ -11,6 +13,8 @@ module Langchain
       @messages = messages
     end
 
+    # Convert the thread to an OpenAI API-compatible array of hashes
+    #
     # @return [Array<Hash>] The thread as an OpenAI API-compatible array of hashes
     def openai_messages
       messages.map(&:to_openai_format)

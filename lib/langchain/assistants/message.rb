@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Langchain
+  # Langchain::Message are the messages that are sent to LLM chat methods
   class Message
     attr_reader :role, :content, :tool_calls, :tool_call_id
 
@@ -17,6 +18,7 @@ module Langchain
     # @param tool_call_id [String] The ID of the tool call to be made
     def initialize(role:, content: nil, tool_calls: [], tool_call_id: nil) # TODO: Implement image_file: reference (https://platform.openai.com/docs/api-reference/messages/object#messages/object-content)
       raise ArgumentError, "Role must be one of #{ROLES.join(", ")}" unless ROLES.include?(role)
+      raise ArgumentError, "Tool calls must be an array of hashes" unless tool_calls.is_a?(Array) && tool_calls.all? { |tool_call| tool_call.is_a?(Hash) }
 
       @role = role
       # Some Tools return content as a JSON hence `.to_s`
@@ -25,6 +27,8 @@ module Langchain
       @tool_call_id = tool_call_id
     end
 
+    # Convert the message to an OpenAI API-compatible hash
+    #
     # @return [Hash] The message as an OpenAI API-compatible hash
     def to_openai_format
       {}.tap do |h|
