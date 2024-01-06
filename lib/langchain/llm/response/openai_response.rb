@@ -16,8 +16,16 @@ module Langchain::LLM
       completions&.dig(0, "message", "content")
     end
 
+    def role
+      completions&.dig(0, "message", "role")
+    end
+
     def chat_completion
       completion
+    end
+
+    def tool_calls
+      chat_completions&.dig(0, "message", "tool_calls")
     end
 
     def embedding

@@ -30,6 +30,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 - [Output Parsers](#output-parsers)
 - [Building RAG](#building-retrieval-augment-generation-rag-system)
 - [Building chat bots](#building-chat-bots)
+- [Assistants](#assistants)
 - [Evaluations](#evaluations-evals)
 - [Examples](#examples)
 - [Logging](#logging)
@@ -73,7 +74,7 @@ Langchain.rb wraps all supported LLMs in a unified interface allowing you to eas
 
 #### OpenAI
 
-Add `gem "ruby-openai", "~> 6.1.0"` to your Gemfile.
+Add `gem "ruby-openai", "~> 6.3.0"` to your Gemfile.
 
 ```ruby
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
@@ -405,43 +406,65 @@ client.ask(
 )
 ```
 
-## Building chat bots
+## Evaluations (Evals)
+The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
 
-### Conversation class
+## Assistants
+Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries. Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
 
-Choose and instantiate the LLM provider you'll be using:
+### Creating an Assistant
+1. Instantiate an LLM of your choice
 ```ruby
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 ```
-Instantiate the Conversation class:
+2. Instantiate a Thread. Threads keep track of the messages in the Assistant conversation.
 ```ruby
-chat = Langchain::Conversation.new(llm: llm)
+thread = Langchain::Thread.new
+```
+You can pass old message from previously using the Assistant:
+```ruby
+thread.messages = messages
+```
+3. Instantiate an Assistant
+```ruby
+assistant = Langchain::Assistant.new(
+  llm: llm,
+  thread: thread,
+  instructions: "You are a Meteorologist Assistant that is able to pull the weather for any location",
+  tools: [
+    Langchain::Tool::GoogleSearch.new(api_key: ENV["SERPAPI_API_KEY"])
+  ]
+)
+```
+### Using an Assistant
+You can now add your message to an Assistant.
+```ruby
+assistant.add_message content: "What's the weather in New York City?"
 ```
 
-(Optional) Set the conversation context:
+Run the Assistant to generate a response. 
 ```ruby
-chat.set_context("You are a chatbot from the future")
+assistant.run
 ```
 
-Exchange messages with the LLM
+If a Tool is invoked you can manually submit an output.
 ```ruby
-chat.message("Tell me about future technologies")
+assistant.submit_tool_output tool_call_id: "...", output: "It's 70 degrees and sunny in New York City"
 ```
 
-To stream the chat response:
+Or run the assistant with `auto_tool_execution: tool` to call Tools automatically.
 ```ruby
-chat = Langchain::Conversation.new(llm: llm) do |chunk|
-  print(chunk)
-end
+assistant.add_message content: "How about San Diego, CA?"
+assistant.run(auto_tool_execution: true)
 ```
 
-Open AI Functions support
+### Accessing Thread messages
+You can access the messages in a Thread by calling `assistant.thread.messages`.
 ```ruby
-chat.set_functions(functions)
+assistant.thread.messages
 ```
 
-## Evaluations (Evals)
-The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
+The Assistant checks the context window limits before every request to the LLM and remove oldest thread messages one by one if the context window is exceeded.
 
 ### RAGAS
 Ragas helps you evaluate your Retrieval Augmented Generation (RAG) pipelines. The implementation is based on this [paper](https://arxiv.org/abs/2309.15217) and the original Python [repo](https://github.com/explodinggradients/ragas). Ragas tracks the following 3 metrics and assigns the 0.0 - 1.0 scores:

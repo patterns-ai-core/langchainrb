@@ -22,8 +22,8 @@ module Langchain
         # @param model_name [String] The model name to validate against
         # @return [Integer] The token length of the text
         #
-        def self.token_length(text, model_name, client)
-          res = client.tokenize(text)
+        def self.token_length(text, model_name, options = {})
+          res = options[:llm].tokenize(text)
           res.dig(:tokens).length
         end
 

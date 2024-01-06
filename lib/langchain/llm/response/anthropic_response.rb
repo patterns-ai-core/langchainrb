@@ -25,5 +25,9 @@ module Langchain::LLM
     def log_id
       raw_response.dig("log_id")
     end
+
+    def role
+      "assistant"
+    end
   end
 end

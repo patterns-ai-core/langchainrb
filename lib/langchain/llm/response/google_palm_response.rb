@@ -32,5 +32,9 @@ module Langchain::LLM
     def embeddings
       [raw_response.dig("embedding", "value")]
     end
+
+    def role
+      "assistant"
+    end
   end
 end
