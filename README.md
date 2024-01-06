@@ -1,6 +1,3 @@
-# Please fill out the [Ruby AI Survey 2023](https://docs.google.com/forms/d/1dH_0js1wpEyh1YqPTOxU3b5fXj76sb5lYp12lVoNNZE/edit).
-Results will be anonymized and shared!
-
 💎🔗 Langchain.rb
 ---
 ⚡ Building LLM-powered applications in Ruby ⚡
@@ -18,8 +15,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 
 ## Use Cases
 * Retrieval Augmented Generation (RAG) and vector search
-* Chat bots
-* [AI agents](https://github.com/andreibondarev/langchainrb/tree/main/lib/langchain/agent/agents.md)
+* [Assistants](#assistants) (chat bots) & [AI Agents](https://github.com/andreibondarev/langchainrb/tree/main/lib/langchain/agent/agents.md)
 
 ## Table of Contents
 
@@ -29,7 +25,6 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 - [Prompt Management](#prompt-management)
 - [Output Parsers](#output-parsers)
 - [Building RAG](#building-retrieval-augment-generation-rag-system)
-- [Building chat bots](#building-chat-bots)
 - [Assistants](#assistants)
 - [Evaluations](#evaluations-evals)
 - [Examples](#examples)
