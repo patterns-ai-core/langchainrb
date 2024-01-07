@@ -6,6 +6,12 @@ module Langchain::Tool
     # Gem requirements: gem "sequel", "~> 5.68.0"
     #
 
+    CALLABLE_METHODS = [
+      :describe_tables,
+      :list_tables,
+      :execute
+    ]
+
     NAME = "database"
 
     description <<~DESC
@@ -33,52 +39,69 @@ module Langchain::Tool
       @db = Sequel.connect(connection_string)
       @requested_tables = tables
       @excluded_tables = exclude_tables
+
+      generate_yard_docs!
     end
 
+    # Database Tool: Returns a list of tables in the database
+    def list_tables
+      db.tables
+    end
+
+    # Database Tool: Returns the schema for a list of tables
     #
-    # Returns the database schema
-    #
-    # @return [String] schema
-    #
-    def dump_schema
-      Langchain.logger.info("Dumping schema tables and keys", for: self.class)
+    # @param tables [String] The tables to describe.
+    # @return [String] Database schema for the tables
+    def describe_tables(tables:)
       schema = ""
-      db.tables.each do |table|
-        next if excluded_tables.include?(table)
-        next unless requested_tables.empty? || requested_tables.include?(table)
-
-        primary_key_columns = []
-        primary_key_column_count = db.schema(table).count { |column| column[1][:primary_key] == true }
-
-        schema << "CREATE TABLE #{table}(\n"
-        db.schema(table).each do |column|
-          schema << "#{column[0]} #{column[1][:type]}"
-          if column[1][:primary_key] == true
-            schema << " PRIMARY KEY" if primary_key_column_count == 1
-          else
-            primary_key_columns << column[0]
-          end
-          schema << ",\n" unless column == db.schema(table).last && primary_key_column_count == 1
-        end
-        if primary_key_column_count > 1
-          schema << "PRIMARY KEY (#{primary_key_columns.join(",")})"
-        end
-        db.foreign_key_list(table).each do |fk|
-          schema << ",\n" if fk == db.foreign_key_list(table).first
-          schema << "FOREIGN KEY (#{fk[:columns][0]}) REFERENCES #{fk[:table]}(#{fk[:key][0]})"
-          schema << ",\n" unless fk == db.foreign_key_list(table).last
-        end
-        schema << ");\n"
+      tables.split(",").each do |table|
+        describe_table(table, schema)
       end
       schema
     end
 
+    # Database Tool: Returns the database schema
     #
-    # Evaluates a sql expression
+    # @return [String] Database schema
+    def dump_schema
+      Langchain.logger.info("Dumping schema tables and keys", for: self.class)
+      schema = ""
+      db.tables.each do |table|
+        describe_table(table, schema)
+      end
+      schema
+    end
+
+    def describe_table(table, schema)
+
+      primary_key_columns = []
+      primary_key_column_count = db.schema(table).count { |column| column[1][:primary_key] == true }
+
+      schema << "CREATE TABLE #{table}(\n"
+      db.schema(table).each do |column|
+        schema << "#{column[0]} #{column[1][:type]}"
+        if column[1][:primary_key] == true
+          schema << " PRIMARY KEY" if primary_key_column_count == 1
+        else
+          primary_key_columns << column[0]
+        end
+        schema << ",\n" unless column == db.schema(table).last && primary_key_column_count == 1
+      end
+      if primary_key_column_count > 1
+        schema << "PRIMARY KEY (#{primary_key_columns.join(",")})"
+      end
+      db.foreign_key_list(table).each do |fk|
+        schema << ",\n" if fk == db.foreign_key_list(table).first
+        schema << "FOREIGN KEY (#{fk[:columns][0]}) REFERENCES #{fk[:table]}(#{fk[:key][0]})"
+        schema << ",\n" unless fk == db.foreign_key_list(table).last
+      end
+      schema << ");\n"
+    end
+
+    # Database Tool: Executes a SQL query and returns the results
     #
-    # @param input [String] sql expression
-    # @return [Array] results
-    #
+    # @param input [String] SQL query to be executed
+    # @return [Array] Results from the SQL query
     def execute(input:)
       Langchain.logger.info("Executing \"#{input}\"", for: self.class)
 

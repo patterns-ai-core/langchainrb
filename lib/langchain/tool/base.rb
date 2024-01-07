@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "yard"
+
 module Langchain::Tool
   # = Tools
   #
@@ -94,25 +96,49 @@ module Langchain::Tool
     # Returns the tool as an OpenAI tool
     #
     # @return [Hash] tool as an OpenAI tool
-    def to_openai_tool
-      # TODO: This is hardcoded to def execute(input:) found in each tool, needs to be dynamic.
-      {
-        type: "function",
-        function: {
-          name: name,
-          description: description,
-          parameters: {
-            type: "object",
-            properties: {
-              input: {
-                type: "string",
-                description: "Input to the tool"
-              }
-            },
-            required: ["input"]
+    def to_openai_tools
+      # Iterate over all the callable methods and convert them to OpenAI format
+      self.class.const_get(:CALLABLE_METHODS).map do |method_name|
+        params = method(method_name).parameters
+        properties = {}
+        required_properties = []
+        # Expected format: [[:keyreq, :input]]
+        params.each do |param|
+          properties[param.last] = {
+            type: "string", # TODO: Support other types; don't assume string
+            description: find_param_yard_tag(method_name: method_name, param: param.last).text
+          }
+          # If :keyreq (required keyword argument) then add the param name to required_properties
+          required_properties << param.last.to_s if param.first == :keyreq
+        end
+
+        {
+          type: "function",
+          function: {
+            name: "#{name}-#{method_name}",
+            description: find_method_yard_docs(method_name: method_name).docstring,
+            parameters: {
+              type: "object",
+              properties: properties,
+              required: required_properties
+            }
           }
         }
-      }
+      end
+    end
+
+    def generate_yard_docs!
+      YARD.parse("./lib/langchain/tool/#{name}.rb")
+    end
+
+    def find_method_yard_docs(method_name:)
+      YARD::Registry.all.find { |o| o.title == "#{self.class.name}##{method_name}" }
+    end
+
+    def find_param_yard_tag(method_name:, param:)
+      find_method_yard_docs(method_name:)
+        .tags
+        .find { |t| t.tag_name == "param" && t.name == param.to_s }
     end
 
     #

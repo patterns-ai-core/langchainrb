@@ -126,7 +126,9 @@ module Langchain
     def chat_with_llm
       llm.chat(
         messages: thread.openai_messages,
-        tools: tools.map(&:to_openai_tool),
+        tools: tools
+          .map(&:to_openai_tools)
+          .flatten,
         # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
         tool_choice: "auto"
       )
@@ -139,14 +141,19 @@ module Langchain
       # Iterate over each function invocation and submit tool output
       tool_calls.each do |tool_call|
         tool_call_id = tool_call.dig("id")
-        tool_name = tool_call.dig("function", "name")
+        function_name = tool_call.dig("function", "name")
+        tool_name, method_name = function_name.split("-")
         tool_arguments = JSON.parse(tool_call.dig("function", "arguments"), symbolize_names: true)
+
+        # Before: "database"
+        # After: "database[execute]"
+        # After: "database[dump_schema]"
 
         tool_instance = tools.find do |t|
           t.name == tool_name
         end or raise ArgumentError, "Tool not found in assistant.tools"
 
-        output = tool_instance.execute(**tool_arguments)
+        output = tool_instance.send(method_name, **tool_arguments)
 
         submit_tool_output(tool_call_id: tool_call_id, output: output)
       end
