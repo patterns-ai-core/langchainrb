@@ -452,6 +452,10 @@ Or run the assistant with `auto_tool_execution: tool` to call Tools automaticall
 assistant.add_message content: "How about San Diego, CA?"
 assistant.run(auto_tool_execution: true)
 ```
+You can also combine the two by calling:
+```ruby
+assistant.add_message_and_run content: "What about Sacramento, CA?", auto_tool_execution: true
+```
 
 ### Accessing Thread messages
 You can access the messages in a Thread by calling `assistant.thread.messages`.
