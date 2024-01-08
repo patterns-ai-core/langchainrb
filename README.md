@@ -420,6 +420,12 @@ You can pass old message from previously using the Assistant:
 ```ruby
 thread.messages = messages
 ```
+Messages contain the conversation history and the whole message history is sent to the LLM every time. A Message belongs to 1 of the 4 roles:
+* `Message(role: "system")` message usually contains the instructions.
+* `Message(role: "user")` messages come from the user.
+* `Message(role: "assistant")` messages are produced by the LLM.
+* `Message(role: "tool")` messages are sent in response to tool calls with tool outputs.
+
 3. Instantiate an Assistant
 ```ruby
 assistant = Langchain::Assistant.new(
