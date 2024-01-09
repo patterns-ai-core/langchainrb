@@ -13,15 +13,15 @@ module Langchain::Tool
     DESC
 
     def initialize(timeout: 30)
-      @timeout = timeout
       depends_on "safe_ruby"
-      require "safe_ruby"
+
+      @timeout = timeout
     end
 
     # @param input [String] ruby code expression
     # @return [String] Answer
     def execute(input:)
-      Langchain.logger.info("[#{self.class.name}]".light_blue + ": Executing \"#{input}\"")
+      Langchain.logger.info("Executing \"#{input}\"", for: self.class)
 
       safe_eval(input)
     end

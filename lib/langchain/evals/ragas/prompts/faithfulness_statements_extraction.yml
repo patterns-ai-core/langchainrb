@@ -1,0 +1,9 @@
+_type: prompt
+input_variables:
+  - question
+  - answer
+template: |
+  Given a question and answer, create one or more statements from each sentence in the given answer.
+  question: {question}
+  answer: {answer}
+  statements:\n

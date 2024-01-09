@@ -6,6 +6,10 @@ require "yaml"
 require "langchain"
 require "pry-byebug"
 
+RUNNING_ON_CI = ENV["CI"] == "true"
+
+require Langchain.root.join("./../spec/support/custom_matchers.rb")
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
@@ -19,4 +23,13 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  # this allows focusing a spec via `fit`, `fcontext`, `fdescribe`, or focus: true
+  # don't allow focusing on CI
+  config.filter_run focus: !RUNNING_ON_CI
+  config.run_all_when_everything_filtered = true
+
+  config.order = :random
+
+  config.include CustomMatchers
 end

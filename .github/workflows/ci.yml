@@ -6,11 +6,12 @@ on:
       - "*"
   push:
     branches:
-      - master
+      - main
 jobs:
   tests:
     env:
       POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      EPSILLA_URL: http://127.0.0.1:8888
 
     runs-on: ubuntu-latest
     strategy:
@@ -25,6 +26,13 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      epsilla:
+        image: epsilla/vectordb:0.3.1
+        ports:
+          - 8888:8888
+        # Faster health checks
+        options: >-
+          --health-interval 1s
 
     steps:
       - uses: actions/checkout@master
@@ -37,7 +45,7 @@ jobs:
 
       - name: Run tests
         run: |
-          bundle exec rspec 
+          bundle exec rspec
   linters:
     runs-on: ubuntu-latest
     steps:
@@ -61,4 +69,4 @@ jobs:
           bundler: default
           bundler-cache: true
       - name: Build docs
-        run: bundle exec rake yard
+        run: bundle exec yardoc

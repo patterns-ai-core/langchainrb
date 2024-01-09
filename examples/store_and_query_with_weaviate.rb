@@ -1,5 +1,5 @@
 require "langchain"
-require "weaviate"
+require "dotenv/load"
 
 # gem install weaviate-ruby
 # or add `gem "weaviate-ruby"` to your Gemfile

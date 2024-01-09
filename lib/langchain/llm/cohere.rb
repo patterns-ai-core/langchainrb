@@ -1,55 +1,59 @@
 # frozen_string_literal: true
 
 module Langchain::LLM
+  #
+  # Wrapper around the Cohere API.
+  #
+  # Gem requirements:
+  #     gem "cohere-ruby", "~> 0.9.6"
+  #
+  # Usage:
+  #     cohere = Langchain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
+  #
   class Cohere < Base
-    #
-    # Wrapper around the Cohere API.
-    #
-    # Gem requirements: gem "cohere-ruby", "~> 0.9.4"
-    #
-    # Usage:
-    # cohere = Langchain::LLM::Cohere.new(api_key: "YOUR_API_KEY")
-    #
-
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "base",
+      completion_model_name: "command",
       embeddings_model_name: "small",
-      dimension: 1024
+      dimension: 1024,
+      truncate: "START"
     }.freeze
 
-    def initialize(api_key:)
-      depends_on "cohere-ruby"
-      require "cohere"
+    def initialize(api_key, default_options = {})
+      depends_on "cohere-ruby", req: "cohere"
 
-      @client = ::Cohere::Client.new(api_key: api_key)
+      @client = ::Cohere::Client.new(api_key)
+      @defaults = DEFAULTS.merge(default_options)
     end
 
     #
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Hash] The embedding
+    # @return [Langchain::LLM::CohereResponse] Response object
     #
     def embed(text:)
       response = client.embed(
         texts: [text],
-        model: DEFAULTS[:embeddings_model_name]
+        model: @defaults[:embeddings_model_name]
       )
-      response.dig("embeddings").first
+
+      Langchain::LLM::CohereResponse.new response, model: @defaults[:embeddings_model_name]
     end
 
     #
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
-    # @return [Hash] The completion
+    # @param params[:stop_sequences]
+    # @return [Langchain::LLM::CohereResponse] Response object
     #
     def complete(prompt:, **params)
       default_params = {
         prompt: prompt,
-        temperature: DEFAULTS[:temperature],
-        model: DEFAULTS[:completion_model_name]
+        temperature: @defaults[:temperature],
+        model: @defaults[:completion_model_name],
+        truncate: @defaults[:truncate]
       }
 
       if params[:stop_sequences]
@@ -58,14 +62,15 @@ module Langchain::LLM
 
       default_params.merge!(params)
 
+      default_params[:max_tokens] = Langchain::Utils::TokenLength::CohereValidator.validate_max_tokens!(prompt, default_params[:model], llm: client)
+
       response = client.generate(**default_params)
-      response.dig("generations").first.dig("text")
+      Langchain::LLM::CohereResponse.new response, model: @defaults[:completion_model_name]
     end
 
-    # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`
-    def chat(...)
-      complete(...)
-    end
+    # TODO: Implement chat method: https://github.com/andreibondarev/cohere-ruby/issues/11
+    # def chat
+    # end
 
     # Generate a summary in English for a given text
     #

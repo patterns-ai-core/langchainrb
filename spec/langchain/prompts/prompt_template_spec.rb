@@ -17,6 +17,16 @@ RSpec.describe Langchain::Prompt::PromptTemplate do
         )
       ).to be_a(Langchain::Prompt::PromptTemplate)
     end
+
+    it "raises an error if the template is invalid" do
+      expect {
+        described_class.new(
+          template: prompt_example,
+          input_variables: %w[product extra_product],
+          validate_template: true
+        )
+      }.to raise_error(ArgumentError)
+    end
   end
 
   describe "#format" do

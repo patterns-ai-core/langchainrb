@@ -22,25 +22,61 @@ RSpec.describe Langchain::LLM::AI21 do
 
     context "with no additional parameters" do
       before do
-        allow(subject.client).to receive(:complete).with("Hello World", {}).and_return(response)
+        allow(subject.client).to receive(:complete)
+          .with("Hello World", {maxTokens: 1000, model: "j2-ultra", temperature: 0.0})
+          .and_return(response)
+
+        allow(Langchain::Utils::TokenLength::AI21Validator).to receive(:validate_max_tokens!).and_return(1000)
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World")).to eq("\nWhat is the meaning of life? What is the meaning of life?\nWhat is the meaning")
+        expect(subject.complete(prompt: "Hello World").completion).to eq("\nWhat is the meaning of life? What is the meaning of life?\nWhat is the meaning")
       end
     end
 
     context "with additional parameters" do
       before do
         allow(subject.client).to receive(:complete)
-          .with("Hello World", {temperature: 0.7, model: "j2-jumbo"})
+          .with("Hello World", {
+            maxTokens: 1000,
+            temperature: 0.7,
+            model: "j2-light"
+          })
           .and_return(response)
+
+        allow(Langchain::Utils::TokenLength::AI21Validator).to receive(:validate_max_tokens!).and_return(1000)
       end
 
       it "returns a completion" do
-        expect(subject.complete(prompt: "Hello World", model: "j2-jumbo", temperature: 0.7)).to eq(
+        expect(subject.complete(prompt: "Hello World", model: "j2-light", temperature: 0.7).completion).to eq(
           "\nWhat is the meaning of life? What is the meaning of life?\nWhat is the meaning"
         )
+      end
+    end
+
+    context "with custom default_options" do
+      before do
+        allow(Langchain::Utils::TokenLength::AI21Validator).to receive(:validate_max_tokens!).and_return(1000)
+      end
+
+      let(:subject) {
+        described_class.new(
+          api_key: "123",
+          default_options: {model: "j2-mid"}
+        )
+      }
+
+      it "passes correct options to the client's complete method" do
+        expect(subject.client).to receive(:complete).with(
+          "Hello World",
+          {
+            maxTokens: 1000,
+            model: "j2-mid",
+            temperature: 0.0
+          }
+        ).and_return(response)
+
+        subject.complete(prompt: "Hello World")
       end
     end
   end

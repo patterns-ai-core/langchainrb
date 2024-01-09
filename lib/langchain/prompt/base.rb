@@ -5,15 +5,20 @@ require "json"
 require "yaml"
 
 module Langchain::Prompt
+  # Prompts are structured inputs to the LLMs. Prompts provide instructions, context and other user input that LLMs use to generate responses.
+  #
+  # @abstract
   class Base
     def format(**kwargs)
       raise NotImplementedError
     end
 
+    # @return [String] the type of the prompt
     def prompt_type
       raise NotImplementedError
     end
 
+    # @return [Hash] a hash representation of the prompt
     def to_h
       raise NotImplementedError
     end
@@ -29,7 +34,7 @@ module Langchain::Prompt
     # @return [void]
     #
     def validate(template:, input_variables:)
-      input_variables_set = @input_variables.uniq
+      input_variables_set = input_variables.uniq
       variables_from_template = Langchain::Prompt::Base.extract_variables_from_template(template)
 
       missing_variables = variables_from_template - input_variables_set
@@ -40,11 +45,11 @@ module Langchain::Prompt
     end
 
     #
-    # Save the object to a file in JSON format.
+    # Save the object to a file in JSON or YAML format.
     #
     # @param file_path [String, Pathname] The path to the file to save the object to
     #
-    # @raise [ArgumentError] If file_path doesn't end with .json
+    # @raise [ArgumentError] If file_path doesn't end with .json or .yaml or .yml
     #
     # @return [void]
     #

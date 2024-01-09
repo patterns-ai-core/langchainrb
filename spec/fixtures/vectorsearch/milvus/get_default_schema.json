@@ -1,0 +1,51 @@
+{
+  "status": {},
+  "schema": {
+    "name": "Products",
+    "description": "Default schema created by Vectorsearch",
+    "fields": [
+      {
+        "fieldID": 100,
+        "name": "id",
+        "is_primary_key": true,
+        "data_type": 5,
+        "autoID": true
+      },
+      {
+        "fieldID": 101,
+        "name": "content",
+        "data_type": 21,
+        "type_params": [
+          {
+            "key": "max_length",
+            "value": "32768"
+          }
+        ]
+      },
+      {
+        "fieldID": 102,
+        "name": "vectors",
+        "data_type": 101,
+        "type_params": [
+          {
+            "key": "dim",
+            "value": "1536"
+          }
+        ]
+      }
+    ]
+  },
+  "collectionID": 442541889915979330,
+  "virtual_channel_names": [
+    "by-dev-rootcoord-dml_2_442541889915979330v0",
+    "by-dev-rootcoord-dml_3_442541889915979330v1"
+  ],
+  "physical_channel_names": [
+    "by-dev-rootcoord-dml_2",
+    "by-dev-rootcoord-dml_3"
+  ],
+  "created_timestamp": 442541971004981252,
+  "created_utc_timestamp": 1688163646717,
+  "shards_num": 2,
+  "collection_name": "Recipes"
+}

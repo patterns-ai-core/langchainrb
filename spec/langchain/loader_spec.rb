@@ -13,6 +13,30 @@ RSpec.describe Langchain::Loader do
       allow(URI).to receive(:parse).and_return(double(open: response))
     end
 
+    context "Directory" do
+      let(:path) { "spec/fixtures/loaders/data" }
+      let(:result) do
+        [
+          [
+            ["Username", "Identifier", "First name", "Last name"],
+            ["booker12", "9012", "Rachel", "Booker"],
+            ["grey07", "2070", "Laura", "Grey"]
+          ],
+          [
+            {"name" => "Luke Skywalker", "height" => "172", "mass" => "77"},
+            {"name" => "C-3PO", "height" => "167", "mass" => "75"}
+          ],
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n"
+        ]
+      end
+
+      it "loads files from directory" do
+        expect(subject).to be_a(Array)
+
+        expect(subject.map(&:value)).to eq(result)
+      end
+    end
+
     context "Text" do
       context "from local file" do
         let(:path) { "spec/fixtures/loaders/example.txt" }
@@ -213,6 +237,26 @@ RSpec.describe Langchain::Loader do
       end
     end
 
+    context "Markdown" do
+      context "from local file" do
+        let(:path) { "spec/fixtures/loaders/example.md" }
+
+        it "loads markdown from file" do
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to include("Lorem Ipsum")
+        end
+      end
+
+      context "from url" do
+        let(:path) { "http://example.com/example.md" }
+
+        it "loads markdown from URL" do
+          expect(subject).to be_a(Langchain::Data)
+          expect(subject.value).to eq("Lorem Ipsum")
+        end
+      end
+    end
+
     context "Custom processor passed as block" do
       subject do
         described_class.new(path).load { |text| text.reverse }
@@ -234,6 +278,19 @@ RSpec.describe Langchain::Loader do
           expect(subject).to be_a(Langchain::Data)
           expect(subject.value).to eq("muspI meroL")
         end
+      end
+    end
+
+    context "with an optional chunker class" do
+      subject do
+        described_class.new(path, chunker: Langchain::Chunker::RecursiveText)
+      end
+
+      let(:path) { "http://example.com/example.txt" }
+
+      it "passes an optional chunker class to Langchain::Data" do
+        expect(Langchain::Data).to receive(:new).with(instance_of(String), chunker: Langchain::Chunker::RecursiveText, source: nil)
+        subject.load
       end
     end
 
