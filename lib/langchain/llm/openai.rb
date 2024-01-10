@@ -77,6 +77,9 @@ module Langchain::LLM
     # @param params [Hash] The parameters to pass to the `chat()` method
     # @return [Langchain::LLM::OpenAIResponse] Response object
     def complete(prompt:, **params)
+      if params[:stop_sequences]
+        params[:stop] = params.delete(:stop_sequences)
+      end
       # Should we still accept the `messages: []` parameter here?
       messages = [{role: "user", content: prompt}]
       chat(messages: messages, **params)
