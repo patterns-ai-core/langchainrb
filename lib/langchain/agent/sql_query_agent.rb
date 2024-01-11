@@ -31,7 +31,11 @@ module Langchain::Agent
 
       # Execute the SQL string and collect the results
       Langchain.logger.info("Passing the SQL to the Database: #{sql_string}", for: self.class)
-      results = db.execute(input: sql_string)
+      begin
+        results = db.execute(input: sql_string)
+      rescue => e
+        results = e.message
+      end
 
       # Pass the results and get the LLM to synthesize the answer to the question
       Langchain.logger.info("Passing the synthesize prompt to the #{llm.class} LLM with results: #{results}", for: self.class)
