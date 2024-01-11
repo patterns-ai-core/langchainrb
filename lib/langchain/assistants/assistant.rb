@@ -146,7 +146,11 @@ module Langchain
           t.name == tool_name
         end or raise ArgumentError, "Tool not found in assistant.tools"
 
-        output = tool_instance.execute(**tool_arguments)
+        begin
+          output = tool_instance.execute(**tool_arguments)
+        rescue => e
+          output = e.message
+        end
 
         submit_tool_output(tool_call_id: tool_call_id, output: output)
       end
