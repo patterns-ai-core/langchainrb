@@ -25,7 +25,6 @@ module Langchain::Tool
 
     def initialize
       depends_on "eqn"
-      require "eqn"
     end
 
     # Evaluates a pure math expression or if equation contains non-math characters (e.g.: "12F in Celsius") then

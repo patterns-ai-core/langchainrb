@@ -37,9 +37,10 @@ module Langchain
     # @param path [String | Pathname] path to file or URL
     # @param options [Hash] options passed to the processor class used to process the data
     # @return [Langchain::Loader] loader instance
-    def initialize(path, options = {})
+    def initialize(path, options = {}, chunker: Langchain::Chunker::Text)
       @options = options
       @path = path
+      @chunker = chunker
     end
 
     # Is the path a URL?
@@ -49,6 +50,13 @@ module Langchain
       return false if @path.is_a?(Pathname)
 
       !!(@path =~ URI_REGEX)
+    end
+
+    # Is the path a directory
+    #
+    # @return [Boolean] true if path is a directory
+    def directory?
+      File.directory?(@path)
     end
 
     # Load data from a file or URL
@@ -69,15 +77,10 @@ module Langchain
     #
     # @return [Data] data that was loaded
     def load(&block)
-      @raw_data = url? ? load_from_url : load_from_path
+      return process_data(load_from_url, &block) if url?
+      return load_from_directory(&block) if directory?
 
-      data = if block
-        yield @raw_data.read, @options
-      else
-        processor_klass.new(@options).parse(@raw_data)
-      end
-
-      Langchain::Data.new(data, source: @path)
+      process_data(load_from_path, &block)
     end
 
     private
@@ -87,9 +90,30 @@ module Langchain
     end
 
     def load_from_path
-      raise FileNotFound unless File.exist?(@path)
+      return File.open(@path) if File.exist?(@path)
 
-      File.open(@path)
+      raise FileNotFound, "File #{@path} does not exist"
+    end
+
+    def load_from_directory(&block)
+      Dir.glob(File.join(@path, "**/*")).map do |file|
+        # Only load and add to result files with supported extensions
+        Langchain::Loader.new(file, @options).load(&block)
+      rescue
+        UnknownFormatError nil
+      end.flatten.compact
+    end
+
+    def process_data(data, &block)
+      @raw_data = data
+
+      result = if block
+        yield @raw_data.read, @options
+      else
+        processor_klass.new(@options).parse(@raw_data)
+      end
+
+      Langchain::Data.new(result, source: @options[:source], chunker: @chunker)
     end
 
     def processor_klass

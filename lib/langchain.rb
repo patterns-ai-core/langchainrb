@@ -3,8 +3,29 @@
 require "logger"
 require "pathname"
 require "colorize"
-
-require_relative "./langchain/version"
+require "to_bool"
+require "zeitwerk"
+loader = Zeitwerk::Loader.for_gem
+loader.ignore("#{__dir__}/langchainrb.rb")
+loader.inflector.inflect(
+  "ai21" => "AI21",
+  "ai21_response" => "AI21Response",
+  "ai21_validator" => "AI21Validator",
+  "csv" => "CSV",
+  "html" => "HTML",
+  "json" => "JSON",
+  "jsonl" => "JSONL",
+  "llm" => "LLM",
+  "openai" => "OpenAI",
+  "openai_validator" => "OpenAIValidator",
+  "openai_response" => "OpenAIResponse",
+  "pdf" => "PDF",
+  "react_agent" => "ReActAgent",
+  "sql_query_agent" => "SQLQueryAgent"
+)
+loader.collapse("#{__dir__}/langchain/llm/response")
+loader.collapse("#{__dir__}/langchain/assistants")
+loader.setup
 
 # Langchain.rb a is library for building LLM-backed Ruby applications. It is an abstraction layer that sits on top of the emerging AI-related tools that makes it easy for developers to consume and string those services together.
 #
@@ -48,12 +69,6 @@ require_relative "./langchain/version"
 #
 # Langchain.logger.level = :info
 module Langchain
-  autoload :Loader, "langchain/loader"
-  autoload :Data, "langchain/data"
-  autoload :Conversation, "langchain/conversation"
-  autoload :DependencyHelper, "langchain/dependency_helper"
-  autoload :ContextualLogger, "langchain/contextual_logger"
-
   class << self
     # @return [ContextualLogger]
     attr_reader :logger
@@ -68,81 +83,9 @@ module Langchain
     attr_reader :root
   end
 
-  self.logger ||= ::Logger.new($stdout, level: :warn)
+  self.logger ||= ::Logger.new($stdout, level: :debug)
 
   @root = Pathname.new(__dir__)
-
-  module Agent
-    autoload :Base, "langchain/agent/base"
-    autoload :ChainOfThoughtAgent, "langchain/agent/chain_of_thought_agent/chain_of_thought_agent.rb"
-    autoload :SQLQueryAgent, "langchain/agent/sql_query_agent/sql_query_agent.rb"
-  end
-
-  module Chunker
-    autoload :Base, "langchain/chunker/base"
-    autoload :Text, "langchain/chunker/text"
-  end
-
-  module Tool
-    autoload :Base, "langchain/tool/base"
-    autoload :Calculator, "langchain/tool/calculator"
-    autoload :RubyCodeInterpreter, "langchain/tool/ruby_code_interpreter"
-    autoload :GoogleSearch, "langchain/tool/google_search"
-    autoload :Weather, "langchain/tool/weather"
-    autoload :Wikipedia, "langchain/tool/wikipedia"
-    autoload :Database, "langchain/tool/database"
-  end
-
-  module Processors
-    autoload :Base, "langchain/processors/base"
-    autoload :CSV, "langchain/processors/csv"
-    autoload :Docx, "langchain/processors/docx"
-    autoload :HTML, "langchain/processors/html"
-    autoload :JSON, "langchain/processors/json"
-    autoload :JSONL, "langchain/processors/jsonl"
-    autoload :PDF, "langchain/processors/pdf"
-    autoload :Text, "langchain/processors/text"
-    autoload :Xlsx, "langchain/processors/xlsx"
-  end
-
-  module Utils
-    module TokenLength
-      autoload :BaseValidator, "langchain/utils/token_length/base_validator"
-      autoload :TokenLimitExceeded, "langchain/utils/token_length/token_limit_exceeded"
-      autoload :OpenAIValidator, "langchain/utils/token_length/openai_validator"
-      autoload :GooglePalmValidator, "langchain/utils/token_length/google_palm_validator"
-      autoload :CohereValidator, "langchain/utils/token_length/cohere_validator"
-    end
-  end
-
-  module Vectorsearch
-    autoload :Base, "langchain/vectorsearch/base"
-    autoload :Chroma, "langchain/vectorsearch/chroma"
-    autoload :Hnswlib, "langchain/vectorsearch/hnswlib"
-    autoload :Milvus, "langchain/vectorsearch/milvus"
-    autoload :Pinecone, "langchain/vectorsearch/pinecone"
-    autoload :Pgvector, "langchain/vectorsearch/pgvector"
-    autoload :Qdrant, "langchain/vectorsearch/qdrant"
-    autoload :Weaviate, "langchain/vectorsearch/weaviate"
-  end
-
-  module LLM
-    autoload :AI21, "langchain/llm/ai21"
-    autoload :Base, "langchain/llm/base"
-    autoload :Cohere, "langchain/llm/cohere"
-    autoload :GooglePalm, "langchain/llm/google_palm"
-    autoload :HuggingFace, "langchain/llm/hugging_face"
-    autoload :OpenAI, "langchain/llm/openai"
-    autoload :Replicate, "langchain/llm/replicate"
-  end
-
-  module Prompt
-    require_relative "langchain/prompt/loading"
-
-    autoload :Base, "langchain/prompt/base"
-    autoload :PromptTemplate, "langchain/prompt/prompt_template"
-    autoload :FewShotPromptTemplate, "langchain/prompt/few_shot_prompt_template"
-  end
 
   module Errors
     class BaseError < StandardError; end

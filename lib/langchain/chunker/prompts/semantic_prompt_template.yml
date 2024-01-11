@@ -1,0 +1,8 @@
+_type: prompt
+input_variables:
+  - text
+template: | 
+  Please split the following text by topics.
+  Output only the paragraphs delimited by "---":
+
+  {text}

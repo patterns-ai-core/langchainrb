@@ -27,7 +27,6 @@ module Langchain::Tool
     #
     def initialize(connection_string:, tables: [], exclude_tables: [])
       depends_on "sequel"
-      require "sequel"
 
       raise StandardError, "connection_string parameter cannot be blank" if connection_string.empty?
 

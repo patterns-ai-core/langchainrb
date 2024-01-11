@@ -17,10 +17,7 @@ module Langchain
   #     end
   #
   class Conversation
-    attr_reader :context, :examples, :messages
-
-    # The least number of tokens we want to be under the limit by
-    TOKEN_LEEWAY = 20
+    attr_reader :options
 
     # Intialize Conversation with a LLM
     #
@@ -28,10 +25,15 @@ module Langchain
     # @param options [Hash] Options to pass to the LLM, like temperature, top_k, etc.
     # @return [Langchain::Conversation] The Langchain::Conversation instance
     def initialize(llm:, **options, &block)
+      warn "[DEPRECATION] `Langchain::Conversation` is deprecated. Please use `Langchain::Assistant` instead."
+
       @llm = llm
       @context = nil
-      @examples = []
-      @messages = options.delete(:messages) || []
+      @memory = ::Langchain::Conversation::Memory.new(
+        llm: llm,
+        messages: options.delete(:messages) || [],
+        strategy: options.delete(:memory_strategy)
+      )
       @options = options
       @block = block
     end
@@ -39,59 +41,42 @@ module Langchain
     # Set the context of the conversation. Usually used to set the model's persona.
     # @param message [String] The context of the conversation
     def set_context(message)
-      @context = message
-    end
-
-    # Add examples to the conversation. Used to give the model a sense of the conversation.
-    # @param examples [Array<Hash>] The examples to add to the conversation
-    def add_examples(examples)
-      @examples.concat examples
+      @memory.set_context ::Langchain::Conversation::Context.new(message)
     end
 
     # Message the model with a prompt and return the response.
     # @param message [String] The prompt to message the model with
-    # @return [String] The response from the model
+    # @return [Response] The response from the model
     def message(message)
-      append_user_message(message)
-      response = llm_response(message)
-      append_ai_message(response)
-      response
+      @memory.append_message ::Langchain::Conversation::Prompt.new(message)
+      ai_message = ::Langchain::Conversation::Response.new(llm_response.chat_completion)
+      @memory.append_message(ai_message)
+      ai_message
+    end
+
+    # Messages from conversation memory
+    # @return [Array<Prompt|Response>] The messages from the conversation memory
+    def messages
+      @memory.messages
+    end
+
+    # Context from conversation memory
+    # @return [Context] Context from conversation memory
+    def context
+      @memory.context
     end
 
     private
 
-    def llm_response(prompt)
-      @llm.chat(messages: @messages, context: @context, examples: @examples, **@options, &@block)
+    def llm_response
+      message_history = messages.map(&:to_h)
+      # Prepend the system message as context as the first message
+      message_history.prepend({role: "system", content: @memory.context.to_s}) if @memory.context
+
+      @llm.chat(messages: message_history, **@options, &@block)
     rescue Langchain::Utils::TokenLength::TokenLimitExceeded => exception
-      raise exception if @messages.size == 1
-
-      reduce_messages(exception.token_overflow)
+      @memory.reduce_messages(exception)
       retry
-    end
-
-    def reduce_messages(token_overflow)
-      @messages = @messages.drop_while do |message|
-        proceed = token_overflow > -TOKEN_LEEWAY
-        token_overflow -= token_length(message.to_json, model_name, llm: @llm)
-
-        proceed
-      end
-    end
-
-    def append_ai_message(message)
-      @messages << {role: "ai", content: message}
-    end
-
-    def append_user_message(message)
-      @messages << {role: "user", content: message}
-    end
-
-    def model_name
-      @options[:model] || @llm.class::DEFAULTS[:chat_completion_model_name]
-    end
-
-    def token_length(content, model_name, options)
-      @llm.class::LENGTH_VALIDATOR.token_length(content, model_name, options)
     end
   end
 end

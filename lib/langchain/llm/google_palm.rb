@@ -5,10 +5,10 @@ module Langchain::LLM
   # Wrapper around the Google PaLM (Pathways Language Model) APIs: https://ai.google/build/machine-learning/
   #
   # Gem requirements:
-  #     gem "google_palm_api", "~> 0.1.2"
+  #     gem "google_palm_api", "~> 0.1.3"
   #
   # Usage:
-  #     google_palm = Langchain::LLM::GooglePalm.new(api_key: "YOUR_API_KEY")
+  #     google_palm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
   #
   class GooglePalm < Base
     DEFAULTS = {
@@ -19,10 +19,14 @@ module Langchain::LLM
       embeddings_model_name: "embedding-gecko-001"
     }.freeze
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidator
+    ROLE_MAPPING = {
+      "assistant" => "ai"
+    }
+
+    attr_reader :defaults
 
     def initialize(api_key:, default_options: {})
       depends_on "google_palm_api"
-      require "google_palm_api"
 
       @client = ::GooglePalmApi::Client.new(api_key: api_key)
       @defaults = DEFAULTS.merge(default_options)
@@ -32,13 +36,13 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Array] The embedding
+    # @return [Langchain::LLM::GooglePalmResponse] Response object
     #
     def embed(text:)
-      response = client.embed(
-        text: text
-      )
-      response.dig("embedding", "value")
+      response = client.embed(text: text)
+
+      Langchain::LLM::GooglePalmResponse.new response,
+        model: @defaults[:embeddings_model_name]
     end
 
     #
@@ -46,7 +50,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params extra parameters passed to GooglePalmAPI::Client#generate_text
-    # @return [String] The completion
+    # @return [Langchain::LLM::GooglePalmResponse] Response object
     #
     def complete(prompt:, **params)
       default_params = {
@@ -66,16 +70,20 @@ module Langchain::LLM
       default_params.merge!(params)
 
       response = client.generate_text(**default_params)
-      response.dig("candidates", 0, "output")
+
+      Langchain::LLM::GooglePalmResponse.new response,
+        model: default_params[:model]
     end
 
     #
     # Generate a chat completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a chat completion for
-    # @param messages [Array] The messages that have been sent in the conversation
-    # @param params extra parameters passed to GooglePalmAPI::Client#generate_chat_message
-    # @return [String] The chat completion
+    # @param messages [Array<Hash>] The messages that have been sent in the conversation
+    # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
+    # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
+    # @param options [Hash] extra parameters passed to GooglePalmAPI::Client#generate_chat_message
+    # @return [Langchain::LLM::GooglePalmResponse] Response object
     #
     def chat(prompt: "", messages: [], context: "", examples: [], **options)
       raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
@@ -104,7 +112,9 @@ module Langchain::LLM
       response = client.generate_chat_message(**default_params)
       raise "GooglePalm API returned an error: #{response}" if response.dig("error")
 
-      response.dig("candidates", 0, "content")
+      Langchain::LLM::GooglePalmResponse.new response,
+        model: default_params[:model]
+      # TODO: Pass in prompt_tokens: prompt_tokens
     end
 
     #
@@ -123,7 +133,7 @@ module Langchain::LLM
         prompt: prompt,
         temperature: @defaults[:temperature],
         # Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
-        max_tokens: 2048
+        max_tokens: 256
       )
     end
 
@@ -155,7 +165,7 @@ module Langchain::LLM
     def transform_messages(messages)
       messages.map do |message|
         {
-          author: message[:role],
+          author: ROLE_MAPPING.fetch(message[:role], message[:role]),
           content: message[:content]
         }
       end

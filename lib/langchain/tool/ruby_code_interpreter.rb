@@ -13,9 +13,9 @@ module Langchain::Tool
     DESC
 
     def initialize(timeout: 30)
-      @timeout = timeout
       depends_on "safe_ruby"
-      require "safe_ruby"
+
+      @timeout = timeout
     end
 
     # @param input [String] ruby code expression
