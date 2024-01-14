@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.8.3]
+- Fix Embedding with ollama
+
 ## [0.8.2]
 - Introducing new `Langchain::Chunker::Markdown` chunker (thanks @spikex)
 - Fixes
