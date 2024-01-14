@@ -21,10 +21,10 @@ module Langchain::LLM
     # @param completion_model [String] The name of the completion model to use
     # @param embeddings_model [String] The name of the embeddings model to use
     #
-    def initialize(url:, completion_model: "llama2", embeddings_model: "llama2")
+    def initialize(url:, completion_model: nil, embeddings_model: nil)
       @url = url
-      @completion_model = completion_model
-      @embeddings_model = embeddings_model
+      @completion_model = completion_model || DEFAULTS[:completion_model_name]
+      @embeddings_model = embeddings_model || DEFAULTS[:embeddings_model_name]
     end
 
     #
@@ -38,7 +38,7 @@ module Langchain::LLM
     def complete(prompt:, model: nil, **options)
       response = +""
 
-      model_name = model || @completion_model || DEFAULTS[:completion_model_name]
+      model_name = model || @completion_model
 
       client.post("api/generate") do |req|
         req.body = {}
@@ -69,7 +69,7 @@ module Langchain::LLM
     # @return [Langchain::LLM::OllamaResponse] Response object
     #
     def embed(text:, model: nil, **options)
-      model_name = model || @embeddings_model || DEFAULTS[:embeddings_model_name]
+      model_name = model || @embeddings_model
 
       response = client.post("api/embeddings") do |req|
         req.body = {}
