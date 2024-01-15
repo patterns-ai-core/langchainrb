@@ -1,7 +1,7 @@
 ## [Unreleased]
 
 ## [0.8.3]
-- Fix Embedding with ollama
+- Fix and refactor of `Langchain::LLM::Ollama`, responses can now be streamed. 
 
 ## [0.8.2]
 - Introducing new `Langchain::Chunker::Markdown` chunker (thanks @spikex)
