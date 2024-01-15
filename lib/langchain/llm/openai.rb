@@ -133,7 +133,7 @@ module Langchain::LLM
       parameters[:temperature] = temperature if temperature
       parameters[:top_p] = top_p if top_p
       parameters[:tools] = tools if tools.any?
-      parameters[:tool_choice] = tool_choice if tool_choice
+      parameters[:tool_choice] = tool_choice if tools.any? && tool_choice
       parameters[:user] = user if user
 
       # TODO: Clean this part up
