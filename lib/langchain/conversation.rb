@@ -25,9 +25,10 @@ module Langchain
     # @param options [Hash] Options to pass to the LLM, like temperature, top_k, etc.
     # @return [Langchain::Conversation] The Langchain::Conversation instance
     def initialize(llm:, **options, &block)
+      warn "[DEPRECATION] `Langchain::Conversation` is deprecated. Please use `Langchain::Assistant` instead."
+
       @llm = llm
       @context = nil
-      @examples = []
       @memory = ::Langchain::Conversation::Memory.new(
         llm: llm,
         messages: options.delete(:messages) || [],
@@ -37,20 +38,10 @@ module Langchain
       @block = block
     end
 
-    def set_functions(functions)
-      @llm.functions = functions
-    end
-
     # Set the context of the conversation. Usually used to set the model's persona.
     # @param message [String] The context of the conversation
     def set_context(message)
       @memory.set_context ::Langchain::Conversation::Context.new(message)
-    end
-
-    # Add examples to the conversation. Used to give the model a sense of the conversation.
-    # @param examples [Array<Prompt|Response>] The examples to add to the conversation
-    def add_examples(examples)
-      @memory.add_examples examples
     end
 
     # Message the model with a prompt and return the response.
@@ -75,16 +66,14 @@ module Langchain
       @memory.context
     end
 
-    # Examples from conversation memory
-    # @return [Array<Prompt|Response>] Examples from the conversation memory
-    def examples
-      @memory.examples
-    end
-
     private
 
     def llm_response
-      @llm.chat(messages: @memory.messages.map(&:to_h), context: @memory.context&.to_s, examples: @memory.examples.map(&:to_h), **@options, &@block)
+      message_history = messages.map(&:to_h)
+      # Prepend the system message as context as the first message
+      message_history.prepend({role: "system", content: @memory.context.to_s}) if @memory.context
+
+      @llm.chat(messages: message_history, **@options, &@block)
     rescue Langchain::Utils::TokenLength::TokenLimitExceeded => exception
       @memory.reduce_messages(exception)
       retry

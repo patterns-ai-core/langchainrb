@@ -3,7 +3,7 @@
 module Langchain
   class Conversation
     class Memory
-      attr_reader :examples, :messages
+      attr_reader :messages
 
       # The least number of tokens we want to be under the limit by
       TOKEN_LEEWAY = 20
@@ -12,7 +12,6 @@ module Langchain
         @llm = llm
         @context = nil
         @summary = nil
-        @examples = []
         @messages = messages
         @strategy = options.delete(:strategy) || :truncate
         @options = options
@@ -20,10 +19,6 @@ module Langchain
 
       def set_context(message)
         @context = message
-      end
-
-      def add_examples(examples)
-        @examples.concat examples
       end
 
       def append_message(message)

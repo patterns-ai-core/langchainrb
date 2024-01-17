@@ -77,12 +77,6 @@ module Langchain::LLM
       Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:completion_model_name])
     end
 
-    # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`
-    def chat(...)
-      response_text = complete(...)
-      ::Langchain::Conversation::Response.new(response_text)
-    end
-
     #
     # Generate a summary for a given text
     #

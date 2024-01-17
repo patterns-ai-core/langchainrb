@@ -23,6 +23,8 @@ module Langchain::LLM
       "assistant" => "ai"
     }
 
+    attr_reader :defaults
+
     def initialize(api_key:, default_options: {})
       depends_on "google_palm_api"
 

@@ -62,17 +62,15 @@ module Langchain::LLM
 
       default_params.merge!(params)
 
-      default_params[:max_tokens] = Langchain::Utils::TokenLength::CohereValidator.validate_max_tokens!(prompt, default_params[:model], client)
+      default_params[:max_tokens] = Langchain::Utils::TokenLength::CohereValidator.validate_max_tokens!(prompt, default_params[:model], llm: client)
 
       response = client.generate(**default_params)
       Langchain::LLM::CohereResponse.new response, model: @defaults[:completion_model_name]
     end
 
-    # Cohere does not have a dedicated chat endpoint, so instead we call `complete()`
-    def chat(...)
-      response_text = complete(...)
-      ::Langchain::Conversation::Response.new(response_text)
-    end
+    # TODO: Implement chat method: https://github.com/andreibondarev/cohere-ruby/issues/11
+    # def chat
+    # end
 
     # Generate a summary in English for a given text
     #
