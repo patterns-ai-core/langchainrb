@@ -471,6 +471,14 @@ RSpec.describe Langchain::LLM::OpenAI do
         }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
       end
     end
+
+    context "with tool_choice" do
+      it "raises an error" do
+        expect {
+          subject.chat(messages: [content: prompt, role: "user"], tool_choice: "auto")
+        }.to raise_error(ArgumentError, "'tool_choice' is only allowed when 'tools' are specified.")
+      end
+    end
   end
 
   describe "#summarize" do

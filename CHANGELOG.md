@@ -1,7 +1,9 @@
 ## [Unreleased]
+- Fix and refactor of `Langchain::LLM::Ollama`, responses can now be streamed.
 
-## [0.8.3]
-- Fix and refactor of `Langchain::LLM::Ollama`, responses can now be streamed. 
+## [0.9.0]
+- Introducing new `Langchain::Assistant` that will be replacing `Langchain::Conversation` and `Langchain::Agent`s.
+- `Langchain::Conversation` is deprecated.
 
 ## [0.8.2]
 - Introducing new `Langchain::Chunker::Markdown` chunker (thanks @spikex)

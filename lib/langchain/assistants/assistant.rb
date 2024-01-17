@@ -124,12 +124,15 @@ module Langchain
     #
     # @return [Langchain::LLM::BaseResponse] The LLM response object
     def chat_with_llm
-      llm.chat(
-        messages: thread.openai_messages,
-        tools: tools.map(&:to_openai_tool),
+      params = {messages: thread.openai_messages}
+
+      if tools.any?
+        params[:tools] = tools.map(&:to_openai_tool)
         # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
-        tool_choice: "auto"
-      )
+        params[:tool_choice] = "auto"
+      end
+
+      llm.chat(**params)
     end
 
     # Run the tools automatically
