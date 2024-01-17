@@ -3,7 +3,7 @@
 require "faraday"
 
 RSpec.describe Langchain::LLM::Ollama do
-  let(:subject) { described_class.new(url: "http://localhost:11434", default_options: { completion_model: "llama2", embeddings_model: "llama2" } ) }
+  let(:subject) { described_class.new(url: "http://localhost:11434", default_options: {completion_model: "llama2", embeddings_model: "llama2"}) }
 
   describe "#initialize" do
     it "initializes the client without any errors" do

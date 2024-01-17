@@ -13,7 +13,7 @@ module Langchain::LLM
     DEFAULTS = {
       temperature: 0.8,
       completion_model_name: "llama2",
-      embeddings_model_name: "llama2",
+      embeddings_model_name: "llama2"
     }.freeze
 
     # Initialize the Ollama client
@@ -38,7 +38,7 @@ module Langchain::LLM
       prompt:,
       model: defaults[:completion_model_name],
       images: nil,
-      format:nil,
+      format: nil,
       system: nil,
       template: nil,
       context: nil,
@@ -60,7 +60,8 @@ module Langchain::LLM
       num_predict: nil,
       top_k: nil,
       top_p: nil,
-      &block)
+      &block
+    )
 
       parameters = {
         prompt: prompt,
@@ -107,7 +108,6 @@ module Langchain::LLM
 
           yield json_chunk, size if block
         end
-
       end
 
       Langchain::LLM::OllamaResponse.new(response, model: parameters[:model])
@@ -143,7 +143,7 @@ module Langchain::LLM
     )
       parameters = {
         prompt: text,
-        model: model,
+        model: model
       }.compact
 
       llm_parameters = {
