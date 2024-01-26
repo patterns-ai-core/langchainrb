@@ -23,6 +23,8 @@ module Langchain
           # Source:
           # https://platform.openai.com/docs/api-reference/embeddings
           # https://platform.openai.com/docs/models/gpt-4
+          "text-embedding-3-large" => 8191,
+          "text-embedding-3-small" => 8191,
           "text-embedding-ada-002" => 8191,
           "gpt-3.5-turbo" => 4096,
           "gpt-3.5-turbo-0301" => 4096,
