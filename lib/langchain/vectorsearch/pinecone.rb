@@ -17,12 +17,13 @@ module Langchain::Vectorsearch
     # @param api_key [String] The API key to use
     # @param index_name [String] The name of the index to use
     # @param llm [Object] The LLM client to use
-    def initialize(environment:, api_key:, index_name:, llm:)
+    def initialize(environment:, api_key:, base_uri:,  index_name:, llm:)
       depends_on "pinecone"
 
       ::Pinecone.configure do |config|
         config.api_key = api_key
         config.environment = environment
+        config.base_uri = base_uri
       end
 
       @client = ::Pinecone::Client.new
