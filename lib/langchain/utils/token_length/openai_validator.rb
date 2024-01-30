@@ -25,6 +25,8 @@ module Langchain
           # Source:
           # https://platform.openai.com/docs/api-reference/embeddings
           # https://platform.openai.com/docs/models/gpt-4
+          "text-embedding-3-large" => 8191,
+          "text-embedding-3-small" => 8191,
           "text-embedding-ada-002" => 8191,
           "gpt-3.5-turbo" => 4096,
           "gpt-3.5-turbo-0301" => 4096,
@@ -62,6 +64,11 @@ module Langchain
         # @return [Integer] The token length of the text
         #
         def self.token_length(text, model_name, options = {})
+          # tiktoken-ruby doesn't support text-embedding-3-large or text-embedding-3-small yet
+          if ["text-embedding-3-large", "text-embedding-3-small"].include?(model_name)
+            model_name = "text-embedding-ada-002"
+          end
+
           encoder = Tiktoken.encoding_for_model(model_name)
           encoder.encode(text).length
         end
