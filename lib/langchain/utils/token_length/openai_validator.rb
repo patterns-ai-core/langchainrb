@@ -65,8 +65,8 @@ module Langchain
         #
         def self.token_length(text, model_name, options = {})
           # tiktoken-ruby doesn't support text-embedding-3-large or text-embedding-3-small yet
-          if ['text-embedding-3-large', 'text-embedding-3-small'].include?(model_name)
-            model_name = 'text-embedding-ada-002'
+          if ["text-embedding-3-large", "text-embedding-3-small"].include?(model_name)
+            model_name = "text-embedding-ada-002"
           end
 
           encoder = Tiktoken.encoding_for_model(model_name)
