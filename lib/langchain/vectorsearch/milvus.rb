@@ -151,7 +151,9 @@ module Langchain::Vectorsearch
 
       prompt = generate_rag_prompt(question: question, context: context)
 
-      response = llm.chat(prompt: prompt, &block)
+      messages = [{role: "user", content: prompt}]
+      llm.chat(messages: messages, &block)
+
       response.context = context
       response
     end
