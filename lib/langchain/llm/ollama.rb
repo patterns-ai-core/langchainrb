@@ -22,6 +22,7 @@ module Langchain::LLM
     # @param default_options [Hash] The default options to use
     #
     def initialize(url:, default_options: {})
+      depends_on "faraday"
       @url = url
       @defaults = DEFAULTS.merge(default_options)
     end
