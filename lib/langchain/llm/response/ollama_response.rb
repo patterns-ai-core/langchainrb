@@ -9,7 +9,7 @@ module Langchain::LLM
 
     def created_at
       if raw_response.dig("created_at")
-        Time.new(raw_response.dig("created_at"))
+        Time.parse(raw_response.dig("created_at"))
       end
     end
 
