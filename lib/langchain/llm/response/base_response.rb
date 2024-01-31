@@ -13,6 +13,13 @@ module Langchain
         @model = model
       end
 
+      # Returns the timestamp when the response was created
+      #
+      # @return [Time]
+      def created_at
+        raise NotImplementedError
+      end
+
       # Returns the completion text
       #
       # @return [String]
