@@ -7,6 +7,16 @@ module Langchain::LLM
       super(raw_response, model: model)
     end
 
+    def created_at
+      if raw_response.dig("created_at")
+        Time.new(raw_response.dig("created_at"))
+      end
+    end
+
+    def chat_completion
+      raw_response.dig("message", "content")
+    end
+
     def completion
       completions.first
     end
@@ -25,6 +35,14 @@ module Langchain::LLM
 
     def role
       "assistant"
+    end
+
+    def prompt_tokens
+      raw_response.dig("prompt_eval_count")
+    end
+
+    def completion_tokens
+      raw_response.dig("eval_count")
     end
   end
 end
