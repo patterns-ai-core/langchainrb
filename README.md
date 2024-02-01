@@ -42,6 +42,8 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
     gem install langchainrb
 
+Additional gems may be required when loading LLM Providers. These are not included by default so you can include only what you need.
+
 ## Usage
 
 ```ruby
