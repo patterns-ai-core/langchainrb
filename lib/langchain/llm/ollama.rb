@@ -61,8 +61,12 @@ module Langchain::LLM
       num_predict: nil,
       top_k: nil,
       top_p: nil,
+      stop_sequences: nil,
       &block
     )
+      if stop_sequences
+        stop = stop_sequences
+      end
 
       parameters = {
         prompt: prompt,
