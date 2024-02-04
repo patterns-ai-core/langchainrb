@@ -93,7 +93,7 @@ llm.complete(prompt: "What is the meaning of life?").completion
 
 Generate a chat completion:
 ```ruby
-llm.chat(prompt: "Hey! How are you?").completion
+llm.chat(messages: [{role: "user", content: "What is the meaning of life?"}]).completion
 ```
 
 Summarize the text:
