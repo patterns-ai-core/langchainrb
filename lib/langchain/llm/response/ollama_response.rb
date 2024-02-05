@@ -44,5 +44,9 @@ module Langchain::LLM
     def completion_tokens
       raw_response.dig("eval_count")
     end
+
+    def summarization
+      raw_response
+    end
   end
 end

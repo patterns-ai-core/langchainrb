@@ -27,6 +27,13 @@ module Langchain::LLM
       @defaults = DEFAULTS.merge(default_options)
     end
 
+    # Returns the # of vector dimensions for the embeddings
+    # @return [Integer] The # of vector dimensions
+    def default_dimension
+      # since Ollama can run multiple models, generate an embedding and return the size
+      @default_dimension ||= embed(text: "test").embedding.size
+    end
+
     #
     # Generate the completion for a given prompt
     #
@@ -108,9 +115,11 @@ module Langchain::LLM
         req.body = parameters
 
         req.options.on_data = proc do |chunk, size|
-          json_chunk = JSON.parse(chunk)
+          chunk.split("\n").each do |line_chunk|
+            json_chunk = JSON.parse(line_chunk)
 
-          response += json_chunk.dig("response")
+            response += json_chunk.dig("response")
+          end
 
           yield json_chunk, size if block
         end
@@ -215,6 +224,19 @@ module Langchain::LLM
       end
 
       Langchain::LLM::OllamaResponse.new(response.body, model: parameters[:model])
+    end
+
+    # Generate a summary for a given text
+    #
+    # @param text [String] The text to generate a summary for
+    # @return [String] The summary
+    def summarize(text:)
+      prompt_template = Langchain::Prompt.load_from_path(
+        file_path: Langchain.root.join("langchain/llm/prompts/ollama/summarize_template.yaml")
+      )
+      prompt = prompt_template.format(text: text)
+
+      complete(prompt: prompt)
     end
 
     private

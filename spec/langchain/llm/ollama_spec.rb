@@ -26,7 +26,15 @@ RSpec.describe Langchain::LLM::Ollama do
     end
   end
 
-  xdescribe "#complete" do
+  describe "#complete" do
+    it "returns a completion" do
+      VCR.use_cassette("ollama-completion") do
+        response = subject.complete(prompt: "In one word, life is ")
+
+        expect(response).to be_a(Langchain::LLM::OllamaResponse)
+        expect(response.completion).to eq("\nIn one word, life is... complex.")
+      end
+    end
   end
 
   describe "#chat" do
@@ -45,6 +53,36 @@ RSpec.describe Langchain::LLM::Ollama do
 
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
       expect(response.chat_completion).to eq(fixture.dig("message", "content"))
+    end
+  end
+
+  describe "#summarize" do
+    let(:mary_had_a_little_lamb_text) {
+      File.read("spec/fixtures/llm/ollama/mary_had_a_little_lamb.txt")
+    }
+
+    it "returns a chat completion" do
+      VCR.use_cassette("ollama-summarize") do
+        response = subject.summarize(text: mary_had_a_little_lamb_text)
+
+        expect(response).to be_a(Langchain::LLM::OllamaResponse)
+        expect(response.summarization).not_to match(/summary/)
+        expect(response.summarization).to start_with("Mary has a little lamb that follows")
+      end
+    end
+  end
+
+  describe "#default_dimension" do
+    let(:response_body) {
+      {"embedding" => 1_024.times.map { rand }}
+    }
+
+    before do
+      allow_any_instance_of(Faraday::Connection).to receive(:post).and_return(double(body: response_body))
+    end
+
+    it "returns size of embeddings" do
+      expect(subject.default_dimension).to eq(1_024)
     end
   end
 end

@@ -1,0 +1,44 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:11434/api/generate
+    body:
+      encoding: UTF-8
+      string: '{"prompt":"In one word, life is ","model":"llama2","options":{"temperature":0.8}}'
+    headers:
+      User-Agent:
+      - Faraday v2.7.12
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/x-ndjson
+      Date:
+      - Mon, 05 Feb 2024 01:17:19 GMT
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.019515Z","response":"\n","done":false}
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.050339Z","response":"In","done":false}
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.079332Z","response":" one","done":false}
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.115628Z","response":" word","done":false}
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.145002Z","response":",","done":false}
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.173601Z","response":" life","done":false}
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.202971Z","response":" is","done":false}
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.233337Z","response":"...","done":false}
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.262564Z","response":" complex","done":false}
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.293183Z","response":".","done":false}
+        {"model":"llama2","created_at":"2024-02-05T01:17:19.332344Z","response":"","done":true,"context":[518,25580,29962,3532,14816,29903,29958,5299,829,14816,29903,6778,13,13,797,697,1734,29892,2834,338,29871,518,29914,25580,29962,13,13,797,697,1734,29892,2834,338,856,4280,29889],"total_duration":564636417,"load_duration":2553084,"prompt_eval_duration":248820000,"eval_count":11,"eval_duration":312857000}
+  recorded_at: Mon, 05 Feb 2024 01:17:19 GMT
+recorded_with: VCR 6.2.0
