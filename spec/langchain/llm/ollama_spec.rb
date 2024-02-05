@@ -27,13 +27,11 @@ RSpec.describe Langchain::LLM::Ollama do
   end
 
   describe "#complete" do
-    it "returns a completion" do
-      VCR.use_cassette("ollama-completion") do
-        response = subject.complete(prompt: "In one word, life is ")
+    it "returns a completion", :vcr do
+      response = subject.complete(prompt: "In one word, life is ")
 
-        expect(response).to be_a(Langchain::LLM::OllamaResponse)
-        expect(response.completion).to eq("\nIn one word, life is... complex.")
-      end
+      expect(response).to be_a(Langchain::LLM::OllamaResponse)
+      expect(response.completion).to eq("\nIn one word, life is... complex.")
     end
   end
 
@@ -61,14 +59,12 @@ RSpec.describe Langchain::LLM::Ollama do
       File.read("spec/fixtures/llm/ollama/mary_had_a_little_lamb.txt")
     }
 
-    it "returns a chat completion" do
-      VCR.use_cassette("ollama-summarize") do
-        response = subject.summarize(text: mary_had_a_little_lamb_text)
+    it "returns a summarization", :vcr do
+      response = subject.summarize(text: mary_had_a_little_lamb_text)
 
-        expect(response).to be_a(Langchain::LLM::OllamaResponse)
-        expect(response.summarization).not_to match(/summary/)
-        expect(response.summarization).to start_with("Mary has a little lamb that follows")
-      end
+      expect(response).to be_a(Langchain::LLM::OllamaResponse)
+      expect(response.summarization).not_to match(/summary/)
+      expect(response.summarization).to start_with("Mary had a little lamb that followed her everywhere she went")
     end
   end
 
