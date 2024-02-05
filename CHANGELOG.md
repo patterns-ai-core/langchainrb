@@ -1,3 +1,6 @@
+## [0.9.1]
+- add support for new models
+
 ## [Unreleased]
 - Fix and refactor of `Langchain::LLM::Ollama`, responses can now be streamed.
 
