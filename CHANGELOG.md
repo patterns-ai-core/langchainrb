@@ -1,10 +1,10 @@
 ## [Unreleased]
+- `Langchain::LLM::Ollama` can now `#summarize`
 
 ## [0.9.1]
 - Add support for new OpenAI models
 - Add Ollama#chat method
 - Fix and refactor of `Langchain::LLM::Ollama`, responses can now be streamed.
-- `Langchain::LLM::Ollama` can now `#summarize`
 
 ## [0.9.0]
 - Introducing new `Langchain::Assistant` that will be replacing `Langchain::Conversation` and `Langchain::Agent`s.
