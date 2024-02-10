@@ -127,7 +127,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
 
   describe "#ask" do
     let(:question) { "How many times is 'lorem' mentioned in this text?" }
-    let(:messages) { [{role: "user", content: "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }] }
+    let(:messages) { [{role: "user", content: "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:"}] }
     let(:response) { double(completion: answer) }
     let(:answer) { "5 times" }
     let(:k) { 4 }

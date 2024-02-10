@@ -238,7 +238,7 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   describe "#ask" do
     let(:question) { "How many times is 'lorem' mentioned in this text?" }
     let(:text) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor." }
-    let(:messages) { [{role: "user", content: "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }] }
+    let(:messages) { [{role: "user", content: "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:"}] }
     let(:response) { double(completion: answer) }
     let(:answer) { "5 times" }
     let(:k) { 4 }
