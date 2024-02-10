@@ -127,7 +127,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
 
   describe "#ask" do
     let(:question) { "How many times is 'lorem' mentioned in this text?" }
-    let(:prompt) { "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }
+    let(:messages) { [{role: "user", content: "Context:\n#{text}\n---\nQuestion: #{question}\n---\nAnswer:" }] }
     let(:response) { double(completion: answer) }
     let(:answer) { "5 times" }
     let(:k) { 4 }
@@ -138,7 +138,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
 
     context "without block" do
       before do
-        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
+        allow(subject.llm).to receive(:chat).with(messages: messages).and_return(response)
         expect(response).to receive(:context=).with(text)
       end
 
