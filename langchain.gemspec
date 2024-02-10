@@ -73,4 +73,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "sequel", "~> 5.68.0"
   spec.add_development_dependency "weaviate-ruby", "~> 0.8.10"
   spec.add_development_dependency "wikipedia-client", "~> 1.17.0"
+  spec.add_development_dependency "faraday"
 end
