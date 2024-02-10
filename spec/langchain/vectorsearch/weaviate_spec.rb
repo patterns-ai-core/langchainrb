@@ -173,7 +173,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
 
   describe "#ask" do
     let(:matches) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/search.json")) }
-    let(:prompt) { "Context:\n#{matches[0]["content"]}\n---\nQuestion: #{question}\n---\nAnswer:" }
+    let(:messages) { [{role: "user", content: "Context:\n#{matches[0]["content"]}\n---\nQuestion: #{question}\n---\nAnswer:"}] }
     let(:question) { "How many times is \"lorem\" mentioned in this text?" }
     let(:response) { double(completion: answer) }
     let(:answer) { "5 times" }
@@ -188,7 +188,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
 
     context "without block" do
       before do
-        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
+        allow(subject.llm).to receive(:chat).with(messages: messages).and_return(response)
         expect(response).to receive(:context=).with(matches[0]["content"])
       end
 
