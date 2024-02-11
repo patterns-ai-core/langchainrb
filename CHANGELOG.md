@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.9.2]
+- Fix vectorsearch#ask methods
+- Bump cohere-ruby gem
+
 ## [0.9.1]
 - Add support for new OpenAI models
 - Add Ollama#chat method
