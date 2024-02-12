@@ -63,8 +63,8 @@ RSpec.describe Langchain::LLM::Ollama do
       response = subject.summarize(text: mary_had_a_little_lamb_text)
 
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
-      expect(response.summarization).not_to match(/summary/)
-      expect(response.summarization).to start_with("Mary had a little lamb that followed her everywhere she went")
+      expect(response.completion).not_to match(/summary/)
+      expect(response.completion).to start_with("Mary had a little lamb that followed her everywhere she went")
     end
   end
 
