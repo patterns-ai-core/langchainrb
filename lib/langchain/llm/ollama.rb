@@ -16,9 +16,12 @@ module Langchain::LLM
       embeddings_model_name: "llama2",
       chat_completion_model_name: "llama2",
       embedding_size: {
+        codellama: 4_096,
+        "dolphin-mixtral": 4_096,
         llama2: 4_096,
         llava: 4_096,
         mistral: 4_096,
+        "mistral-openorca": 4_096,
         mixtral: 4_096
       }
     }.freeze
