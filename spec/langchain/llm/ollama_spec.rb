@@ -3,7 +3,7 @@
 require "faraday"
 
 RSpec.describe Langchain::LLM::Ollama do
-  let(:subject) { described_class.new(url: "http://localhost:11434", default_options: {completion_model: "llama2", embeddings_model: "llama2"}) }
+  let(:subject) { described_class.new(url: "http://localhost:11434", default_options: {completion_model_name: "llama2", embeddings_model_name: "llama2"}) }
 
   describe "#initialize" do
     it "initializes the client without any errors" do
@@ -69,16 +69,36 @@ RSpec.describe Langchain::LLM::Ollama do
   end
 
   describe "#default_dimension" do
-    let(:response_body) {
-      {"embedding" => 1_024.times.map { rand }}
-    }
+    it "returns size of llama2 embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "llama2"})
 
-    before do
-      allow_any_instance_of(Faraday::Connection).to receive(:post).and_return(double(body: response_body))
+      expect(subject.default_dimension).to eq(4_096)
     end
 
-    it "returns size of embeddings" do
-      expect(subject.default_dimension).to eq(1_024)
+    it "returns size of llava embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "llava"})
+
+      expect(subject.default_dimension).to eq(4_096)
+    end
+
+    it "returns size of mistral embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mistral"})
+
+      expect(subject.default_dimension).to eq(4_096)
+    end
+
+    it "returns size of mixtral embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mixtral"})
+
+      expect(subject.default_dimension).to eq(4_096)
+    end
+
+    # this one has not been hardcoded, but will be looked up
+    # by generating an embedding and checking its size
+    it "returns size of tinydolphin embeddings", vcr: true do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "tinydolphin"})
+
+      expect(subject.default_dimension).to eq(2_048)
     end
   end
 end

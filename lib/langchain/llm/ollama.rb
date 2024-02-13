@@ -14,7 +14,13 @@ module Langchain::LLM
       temperature: 0.8,
       completion_model_name: "llama2",
       embeddings_model_name: "llama2",
-      chat_completion_model_name: "llama2"
+      chat_completion_model_name: "llama2",
+      embedding_size: {
+        llama2: 4_096,
+        llava: 4_096,
+        mistral: 4_096,
+        mixtral: 4_096
+      }
     }.freeze
 
     # Initialize the Ollama client
@@ -24,14 +30,16 @@ module Langchain::LLM
     def initialize(url:, default_options: {})
       depends_on "faraday"
       @url = url
-      @defaults = DEFAULTS.merge(default_options)
+      @defaults = DEFAULTS.deep_merge(default_options)
     end
 
     # Returns the # of vector dimensions for the embeddings
     # @return [Integer] The # of vector dimensions
     def default_dimension
-      # since Ollama can run multiple models, generate an embedding and return the size
-      @default_dimension ||= embed(text: "test").embedding.size
+      # since Ollama can run multiple models, look it up or generate an embedding and return the size
+      @default_dimension ||=
+        DEFAULTS.dig(:embedding_size, defaults[:embeddings_model_name].to_sym) ||
+        embed(text: "test").embedding.size
     end
 
     #
