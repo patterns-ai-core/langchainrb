@@ -7,7 +7,7 @@ module Langchain
         attr_reader :token_overflow
 
         def initialize(message = "", token_overflow = 0)
-          super message
+          super(message)
 
           @token_overflow = token_overflow
         end

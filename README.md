@@ -42,6 +42,8 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
     gem install langchainrb
 
+Additional gems may be required when loading LLM Providers. These are not included by default so you can include only what you need.
+
 ## Usage
 
 ```ruby
@@ -62,7 +64,7 @@ Langchain.rb wraps all supported LLMs in a unified interface allowing you to eas
 | [GooglePalm](https://ai.google/discover/palm2?utm_source=langchainrb&utm_medium=github)         | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Google Vertex AI](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ✅                 | ❌                  | ✅                 |                    |
 | [HuggingFace](https://huggingface.co/?utm_source=langchainrb&utm_medium=github)                 | ✅                 | ❌                 | ❌                  | ❌                 |                    |
-| [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ❌                  | ❌                 |                    |
+| [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ✅                  | ❌                 |                    |
 | [Replicate](https://replicate.com/?utm_source=langchainrb&utm_medium=github)                    | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 
 #### Using standalone LLMs:
@@ -91,7 +93,7 @@ llm.complete(prompt: "What is the meaning of life?").completion
 
 Generate a chat completion:
 ```ruby
-llm.chat(prompt: "Hey! How are you?").completion
+llm.chat(messages: [{role: "user", content: "What is the meaning of life?"}]).completion
 ```
 
 Summarize the text:
