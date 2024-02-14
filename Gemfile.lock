@@ -7,7 +7,7 @@ PATH
       json-schema (~> 4.0.0)
       matrix
       pragmatic_segmenter (~> 0.3.0)
-      tiktoken_ruby (~> 0.0.5)
+      tiktoken_ruby (~> 0.0.7)
       to_bool (~> 2.0.0)
       zeitwerk (~> 2.5)
 
