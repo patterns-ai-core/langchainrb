@@ -18,7 +18,8 @@ module Langchain::LLM
       temperature: 0.0,
       chat_completion_model_name: "gpt-3.5-turbo",
       embeddings_model_name: "text-embedding-ada-002",
-      dimension: 1536
+      dimension: 1536,
+      token_counter: :tiktoken
     }.freeze
 
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
@@ -28,7 +29,8 @@ module Langchain::LLM
     # Initialize an OpenAI LLM instance
     #
     # @param api_key [String] The API key to use
-    # @param client_options [Hash] Options to pass to the OpenAI::Client constructor
+    # @param llm_options [Hash] Options to pass to the OpenAI::Client constructor
+    # @param default_options [Hash] Options to customize the default behavior of the LLM
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai", req: "openai"
 
@@ -188,7 +190,11 @@ module Langchain::LLM
     end
 
     def validate_max_tokens(messages, model, max_tokens = nil)
-      LENGTH_VALIDATOR.validate_max_tokens!(messages, model, max_tokens: max_tokens, llm: self)
+      LENGTH_VALIDATOR.validate_max_tokens!(
+        messages, model,
+        max_tokens: max_tokens, llm: self,
+        token_counter: defaults[:token_counter]
+      )
     end
 
     def response_from_chunks
