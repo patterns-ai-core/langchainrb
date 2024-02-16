@@ -16,7 +16,9 @@ module Langchain
       # @return [String]
       def parse(data)
         mail         = Mail.read(data.path)
+        address_info = "From: #{mail.from}\nTo: #{mail.to}\nCc: #{mail.cc}\nBcc: #{mail.bcc}\nSubject: #{mail.subject}\n"
         text_content = extract_text_content(mail)
+        text_content = address_info + text_content
         clean_content(text_content)
       end
 
