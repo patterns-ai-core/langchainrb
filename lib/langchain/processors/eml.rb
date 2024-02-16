@@ -16,9 +16,7 @@ module Langchain
       # @return [String]
       def parse(data)
         mail         = Mail.read(data.path)
-        address_info = "From: #{mail.from}\nTo: #{mail.to}\nCc: #{mail.cc}\nBcc: #{mail.bcc}\nSubject: #{mail.subject}\n"
         text_content = extract_text_content(mail)
-        text_content = address_info + text_content
         clean_content(text_content)
       end
 
@@ -26,30 +24,35 @@ module Langchain
 
       # Extract text content from the email, preferring plaintext over HTML
       def extract_text_content(mail)
+        text_content = "From: #{mail.from}\nTo: #{mail.to}\nCc: #{mail.cc}\nBcc: #{mail.bcc}\nSubject: #{mail.subject}\n\n"
         if mail.multipart?
-          mail.parts.map { |part|
+          mail.parts.each do |part|
             if part.content_type.start_with?('text/plain')
-              # Ensure the decoded content is treated as UTF-8
-              part.body.decoded.force_encoding('UTF-8')
-            elsif part.content_type.start_with?('multipart/alternative')
-              subpart = part.parts.find { |subpart| subpart.content_type.start_with?('text/plain') }
-              subpart&.body&.decoded&.force_encoding('UTF-8') if subpart
-            end&.strip
-          }.compact.join # Return the first non-nil content found
-        else
-          # Assume the whole email is in plain text and ensure UTF-8 encoding
-          mail.body.decoded.force_encoding('UTF-8')
+              text_content += part.body.decoded.force_encoding('UTF-8').strip + "\n"
+            elsif part.content_type.start_with?('multipart/alternative') || part.content_type.start_with?('multipart/mixed')
+              text_content += extract_text_content(part) + "\n" # Recursively extract from multipart
+            elsif part.content_type.start_with?('message/rfc822')
+              # Handle embedded .eml parts as separate emails
+              embedded_mail = Mail.read_from_string(part.body.decoded)
+              text_content  += "--- Begin Embedded Email ---\n"
+              text_content  += extract_text_content(embedded_mail) + "\n"
+              text_content  += "--- End Embedded Email ---\n"
+            end
+          end
+        elsif mail.content_type.start_with?('text/plain')
+          text_content = mail.body.decoded.force_encoding('UTF-8').strip
         end
+        text_content
       end
 
       # Clean and format the extracted content
       def clean_content(content)
         content
-          .gsub(/\[cid:[^\]]+\]/, '')  # Remove embedded image references
-          .gsub(URI.regexp(['http', 'https'])) { |match| "<#{match}>" }  # Format URLs
-          .gsub(/\r\n?/, "\n")  # Normalize line endings to Unix style
-          .gsub(/[\u200B-\u200D\uFEFF]/, '')  # Remove zero width spaces and similar characters
-          .gsub(/<\/?[^>]+>/, '')  # Remove any HTML tags that might have sneaked in
+          .gsub(/\[cid:[^\]]+\]/, '') # Remove embedded image references
+          .gsub(URI.regexp(['http', 'https'])) { |match| "<#{match}>" } # Format URLs
+          .gsub(/\r\n?/, "\n") # Normalize line endings to Unix style
+          .gsub(/[\u200B-\u200D\uFEFF]/, '') # Remove zero width spaces and similar characters
+          .gsub(/<\/?[^>]+>/, '') # Remove any HTML tags that might have sneaked in
       end
     end
   end
