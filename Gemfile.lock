@@ -77,6 +77,7 @@ GEM
     concurrent-ruby (1.2.3)
     connection_pool (2.4.1)
     crass (1.0.6)
+    date (3.3.4)
     declarative (0.0.20)
     diff-lcs (1.5.1)
     docx (0.8.0)
@@ -208,6 +209,11 @@ GEM
     loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
+    mail (2.8.1)
+      mini_mime (>= 0.1.1)
+      net-imap
+      net-pop
+      net-smtp
     matrix (0.4.2)
     method_source (1.0.0)
     milvus (0.9.2)
@@ -220,6 +226,15 @@ GEM
     mutex_m (0.2.0)
     net-http (0.4.1)
       uri
+    net-imap (0.4.10)
+      date
+      net-protocol
+    net-pop (0.1.2)
+      net-protocol
+    net-protocol (0.2.2)
+      timeout
+    net-smtp (0.4.0.1)
+      net-protocol
     nokogiri (1.16.2-aarch64-linux)
       racc (~> 1.4)
     nokogiri (1.16.2-arm-linux)
@@ -390,6 +405,7 @@ GEM
     tiktoken_ruby (0.0.7-x86_64-darwin)
     tiktoken_ruby (0.0.7-x86_64-linux)
     tiktoken_ruby (0.0.7-x86_64-linux-musl)
+    timeout (0.4.1)
     to_bool (2.0.0)
     trailblazer-option (0.1.2)
     treetop (1.6.12)
@@ -440,6 +456,7 @@ DEPENDENCIES
   hugging-face (~> 0.3.4)
   langchainrb!
   llama_cpp (~> 0.9.4)
+  mail (~> 2.8)
   milvus (~> 0.9.2)
   nokogiri (~> 1.13)
   open-weather-ruby-client (~> 0.4.0)

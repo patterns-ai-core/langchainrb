@@ -3,26 +3,26 @@
 require_relative "lib/langchain/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "langchainrb"
+  spec.name    = "langchainrb"
   spec.version = Langchain::VERSION
   spec.authors = ["Andrei Bondarev"]
-  spec.email = ["andrei.bondarev13@gmail.com"]
+  spec.email   = ["andrei.bondarev13@gmail.com"]
 
-  spec.summary = "Build LLM-backed Ruby applications with Ruby's LangChain"
-  spec.description = "Build LLM-backed Ruby applications with Ruby's LangChain"
-  spec.homepage = "https://rubygems.org/gems/langchainrb"
-  spec.license = "MIT"
+  spec.summary               = "Build LLM-backed Ruby applications with Ruby's LangChain"
+  spec.description           = "Build LLM-backed Ruby applications with Ruby's LangChain"
+  spec.homepage              = "https://rubygems.org/gems/langchainrb"
+  spec.license               = "MIT"
   spec.required_ruby_version = ">= 3.0.0"
 
-  spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/andreibondarev/langchainrb"
-  spec.metadata["changelog_uri"] = "https://github.com/andreibondarev/langchainrb/CHANGELOG.md"
+  spec.metadata["homepage_uri"]      = spec.homepage
+  spec.metadata["source_code_uri"]   = "https://github.com/andreibondarev/langchainrb"
+  spec.metadata["changelog_uri"]     = "https://github.com/andreibondarev/langchainrb/CHANGELOG.md"
   spec.metadata["documentation_uri"] = "https://rubydoc.info/gems/langchainrb"
 
   # Specify which files should be added to the gem when it is released.
-  spec.files = Dir["LICENSE.txt", "README.md", "CHANGELOG.md", "lib/**/*"]
-  spec.bindir = "exe"
-  spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
+  spec.files         = Dir["LICENSE.txt", "README.md", "CHANGELOG.md", "lib/**/*"]
+  spec.bindir        = "exe"
+  spec.executables   = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   # dependencies
@@ -60,6 +60,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "milvus", "~> 0.9.2"
   spec.add_development_dependency "llama_cpp", "~> 0.9.4"
   spec.add_development_dependency "nokogiri", "~> 1.13"
+  spec.add_development_dependency "mail", "~> 2.8"
   spec.add_development_dependency "open-weather-ruby-client", "~> 0.4.0"
   spec.add_development_dependency "pg", "~> 1.5"
   spec.add_development_dependency "pgvector", "~> 0.2.1"
