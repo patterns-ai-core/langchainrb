@@ -24,7 +24,13 @@ module Langchain
 
       # Extract text content from the email, preferring plaintext over HTML
       def extract_text_content(mail)
-        text_content = "From: #{mail.from}\nTo: #{mail.to}\nCc: #{mail.cc}\nBcc: #{mail.bcc}\nSubject: #{mail.subject}\n\n"
+        text_content = ""
+        text_content += "From: #{mail.from}\n" \
+                        "To: #{mail.to}\n" \
+                        "Cc: #{mail.cc}\n" \
+                        "Bcc: #{mail.bcc}\n" \
+                        "Subject: #{mail.subject}\n" \
+                        "Date: #{mail.date}\n\n"
         if mail.multipart?
           mail.parts.each do |part|
             if part.content_type.start_with?("text/plain")
