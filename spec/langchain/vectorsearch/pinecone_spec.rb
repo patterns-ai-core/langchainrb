@@ -363,7 +363,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
 
   describe "#ask" do
     let(:question) { "How many times is \"lorem\" mentioned in this text?" }
-    let(:prompt) { "Context:\n#{metadata}\n---\nQuestion: #{question}\n---\nAnswer:" }
+    let(:messages) { [{role: "user", content: "Context:\n#{metadata}\n---\nQuestion: #{question}\n---\nAnswer:"}] }
     let(:response) { double(completion: answer) }
     let(:answer) { "5 times" }
     let(:k) { 4 }
@@ -373,7 +373,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         allow(subject).to receive(:similarity_search).with(
           query: question, namespace: "", filter: nil, k: k
         ).and_return(matches)
-        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
+        allow(subject.llm).to receive(:chat).with(messages: messages).and_return(response)
         expect(response).to receive(:context=).with(metadata.to_s)
       end
 
@@ -387,7 +387,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         allow(subject).to receive(:similarity_search).with(
           query: question, namespace: namespace, filter: nil, k: k
         ).and_return(matches)
-        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
+        allow(subject.llm).to receive(:chat).with(messages: messages).and_return(response)
         expect(response).to receive(:context=).with(metadata.to_s)
       end
 
@@ -401,7 +401,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         allow(subject).to receive(:similarity_search).with(
           query: question, namespace: "", filter: filter, k: k
         ).and_return(matches)
-        allow(subject.llm).to receive(:chat).with(prompt: prompt).and_return(response)
+        allow(subject.llm).to receive(:chat).with(messages: messages).and_return(response)
         expect(response).to receive(:context=).with(metadata.to_s)
       end
 

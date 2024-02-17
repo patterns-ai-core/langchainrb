@@ -77,6 +77,9 @@ module Langchain::LLM
     # @param params [Hash] The parameters to pass to the `chat()` method
     # @return [Langchain::LLM::OpenAIResponse] Response object
     def complete(prompt:, **params)
+      if params[:stop_sequences]
+        params[:stop] = params.delete(:stop_sequences)
+      end
       # Should we still accept the `messages: []` parameter here?
       messages = [{role: "user", content: prompt}]
       chat(messages: messages, **params)
@@ -110,6 +113,7 @@ module Langchain::LLM
     )
       raise ArgumentError.new("messages argument is required") if messages.empty?
       raise ArgumentError.new("model argument is required") if model.empty?
+      raise ArgumentError.new("'tool_choice' is only allowed when 'tools' are specified.") if tool_choice && tools.empty?
 
       parameters = {
         messages: messages,

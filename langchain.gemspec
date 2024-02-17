@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   # Not sure if we should require this as it only applies to OpenAI usecase.
   spec.add_dependency "baran", "~> 0.1.9"
   spec.add_dependency "colorize", "~> 0.8.1"
-  spec.add_dependency "tiktoken_ruby", "~> 0.0.5"
+  spec.add_dependency "tiktoken_ruby", "~> 0.0.7"
   spec.add_dependency "json-schema", "~> 4.0.0"
   spec.add_dependency "zeitwerk", "~> 2.5"
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
@@ -47,7 +47,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "anthropic", "~> 0.1.0"
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.1"
   spec.add_development_dependency "chroma-db", "~> 0.6.0"
-  spec.add_development_dependency "cohere-ruby", "~> 0.9.7"
+  spec.add_development_dependency "cohere-ruby", "~> 0.9.8"
   spec.add_development_dependency "docx", "~> 0.8.0"
   spec.add_development_dependency "elasticsearch", "~> 8.2.0"
   spec.add_development_dependency "epsilla-ruby", "~> 0.0.4"
@@ -71,6 +71,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "ruby-openai", "~> 6.3.0"
   spec.add_development_dependency "safe_ruby", "~> 1.0.4"
   spec.add_development_dependency "sequel", "~> 5.68.0"
-  spec.add_development_dependency "weaviate-ruby", "~> 0.8.9"
+  spec.add_development_dependency "weaviate-ruby", "~> 0.8.10"
   spec.add_development_dependency "wikipedia-client", "~> 1.17.0"
+  spec.add_development_dependency "faraday"
 end

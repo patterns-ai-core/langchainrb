@@ -19,10 +19,14 @@ module Langchain
           "gpt-3.5-turbo-1106" => 4096
         }
 
+        # NOTE: The gpt-4-turbo-preview is an alias that will always point to the latest GPT 4 Turbo preview
+        #   the future previews may have a different token limit!
         TOKEN_LIMITS = {
           # Source:
           # https://platform.openai.com/docs/api-reference/embeddings
           # https://platform.openai.com/docs/models/gpt-4
+          "text-embedding-3-large" => 8191,
+          "text-embedding-3-small" => 8191,
           "text-embedding-ada-002" => 8191,
           "gpt-3.5-turbo" => 4096,
           "gpt-3.5-turbo-0301" => 4096,
@@ -40,6 +44,8 @@ module Langchain
           "gpt-4-32k-0314" => 32768,
           "gpt-4-32k-0613" => 32768,
           "gpt-4-1106-preview" => 128000,
+          "gpt-4-turbo-preview" => 128000,
+          "gpt-4-0125-preview" => 128000,
           "gpt-4-vision-preview" => 128000,
           "text-curie-001" => 2049,
           "text-babbage-001" => 2049,
@@ -58,6 +64,11 @@ module Langchain
         # @return [Integer] The token length of the text
         #
         def self.token_length(text, model_name, options = {})
+          # tiktoken-ruby doesn't support text-embedding-3-large or text-embedding-3-small yet
+          if ["text-embedding-3-large", "text-embedding-3-small"].include?(model_name)
+            model_name = "text-embedding-ada-002"
+          end
+
           encoder = Tiktoken.encoding_for_model(model_name)
           encoder.encode(text).length
         end

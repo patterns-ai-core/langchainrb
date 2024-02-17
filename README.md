@@ -1,6 +1,3 @@
-# Please fill out the [Ruby AI Survey 2023](https://docs.google.com/forms/d/1dH_0js1wpEyh1YqPTOxU3b5fXj76sb5lYp12lVoNNZE/edit).
-Results will be anonymized and shared!
-
 💎🔗 Langchain.rb
 ---
 ⚡ Building LLM-powered applications in Ruby ⚡
@@ -18,8 +15,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 
 ## Use Cases
 * Retrieval Augmented Generation (RAG) and vector search
-* Chat bots
-* [AI agents](https://github.com/andreibondarev/langchainrb/tree/main/lib/langchain/agent/agents.md)
+* [Assistants](#assistants) (chat bots) & [AI Agents](https://github.com/andreibondarev/langchainrb/tree/main/lib/langchain/agent/agents.md)
 
 ## Table of Contents
 
@@ -29,7 +25,6 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 - [Prompt Management](#prompt-management)
 - [Output Parsers](#output-parsers)
 - [Building RAG](#building-retrieval-augment-generation-rag-system)
-- [Building chat bots](#building-chat-bots)
 - [Assistants](#assistants)
 - [Evaluations](#evaluations-evals)
 - [Examples](#examples)
@@ -46,6 +41,8 @@ Install the gem and add to the application's Gemfile by executing:
 If bundler is not being used to manage dependencies, install the gem by executing:
 
     gem install langchainrb
+
+Additional gems may be required when loading LLM Providers. These are not included by default so you can include only what you need.
 
 ## Usage
 
@@ -67,7 +64,7 @@ Langchain.rb wraps all supported LLMs in a unified interface allowing you to eas
 | [GooglePalm](https://ai.google/discover/palm2?utm_source=langchainrb&utm_medium=github)         | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Google Vertex AI](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ✅                 | ❌                  | ✅                 |                    |
 | [HuggingFace](https://huggingface.co/?utm_source=langchainrb&utm_medium=github)                 | ✅                 | ❌                 | ❌                  | ❌                 |                    |
-| [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ❌                  | ❌                 |                    |
+| [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ✅                  | ❌                 |                    |
 | [Replicate](https://replicate.com/?utm_source=langchainrb&utm_medium=github)                    | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 
 #### Using standalone LLMs:
@@ -96,7 +93,7 @@ llm.complete(prompt: "What is the meaning of life?").completion
 
 Generate a chat completion:
 ```ruby
-llm.chat(prompt: "Hey! How are you?").completion
+llm.chat(messages: [{role: "user", content: "What is the meaning of life?"}]).completion
 ```
 
 Summarize the text:
@@ -425,6 +422,12 @@ You can pass old message from previously using the Assistant:
 ```ruby
 thread.messages = messages
 ```
+Messages contain the conversation history and the whole message history is sent to the LLM every time. A Message belongs to 1 of the 4 roles:
+* `Message(role: "system")` message usually contains the instructions.
+* `Message(role: "user")` messages come from the user.
+* `Message(role: "assistant")` messages are produced by the LLM.
+* `Message(role: "tool")` messages are sent in response to tool calls with tool outputs.
+
 3. Instantiate an Assistant
 ```ruby
 assistant = Langchain::Assistant.new(
@@ -456,6 +459,10 @@ Or run the assistant with `auto_tool_execution: tool` to call Tools automaticall
 ```ruby
 assistant.add_message content: "How about San Diego, CA?"
 assistant.run(auto_tool_execution: true)
+```
+You can also combine the two by calling:
+```ruby
+assistant.add_message_and_run content: "What about Sacramento, CA?", auto_tool_execution: true
 ```
 
 ### Accessing Thread messages
