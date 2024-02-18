@@ -3,16 +3,14 @@ module Langchain::Tool
     #
     # Connects to a database, executes SQL queries, and outputs DB schema for Agents to use
     #
-    # Gem requirements: gem "sequel", "~> 5.68.0"
+    # Gem requirements:
+    #     gem "sequel", "~> 5.68.0"
     #
-
-    CALLABLE_METHODS = [
-      :describe_tables,
-      :list_tables,
-      :execute
-    ]
-
+    # Usage:
+    #     database = Langchain::Tool::Database.new(connection_string: "postgres://user:password@localhost:5432/db_name")
+    #
     NAME = "database"
+    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
     description <<~DESC
       Useful for getting the result of a database query.
@@ -22,15 +20,12 @@ module Langchain::Tool
 
     attr_reader :db, :requested_tables, :excluded_tables
 
-    #
     # Establish a database connection
     #
     # @param connection_string [String] Database connection info, e.g. 'postgres://user:password@localhost:5432/db_name'
     # @param tables [Array<Symbol>] The tables to use. Will use all if empty.
     # @param except_tables [Array<Symbol>] The tables to exclude. Will exclude none if empty.
-
     # @return [Database] Database object
-    #
     def initialize(connection_string:, tables: [], exclude_tables: [])
       depends_on "sequel"
 
@@ -39,8 +34,6 @@ module Langchain::Tool
       @db = Sequel.connect(connection_string)
       @requested_tables = tables
       @excluded_tables = exclude_tables
-
-      generate_yard_docs!
     end
 
     # Database Tool: Returns a list of tables in the database
@@ -73,7 +66,6 @@ module Langchain::Tool
     end
 
     def describe_table(table, schema)
-
       primary_key_columns = []
       primary_key_column_count = db.schema(table).count { |column| column[1][:primary_key] == true }
 
