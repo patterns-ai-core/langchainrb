@@ -147,10 +147,6 @@ module Langchain
         tool_name, method_name = function_name.split("-")
         tool_arguments = JSON.parse(tool_call.dig("function", "arguments"), symbolize_names: true)
 
-        # Before: "database"
-        # After: "database[execute]"
-        # After: "database[dump_schema]"
-
         tool_instance = tools.find do |t|
           t.name == tool_name
         end or raise ArgumentError, "Tool not found in assistant.tools"
