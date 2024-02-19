@@ -5,14 +5,15 @@ module Langchain::Tool
     #
     # Wrapper around SerpApi's Google Search API
     #
-    # Gem requirements: gem "google_search_results", "~> 2.0.0"
+    # Gem requirements:
+    #     gem "google_search_results", "~> 2.0.0"
     #
     # Usage:
-    # search = Langchain::Tool::GoogleSearch.new(api_key: "YOUR_API_KEY")
-    # search.execute(input: "What is the capital of France?")
+    #     search = Langchain::Tool::GoogleSearch.new(api_key: "YOUR_API_KEY")
+    #     search.execute(input: "What is the capital of France?")
     #
-
     NAME = "google_search"
+    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
     description <<~DESC
       A wrapper around SerpApi's Google Search API.
@@ -44,12 +45,10 @@ module Langchain::Tool
       new.execute_search(input: input)
     end
 
-    #
     # Executes Google Search and returns the result
     #
     # @param input [String] search query
     # @return [String] Answer
-    #
     def execute(input:)
       Langchain.logger.info("Executing \"#{input}\"", for: self.class)
 

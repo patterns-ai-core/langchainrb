@@ -1,0 +1,19 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "ruby_code_interpreter-execute",
+      "description": "Executes Ruby code in a sandboxes environment.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "ruby code expression"
+          }
+        },
+        "required": ["input"]
+      }
+    }
+  }
+]
