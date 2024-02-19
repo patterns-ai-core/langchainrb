@@ -48,7 +48,7 @@ module Langchain::Tool
   class Base
     include Langchain::DependencyHelper
 
-    def initialize
+    def initialize(*)
       raise "Your tool must specify ANNOTATIONS_PATH constant with a path to your method annotations JSON file" unless self.class.const_defined?(:ANNOTATIONS_PATH)
     end
 
