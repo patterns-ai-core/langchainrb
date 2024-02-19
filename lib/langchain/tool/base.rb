@@ -3,7 +3,7 @@
 module Langchain::Tool
   # = Tools
   #
-  # Tools are used by Agents to perform specific tasks. Basically anything is possible with enough code!
+  # Tools are used by Assistants to perform specific tasks. Basically anything is possible with enough code!
   #
   # == Available Tools
   #
@@ -16,7 +16,7 @@ module Langchain::Tool
   #
   # == Usage
   #
-  # 1. Pick the tools you'd like to pass to an Agent and install the gems listed under **Gem Requirements**
+  # 1. Pick the tools you'd like to pass to an Assistant and install the gems listed under **Gem Requirements**
   #
   #     # For example to use the Calculator, GoogleSearch, and Wikipedia:
   #     gem install eqn
@@ -27,14 +27,14 @@ module Langchain::Tool
   #
   #     export SERPAPI_API_KEY=paste-your-serpapi-api-key-here
   #
-  # 3. Pass the tools when Agent is instantiated.
+  # 3. Pass the tools when Assistant is instantiated.
   #
-  #     agent = Langchain::Agent::ReActAgent.new(
-  #       llm: Langchain::LLM::OpenAI.new(api_key: "YOUR_API_KEY"), # or other like Cohere, Hugging Face, Google Palm or Replicate
+  #     assistant = Langchain::Assistant.new(
+  #       llm: llm,
+  #       thread: thread,
+  #       instructions: "You are a Meteorologist Assistant that is able to pull the weather for any location",
   #       tools: [
-  #         Langchain::Tool::GoogleSearch.new(api_key: "YOUR_API_KEY"),
-  #         Langchain::Tool::Calculator.new,
-  #         Langchain::Tool::Wikipedia.new
+  #         Langchain::Tool::GoogleSearch.new(api_key: ENV["SERPAPI_API_KEY"])
   #       ]
   #     )
   #
@@ -47,6 +47,10 @@ module Langchain::Tool
   # 5. Add your tool to the {file:README.md}
   class Base
     include Langchain::DependencyHelper
+
+    def initialize
+      raise "Your tool must specify ANNOTATIONS_PATH constant with a path to your method annotations JSON file" unless self.class.const_defined?(:ANNOTATIONS_PATH)
+    end
 
     # Returns the NAME constant of the tool
     #

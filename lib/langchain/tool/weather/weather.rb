@@ -46,6 +46,7 @@ module Langchain::Tool
       end
 
       @client = OpenWeather::Client.new
+      super
     end
 
     # Returns current weather for a city

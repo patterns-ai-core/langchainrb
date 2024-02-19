@@ -33,6 +33,7 @@ module Langchain::Tool
       depends_on "google_search_results"
 
       @api_key = api_key
+      super
     end
 
     #

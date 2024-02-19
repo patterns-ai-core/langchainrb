@@ -34,6 +34,7 @@ module Langchain::Tool
       @db = Sequel.connect(connection_string)
       @requested_tables = tables
       @excluded_tables = exclude_tables
+      super
     end
 
     # Database Tool: Returns a list of tables in the database

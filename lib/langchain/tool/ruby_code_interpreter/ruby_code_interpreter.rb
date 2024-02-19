@@ -22,6 +22,7 @@ module Langchain::Tool
       depends_on "safe_ruby"
 
       @timeout = timeout
+      super
     end
 
     # Executes Ruby code in a sandboxes environment.

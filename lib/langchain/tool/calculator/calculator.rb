@@ -28,6 +28,7 @@ module Langchain::Tool
 
     def initialize
       depends_on "eqn"
+      super
     end
 
     # Evaluates a pure math expression or if equation contains non-math characters (e.g.: "12F in Celsius") then it uses the google search calculator to evaluate the expression
