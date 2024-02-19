@@ -60,6 +60,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "milvus", "~> 0.9.2"
   spec.add_development_dependency "llama_cpp", "~> 0.9.4"
   spec.add_development_dependency "nokogiri", "~> 1.13"
+  spec.add_development_dependency "mail", "~> 2.8"
   spec.add_development_dependency "open-weather-ruby-client", "~> 0.4.0"
   spec.add_development_dependency "pg", "~> 1.5"
   spec.add_development_dependency "pgvector", "~> 0.2.1"
