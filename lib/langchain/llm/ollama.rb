@@ -14,16 +14,17 @@ module Langchain::LLM
       temperature: 0.8,
       completion_model_name: "llama2",
       embeddings_model_name: "llama2",
-      chat_completion_model_name: "llama2",
-      embedding_size: {
-        codellama: 4_096,
-        "dolphin-mixtral": 4_096,
-        llama2: 4_096,
-        llava: 4_096,
-        mistral: 4_096,
-        "mistral-openorca": 4_096,
-        mixtral: 4_096
-      }
+      chat_completion_model_name: "llama2"
+    }.freeze
+
+    EMBEDDING_SIZES = {
+      codellama: 4_096,
+      "dolphin-mixtral": 4_096,
+      llama2: 4_096,
+      llava: 4_096,
+      mistral: 4_096,
+      "mistral-openorca": 4_096,
+      mixtral: 4_096
     }.freeze
 
     # Initialize the Ollama client
@@ -41,8 +42,9 @@ module Langchain::LLM
     def default_dimension
       # since Ollama can run multiple models, look it up or generate an embedding and return the size
       @default_dimension ||=
-        DEFAULTS.dig(:embedding_size, defaults[:embeddings_model_name].to_sym) ||
-        embed(text: "test").embedding.size
+        EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name].to_sym) do
+          embed(text: "test").embedding.size
+        end
     end
 
     #
