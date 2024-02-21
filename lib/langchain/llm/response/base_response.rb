@@ -43,14 +43,6 @@ module Langchain
         raise NotImplementedError
       end
 
-      # Returns the summarization text
-      #
-      # @return [String]
-      #
-      def summarization
-        raise NotImplementedError
-      end
-
       # Return the completion candidates
       #
       # @return [Array]
