@@ -28,8 +28,8 @@ Gem::Specification.new do |spec|
   # dependencies
   # Not sure if we should require this as it only applies to OpenAI usecase.
   spec.add_dependency "baran", "~> 0.1.9"
-  spec.add_dependency "colorize", "~> 0.8.1"
-  spec.add_dependency "tiktoken_ruby", "~> 0.0.5"
+  spec.add_dependency "colorize", "~> 1.1.0"
+  spec.add_dependency "tiktoken_ruby", "~> 0.0.7"
   spec.add_dependency "json-schema", "~> 4.0.0"
   spec.add_dependency "zeitwerk", "~> 2.5"
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
@@ -62,6 +62,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "milvus", "~> 0.9.2"
   spec.add_development_dependency "llama_cpp", "~> 0.9.4"
   spec.add_development_dependency "nokogiri", "~> 1.13"
+  spec.add_development_dependency "mail", "~> 2.8"
   spec.add_development_dependency "open-weather-ruby-client", "~> 0.4.0"
   spec.add_development_dependency "pg", "~> 1.5"
   spec.add_development_dependency "pgvector", "~> 0.2.1"

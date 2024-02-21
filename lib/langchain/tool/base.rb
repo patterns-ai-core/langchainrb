@@ -48,11 +48,9 @@ module Langchain::Tool
   class Base
     include Langchain::DependencyHelper
 
-    #
     # Returns the NAME constant of the tool
     #
     # @return [String] tool name
-    #
     def name
       self.class.const_get(:NAME)
     end
@@ -63,59 +61,37 @@ module Langchain::Tool
       }
     end
 
-    #
     # Returns the DESCRIPTION constant of the tool
     #
     # @return [String] tool description
-    #
     def description
       self.class.const_get(:DESCRIPTION)
     end
 
-    #
     # Sets the DESCRIPTION constant of the tool
     #
     # @param value [String] tool description
-    #
     def self.description(value)
       const_set(:DESCRIPTION, value.tr("\n", " ").strip)
     end
 
-    #
     # Instantiates and executes the tool and returns the answer
     #
     # @param input [String] input to the tool
     # @return [String] answer
-    #
     def self.execute(input:)
+      warn "DEPRECATED: `#{self}.execute` is deprecated, and will be removed in the next major version."
+
       new.execute(input: input)
     end
 
-    # Returns the tool as an OpenAI tool
+    # Returns the tool as a list of OpenAI formatted functions
     #
     # @return [Hash] tool as an OpenAI tool
-    def to_openai_tool
-      # TODO: This is hardcoded to def execute(input:) found in each tool, needs to be dynamic.
-      {
-        type: "function",
-        function: {
-          name: name,
-          description: description,
-          parameters: {
-            type: "object",
-            properties: {
-              input: {
-                type: "string",
-                description: "Input to the tool"
-              }
-            },
-            required: ["input"]
-          }
-        }
-      }
+    def to_openai_tools
+      method_annotations
     end
 
-    #
     # Executes the tool and returns the answer
     #
     # @param input [String] input to the tool
@@ -125,12 +101,21 @@ module Langchain::Tool
       raise NotImplementedError, "Your tool must implement the `#execute(input:)` method that returns a string"
     end
 
+    # Return tool's method annotations as JSON
     #
+    # @return [Hash] Tool's method annotations
+    def method_annotations
+      JSON.parse(
+        File.read(
+          self.class.const_get(:ANNOTATIONS_PATH)
+        )
+      )
+    end
+
     # Validates the list of tools or raises an error
+    #
     # @param tools [Array<Langchain::Tool>] list of tools to be used
-    #
     # @raise [ArgumentError] If any of the tools are not supported
-    #
     def self.validate_tools!(tools:)
       # Check if the tool count is equal to unique tool count
       if tools.count != tools.map(&:name).uniq.count

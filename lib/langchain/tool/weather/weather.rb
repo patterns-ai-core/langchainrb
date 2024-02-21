@@ -13,11 +13,11 @@ module Langchain::Tool
     #     api_key: https://home.openweathermap.org/api_keys
     #
     # Usage:
-    #     weather = Langchain::Tool::Weather.new(api_key: "YOUR_API_KEY")
+    #     weather = Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
     #     weather.execute(input: "Boston, MA; imperial")
     #
-
     NAME = "weather"
+    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
     description <<~DESC
       Useful for getting current weather data
@@ -32,12 +32,10 @@ module Langchain::Tool
 
     attr_reader :client, :units
 
-    #
     # Initializes the Weather tool
     #
     # @param api_key [String] Open Weather API key
     # @return [Langchain::Tool::Weather] Weather tool
-    #
     def initialize(api_key:, units: "metric")
       depends_on "open-weather-ruby-client"
       require "open-weather-ruby-client"
@@ -51,6 +49,7 @@ module Langchain::Tool
     end
 
     # Returns current weather for a city
+    #
     # @param input [String] comma separated city and unit (optional: imperial, metric, or standard)
     # @return [String] Answer
     def execute(input:)
