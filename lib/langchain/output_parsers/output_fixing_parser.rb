@@ -53,11 +53,12 @@ module Langchain::OutputParsers
       parser.parse(completion)
     rescue OutputParserException => e
       new_completion = llm.chat(
-        prompt: prompt.format(
-          instructions: parser.get_format_instructions,
-          completion: completion,
-          error: e
-        )
+        messages: [{role: "user",
+                    content: prompt.format(
+                      instructions: parser.get_format_instructions,
+                      completion: completion,
+                      error: e
+                    )}]
       ).completion
       parser.parse(new_completion)
     end
