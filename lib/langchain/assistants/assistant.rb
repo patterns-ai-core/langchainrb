@@ -15,7 +15,7 @@ module Langchain
       llm:,
       thread:,
       tools: [],
-      instructions: nil
+      instructions: nil,
       &block
     )
       raise ArgumentError, "Invalid LLM; currently only Langchain::LLM::OpenAI is supported" unless llm.instance_of?(Langchain::LLM::OpenAI)
