@@ -16,6 +16,7 @@ module Langchain
       thread:,
       tools: [],
       instructions: nil
+      &block
     )
       raise ArgumentError, "Invalid LLM; currently only Langchain::LLM::OpenAI is supported" unless llm.instance_of?(Langchain::LLM::OpenAI)
       raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless thread.is_a?(Langchain::Thread)
@@ -25,6 +26,7 @@ module Langchain
       @thread = thread
       @tools = tools
       @instructions = instructions
+      @block = block
 
       # The first message in the thread should be the system instructions
       # TODO: What if the user added old messages and the system instructions are already in there? Should this overwrite the existing instructions?
@@ -132,7 +134,7 @@ module Langchain
         params[:tool_choice] = "auto"
       end
 
-      llm.chat(**params)
+      llm.chat(**params, &@block)
     end
 
     # Run the tools automatically
