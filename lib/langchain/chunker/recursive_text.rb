@@ -4,12 +4,10 @@ require "baran"
 
 module Langchain
   module Chunker
-    #
     # Recursive text chunker. Preferentially splits on separators.
     #
     # Usage:
     #     Langchain::Chunker::RecursiveText.new(text).chunks
-    #
     class RecursiveText < Base
       attr_reader :text, :chunk_size, :chunk_overlap, :separators
 

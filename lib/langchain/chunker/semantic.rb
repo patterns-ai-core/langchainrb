@@ -2,7 +2,6 @@
 
 module Langchain
   module Chunker
-    #
     # LLM-powered semantic chunker.
     # Semantic chunking is a technique of splitting texts by their semantic meaning, e.g.: themes, topics, and ideas.
     # We use an LLM to accomplish this. The Anthropic LLM is highly recommended for this task as it has the longest context window (100k tokens).
@@ -12,7 +11,6 @@ module Langchain
     #       text,
     #       llm: Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
     #     ).chunks
-    #
     class Semantic < Base
       attr_reader :text, :llm, :prompt_template
       # @param [Langchain::LLM::Base] Langchain::LLM::* instance

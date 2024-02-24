@@ -72,7 +72,7 @@ loader.setup
 #
 # = Logging
 #
-# LangChain.rb uses standard logging mechanisms and defaults to :debug level. Most messages are at info level, but we will add debug or warn statements as needed. To show all log messages:
+# Langchain.rb uses standard logging mechanisms and defaults to :debug level. Most messages are at info level, but we will add debug or warn statements as needed. To show all log messages:
 #
 # Langchain.logger.level = :info
 module Langchain
