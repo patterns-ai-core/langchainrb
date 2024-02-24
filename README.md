@@ -64,7 +64,7 @@ Langchain.rb wraps supported LLMs in a unified interface allowing you to easily 
 | [GooglePalm](https://ai.google/discover/palm2?utm_source=langchainrb&utm_medium=github)         | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Google Vertex AI](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ✅                 | ❌                  | ✅                 |                    |
 | [HuggingFace](https://huggingface.co/?utm_source=langchainrb&utm_medium=github)                 | ✅                 | ❌                 | ❌                  | ❌                 |                    |
-| [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ✅                  | ❌                 |                    |
+| [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Replicate](https://replicate.com/?utm_source=langchainrb&utm_medium=github)                    | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 
 #### Using standalone LLMs:

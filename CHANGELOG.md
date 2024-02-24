@@ -1,4 +1,5 @@
 ## [Unreleased]
+- `Langchain::LLM::Ollama` can now `#summarize`
 
 ## [0.9.3]
 - Add EML processor

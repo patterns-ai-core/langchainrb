@@ -41,6 +41,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry-byebug", "~> 3.10.0"
   spec.add_development_dependency "yard", "~> 0.9.34"
   spec.add_development_dependency "rdiscount", "~> 2.2.7" # for github-flavored markdown in yard
+  spec.add_development_dependency "vcr"
+  spec.add_development_dependency "webmock"
 
   # optional dependencies
   spec.add_development_dependency "ai21", "~> 0.2.1"
