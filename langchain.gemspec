@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["Andrei Bondarev"]
   spec.email = ["andrei.bondarev13@gmail.com"]
 
-  spec.summary = "Build LLM-backed Ruby applications with Ruby's LangChain"
-  spec.description = "Build LLM-backed Ruby applications with Ruby's LangChain"
+  spec.summary = "Build LLM-backed Ruby applications with Ruby's Langchain.rb"
+  spec.description = "Build LLM-backed Ruby applications with Ruby's Langchain.rb"
   spec.homepage = "https://rubygems.org/gems/langchainrb"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0.0"

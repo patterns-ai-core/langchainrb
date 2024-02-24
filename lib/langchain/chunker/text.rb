@@ -4,12 +4,10 @@ require "baran"
 
 module Langchain
   module Chunker
-    #
     # Simple text chunker
     #
     # Usage:
     #     Langchain::Chunker::Text.new(text).chunks
-    #
     class Text < Base
       attr_reader :text, :chunk_size, :chunk_overlap, :separator
 
