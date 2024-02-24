@@ -26,6 +26,8 @@ module Langchain::Agent
     # @param max_iterations [Integer] The maximum number of iterations to run
     # @return [ReActAgent] The Agent::ReActAgent instance
     def initialize(llm:, tools: [], max_iterations: 10)
+      warn "[DEPRECATION] `Langchain::Agent::ReActAgent` is deprecated. Please use `Langchain::Assistant` instead."
+
       Langchain::Tool::Base.validate_tools!(tools: tools)
 
       @tools = tools

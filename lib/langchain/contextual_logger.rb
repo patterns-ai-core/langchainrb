@@ -42,7 +42,7 @@ module Langchain
       for_class_name = for_class&.name
 
       log_line_parts = []
-      log_line_parts << "[LangChain.rb]".colorize(color: :yellow)
+      log_line_parts << "[Langchain.rb]".colorize(color: :yellow)
       log_line_parts << if for_class.respond_to?(:logger_options)
         "[#{for_class_name}]".colorize(for_class.logger_options) + ":"
       elsif for_class_name

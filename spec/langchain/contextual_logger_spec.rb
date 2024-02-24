@@ -9,7 +9,7 @@ RSpec.describe Langchain::ContextualLogger do
     it "#info" do
       expect(logger).to receive(:info).with(
         <<~LINE.strip
-          #{"[LangChain.rb]".yellow} #{"Hello World".white}
+          #{"[Langchain.rb]".yellow} #{"Hello World".white}
         LINE
       )
       subject.info("Hello World")
@@ -18,7 +18,7 @@ RSpec.describe Langchain::ContextualLogger do
     it "#warn" do
       expect(logger).to receive(:warn).with(
         <<~LINE.strip
-          #{"[LangChain.rb]".yellow} #{"Hello World".colorize(color: :yellow, mode: :bold)}
+          #{"[Langchain.rb]".yellow} #{"Hello World".colorize(color: :yellow, mode: :bold)}
         LINE
       )
       subject.warn("Hello World")
@@ -27,7 +27,7 @@ RSpec.describe Langchain::ContextualLogger do
     it "#debug" do
       expect(logger).to receive(:debug).with(
         <<~LINE.strip
-          #{"[LangChain.rb]".yellow} #{"Hello World".white}
+          #{"[Langchain.rb]".yellow} #{"Hello World".white}
         LINE
       )
       subject.debug("Hello World")
@@ -38,7 +38,7 @@ RSpec.describe Langchain::ContextualLogger do
     it "#info" do
       expect(logger).to receive(:info).with(
         <<~LINE.strip
-          #{"[LangChain.rb]".yellow} #{"[Langchain::Vectorsearch::Pgvector]".blue}: #{"Hello World".white}
+          #{"[Langchain.rb]".yellow} #{"[Langchain::Vectorsearch::Pgvector]".blue}: #{"Hello World".white}
         LINE
       )
       subject.info("Hello World", for: Langchain::Vectorsearch::Pgvector)
@@ -47,7 +47,7 @@ RSpec.describe Langchain::ContextualLogger do
     it "#warn" do
       expect(logger).to receive(:warn).with(
         <<~LINE.strip
-          #{"[LangChain.rb]".yellow} #{"[Langchain::Vectorsearch::Pgvector]".blue}: #{"Hello World".colorize(color: :yellow, mode: :bold)}
+          #{"[Langchain.rb]".yellow} #{"[Langchain::Vectorsearch::Pgvector]".blue}: #{"Hello World".colorize(color: :yellow, mode: :bold)}
         LINE
       )
       subject.warn("Hello World", for: Langchain::Vectorsearch::Pgvector)
@@ -56,7 +56,7 @@ RSpec.describe Langchain::ContextualLogger do
     it "doesn't have an issue with objects that don't have .logger_options" do
       expect(logger).to receive(:warn).with(
         <<~LINE.strip
-          #{"[LangChain.rb]".yellow} [Object]: #{"Hello World".colorize(color: :yellow, mode: :bold)}
+          #{"[Langchain.rb]".yellow} [Object]: #{"Hello World".colorize(color: :yellow, mode: :bold)}
         LINE
       )
       subject.warn("Hello World", for: Object)
