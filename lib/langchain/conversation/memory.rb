@@ -9,6 +9,8 @@ module Langchain
       TOKEN_LEEWAY = 20
 
       def initialize(llm:, messages: [], **options)
+        warn "[DEPRECATION] `Langchain::Conversation::Memory` is deprecated. Please use `Langchain::Assistant` instead."
+
         @llm = llm
         @context = nil
         @summary = nil

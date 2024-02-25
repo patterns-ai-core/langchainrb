@@ -8,7 +8,7 @@ require "pry-byebug"
 
 RUNNING_ON_CI = ENV["CI"] == "true"
 
-require Langchain.root.join("./../spec/support/custom_matchers.rb")
+Dir[Langchain.root.join("./../spec/support/**/*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

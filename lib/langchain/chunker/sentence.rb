@@ -4,12 +4,10 @@ require "pragmatic_segmenter"
 
 module Langchain
   module Chunker
-    #
     # This chunker splits text by sentences.
     #
     # Usage:
     #     Langchain::Chunker::Sentence.new(text).chunks
-    #
     class Sentence < Base
       attr_reader :text
 

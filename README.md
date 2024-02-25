@@ -42,7 +42,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
     gem install langchainrb
 
-Additional gems may be required when loading LLM Providers. These are not included by default so you can include only what you need.
+Additional gems may be required. They're not included by default so you can include only what you need.
 
 ## Usage
 
@@ -51,10 +51,10 @@ require "langchain"
 ```
 
 ## Large Language Models (LLMs)
-Langchain.rb wraps all supported LLMs in a unified interface allowing you to easily swap out and test out different models.
+Langchain.rb wraps supported LLMs in a unified interface allowing you to easily swap out and test out different models.
 
 #### Supported LLMs and features:
-| LLM providers                                                                                   | embed()            | complete()         | chat()              | summarize()        | Notes              |
+| LLM providers                                                                                   | `embed()`            | `complete()`         | `chat()`              | `summarize()`        | Notes              |
 | --------                                                                                        |:------------------:| :-------:          | :-----------------: | :-------:          | :----------------- |
 | [OpenAI](https://openai.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ❌                 | Including Azure OpenAI |
 | [AI21](https://ai21.com/?utm_source=langchainrb&utm_medium=github)                              | ❌                 | ✅                 | ❌                  | ✅                 |                    |
@@ -64,7 +64,7 @@ Langchain.rb wraps all supported LLMs in a unified interface allowing you to eas
 | [GooglePalm](https://ai.google/discover/palm2?utm_source=langchainrb&utm_medium=github)         | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Google Vertex AI](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ✅                 | ❌                  | ✅                 |                    |
 | [HuggingFace](https://huggingface.co/?utm_source=langchainrb&utm_medium=github)                 | ✅                 | ❌                 | ❌                  | ❌                 |                    |
-| [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ✅                  | ❌                 |                    |
+| [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Replicate](https://replicate.com/?utm_source=langchainrb&utm_medium=github)                    | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 
 #### Using standalone LLMs:
@@ -83,12 +83,7 @@ llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"], llm_options: { 
 
 Generate vector embeddings:
 ```ruby
-llm.embed(text: "foo bar")
-```
-
-Generate a text completion:
-```ruby
-llm.complete(prompt: "What is the meaning of life?").completion
+llm.embed(text: "foo bar").embedding
 ```
 
 Generate a chat completion:
@@ -249,7 +244,7 @@ Then parse the llm response:
 
 ```ruby
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-llm_response = llm.chat(prompt: prompt_text).completion
+llm_response = llm.chat(messages: [{role: "user", content: prompt_text}]).completion
 parser.parse(llm_response)
 # {
 #   "name" => "Kim Ji-hyun",
@@ -398,13 +393,8 @@ client.similarity_search_by_vector(
 
 RAG-based querying
 ```ruby
-client.ask(
-  question:
-)
+client.ask(question: "...")
 ```
-
-## Evaluations (Evals)
-The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
 
 ## Assistants
 Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries. Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
@@ -473,6 +463,9 @@ assistant.thread.messages
 
 The Assistant checks the context window limits before every request to the LLM and remove oldest thread messages one by one if the context window is exceeded.
 
+## Evaluations (Evals)
+The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
+
 ### RAGAS
 Ragas helps you evaluate your Retrieval Augmented Generation (RAG) pipelines. The implementation is based on this [paper](https://arxiv.org/abs/2309.15217) and the original Python [repo](https://github.com/explodinggradients/ragas). Ragas tracks the following 3 metrics and assigns the 0.0 - 1.0 scores:
 * Faithfulness - the answer is grounded in the given context.
@@ -501,7 +494,7 @@ Additional examples available: [/examples](https://github.com/andreibondarev/lan
 
 ## Logging
 
-LangChain.rb uses standard logging mechanisms and defaults to `:warn` level. Most messages are at info level, but we will add debug or warn statements as needed.
+Langchain.rb uses standard logging mechanisms and defaults to `:warn` level. Most messages are at info level, but we will add debug or warn statements as needed.
 To show all log messages:
 
 ```ruby
