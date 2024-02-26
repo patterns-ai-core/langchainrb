@@ -174,6 +174,10 @@ module Langchain::LLM
       complete(prompt: prompt)
     end
 
+    def default_dimension
+      @defaults[:dimension]
+    end
+
     private
 
     attr_reader :response_chunks

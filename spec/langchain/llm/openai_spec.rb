@@ -270,6 +270,19 @@ RSpec.describe Langchain::LLM::OpenAI do
     it "returns the default dimension" do
       expect(subject.default_dimension).to eq(1536)
     end
+
+    context "when the dimension is passed as an argument" do
+      let(:subject) do
+        described_class.new(api_key: "123", default_options: {
+          embeddings_model_name: "text-embedding-3-small",
+          dimension: 512,
+        })
+      end
+
+      it "sets the default_dimension" do
+        expect(subject.default_dimension).to eq 512
+      end
+    end
   end
 
   describe "#chat" do
