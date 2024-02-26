@@ -47,7 +47,6 @@ module Langchain::LLM
     def embed(
       text:,
       model: defaults[:embeddings_model_name],
-      dimension: defaults[:dimension],
       encoding_format: nil,
       user: nil
     )
@@ -57,8 +56,7 @@ module Langchain::LLM
 
       parameters = {
         input: text,
-        model: model,
-        dimensions: dimension,
+        model: model
       }
       parameters[:encoding_format] = encoding_format if encoding_format
       parameters[:user] = user if user
