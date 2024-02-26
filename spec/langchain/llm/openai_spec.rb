@@ -93,11 +93,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "sets the dimension" do
         subject.embed(text: "Hello World", model: "text-embedding-3-small", dimension: 512)
 
-        expect(subject.client).to have_received(:embeddings).with(parameters: {
-          input: "Hello World",
-          model: "text-embedding-3-small",
-          dimensions: 512
-        })
+        expect(subject.client).to have_received(:embeddings).with(parameters)
       end
     end
   end
