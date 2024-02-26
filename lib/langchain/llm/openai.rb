@@ -58,7 +58,7 @@ module Langchain::LLM
       parameters = {
         input: text,
         model: model,
-        dimensions: dimension,
+        dimensions: dimension
       }
       parameters[:encoding_format] = encoding_format if encoding_format
       parameters[:user] = user if user
