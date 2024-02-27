@@ -26,7 +26,7 @@ module Langchain
         prompt = prompt_template.format(text: text)
 
         # Replace static 50k limit with dynamic limit based on text length (max_tokens_to_sample)
-        completion = llm.complete(prompt: prompt, max_tokens_to_sample: 50000)
+        completion = llm.complete(prompt: prompt, max_tokens_to_sample: 50000).completion
         completion
           .gsub("Here are the paragraphs split by topic:\n\n", "")
           .split("---")
