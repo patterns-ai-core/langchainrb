@@ -5,15 +5,12 @@ require "json-schema"
 
 module Langchain::OutputParsers
   # = Structured Output Parser
-  #
   class StructuredOutputParser < Base
     attr_reader :schema
 
-    #
     # Initializes a new instance of the class.
     #
     # @param schema [JSON::Schema] The json schema
-    #
     def initialize(schema:)
       @schema = validate_schema!(schema)
     end
@@ -25,24 +22,20 @@ module Langchain::OutputParsers
       }
     end
 
-    #
     # Creates a new instance of the class using the given JSON::Schema.
     #
     # @param schema [JSON::Schema] The JSON::Schema to use
     #
     # @return [Object] A new instance of the class
-    #
     def self.from_json_schema(schema)
       new(schema: schema)
     end
 
-    #
     # Returns a string containing instructions for how the output of a language model should be formatted
     # according to the @schema.
     #
     # @return [String] Instructions for how the output of a language model should be formatted
     # according to the @schema.
-    #
     def get_format_instructions
       <<~INSTRUCTIONS
         You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
@@ -62,13 +55,10 @@ module Langchain::OutputParsers
       INSTRUCTIONS
     end
 
-    #
     # Parse the output of an LLM call extracting an object that abides by the @schema
     #
     # @param text [String] Text output from the LLM call
-    #
     # @return [Object] object that abides by the @schema
-    #
     def parse(text)
       json = text.include?("```") ? text.strip.split(/```(?:json)?/)[1] : text.strip
       parsed = JSON.parse(json)

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Langchain
+  # Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries.
+  # Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
   class Assistant
     attr_reader :llm, :thread, :instructions
     attr_accessor :tools
@@ -178,26 +180,6 @@ module Langchain
       Message.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
     end
 
-    # # TODO: Fix the message truncation when context window is exceeded
-    # def build_assistant_prompt(instructions:, tools:)
-    #   while begin
-    #     # Check if the prompt exceeds the context window
-    #     # Return false to exit the while loop
-    #     !llm.class.const_get(:LENGTH_VALIDATOR).validate_max_tokens!(
-    #       thread.messages,
-    #       llm.defaults[:chat_completion_model_name],
-    #       {llm: llm}
-    #     )
-    #   # Rescue error if context window is exceeded and return true to continue the while loop
-    #   rescue Langchain::Utils::TokenLength::TokenLimitExceeded
-    #     # Should be using `retry` instead of while()
-    #     true
-    #   end
-    #     # Truncate the oldest messages when the context window is exceeded
-    #     thread.messages.shift
-    #   end
-
-    #   prompt
-    # end
+    # TODO: Fix the message truncation when context window is exceeded
   end
 end

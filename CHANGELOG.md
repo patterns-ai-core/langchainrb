@@ -1,4 +1,10 @@
 ## [Unreleased]
+- `Langchain::LLM::Ollama` can now `#summarize`
+
+## [0.9.3]
+- Add EML processor
+- Tools can support multiple-methods
+- Bump gems and bug fixes
 
 ## [0.9.2]
 - Fix vectorsearch#ask methods

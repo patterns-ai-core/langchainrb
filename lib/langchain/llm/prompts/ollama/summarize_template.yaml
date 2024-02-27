@@ -1,0 +1,9 @@
+_type: prompt
+input_variables:
+  - text
+template: |
+  Write a concise summary of the following TEXT. Do not include the word summary, just provide the summary.
+
+  TEXT: {text}
+
+  CONCISE SUMMARY:
