@@ -61,12 +61,10 @@ prompt.format(description: "Korean chemistry student", format_instructions: pars
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 llm_response = llm.chat(
   messages: [{role: "user",
-    content: prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)
-  }]
+              content: prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)}]
 )
 
 # LLM example response:
-llm_example_response = <<~RESPONSE
   Here is your character:
   ```json
   {
