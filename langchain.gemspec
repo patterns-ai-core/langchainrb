@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
   # Not sure if we should require this as it only applies to OpenAI usecase.
   spec.add_dependency "baran", "~> 0.1.9"
   spec.add_dependency "colorize", "~> 1.1.0"
+  spec.add_dependency "deep_merge", "~> 1.2.0"
   spec.add_dependency "tiktoken_ruby", "~> 0.0.7"
   spec.add_dependency "json-schema", "~> 4"
   spec.add_dependency "zeitwerk", "~> 2.5"
