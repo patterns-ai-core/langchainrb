@@ -28,6 +28,7 @@ if ENV["POSTGRES_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
+              dimensions: 1536,
               model: "text-embedding-ada-002",
               input: "Hello World"
             }
@@ -61,6 +62,7 @@ if ENV["POSTGRES_URL"]
           ).to receive(:embeddings)
             .with(
               parameters: {
+                dimensions: 1536,
                 model: "text-embedding-ada-002",
                 input: input
               }
@@ -103,6 +105,7 @@ if ENV["POSTGRES_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
+              dimensions: 1536,
               model: "text-embedding-ada-002",
               input: "earth"
             }
@@ -173,6 +176,7 @@ if ENV["POSTGRES_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
+              dimensions: 1536,
               model: "text-embedding-ada-002",
               input: question
             }

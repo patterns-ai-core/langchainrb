@@ -17,8 +17,13 @@ module Langchain::LLM
       n: 1,
       temperature: 0.0,
       chat_completion_model_name: "gpt-3.5-turbo",
-      embeddings_model_name: "text-embedding-ada-002",
-      dimension: 1536
+      embeddings_model_name: "text-embedding-ada-002"
+    }.freeze
+
+    EMBEDDING_SIZES = {
+      "text-embedding-ada-002": 1536,
+      "text-embedding-3-large": 3072,
+      "text-embedding-3-small": 1536
     }.freeze
 
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
@@ -56,7 +61,8 @@ module Langchain::LLM
 
       parameters = {
         input: text,
-        model: model
+        model: model,
+        dimensions: default_dimension
       }
       parameters[:encoding_format] = encoding_format if encoding_format
       parameters[:user] = user if user
@@ -170,6 +176,10 @@ module Langchain::LLM
       prompt = prompt_template.format(text: text)
 
       complete(prompt: prompt)
+    end
+
+    def default_dimension
+      @defaults[:dimension] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name].to_sym)
     end
 
     private
