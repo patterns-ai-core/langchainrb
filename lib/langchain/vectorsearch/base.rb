@@ -136,7 +136,7 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of results to return
     # @return [String] Response
     def similarity_search_with_hyde(query:, k: 4)
-      hyde_completion = llm.complete(prompt: generate_hyde_prompt(question: query))
+      hyde_completion = llm.complete(prompt: generate_hyde_prompt(question: query)).completion
       similarity_search(query: hyde_completion, k: k)
     end
 

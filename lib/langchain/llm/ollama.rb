@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "active_support/core_ext/hash"
+
 module Langchain::LLM
   # Interface to Ollama API.
   # Available models: https://ollama.ai/library

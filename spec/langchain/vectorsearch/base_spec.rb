@@ -55,7 +55,7 @@ RSpec.describe Langchain::Vectorsearch::Base do
 
   describe "#similarity_search_with_hyde" do
     before do
-      allow(subject.llm).to receive(:complete).and_return("fictional passage")
+      allow(subject.llm).to receive_message_chain(:complete, :completion).and_return("fictional passage")
     end
 
     it "raises an error" do
