@@ -38,6 +38,7 @@ RSpec.describe Langchain::Assistant do
   describe "#add_message" do
     it "adds a message to the thread" do
       subject.add_message(content: "foo")
+      expect(thread.messages.last.role).to eq("user")
       expect(thread.messages.last.content).to eq("foo")
     end
   end
@@ -45,6 +46,7 @@ RSpec.describe Langchain::Assistant do
   describe "submit_tool_output" do
     it "adds a message to the thread" do
       subject.submit_tool_output(tool_call_id: "123", output: "bar")
+      expect(thread.messages.last.role).to eq("tool")
       expect(thread.messages.last.content).to eq("bar")
     end
   end
