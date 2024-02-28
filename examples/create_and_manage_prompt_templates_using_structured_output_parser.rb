@@ -60,33 +60,36 @@ prompt.format(description: "Korean chemistry student", format_instructions: pars
 
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 llm_response = llm.chat(
-  messages: [{role: "user",
-              content: prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)}]
+  messages: [{
+    role: "user",
+    content: prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)
+  }]
 )
 
 # LLM example response:
-  Here is your character:
-  ```json
-  {
-    "name": "Kim Ji-hyun",
-    "age": 22,
-    "interests": [
-      {
-        "interest": "Organic Chemistry",
-        "levelOfInterest": 85
-      },
-      {
-        "interest": "Biochemistry",
-        "levelOfInterest": 70
-      },
-      {
-        "interest": "Analytical Chemistry",
-        "levelOfInterest": 60
-      }
-    ]
-  }
-  ```
-RESPONSE
+# llm_example_response = <<~RESPONSE
+#   Here is your character:
+#   ```json
+#   {
+#     "name": "Kim Ji-hyun",
+#     "age": 22,
+#     "interests": [
+#       {
+#         "interest": "Organic Chemistry",
+#         "levelOfInterest": 85
+#       },
+#       {
+#         "interest": "Biochemistry",
+#         "levelOfInterest": 70
+#       },
+#       {
+#         "interest": "Analytical Chemistry",
+#         "levelOfInterest": 60
+#       }
+#     ]
+#   }
+#   ```
+# RESPONSE
 
 fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
   llm: llm,
