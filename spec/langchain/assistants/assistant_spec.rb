@@ -3,11 +3,15 @@
 RSpec.describe Langchain::Assistant do
   let(:thread) { Langchain::Thread.new }
   let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+  let(:calculator) { Langchain::Tool::Calculator.new }
+  let(:instructions) { "You are an expert assistant" }
 
   subject {
     described_class.new(
       llm: llm,
-      thread: thread
+      thread: thread,
+      tools: [calculator],
+      instructions: instructions
     )
   }
 
@@ -23,10 +27,25 @@ RSpec.describe Langchain::Assistant do
     expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
   end
 
+  describe "#initialize" do
+    it "adds a system message to the thread" do
+      described_class.new(llm: llm, thread: thread, instructions: instructions)
+      expect(thread.messages.first.role).to eq("system")
+      expect(thread.messages.first.content).to eq("You are an expert assistant")
+    end
+  end
+
   describe "#add_message" do
     it "adds a message to the thread" do
       subject.add_message(content: "foo")
-      expect(thread.messages.first.content).to eq("foo")
+      expect(thread.messages.last.content).to eq("foo")
+    end
+  end
+
+  describe "submit_tool_output" do
+    it "adds a message to the thread" do
+      subject.submit_tool_output(tool_call_id: "123", output: "bar")
+      expect(thread.messages.last.content).to eq("bar")
     end
   end
 end
