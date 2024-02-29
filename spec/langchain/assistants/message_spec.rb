@@ -11,7 +11,7 @@ RSpec.describe Langchain::Message do
     context "when role and content are not nil" do
       let(:message) { described_class.new(role: "user", content: "Hello, world!", tool_calls: [], tool_call_id: nil) }
 
-      it "returns a hash with the content key" do
+      it "returns a hash with the role and content key" do
         expect(message.to_openai_format).to eq({role: "user", content: "Hello, world!"})
       end
     end
@@ -26,13 +26,14 @@ RSpec.describe Langchain::Message do
 
     context "when tool_calls is not empty" do
       let(:tool_call) {
-        {"id" => "call_9TewGANaaIjzY31UCpAAGLeV", "type" => "function",
+        {"id" => "call_9TewGANaaIjzY31UCpAAGLeV",
+         "type" => "function",
          "function" => {"name" => "weather-execute", "arguments" => "{\"input\":\"Saint Petersburg\"}"}}
       }
 
-      let(:message) { described_class.new(role: "assistant", content: "", tool_calls: tool_call, tool_call_id: nil) }
+      let(:message) { described_class.new(role: "assistant", content: "", tool_calls: [tool_call], tool_call_id: nil) }
 
-      xit "returns a hash with the tool_calls key and array value" do
+      it "returns a hash with the tool_calls key" do
         expect(message.to_openai_format).to eq({role: "assistant", content: "", tool_calls: [tool_call]})
       end
     end
