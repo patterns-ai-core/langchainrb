@@ -29,8 +29,9 @@ RSpec.describe Langchain::Thread do
     it "adds a Langchain::Message instance to the messages array" do
       thread = described_class.new(messages: [])
 
-      thread.add_message(message)
-
+      expect {
+        thread.add_message(message)
+      }.to change { thread.messages.count }.from(0).to(1)
       expect(thread.messages).to include(message)
     end
 
