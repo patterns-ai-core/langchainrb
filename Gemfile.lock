@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.9.3)
+    langchainrb (0.9.4)
       activesupport (>= 7.0.8)
       baran (~> 0.1.9)
       colorize (~> 1.1.0)
@@ -292,7 +292,7 @@ GEM
     qdrant-ruby (0.9.7)
       faraday (>= 2.0.1, < 3)
     racc (1.7.3)
-    rack (3.0.9)
+    rack (3.0.9.1)
     rack-session (2.0.0)
       rack (>= 3.0.0)
     rack-test (2.1.0)
@@ -443,7 +443,7 @@ GEM
     webrick (1.8.1)
     wikipedia-client (1.17.0)
       addressable (~> 2.7)
-    yard (0.9.34)
+    yard (0.9.35)
     zeitwerk (2.6.13)
 
 PLATFORMS

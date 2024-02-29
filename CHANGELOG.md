@@ -1,6 +1,11 @@
 ## [Unreleased]
 - `Langchain::LLM::Ollama` can now `#summarize`
 
+## [0.9.4]
+- New `Ollama#summarize()` method
+- Improved README
+- Fixes + specs
+
 ## [0.9.3]
 - Add EML processor
 - Tools can support multiple-methods
