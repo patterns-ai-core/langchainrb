@@ -443,7 +443,7 @@ GEM
     webrick (1.8.1)
     wikipedia-client (1.17.0)
       addressable (~> 2.7)
-    yard (0.9.35)
+    yard (0.9.36)
     zeitwerk (2.6.13)
 
 PLATFORMS
