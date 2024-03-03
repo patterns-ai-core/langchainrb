@@ -1,0 +1,15 @@
+{
+  "model": "llama2",
+  "created_at": "2024-01-31T03:13:53.619931Z",
+  "message": {
+    "role":"assistant",
+    "content": " Of course, I'd be happy to help you debug your computer! Can you please provide more information about the issue you're experiencing? For example:\n\n* What kind of error message are you seeing?\n* How often does the issue occur?\n* Have you tried any troubleshooting steps already?\n\nThe more details you can provide, the better I can assist you in diagnosing and fixing the problem."
+  },
+  "done": true,
+  "total_duration": 2244372875,
+  "load_duration": 2552250,
+  "prompt_eval_count": 98,
+  "prompt_eval_duration": 494705000,
+  "eval_count": 90,
+  "eval_duration": 1747044000
+}

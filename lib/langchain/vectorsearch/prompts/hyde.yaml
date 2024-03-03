@@ -1,0 +1,10 @@
+# Inspiration: https://github.com/langchain-ai/langchain/blob/v0.0.254/libs/langchain/langchain/chains/hyde/prompts.py#L4-L6
+_type: prompt
+input_variables:
+  - question
+template: |
+  Please write a passage to answer the question
+  
+  Question: {question}
+
+  Passage:

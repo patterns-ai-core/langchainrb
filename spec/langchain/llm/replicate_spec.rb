@@ -42,7 +42,27 @@ RSpec.describe Langchain::LLM::Replicate do
     end
 
     it "returns an embedding" do
-      expect(subject.complete(prompt: prompt)).to eq("Foo bar !")
+      expect(subject.complete(prompt: prompt).completion).to eq("Foo bar !")
+    end
+
+    context "with custom default_options" do
+      let(:subject) {
+        described_class.new(
+          api_key: "123",
+          default_options: {completion_model_name: "replicate/vicuna-foobar"}
+        )
+      }
+
+      it "passes correct options to the completions method" do
+        latest_version_stub = double("latest_version")
+        expect(latest_version_stub).to receive(:latest_version).and_return(model)
+
+        expect(subject.client).to receive(:retrieve_model).with(
+          "replicate/vicuna-foobar"
+        ).and_return(latest_version_stub)
+
+        subject.complete(prompt: "Hello World")
+      end
     end
   end
 
@@ -59,7 +79,7 @@ RSpec.describe Langchain::LLM::Replicate do
     end
 
     it "returns an embedding" do
-      expect(subject.embed(text: text)).to eq(embedding)
+      expect(subject.embed(text: text).embedding).to eq(embedding)
     end
   end
 

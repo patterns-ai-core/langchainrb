@@ -1,0 +1,41 @@
+{
+  "result": [
+    {
+      "id": 4,
+      "version": 2,
+      "score": 1.362,
+      "payload": null,
+      "vector": null
+    },
+    {
+      "id": 1,
+      "version": 2,
+      "score": 1.273,
+      "payload": null,
+      "vector": null
+    },
+    {
+      "id": 2,
+      "version": 2,
+      "score": 0.871,
+      "payload": null,
+      "vector": null
+    },
+    {
+      "id": 5,
+      "version": 2,
+      "score": 0.572,
+      "payload": null,
+      "vector": null
+    },
+    {
+      "id": 6,
+      "version": 2,
+      "score": 0.485,
+      "payload": null,
+      "vector": null
+    }
+  ],
+  "status": "ok",
+  "time": 8.1504e-05
+}

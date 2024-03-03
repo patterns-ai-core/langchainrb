@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Agent::SQLQueryAgent do
-  let(:db) { Langchain::Tool::Database.new(connection_string: "mock:///") }
+  let(:db) { Langchain::Tool::Database.new(connection_string: "mock://postgres") }
   let(:openai) { Langchain::LLM::OpenAI.new(api_key: "123") }
 
   subject { described_class.new(llm: openai, db: db) }
@@ -35,15 +35,18 @@ RSpec.describe Langchain::Agent::SQLQueryAgent do
         input: sql_string
       ).and_return(database_tool_response)
 
-      allow(subject.llm).to receive(:complete).with(
-        prompt: <<~PROMPT
-          Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:
-          Question: What is the longest length name in the users table?
-          The SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);
-          Result of the SQLQuery: []
-          Final answer: Final answer here
-        PROMPT
-      ).and_return(final_answer)
+      allow(subject.llm).to receive_message_chain(:complete, :completion)
+        .with(
+          prompt: <<~PROMPT
+            Given an input question and results of a SQL query, look at the results and return the answer. Use the following format:
+            Question: What is the longest length name in the users table?
+            The SQL query: SQLQuery: SELECT name, LENGTH(name) FROM users HAVING MAX(length);
+            Result of the SQLQuery: []
+            Final answer: Final answer here
+          PROMPT
+        )
+        .with(no_args)
+        .and_return(final_answer)
     end
 
     it "runs the agent" do

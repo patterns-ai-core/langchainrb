@@ -13,7 +13,7 @@ RSpec.describe Langchain::LLM::HuggingFace do
     end
 
     it "returns an embedding" do
-      expect(subject.embed(text: "Hello World")).to eq([-1.5693359, -0.9458008, 1.9355469])
+      expect(subject.embed(text: "Hello World").embedding).to eq([-1.5693359, -0.9458008, 1.9355469])
     end
   end
 

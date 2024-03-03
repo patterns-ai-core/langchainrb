@@ -5,20 +5,19 @@ module Langchain::Vectorsearch
     #
     # Wrapper around Chroma DB
     #
-    # Gem requirements: gem "chroma-db", "~> 0.3.0"
+    # Gem requirements:
+    #     gem "chroma-db", "~> 0.6.0"
     #
     # Usage:
-    # chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, llm_api_key:, api_key: nil)
+    # chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, api_key: nil)
     #
 
     # Initialize the Chroma client
-    # @param url [String] The URL of the Qdrant server
-    # @param api_key [String] The API key to use
+    # @param url [String] The URL of the Chroma server
     # @param index_name [String] The name of the index to use
     # @param llm [Object] The LLM client to use
-    def initialize(url:, index_name:, llm:, api_key: nil)
+    def initialize(url:, index_name:, llm:)
       depends_on "chroma-db"
-      require "chroma-db"
 
       ::Chroma.connect_host = url
       ::Chroma.logger = Langchain.logger
@@ -30,16 +29,16 @@ module Langchain::Vectorsearch
     end
 
     # Add a list of texts to the index
-    # @param texts [Array] The list of texts to add
+    # @param texts [Array<String>] The list of texts to add
+    # @param ids [Array<String>] The list of ids to use for the texts (optional)
+    # @param metadatas [Array<Hash>] The list of metadata to use for the texts (optional)
     # @return [Hash] The response from the server
-    def add_texts(texts:)
-      embeddings = Array(texts).map do |text|
+    def add_texts(texts:, ids: [], metadatas: [])
+      embeddings = Array(texts).map.with_index do |text, i|
         ::Chroma::Resources::Embedding.new(
-          # TODO: Add support for passing your own IDs
-          id: SecureRandom.uuid,
-          embedding: llm.embed(text: text),
-          # TODO: Add support for passing metadata
-          metadata: [], # metadatas[index],
+          id: ids[i] ? ids[i].to_s : SecureRandom.uuid,
+          embedding: llm.embed(text: text).embedding,
+          metadata: metadatas[i] || {},
           document: text # Do we actually need to store the whole original document?
         )
       end
@@ -48,10 +47,35 @@ module Langchain::Vectorsearch
       collection.add(embeddings)
     end
 
+    def update_texts(texts:, ids:, metadatas: [])
+      embeddings = Array(texts).map.with_index do |text, i|
+        ::Chroma::Resources::Embedding.new(
+          id: ids[i].to_s,
+          embedding: llm.embed(text: text).embedding,
+          metadata: metadatas[i] || {},
+          document: text # Do we actually need to store the whole original document?
+        )
+      end
+
+      collection.update(embeddings)
+    end
+
     # Create the collection with the default schema
-    # @return [Hash] The response from the server
+    # @return [::Chroma::Resources::Collection] Created collection
     def create_default_schema
       ::Chroma::Resources::Collection.create(index_name)
+    end
+
+    # Get the default schema
+    # @return [::Chroma::Resources::Collection] Default schema
+    def get_default_schema
+      ::Chroma::Resources::Collection.get(index_name)
+    end
+
+    # Delete the default schema
+    # @return [bool] Success or failure
+    def destroy_default_schema
+      ::Chroma::Resources::Collection.delete(index_name)
     end
 
     # Search for similar texts
@@ -62,7 +86,7 @@ module Langchain::Vectorsearch
       query:,
       k: 4
     )
-      embedding = llm.embed(text: query)
+      embedding = llm.embed(text: query).embedding
 
       similarity_search_by_vector(
         embedding: embedding,
@@ -71,7 +95,7 @@ module Langchain::Vectorsearch
     end
 
     # Search for similar texts by embedding
-    # @param embedding [Array] The embedding to search for
+    # @param embedding [Array<Float>] The embedding to search for
     # @param k [Integer] The number of results to return
     # @return [Chroma::Resources::Embedding] The response from the server
     def similarity_search_by_vector(
@@ -88,9 +112,11 @@ module Langchain::Vectorsearch
 
     # Ask a question and return the answer
     # @param question [String] The question to ask
+    # @param k [Integer] The number of results to have in context
+    # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:)
-      search_results = similarity_search(query: question)
+    def ask(question:, k: 4, &block)
+      search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
         result.document
@@ -98,9 +124,13 @@ module Langchain::Vectorsearch
 
       context = context.join("\n---\n")
 
-      prompt = generate_prompt(question: question, context: context)
+      prompt = generate_rag_prompt(question: question, context: context)
 
-      llm.chat(prompt: prompt)
+      messages = [{role: "user", content: prompt}]
+      response = llm.chat(messages: messages, &block)
+
+      response.context = context
+      response
     end
 
     private

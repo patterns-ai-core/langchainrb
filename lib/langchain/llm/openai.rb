@@ -4,192 +4,218 @@ module Langchain::LLM
   # LLM interface for OpenAI APIs: https://platform.openai.com/overview
   #
   # Gem requirements:
-  #    gem "ruby-openai", "~> 4.0.0"
+  #    gem "ruby-openai", "~> 6.3.0"
   #
   # Usage:
-  #    openai = Langchain::LLM::OpenAI.new(api_key:, llm_options: {})
-  #
+  #    openai = Langchain::LLM::OpenAI.new(
+  #      api_key: ENV["OPENAI_API_KEY"],
+  #      llm_options: {}, # Available options: https://github.com/alexrudall/ruby-openai/blob/main/lib/openai/client.rb#L5-L13
+  #      default_options: {}
+  #    )
   class OpenAI < Base
     DEFAULTS = {
+      n: 1,
       temperature: 0.0,
-      completion_model_name: "text-davinci-003",
       chat_completion_model_name: "gpt-3.5-turbo",
-      embeddings_model_name: "text-embedding-ada-002",
-      dimension: 1536
+      embeddings_model_name: "text-embedding-ada-002"
     }.freeze
+
+    EMBEDDING_SIZES = {
+      "text-embedding-ada-002": 1536,
+      "text-embedding-3-large": 3072,
+      "text-embedding-3-small": 1536
+    }.freeze
+
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
 
-    def initialize(api_key:, llm_options: {})
-      depends_on "ruby-openai"
-      require "openai"
+    attr_reader :defaults
+
+    # Initialize an OpenAI LLM instance
+    #
+    # @param api_key [String] The API key to use
+    # @param client_options [Hash] Options to pass to the OpenAI::Client constructor
+    def initialize(api_key:, llm_options: {}, default_options: {})
+      depends_on "ruby-openai", req: "openai"
 
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
+
+      @defaults = DEFAULTS.merge(default_options)
     end
 
-    #
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @param params extra parameters passed to OpenAI::Client#embeddings
-    # @return [Array] The embedding
-    #
-    def embed(text:, **params)
-      parameters = {model: DEFAULTS[:embeddings_model_name], input: text}
+    # @param model [String] ID of the model to use
+    # @param encoding_format [String] The format to return the embeddings in. Can be either float or base64.
+    # @param user [String] A unique identifier representing your end-user
+    # @return [Langchain::LLM::OpenAIResponse] Response object
+    def embed(
+      text:,
+      model: defaults[:embeddings_model_name],
+      encoding_format: nil,
+      user: nil
+    )
+      raise ArgumentError.new("text argument is required") if text.empty?
+      raise ArgumentError.new("model argument is required") if model.empty?
+      raise ArgumentError.new("encoding_format must be either float or base64") if encoding_format && %w[float base64].include?(encoding_format)
+
+      parameters = {
+        input: text,
+        model: model,
+        dimensions: default_dimension
+      }
+      parameters[:encoding_format] = encoding_format if encoding_format
+      parameters[:user] = user if user
 
       validate_max_tokens(text, parameters[:model])
 
-      response = client.embeddings(parameters: parameters.merge(params))
-      response.dig("data").first.dig("embedding")
+      response = with_api_error_handling do
+        client.embeddings(parameters: parameters)
+      end
+
+      Langchain::LLM::OpenAIResponse.new(response)
     end
 
-    #
+    # rubocop:disable Style/ArgumentsForwarding
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
-    # @param params  extra parameters passed to OpenAI::Client#complete
-    # @return [String] The completion
-    #
+    # @param params [Hash] The parameters to pass to the `chat()` method
+    # @return [Langchain::LLM::OpenAIResponse] Response object
     def complete(prompt:, **params)
-      parameters = compose_parameters DEFAULTS[:completion_model_name], params
+      warn "DEPRECATED: `Langchain::LLM::OpenAI#complete` is deprecated, and will be removed in the next major version. Use `Langchain::LLM::OpenAI#chat` instead."
 
-      parameters[:prompt] = prompt
-      parameters[:max_tokens] = validate_max_tokens(prompt, parameters[:model])
-
-      response = client.completions(parameters: parameters)
-      response.dig("choices", 0, "text")
+      if params[:stop_sequences]
+        params[:stop] = params.delete(:stop_sequences)
+      end
+      # Should we still accept the `messages: []` parameter here?
+      messages = [{role: "user", content: prompt}]
+      chat(messages: messages, **params)
     end
+    # rubocop:enable Style/ArgumentsForwarding
 
-    #
     # Generate a chat completion for a given prompt or messages.
     #
-    # == Examples
-    #
-    #     # simplest case, just give a prompt
-    #     openai.chat prompt: "When was Ruby first released?"
-    #
-    #     # prompt plus some context about how to respond
-    #     openai.chat context: "You are RubyGPT, a helpful chat bot for helping people learn Ruby", prompt: "Does Ruby have a REPL like IPython?"
-    #
-    #     # full control over messages that get sent, equivilent to the above
-    #     openai.chat messages: [
-    #       {
-    #         role: "system",
-    #         content: "You are RubyGPT, a helpful chat bot for helping people learn Ruby", prompt: "Does Ruby have a REPL like IPython?"
-    #       },
-    #       {
-    #         role: "user",
-    #         content: "When was Ruby first released?"
-    #       }
-    #     ]
-    #
-    #     # few-short prompting with examples
-    #     openai.chat prompt: "When was factory_bot released?",
-    #       examples: [
-    #         {
-    #           role: "user",
-    #           content: "When was Ruby on Rails released?"
-    #         }
-    #         {
-    #           role: "assistant",
-    #           content: "2004"
-    #         },
-    #       ]
-    #
-    # @param prompt [String] The prompt to generate a chat completion for
-    # @param messages [Array<Hash>] The messages that have been sent in the conversation
-    #   Each message should be a Hash with the following keys:
-    #   - :content [String] The content of the message
-    #   - :role [String] The role of the sender (system, user, assistant, or function)
-    # @param context [String] An initial context to provide as a system message, ie "You are RubyGPT, a helpful chat bot for helping people learn Ruby"
-    # @param examples [Array<Hash>] Examples of messages to provide to the model. Useful for Few-Shot Prompting
-    #   Each message should be a Hash with the following keys:
-    #   - :content [String] The content of the message
-    #   - :role [String] The role of the sender (system, user, assistant, or function)
-    # @param options <Hash> extra parameters passed to OpenAI::Client#chat
-    # @yield [String] Stream responses back one String at a time
-    # @return [String] The chat completion
-    #
-    def chat(prompt: "", messages: [], context: "", examples: [], **options)
-      raise ArgumentError.new(":prompt or :messages argument is expected") if prompt.empty? && messages.empty?
+    # @param messages [Array<Hash>] List of messages comprising the conversation so far
+    # @param model [String] ID of the model to use
+    def chat(
+      messages: [],
+      model: defaults[:chat_completion_model_name],
+      frequency_penalty: nil,
+      logit_bias: nil,
+      logprobs: nil,
+      top_logprobs: nil,
+      max_tokens: nil,
+      n: defaults[:n],
+      presence_penalty: nil,
+      response_format: nil,
+      seed: nil,
+      stop: nil,
+      stream: nil,
+      temperature: defaults[:temperature],
+      top_p: nil,
+      tools: [],
+      tool_choice: nil,
+      user: nil,
+      &block
+    )
+      raise ArgumentError.new("messages argument is required") if messages.empty?
+      raise ArgumentError.new("model argument is required") if model.empty?
+      raise ArgumentError.new("'tool_choice' is only allowed when 'tools' are specified.") if tool_choice && tools.empty?
 
-      parameters = compose_parameters DEFAULTS[:chat_completion_model_name], options
-      parameters[:messages] = compose_chat_messages(prompt: prompt, messages: messages, context: context, examples: examples)
-      parameters[:max_tokens] = validate_max_tokens(parameters[:messages], parameters[:model])
+      parameters = {
+        messages: messages,
+        model: model
+      }
+      parameters[:frequency_penalty] = frequency_penalty if frequency_penalty
+      parameters[:logit_bias] = logit_bias if logit_bias
+      parameters[:logprobs] = logprobs if logprobs
+      parameters[:top_logprobs] = top_logprobs if top_logprobs
+      # TODO: Fix max_tokens validation to account for tools/functions
+      parameters[:max_tokens] = max_tokens if max_tokens # || validate_max_tokens(parameters[:messages], parameters[:model])
+      parameters[:n] = n if n
+      parameters[:presence_penalty] = presence_penalty if presence_penalty
+      parameters[:response_format] = response_format if response_format
+      parameters[:seed] = seed if seed
+      parameters[:stop] = stop if stop
+      parameters[:stream] = stream if stream
+      parameters[:temperature] = temperature if temperature
+      parameters[:top_p] = top_p if top_p
+      parameters[:tools] = tools if tools.any?
+      parameters[:tool_choice] = tool_choice if tool_choice
+      parameters[:user] = user if user
 
-      if (streaming = block_given?)
+      # TODO: Clean this part up
+      if block
+        @response_chunks = []
         parameters[:stream] = proc do |chunk, _bytesize|
-          yield chunk.dig("choices", 0, "delta", "content")
+          chunk_content = chunk.dig("choices", 0)
+          @response_chunks << chunk
+          yield chunk_content
         end
       end
 
-      response = client.chat(parameters: parameters)
-
-      raise "Chat completion failed: #{response}" if !response.empty? && response.dig("error")
-
-      unless streaming
-        response.dig("choices", 0, "message", "content")
+      response = with_api_error_handling do
+        client.chat(parameters: parameters)
       end
+
+      response = response_from_chunks if block
+      reset_response_chunks
+
+      Langchain::LLM::OpenAIResponse.new(response)
     end
 
-    #
     # Generate a summary for a given text
     #
     # @param text [String] The text to generate a summary for
     # @return [String] The summary
-    #
     def summarize(text:)
       prompt_template = Langchain::Prompt.load_from_path(
         file_path: Langchain.root.join("langchain/llm/prompts/summarize_template.yaml")
       )
       prompt = prompt_template.format(text: text)
 
-      complete(prompt: prompt, temperature: DEFAULTS[:temperature])
+      complete(prompt: prompt)
+    end
+
+    def default_dimension
+      @defaults[:dimension] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name].to_sym)
     end
 
     private
 
-    def compose_parameters(model, params)
-      default_params = {model: model, temperature: DEFAULTS[:temperature]}
+    attr_reader :response_chunks
 
-      default_params[:stop] = params.delete(:stop_sequences) if params[:stop_sequences]
-
-      default_params.merge(params)
+    def reset_response_chunks
+      @response_chunks = []
     end
 
-    def compose_chat_messages(prompt:, messages:, context:, examples:)
-      history = []
+    def with_api_error_handling
+      response = yield
+      return if response.empty?
 
-      history.concat transform_messages(examples) unless examples.empty?
+      raise Langchain::LLM::ApiError.new "OpenAI API error: #{response.dig("error", "message")}" if response&.dig("error")
 
-      history.concat transform_messages(messages) unless messages.empty?
-
-      unless context.nil? || context.empty?
-        history.reject! { |message| message[:role] == "system" }
-        history.prepend({role: "system", content: context})
-      end
-
-      unless prompt.empty?
-        if history.last && history.last[:role] == "user"
-          history.last[:content] += "\n#{prompt}"
-        else
-          history.append({role: "user", content: prompt})
-        end
-      end
-
-      history
+      response
     end
 
-    def transform_messages(messages)
-      messages.map do |message|
+    def validate_max_tokens(messages, model, max_tokens = nil)
+      LENGTH_VALIDATOR.validate_max_tokens!(messages, model, max_tokens: max_tokens, llm: self)
+    end
+
+    def response_from_chunks
+      grouped_chunks = @response_chunks.group_by { |chunk| chunk.dig("choices", 0, "index") }
+      final_choices = grouped_chunks.map do |index, chunks|
         {
-          content: message[:content],
-          role: (message[:role] == "ai") ? "assistant" : message[:role]
+          "index" => index,
+          "message" => {
+            "role" => "assistant",
+            "content" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
+          },
+          "finish_reason" => chunks.last.dig("choices", 0, "finish_reason")
         }
       end
-    end
-
-    def validate_max_tokens(messages, model)
-      LENGTH_VALIDATOR.validate_max_tokens!(messages, model)
+      @response_chunks.first&.slice("id", "object", "created", "model")&.merge({"choices" => final_choices})
     end
   end
 end

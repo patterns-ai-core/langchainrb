@@ -1,4 +1,144 @@
 ## [Unreleased]
+- `Langchain::LLM::Ollama` can now `#summarize`
+
+## [0.9.4]
+- New `Ollama#summarize()` method
+- Improved README
+- Fixes + specs
+
+## [0.9.3]
+- Add EML processor
+- Tools can support multiple-methods
+- Bump gems and bug fixes
+
+## [0.9.2]
+- Fix vectorsearch#ask methods
+- Bump cohere-ruby gem
+
+## [0.9.1]
+- Add support for new OpenAI models
+- Add Ollama#chat method
+- Fix and refactor of `Langchain::LLM::Ollama`, responses can now be streamed.
+
+## [0.9.0]
+- Introducing new `Langchain::Assistant` that will be replacing `Langchain::Conversation` and `Langchain::Agent`s.
+- `Langchain::Conversation` is deprecated.
+
+## [0.8.2]
+- Introducing new `Langchain::Chunker::Markdown` chunker (thanks @spikex)
+- Fixes
+
+## [0.8.1]
+- Support for Epsilla vector DB
+- Fully functioning Google Vertex AI LLM
+- Bug fixes
+
+## [0.8.0]
+- [BREAKING] Updated llama_cpp.rb to 0.9.4. The model file format used by the underlying llama.cpp library has changed to GGUF. llama.cpp ships with scripts to convert existing files and GGUF format models can be downloaded from HuggingFace.
+- Introducing Langchain::LLM::GoogleVertexAi LLM provider
+
+## [0.7.5] - 2023-11-13
+- Fixes
+
+## [0.7.4] - 2023-11-10
+- AWS Bedrock is available as an LLM provider. Available models from AI21, Cohere, AWS, and Anthropic.
+
+## [0.7.3] - 2023-11-08
+- LLM response passes through the context in RAG cases 
+- Fix gpt-4 token length validation
+
+## [0.7.2] - 2023-11-02
+- Azure OpenAI LLM support
+
+## [0.7.1] - 2023-10-26
+- Ragas evals tool to evaluate Retrieval Augmented Generation (RAG) pipelines
+
+## [0.7.0] - 2023-10-22
+- BREAKING: Moving Rails-specific code to `langchainrb_rails` gem
+
+## [0.6.19] - 2023-10-18
+- Elasticsearch vector search support
+- Fix `lib/langchain/railtie.rb` not being loaded with the gem
+
+## [0.6.18] - 2023-10-16
+- Introduce `Langchain::LLM::Response`` object
+- Introduce `Langchain::Chunk` object
+- Add the ask() method to the Langchain::ActiveRecord::Hooks
+
+## [0.6.17] - 2023-10-10
+- Bump weaviate and chroma-db deps
+- `Langchain::Chunker::Semantic` chunker
+- Re-structure Conversations class
+- Bug fixes
+
+## [0.6.16] - 2023-10-02
+- HyDE-style similarity search
+- `Langchain::Chunker::Sentence` chunker
+- Bug fixes
+
+## [0.6.15] - 2023-09-22
+- Bump weaviate-ruby gem version
+- Ollama support
+
+## [0.6.14] - 2023-09-11
+- Add `find` method to `Langchain::Vectorsearch::Qdrant`
+- Enhance Google search output
+- Raise ApiError when OpenAI returns an error
+- Update OpenAI `complete` method to use chat completion api
+  - Deprecate legacy completion models. See https://platform.openai.com/docs/deprecations/2023-07-06-gpt-and-embeddings
+
+## [0.6.13] - 2023-08-23
+- Add `k:` parameter to all `ask()` vector search methods
+- Bump Faraday to 2.x 
+
+## [0.6.12] - 2023-08-13
+
+## [0.6.11] - 2023-08-08
+
+## [0.6.10] - 2023-08-01
+- 🗣️ LLMs
+  - Introducing Anthropic support
+
+## [0.6.9] - 2023-07-29
+
+## [0.6.8] - 2023-07-21
+
+## [0.6.7] - 2023-07-19
+- Support for OpenAI functions
+- Streaming vectorsearch ask() responses
+
+## [0.6.6] - 2023-07-13
+- Langchain::Chunker::RecursiveText
+- Fixes
+
+## [0.6.5] - 2023-07-06
+- 🗣️ LLMs
+  - Introducing Llama.cpp support
+- Langchain::OutputParsers::OutputFixingParser to wrap a Langchain::OutputParser and handle invalid response
+
+## [0.6.4] - 2023-07-01
+- Fix `Langchain::Vectorsearch::Qdrant#add_texts()`
+- Introduce `ConversationMemory`
+- Allow loading multiple files from a directory
+- Add `get_default_schema()`, `create_default_schema()`, `destroy_default_schema()` missing methods to `Langchain::Vectorsearch::*` classes
+
+## [0.6.3] - 2023-06-25
+- Add #destroy_default_schema() to Langchain::Vectorsearch::* classes
+
+## [0.6.2] - 2023-06-25
+- Qdrant, Chroma, and Pinecone are supported by ActiveRecord hooks
+
+## [0.6.1] - 2023-06-24
+- Adding support to hook vectorsearch into ActiveRecord models
+
+## [0.6.0] - 2023-06-22
+- [BREAKING] Rename `ChainOfThoughtAgent` to `ReActAgent`
+- Implement A21 token validator
+- Add `Langchain::OutputParsers`
+
+## [0.5.7] - 2023-06-19
+- Developer can modify models used when initiliazing `Langchain::LLM::*` clients
+- Improvements to the `SQLQueryAgent` and the database tool
 
 ## [0.5.6] - 2023-06-18
 - If used with OpenAI, Langchain::Conversation responses can now be streamed.

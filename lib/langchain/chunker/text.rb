@@ -4,12 +4,10 @@ require "baran"
 
 module Langchain
   module Chunker
-    #
     # Simple text chunker
     #
     # Usage:
     #     Langchain::Chunker::Text.new(text).chunks
-    #
     class Text < Base
       attr_reader :text, :chunk_size, :chunk_overlap, :separator
 
@@ -24,14 +22,17 @@ module Langchain
         @separator = separator
       end
 
-      # @return [Array<String>]
+      # @return [Array<Langchain::Chunk>]
       def chunks
         splitter = Baran::CharacterTextSplitter.new(
           chunk_size: chunk_size,
           chunk_overlap: chunk_overlap,
           separator: separator
         )
-        splitter.chunks(text)
+
+        splitter.chunks(text).map do |chunk|
+          Langchain::Chunk.new(text: chunk[:text])
+        end
       end
     end
   end

@@ -10,8 +10,7 @@ module Langchain::Vectorsearch
     #     gem "hnswlib", "~> 0.8.1"
     #
     # Usage:
-    #     hnsw = Langchain::Vectorsearch::Hnswlib.new(llm:, url:, index_name:)
-    #
+    #     hnsw = Langchain::Vectorsearch::Hnswlib.new(llm:, path_to_index:)
 
     attr_reader :client, :path_to_index
 
@@ -24,7 +23,6 @@ module Langchain::Vectorsearch
     #
     def initialize(llm:, path_to_index:)
       depends_on "hnswlib"
-      require "hnswlib"
 
       super(llm: llm)
 
@@ -37,21 +35,23 @@ module Langchain::Vectorsearch
     #
     # Add a list of texts and corresponding IDs to the index
     #
-    # @param texts [Array] The list of texts to add
-    # @param ids [Array] The list of corresponding IDs (integers) to the texts
+    # @param texts [Array<String>] The list of texts to add
+    # @param ids [Array<Integer>] The list of corresponding IDs (integers) to the texts
     # @return [Boolean] The response from the HNSW library
     #
     def add_texts(texts:, ids:)
       resize_index(texts.size)
 
       Array(texts).each_with_index do |text, i|
-        embedding = llm.embed(text: text)
+        embedding = llm.embed(text: text).embedding
 
         client.add_point(embedding, ids[i])
       end
 
       client.save_index(path_to_index)
     end
+
+    # TODO: Add update_texts method
 
     #
     # Search for similar texts
@@ -64,7 +64,7 @@ module Langchain::Vectorsearch
       query:,
       k: 4
     )
-      embedding = llm.embed(text: query)
+      embedding = llm.embed(text: query).embedding
 
       similarity_search_by_vector(
         embedding: embedding,
@@ -75,7 +75,7 @@ module Langchain::Vectorsearch
     #
     # Search for the K nearest neighbors of a given vector
     #
-    # @param embedding [Array] The embedding to search for
+    # @param embedding [Array<Float>] The embedding to search for
     # @param k [Integer] The number of results to return
     # @return [Array] Results in the format `[[id1, distance3], [id2, distance2]]`
     #

@@ -24,9 +24,18 @@ RSpec.describe Langchain::Vectorsearch::Hnswlib do
 
   describe "#add_texts" do
     before do
-      allow(subject.llm).to receive(:embed).with(text: "one").and_return([0.1, 0.1, 0.1])
-      allow(subject.llm).to receive(:embed).with(text: "two").and_return([0.2, 0.2, 0.2])
-      allow(subject.llm).to receive(:embed).with(text: "three").and_return([0.3, 0.3, 0.3])
+      allow(subject.llm).to receive_message_chain(:embed, :embedding)
+        .with(text: "one")
+        .with(no_args)
+        .and_return([0.1, 0.1, 0.1])
+      allow(subject.llm).to receive_message_chain(:embed, :embedding)
+        .with(text: "two")
+        .with(no_args)
+        .and_return([0.2, 0.2, 0.2])
+      allow(subject.llm).to receive_message_chain(:embed, :embedding)
+        .with(text: "three")
+        .with(no_args)
+        .and_return([0.3, 0.3, 0.3])
     end
 
     it "succeeds" do
