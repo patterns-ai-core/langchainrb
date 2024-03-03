@@ -90,6 +90,7 @@ RSpec.describe Langchain::Assistant do
         subject.run(auto_tool_execution: true)
 
         expect(subject.thread.messages[-2].content).to eq("4")
+        # expect(subject.thread.messages[-1].content).to eq("Here is the result: 4")
       end
     end
   end
