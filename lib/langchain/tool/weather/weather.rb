@@ -22,7 +22,7 @@ module Langchain::Tool
     description <<~DESC
       Useful for getting current weather data
 
-      The input to this tool should be a city name followed by the units (imperial, metric, or standard).
+      The input to this tool should be a city name followed by a semicolon followed by the units (imperial, metric, or standard).
       The Observation temperature will be in Fahrenheit, Celsius, or Kelvin respectively.
 
       Usage:
