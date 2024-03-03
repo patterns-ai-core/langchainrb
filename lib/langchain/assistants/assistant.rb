@@ -73,7 +73,7 @@ module Langchain
           end
         when "user"
           # Run it!
-          response = chat_with_llm
+          response = chat_with_llm(tool_choice: "auto")
 
           if response.tool_calls
             # Re-run the while(running) loop to process the tool calls
@@ -86,7 +86,7 @@ module Langchain
           end
         when "tool"
           # Run it!
-          response = chat_with_llm
+          response = chat_with_llm(tool_choice: "tool")
           running = true
 
           if response.tool_calls
@@ -125,13 +125,12 @@ module Langchain
     # Call to the LLM#chat() method
     #
     # @return [Langchain::LLM::BaseResponse] The LLM response object
-    def chat_with_llm
+    def chat_with_llm(tool_choice: "auto")
       params = {messages: thread.openai_messages}
 
-      if tools.any?
+      if tools.any? && (tool_choice == "auto" || tool_choice == "tool")
         params[:tools] = tools.map(&:to_openai_tools).flatten
-        # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
-        params[:tool_choice] = "auto"
+        params[:tool_choice] = tool_choice
       end
 
       llm.chat(**params)
@@ -158,10 +157,10 @@ module Langchain
         submit_tool_output(tool_call_id: tool_call_id, output: output)
       end
 
-      response = chat_with_llm
+      response = chat_with_llm(tool_choice: "auto")
 
       if response.tool_calls
-        add_message(role: response.role, tool_calls: response.tool_calls)
+        add_message(role: "assistant", tool_calls: response.tool_calls)
       elsif response.chat_completion
         add_message(role: response.role, content: response.chat_completion)
       end
