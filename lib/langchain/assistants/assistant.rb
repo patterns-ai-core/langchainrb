@@ -86,7 +86,7 @@ module Langchain
           end
         when "tool"
           # Run it!
-          response = chat_with_llm(tool_choice: "tool")
+          response = chat_with_llm(tool_choice: "none")
           running = true
 
           if response.tool_calls
@@ -128,9 +128,9 @@ module Langchain
     def chat_with_llm(tool_choice: "auto")
       params = {messages: thread.openai_messages}
 
-      if tools.any? && (tool_choice == "auto" || tool_choice == "tool")
+      if tools.any?
         params[:tools] = tools.map(&:to_openai_tools).flatten
-        params[:tool_choice] = tool_choice
+        params[:tool_choice] = tool_choice unless tool_choice == "none"
       end
 
       llm.chat(**params)
