@@ -5,18 +5,15 @@ module Langchain::OutputParsers
   #
   # @abstract
   class Base
-    #
     # Parse the output of an LLM call.
     #
     # @param text - LLM output to parse.
     #
     # @return [Object] Parsed output.
-    #
     def parse(text:)
       raise NotImplementedError
     end
 
-    #
     # Return a string describing the format of the output.
     #
     # @return [String] Format instructions.
@@ -27,7 +24,6 @@ module Langchain::OutputParsers
     #  "foo": "bar"
     # }
     # ```
-    #
     def get_format_instructions
       raise NotImplementedError
     end

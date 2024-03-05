@@ -59,34 +59,37 @@ prompt.format(description: "Korean chemistry student", format_instructions: pars
 # Character description: Korean chemistry student
 
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-# llm_response = llm.chat(
-#   prompt: prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)
-# )
+llm_response = llm.chat(
+  messages: [{
+    role: "user",
+    content: prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)
+  }]
+)
 
 # LLM example response:
-llm_example_response = <<~RESPONSE
-  Here is your character:
-  ```json
-  {
-    "name": "Kim Ji-hyun",
-    "age": 22,
-    "interests": [
-      {
-        "interest": "Organic Chemistry",
-        "levelOfInterest": 85
-      },
-      {
-        "interest": "Biochemistry",
-        "levelOfInterest": 70
-      },
-      {
-        "interest": "Analytical Chemistry",
-        "levelOfInterest": 60
-      }
-    ]
-  }
-  ```
-RESPONSE
+# llm_example_response = <<~RESPONSE
+#   Here is your character:
+#   ```json
+#   {
+#     "name": "Kim Ji-hyun",
+#     "age": 22,
+#     "interests": [
+#       {
+#         "interest": "Organic Chemistry",
+#         "levelOfInterest": 85
+#       },
+#       {
+#         "interest": "Biochemistry",
+#         "levelOfInterest": 70
+#       },
+#       {
+#         "interest": "Analytical Chemistry",
+#         "levelOfInterest": 60
+#       }
+#     ]
+#   }
+#   ```
+# RESPONSE
 
 fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
   llm: llm,
@@ -95,7 +98,7 @@ fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
 # The OutputFixingParser wraps the StructuredOutputParser such that if initial
 # LLM response does not conform to the schema, will call out the LLM to fix
 # the error
-fix_parser.parse(llm_example_response)
+pp fix_parser.parse(llm_response)
 # {
 #   "name" => "Kim Ji-hyun",
 #   "age" => 22,

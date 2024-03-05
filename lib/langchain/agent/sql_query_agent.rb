@@ -11,6 +11,8 @@ module Langchain::Agent
     # @param db [Object] Database connection info
     #
     def initialize(llm:, db:)
+      warn "[DEPRECATION] `Langchain::Agent::ReActAgent` is deprecated. Please use `Langchain::Assistant` instead."
+
       @llm = llm
       @db = db
       @schema = @db.dump_schema

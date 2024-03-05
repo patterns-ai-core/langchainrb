@@ -25,6 +25,13 @@ loader.inflector.inflect(
 )
 loader.collapse("#{__dir__}/langchain/llm/response")
 loader.collapse("#{__dir__}/langchain/assistants")
+
+loader.collapse("#{__dir__}/langchain/tool/calculator")
+loader.collapse("#{__dir__}/langchain/tool/database")
+loader.collapse("#{__dir__}/langchain/tool/google_search")
+loader.collapse("#{__dir__}/langchain/tool/ruby_code_interpreter")
+loader.collapse("#{__dir__}/langchain/tool/weather")
+loader.collapse("#{__dir__}/langchain/tool/wikipedia")
 loader.setup
 
 # Langchain.rb a is library for building LLM-backed Ruby applications. It is an abstraction layer that sits on top of the emerging AI-related tools that makes it easy for developers to consume and string those services together.
@@ -65,7 +72,7 @@ loader.setup
 #
 # = Logging
 #
-# LangChain.rb uses standard logging mechanisms and defaults to :debug level. Most messages are at info level, but we will add debug or warn statements as needed. To show all log messages:
+# Langchain.rb uses standard logging mechanisms and defaults to :debug level. Most messages are at info level, but we will add debug or warn statements as needed. To show all log messages:
 #
 # Langchain.logger.level = :info
 module Langchain

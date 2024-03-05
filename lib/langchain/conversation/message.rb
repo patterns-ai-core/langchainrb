@@ -12,6 +12,8 @@ module Langchain
       }
 
       def initialize(content)
+        warn "[DEPRECATION] `Langchain::Conversation::*` is deprecated. Please use `Langchain::Assistant` and `Langchain::Messages` classes instead."
+
         @content = content
       end
 

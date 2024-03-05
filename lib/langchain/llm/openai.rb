@@ -9,7 +9,7 @@ module Langchain::LLM
   # Usage:
   #    openai = Langchain::LLM::OpenAI.new(
   #      api_key: ENV["OPENAI_API_KEY"],
-  #      llm_options: {},
+  #      llm_options: {}, # Available options: https://github.com/alexrudall/ruby-openai/blob/main/lib/openai/client.rb#L5-L13
   #      default_options: {}
   #    )
   class OpenAI < Base
@@ -17,8 +17,13 @@ module Langchain::LLM
       n: 1,
       temperature: 0.0,
       chat_completion_model_name: "gpt-3.5-turbo",
-      embeddings_model_name: "text-embedding-ada-002",
-      dimension: 1536
+      embeddings_model_name: "text-embedding-ada-002"
+    }.freeze
+
+    EMBEDDING_SIZES = {
+      "text-embedding-ada-002": 1536,
+      "text-embedding-3-large": 3072,
+      "text-embedding-3-small": 1536
     }.freeze
 
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
@@ -56,7 +61,8 @@ module Langchain::LLM
 
       parameters = {
         input: text,
-        model: model
+        model: model,
+        dimensions: default_dimension
       }
       parameters[:encoding_format] = encoding_format if encoding_format
       parameters[:user] = user if user
@@ -77,6 +83,8 @@ module Langchain::LLM
     # @param params [Hash] The parameters to pass to the `chat()` method
     # @return [Langchain::LLM::OpenAIResponse] Response object
     def complete(prompt:, **params)
+      warn "DEPRECATED: `Langchain::LLM::OpenAI#complete` is deprecated, and will be removed in the next major version. Use `Langchain::LLM::OpenAI#chat` instead."
+
       if params[:stop_sequences]
         params[:stop] = params.delete(:stop_sequences)
       end
@@ -168,6 +176,10 @@ module Langchain::LLM
       prompt = prompt_template.format(text: text)
 
       complete(prompt: prompt)
+    end
+
+    def default_dimension
+      @defaults[:dimension] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name].to_sym)
     end
 
     private

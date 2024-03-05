@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Langchain
+  # Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries.
+  # Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
   class Assistant
     attr_reader :llm, :thread, :instructions
     attr_accessor :tools
@@ -127,7 +129,7 @@ module Langchain
       params = {messages: thread.openai_messages}
 
       if tools.any?
-        params[:tools] = tools.map(&:to_openai_tool)
+        params[:tools] = tools.map(&:to_openai_tools).flatten
         # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
         params[:tool_choice] = "auto"
       end
@@ -142,14 +144,16 @@ module Langchain
       # Iterate over each function invocation and submit tool output
       tool_calls.each do |tool_call|
         tool_call_id = tool_call.dig("id")
-        tool_name = tool_call.dig("function", "name")
+
+        function_name = tool_call.dig("function", "name")
+        tool_name, method_name = function_name.split("-")
         tool_arguments = JSON.parse(tool_call.dig("function", "arguments"), symbolize_names: true)
 
         tool_instance = tools.find do |t|
           t.name == tool_name
         end or raise ArgumentError, "Tool not found in assistant.tools"
 
-        output = tool_instance.execute(**tool_arguments)
+        output = tool_instance.send(method_name, **tool_arguments)
 
         submit_tool_output(tool_call_id: tool_call_id, output: output)
       end
@@ -174,26 +178,6 @@ module Langchain
       Message.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
     end
 
-    # # TODO: Fix the message truncation when context window is exceeded
-    # def build_assistant_prompt(instructions:, tools:)
-    #   while begin
-    #     # Check if the prompt exceeds the context window
-    #     # Return false to exit the while loop
-    #     !llm.class.const_get(:LENGTH_VALIDATOR).validate_max_tokens!(
-    #       thread.messages,
-    #       llm.defaults[:chat_completion_model_name],
-    #       {llm: llm}
-    #     )
-    #   # Rescue error if context window is exceeded and return true to continue the while loop
-    #   rescue Langchain::Utils::TokenLength::TokenLimitExceeded
-    #     # Should be using `retry` instead of while()
-    #     true
-    #   end
-    #     # Truncate the oldest messages when the context window is exceeded
-    #     thread.messages.shift
-    #   end
-
-    #   prompt
-    # end
+    # TODO: Fix the message truncation when context window is exceeded
   end
 end
