@@ -64,6 +64,16 @@ module Langchain::Vectorsearch
       add_texts(texts: texts, ids: ids)
     end
 
+    # Remove a list of texts from the index
+    # @param ids [Array<Integer>] The ids to remove
+    # @return [Hash] The response from the server
+    def remove_texts(ids:)
+      client.points.delete(
+        collection_name: index_name,
+        points: ids
+      )
+    end
+
     # Get the default schema
     # @return [Hash] The response from the server
     def get_default_schema
