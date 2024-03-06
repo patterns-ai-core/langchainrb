@@ -5,11 +5,15 @@ module Langchain
   class Message
     attr_reader :role, :content, :tool_calls, :tool_call_id
 
-    ROLES = %w[
-      system
-      assistant
-      user
-      tool
+    ROLES = [
+      # OpenAI uses the following roles:
+      "system",
+      "assistant",
+      "user",
+      "tool",
+      # Google Gemini uses the following roles:
+      "model",
+      "function"
     ].freeze
 
     # @param role [String] The role of the message
@@ -37,6 +41,23 @@ module Langchain
         h[:tool_calls] = tool_calls if tool_calls.any?
         h[:tool_call_id] = tool_call_id if tool_call_id
       end
+    end
+
+    def to_google_gemini_format
+      {}.tap do |h|
+        h[:role] = role
+        h[:parts] = [{ text: content }]
+      end
+    end
+
+    # Was this message produced by an LLM?
+    def llm?
+      model? || assistant?
+    end
+
+    # Was this message produced by a model? (This value is specifically used by Google Gemini)
+    def model?
+      role == "model"
     end
 
     def assistant?
