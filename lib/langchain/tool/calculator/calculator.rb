@@ -6,11 +6,14 @@ module Langchain::Tool
     # A calculator tool that falls back to the Google calculator widget
     #
     # Gem requirements:
-    #   gem "eqn", "~> 1.6.5"
-    #   gem "google_search_results", "~> 2.0.0"
+    #     gem "eqn", "~> 1.6.5"
+    #     gem "google_search_results", "~> 2.0.0"
     #
-
+    # Usage:
+    #     calculator = Langchain::Tool::Calculator.new
+    #
     NAME = "calculator"
+    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
     description <<~DESC
       Useful for getting the result of a math expression.
@@ -27,8 +30,8 @@ module Langchain::Tool
       depends_on "eqn"
     end
 
-    # Evaluates a pure math expression or if equation contains non-math characters (e.g.: "12F in Celsius") then
-    # it uses the google search calculator to evaluate the expression
+    # Evaluates a pure math expression or if equation contains non-math characters (e.g.: "12F in Celsius") then it uses the google search calculator to evaluate the expression
+    #
     # @param input [String] math expression
     # @return [String] Answer
     def execute(input:)

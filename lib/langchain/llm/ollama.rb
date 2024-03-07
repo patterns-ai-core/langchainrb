@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "active_support/core_ext/hash"
+
 module Langchain::LLM
   # Interface to Ollama API.
   # Available models: https://ollama.ai/library
@@ -17,6 +19,16 @@ module Langchain::LLM
       chat_completion_model_name: "llama2"
     }.freeze
 
+    EMBEDDING_SIZES = {
+      codellama: 4_096,
+      "dolphin-mixtral": 4_096,
+      llama2: 4_096,
+      llava: 4_096,
+      mistral: 4_096,
+      "mistral-openorca": 4_096,
+      mixtral: 4_096
+    }.freeze
+
     # Initialize the Ollama client
     # @param url [String] The URL of the Ollama instance
     # @param default_options [Hash] The default options to use
@@ -24,7 +36,17 @@ module Langchain::LLM
     def initialize(url:, default_options: {})
       depends_on "faraday"
       @url = url
-      @defaults = DEFAULTS.merge(default_options)
+      @defaults = DEFAULTS.deep_merge(default_options)
+    end
+
+    # Returns the # of vector dimensions for the embeddings
+    # @return [Integer] The # of vector dimensions
+    def default_dimension
+      # since Ollama can run multiple models, look it up or generate an embedding and return the size
+      @default_dimension ||=
+        EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name].to_sym) do
+          embed(text: "test").embedding.size
+        end
     end
 
     #
@@ -108,9 +130,11 @@ module Langchain::LLM
         req.body = parameters
 
         req.options.on_data = proc do |chunk, size|
-          json_chunk = JSON.parse(chunk)
+          chunk.split("\n").each do |line_chunk|
+            json_chunk = JSON.parse(line_chunk)
 
-          response += json_chunk.dig("response")
+            response += json_chunk.dig("response")
+          end
 
           yield json_chunk, size if block
         end
@@ -215,6 +239,19 @@ module Langchain::LLM
       end
 
       Langchain::LLM::OllamaResponse.new(response.body, model: parameters[:model])
+    end
+
+    # Generate a summary for a given text
+    #
+    # @param text [String] The text to generate a summary for
+    # @return [String] The summary
+    def summarize(text:)
+      prompt_template = Langchain::Prompt.load_from_path(
+        file_path: Langchain.root.join("langchain/llm/prompts/ollama/summarize_template.yaml")
+      )
+      prompt = prompt_template.format(text: text)
+
+      complete(prompt: prompt)
     end
 
     private

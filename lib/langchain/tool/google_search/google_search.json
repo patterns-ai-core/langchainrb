@@ -1,0 +1,19 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "google_search-execute",
+      "description": "Executes Google Search and returns the result",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "search query"
+          }
+        },
+        "required": ["input"]
+      }
+    }
+  }
+]

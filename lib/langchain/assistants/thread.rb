@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Langchain
-  # Langchain::Thread keeps track of messages in a conversation
-  # Eventually we may want to add functionality to persist to the thread to disk, DB, storage, etc.
+  # Langchain::Thread keeps track of messages in a conversation.
+  # TODO: Add functionality to persist to the thread to disk, DB, storage, etc.
   class Thread
     attr_accessor :messages
 

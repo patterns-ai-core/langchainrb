@@ -5,9 +5,16 @@ module Langchain::Tool
     #
     # Tool that adds the capability to search using the Wikipedia API
     #
-    # Gem requirements: gem "wikipedia-client", "~> 1.17.0"
+    # Gem requirements:
+    #     gem "wikipedia-client", "~> 1.17.0"
+    #
+    # Usage:
+    #     weather = Langchain::Tool::Wikipedia.new
+    #     weather.execute(input: "The Roman Empire")
     #
     NAME = "wikipedia"
+    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
+
     description <<~DESC
       A wrapper around Wikipedia.
 
@@ -17,11 +24,13 @@ module Langchain::Tool
       Input should be a search query.
     DESC
 
+    # Initializes the Wikipedia tool
     def initialize
       depends_on "wikipedia-client", req: "wikipedia"
     end
 
     # Executes Wikipedia API search and returns the answer
+    #
     # @param input [String] search query
     # @return [String] Answer
     def execute(input:)

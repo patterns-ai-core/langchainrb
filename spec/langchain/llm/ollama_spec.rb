@@ -3,7 +3,7 @@
 require "faraday"
 
 RSpec.describe Langchain::LLM::Ollama do
-  let(:subject) { described_class.new(url: "http://localhost:11434", default_options: {completion_model: "llama2", embeddings_model: "llama2"}) }
+  let(:subject) { described_class.new(url: "http://localhost:11434", default_options: {completion_model_name: "llama2", embeddings_model_name: "llama2"}) }
 
   describe "#initialize" do
     it "initializes the client without any errors" do
@@ -26,7 +26,13 @@ RSpec.describe Langchain::LLM::Ollama do
     end
   end
 
-  xdescribe "#complete" do
+  describe "#complete" do
+    it "returns a completion", :vcr do
+      response = subject.complete(prompt: "In one word, life is ")
+
+      expect(response).to be_a(Langchain::LLM::OllamaResponse)
+      expect(response.completion).to eq("\nIn one word, life is... complex.")
+    end
   end
 
   describe "#chat" do
@@ -45,6 +51,69 @@ RSpec.describe Langchain::LLM::Ollama do
 
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
       expect(response.chat_completion).to eq(fixture.dig("message", "content"))
+    end
+  end
+
+  describe "#summarize" do
+    let(:mary_had_a_little_lamb_text) {
+      File.read("spec/fixtures/llm/ollama/mary_had_a_little_lamb.txt")
+    }
+
+    it "returns a summarization", :vcr do
+      response = subject.summarize(text: mary_had_a_little_lamb_text)
+
+      expect(response).to be_a(Langchain::LLM::OllamaResponse)
+      expect(response.completion).not_to match(/summary/)
+      expect(response.completion).to start_with("Mary had a little lamb that followed her everywhere she went")
+    end
+  end
+
+  describe "#default_dimension" do
+    it "returns size of llama2 embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "llama2"})
+
+      expect(subject.default_dimension).to eq(4_096)
+    end
+
+    it "returns size of llava embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "llava"})
+
+      expect(subject.default_dimension).to eq(4_096)
+    end
+
+    it "returns size of mistral embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mistral"})
+
+      expect(subject.default_dimension).to eq(4_096)
+    end
+
+    it "returns size of mixtral embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mixtral"})
+
+      expect(subject.default_dimension).to eq(4_096)
+    end
+
+    it "returns size of dolphin-mixtral embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "dolphin-mixtral"})
+      expect(subject.default_dimension).to eq(4_096)
+    end
+
+    it "returns size of mistral-openorca embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mistral-openorca"})
+      expect(subject.default_dimension).to eq(4_096)
+    end
+
+    it "returns size of codellama embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "codellama"})
+      expect(subject.default_dimension).to eq(4_096)
+    end
+
+    # this one has not been hardcoded, but will be looked up
+    # by generating an embedding and checking its size
+    it "returns size of tinydolphin embeddings", vcr: true do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "tinydolphin"})
+
+      expect(subject.default_dimension).to eq(2_048)
     end
   end
 end

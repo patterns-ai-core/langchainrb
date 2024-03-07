@@ -48,6 +48,7 @@ if ENV["EPSILLA_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
+              dimensions: 1536,
               model: "text-embedding-ada-002",
               input: "Hello World"
             }
@@ -93,6 +94,7 @@ if ENV["EPSILLA_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
+              dimensions: 1536,
               model: "text-embedding-ada-002",
               input: "earth"
             }
@@ -109,6 +111,7 @@ if ENV["EPSILLA_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
+              dimensions: 1536,
               model: "text-embedding-ada-002",
               input: "something about earth"
             }
@@ -126,6 +129,7 @@ if ENV["EPSILLA_URL"]
           ).to receive(:embeddings)
             .with(
               parameters: {
+                dimensions: 1536,
                 model: "text-embedding-ada-002",
                 input: "Hello World #{i}"
               }
@@ -181,6 +185,7 @@ if ENV["EPSILLA_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
+              dimensions: 1536,
               model: "text-embedding-ada-002",
               input: question
             }
@@ -196,6 +201,7 @@ if ENV["EPSILLA_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
+              dimensions: 1536,
               model: "text-embedding-ada-002",
               input: text
             }
