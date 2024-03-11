@@ -135,6 +135,7 @@ module Langchain::Vectorsearch
     # Ask a question and return the answer
     # @param question [String] The question to ask
     # @param k [Integer] The number of results to have in context
+    # @param prompt_template_path [String] The path to the prompt template
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
     def ask(question:, k: 4, prompt_template_path: nil, **additional_params, &block)
@@ -145,7 +146,7 @@ module Langchain::Vectorsearch
       end
       context = context.join("\n---\n")
 
-      prompt = generate_rag_prompt(question: question, context: context, prompt_template_path: prompt_template_path, **additional_params)
+      prompt = generate_rag_prompt(prompt_template_path: prompt_template_path, question: question, context: context, **additional_params)
 
       messages = [{role: "user", content: prompt}]
       response = llm.chat(messages: messages, &block)
