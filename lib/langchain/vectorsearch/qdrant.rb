@@ -137,7 +137,7 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, k: 4, &block)
+    def ask(question:, k: 4, **additional_params, &block)
       search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
@@ -145,7 +145,7 @@ module Langchain::Vectorsearch
       end
       context = context.join("\n---\n")
 
-      prompt = generate_rag_prompt(question: question, context: context)
+      prompt = generate_rag_prompt(question: question, context: context, **additional_params)
 
       messages = [{role: "user", content: prompt}]
       response = llm.chat(messages: messages, &block)

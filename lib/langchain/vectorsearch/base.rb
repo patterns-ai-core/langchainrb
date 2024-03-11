@@ -168,11 +168,11 @@ module Langchain::Vectorsearch
     # @param question [String] User's question
     # @param context [String] The context to synthesize the answer from
     # @return [String] Prompt
-    def generate_rag_prompt(question:, context:)
+    def generate_rag_prompt(question:, context:, **additional_params)
       prompt_template = Langchain::Prompt.load_from_path(
         file_path: Langchain.root.join("langchain/vectorsearch/prompts/rag.yaml")
       )
-      prompt_template.format(question: question, context: context)
+      prompt_template.format(question: question, context: context, **additional_params)
     end
 
     def add_data(paths:, options: {}, chunker: Langchain::Chunker::Text)
