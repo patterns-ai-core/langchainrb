@@ -60,6 +60,13 @@ module Langchain::Vectorsearch
       collection.update(embeddings)
     end
 
+    # Remove a list of texts from the index
+    # @param ids [Array<String>] The list of ids to remove
+    # @return [Hash] The response from the server
+    def remove_texts(ids:)
+      collection.delete(ids)
+    end
+
     # Create the collection with the default schema
     # @return [::Chroma::Resources::Collection] Created collection
     def create_default_schema
