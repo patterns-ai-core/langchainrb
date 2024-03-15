@@ -183,7 +183,7 @@ module Langchain::LLM
     end
 
     def default_dimension
-      @defaults[:dimension] || Langchain::Config::EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name].to_sym)
+      @defaults[:dimension] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name].to_sym)
     end
 
     private
