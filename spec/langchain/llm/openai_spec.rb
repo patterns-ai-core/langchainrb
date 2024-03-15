@@ -28,7 +28,11 @@ RSpec.describe Langchain::LLM::OpenAI do
   describe "#embed" do
     let(:result) { [-0.007097351, 0.0035200312, -0.0069700438] }
     let(:parameters) do
-      {parameters: {input: "Hello World", model: "text-embedding-ada-002"}}
+      {parameters: {
+        input: "Hello World",
+        model: "text-embedding-3-small",
+        dimensions: 1536
+      }}
     end
     let(:response) do
       {
@@ -56,7 +60,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       response = subject.embed(text: "Hello World")
 
       expect(response).to be_a(Langchain::LLM::OpenAIResponse)
-      expect(response.model).to eq("text-embedding-ada-002")
+      expect(response.model).to eq("text-embedding-3-small")
       expect(response.embedding).to eq([-0.007097351, 0.0035200312, -0.0069700438])
       expect(response.prompt_tokens).to eq(2)
       expect(response.completion_tokens).to eq(nil)
