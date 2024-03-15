@@ -53,7 +53,8 @@ module Langchain::LLM
       text:,
       model: defaults[:embeddings_model_name],
       encoding_format: nil,
-      user: nil
+      user: nil,
+      dimensions: nil
     )
       raise ArgumentError.new("text argument is required") if text.empty?
       raise ArgumentError.new("model argument is required") if model.empty?
@@ -61,9 +62,10 @@ module Langchain::LLM
 
       parameters = {
         input: text,
-        model: model,
-        dimensions: default_dimension
+        model: model
       }
+      parameters.merge!(dimensions: dimensions) if dimensions
+
       parameters[:encoding_format] = encoding_format if encoding_format
       parameters[:user] = user if user
 
