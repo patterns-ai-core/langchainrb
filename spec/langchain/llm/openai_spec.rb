@@ -123,7 +123,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
     end
 
-    Langchain::Config::EMBEDDING_SIZES.each do |model_key, dimensions|
+    EMBEDDING_SIZES.each do |model_key, dimensions|
       model = model_key.to_s.gsub(':', '') # Convertir el símbolo del modelo a string
 
       context "when using model #{model}" do
