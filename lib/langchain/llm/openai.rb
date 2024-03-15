@@ -62,12 +62,12 @@ module Langchain::LLM
 
       parameters = {
         input: text,
-        model: model,
+        model: model
       }
       parameters[:encoding_format] = encoding_format if encoding_format
       parameters[:user] = user if user
 
-      if ['text-embedding-3-small', 'text-embedding-3-large'].include?(model)
+      if ["text-embedding-3-small", "text-embedding-3-large"].include?(model)
         parameters[:dimensions] = EMBEDDING_SIZES[model.to_sym] if EMBEDDING_SIZES.key?(model.to_sym)
       end
 

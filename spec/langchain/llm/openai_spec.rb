@@ -105,30 +105,30 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
 
       context "when dimension is provided" do
-        let(:dimension_size) { 1536 } 
-      
+        let(:dimension_size) { 1536 }
+
         let(:parameters) do
           {parameters: {input: "Hello World", model: model, dimensions: dimension_size}}
         end
-      
+
         let(:subject) do
           described_class.new(api_key: "123", default_options: {
             embeddings_model_name: model,
-            dimension: dimension_size 
+            dimension: dimension_size
           })
         end
-      
+
         it "forwards the model's default dimension" do
           allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
           subject.embed(text: "Hello World", model: model)
-      
+
           expect(subject.client).to have_received(:embeddings).with(parameters)
         end
       end
     end
 
     Langchain::LLM::OpenAI::EMBEDDING_SIZES.each do |model_key, dimensions|
-      model = model_key.to_s.gsub(':', '') # Convertir el símbolo del modelo a string
+      model = model_key.to_s.delete(":") # Convertir el símbolo del modelo a string
 
       context "when using model #{model}" do
         let(:text) { "Hello World" }
@@ -174,7 +174,6 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
       end
     end
-    
   end
 
   describe "#complete" do
