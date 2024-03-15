@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require_relative '../../../lib/langchain/embeddings'
 
 RSpec.describe Langchain::LLM::OpenAI do
   let(:subject) { described_class.new(api_key: "123") }

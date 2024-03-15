@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require_relative '../../../lib/langchain/embeddings'
 
 module Langchain::LLM
   # LLM interface for OpenAI APIs: https://platform.openai.com/overview
@@ -19,6 +18,12 @@ module Langchain::LLM
       temperature: 0.0,
       chat_completion_model_name: "gpt-3.5-turbo",
       embeddings_model_name: "text-embedding-ada-002"
+    }.freeze
+
+    EMBEDDING_SIZES = {
+      "text-embedding-ada-002": 1536,
+      "text-embedding-3-large": 3072,
+      "text-embedding-3-small": 1536
     }.freeze
 
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
@@ -49,7 +54,7 @@ module Langchain::LLM
       model: defaults[:embeddings_model_name],
       encoding_format: nil,
       user: nil,
-      dimensions: Langchain::Config::EMBEDDING_SIZES.fetch(model.to_sym, nil)
+      dimensions: EMBEDDING_SIZES.fetch(model.to_sym, nil)
     )
       raise ArgumentError.new("text argument is required") if text.empty?
       raise ArgumentError.new("model argument is required") if model.empty?
@@ -63,7 +68,7 @@ module Langchain::LLM
       parameters[:user] = user if user
 
       if ['text-embedding-3-small', 'text-embedding-3-large'].include?(model)
-        parameters[:dimensions] = Langchain::Config::EMBEDDING_SIZES[model.to_sym] if Langchain::Config::EMBEDDING_SIZES.key?(model.to_sym)
+        parameters[:dimensions] = EMBEDDING_SIZES[model.to_sym] if EMBEDDING_SIZES.key?(model.to_sym)
       end
 
       validate_max_tokens(text, parameters[:model])
