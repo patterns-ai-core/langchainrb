@@ -49,7 +49,7 @@ if ENV["EPSILLA_URL"]
           .with(
             parameters: {
               dimensions: 1536,
-              model: "text-embedding-ada-002",
+              model: "text-embedding-3-small",
               input: "Hello World"
             }
           )
