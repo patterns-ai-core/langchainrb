@@ -18,7 +18,11 @@ module Langchain::LLM
     end
 
     def tool_calls
-      raw_response.dig("candidates", 0, "content", "parts")
+      if raw_response.dig("candidates", 0, "content", "parts", 0).has_key?("functionCall")
+        raw_response.dig("candidates", 0, "content", "parts")
+      else
+        []
+      end
     end
 
     def prompt_tokens

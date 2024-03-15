@@ -432,7 +432,7 @@ assistant = Langchain::Assistant.new(
 ### Using an Assistant
 You can now add your message to an Assistant.
 ```ruby
-assistant.add_message content: "What's the weather in New York City?"
+assistant.add_message content: "What's the weather in New York, New York?"
 ```
 
 Run the Assistant to generate a response. 

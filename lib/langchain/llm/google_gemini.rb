@@ -37,7 +37,6 @@ module Langchain::LLM
       })
 
       binding.pry
-
       Langchain::LLM::GoogleGeminiResponse.new(response.to_h, model: @defaults[:chat_completion_model_name])
     end
   end

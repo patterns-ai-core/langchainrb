@@ -124,7 +124,7 @@ module Langchain
     # @return [Array<Langchain::Message>] The messages in the thread
     def submit_tool_output(tool_call_id:, output:)
       # TODO: Validate that `tool_call_id` is valid
-      add_message(role: "tool", content: output, tool_call_id: tool_call_id)
+      add_message(role: "function", content: output, tool_call_id: tool_call_id)
     end
 
     private
@@ -152,13 +152,16 @@ module Langchain
     def run_tools(tool_calls)
       # Iterate over each function invocation and submit tool output
       tool_calls.each do |tool_call|
-        tool_call_id = tool_call.dig("id")
+        # Use the OpenAI "id" OR Google Gemini function name
+        tool_call_id = tool_call.dig("id") || tool_call.dig("functionCall", "name")
 
         # Dig OpenAI format OR Google Gemini format
         function_name = tool_call.dig("function", "name") || tool_call.dig("functionCall", "name")
-        # 
-        tool_name, method_name = function_name.split("-")
-        tool_arguments = JSON.parse(tool_call.dig("function", "arguments"), symbolize_names: true)
+        # dash or underscore?
+        tool_name, method_name = function_name.split("_")
+
+        # tool_arguments = JSON.parse(tool_call.dig("function", "arguments"), symbolize_names: true)
+        tool_arguments = tool_call.dig("functionCall", "args").transform_keys(&:to_sym)
 
         tool_instance = tools.find do |t|
           t.name == tool_name

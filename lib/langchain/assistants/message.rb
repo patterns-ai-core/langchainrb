@@ -46,7 +46,21 @@ module Langchain
     def to_google_gemini_format
       {}.tap do |h|
         h[:role] = role
-        h[:parts] = [{ text: content }]
+        h[:parts] = if function?
+          [{
+            functionResponse: { 
+              name: tool_call_id,
+              response: {
+                name: tool_call_id,
+                content: content
+              }
+            }
+          }]
+        elsif tool_calls.any?
+          tool_calls
+        else
+          [{ text: content }]
+        end
       end
     end
 
@@ -74,6 +88,10 @@ module Langchain
 
     def tool?
       role == "tool"
+    end
+
+    def function?
+      role == "function"
     end
   end
 end
