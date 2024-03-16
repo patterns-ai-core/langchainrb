@@ -87,6 +87,45 @@ if ENV["EPSILLA_URL"]
       end
     end
 
+    describe "#remove_texts" do
+      before do
+        allow_any_instance_of(
+          OpenAI::Client
+        ).to receive(:embeddings)
+          .with(
+            parameters: {
+              dimensions: 1536,
+              model: "text-embedding-3-small",
+              input: "Hello World"
+            }
+          )
+          .and_return({
+            "object" => "list",
+            "data" => [
+              {"embedding" => 1536.times.map { rand }}
+            ]
+          })
+
+        begin
+          # make sure table is created
+          subject.create_default_schema
+        rescue
+          # do nothing
+        end
+
+        subject.add_texts(texts: ["Hello World", "Hello World"])
+      end
+
+      it "removes texts" do
+        result = subject.remove_texts(ids: [100, 101])
+        expect(result["statusCode"]).to eq(200)
+      end
+
+      after do
+        subject.destroy_default_schema
+      end
+    end
+
     describe "#similarity_search" do
       before do
         allow_any_instance_of(

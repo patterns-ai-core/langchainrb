@@ -99,6 +99,15 @@ module Langchain::Vectorsearch
       response
     end
 
+    # Remove a list of texts from the database
+    # @param ids [Array<String>] The list of ids to remove
+    # @return [String] The response from the server
+    def remove_texts(ids:)
+      status_code, response = @client.database.delete(@table_name, ids)
+      raise "Failed to delete texts: #{response}" if status_code != 200
+      response
+    end
+
     # Search for similar texts
     # @param query [String] The text to search for
     # @param k [Integer] The number of results to return
