@@ -98,6 +98,16 @@ if ENV["POSTGRES_URL"]
       end
     end
 
+    describe "#remove_texts" do
+      it "removes texts" do
+        values = subject.add_texts(texts: ["Hello World", "Hello World"])
+        ids = values.flatten
+        result = subject.remove_texts(ids: ids)
+
+        expect(result.size).to eq(2)
+      end
+    end
+
     describe "#similarity_search" do
       before do
         allow_any_instance_of(
