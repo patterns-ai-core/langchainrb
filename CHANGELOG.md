@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.10.0]
+- Delete `Langchain::Conversation` class
+
 ## [0.9.5]
 - Now using OpenAI's "text-embedding-3-small" model to generate embeddings
 - Added `remove_texts(ids:)` method to Qdrant and Chroma
