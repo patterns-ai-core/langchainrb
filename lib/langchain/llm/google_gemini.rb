@@ -31,12 +31,11 @@ module Langchain::LLM
       tools: [],
       tool_choice: nil # Do we need this param?
     )
-      response = client.generate_content({
-        contents: messages,
-        tools: { function_declarations: tools }
-      })
+      params = {contents: messages}
+      params.merge!(tools: { function_declarations: tools }) if tools.any?
 
-      binding.pry
+      response = client.generate_content(params)
+
       Langchain::LLM::GoogleGeminiResponse.new(response.to_h, model: @defaults[:chat_completion_model_name])
     end
   end
