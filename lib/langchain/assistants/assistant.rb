@@ -96,7 +96,7 @@ module Langchain
           response = chat_with_llm
           running = true
 
-          if response.tool_calls
+          if response.tool_calls.any?
             add_message(role: response.role, tool_calls: response.tool_calls)
           elsif response.chat_completion
             add_message(role: response.role, content: response.chat_completion)
@@ -174,7 +174,7 @@ module Langchain
 
       response = chat_with_llm
 
-      if response.tool_calls
+      if response.tool_calls.any?
         add_message(role: response.role, tool_calls: response.tool_calls)
       elsif response.chat_completion
         add_message(role: response.role, content: response.chat_completion)
