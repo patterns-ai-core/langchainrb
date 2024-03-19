@@ -18,8 +18,8 @@ module Langchain::LLM
       depends_on "mistral-ai"
 
       @client = Mistral.new(
-        credentials: { api_key: ENV['MISTRAL_AI_API_KEY'] },
-        options: { server_sent_events: true }
+        credentials: {api_key: ENV["MISTRAL_AI_API_KEY"]},
+        options: {server_sent_events: true}
       )
 
       @defaults = DEFAULTS.merge(default_options)
@@ -45,7 +45,7 @@ module Langchain::LLM
       params.merge!(random_seed: random_seed) if random_seed
 
       response = client.chat_completions(params)
-    
+
       Langchain::LLM::MistralAIResponse.new(response.to_h)
     end
 
