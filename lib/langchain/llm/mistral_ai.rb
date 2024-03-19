@@ -38,11 +38,11 @@ module Langchain::LLM
         messages: messages,
         model: model
       }
-      params.merge!(temperature: temperature) if temperature
-      params.merge!(top_p: top_p) if top_p
-      params.merge!(max_tokens: max_tokens) if max_tokens
-      params.merge!(safe_prompt: safe_prompt) if safe_prompt
-      params.merge!(random_seed: random_seed) if random_seed
+      params[:temperature] = temperature if temperature
+      params[:top_p] = top_p if top_p
+      params[:max_tokens] = max_tokens if max_tokens
+      params[:safe_prompt] = safe_prompt if safe_prompt
+      params[:random_seed] = random_seed if random_seed
 
       response = client.chat_completions(params)
 
@@ -58,7 +58,7 @@ module Langchain::LLM
         input: text,
         model: model
       }
-      params.merge!(encoding_format: encoding_format) if encoding_format
+      params[:encoding_format] = encoding_format if encoding_format
 
       response = client.embeddings(params)
 
