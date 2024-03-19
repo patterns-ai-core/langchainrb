@@ -16,6 +16,8 @@ loader.inflector.inflect(
   "json" => "JSON",
   "jsonl" => "JSONL",
   "llm" => "LLM",
+  "mistral_ai" => "MistralAI",
+  "mistral_ai_response" => "MistralAIResponse",
   "openai" => "OpenAI",
   "openai_validator" => "OpenAIValidator",
   "openai_response" => "OpenAIResponse",
