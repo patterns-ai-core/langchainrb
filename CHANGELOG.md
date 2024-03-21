@@ -1,9 +1,11 @@
 ## [Unreleased]
 
-## [0.10.1]
+## [0.10.2]
 - New Langchain::LLM::Mistral
 - Drop Ruby 3.0 support
 - Fixes Zeitwerk::NameError
+
+## [0.10.1] - GEM VERSION YANKED
 
 ## [0.10.0]
 - Delete `Langchain::Conversation` class
