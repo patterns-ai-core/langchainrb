@@ -1,5 +1,15 @@
 ## [Unreleased]
 
+## [0.10.2]
+- New Langchain::LLM::Mistral
+- Drop Ruby 3.0 support
+- Fixes Zeitwerk::NameError
+
+## [0.10.1] - GEM VERSION YANKED
+
+## [0.10.0]
+- Delete `Langchain::Conversation` class
+
 ## [0.9.5]
 - Now using OpenAI's "text-embedding-3-small" model to generate embeddings
 - Added `remove_texts(ids:)` method to Qdrant and Chroma
