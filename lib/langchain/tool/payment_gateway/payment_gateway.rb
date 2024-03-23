@@ -6,11 +6,11 @@ module Langchain::Tool
     ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
     def charge_customer(customer_id:, amount:)
-      true
+      {success: true, transaction_id: SecureRandom.uuid, amount: amount, customer_id: customer_id, transaction_type: "charge", transaction_date: Time.now}
     end
 
     def refund_customer(customer_id:, amount:)
-      true
+      {success: true, transaction_id: SecureRandom.uuid, amount: amount, customer_id: customer_id, transaction_type: "refund", transaction_date: Time.now}
     end
   end
 end

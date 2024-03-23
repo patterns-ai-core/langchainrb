@@ -17,7 +17,7 @@ module Langchain::Tool
 
       return "Invalid provider" unless ["ups", "fedex", "usps", "dhl"].include?(provider)
 
-      true
+      {success: true, tracking_number: SecureRandom.uuid, provider: provider}
     end
 
     def create_return_label(customer_name:, address:, provider:)
@@ -25,20 +25,7 @@ module Langchain::Tool
 
       return "Invalid provider" unless ["ups", "fedex", "usps", "dhl"].include?(provider)
 
-      true
+      {success: true, tracking_number: SecureRandom.uuid, provider: provider}
     end
   end
 end
-
-# llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-
-# assistant = Langchain::Assistant.new(
-#   instructions: "You are an E-commerce Assistant GPT",
-#   llm: llm,
-#   tools: [
-#     Langchain::Tool::InventoryManagement.new,
-#     Langchain::Tool::ShippingService.new,
-#     Langchain::Tool::PaymentGateway.new
-#   ],
-#   thread: Langchain::Thread.new
-# )
