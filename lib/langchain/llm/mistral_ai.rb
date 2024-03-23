@@ -18,7 +18,7 @@ module Langchain::LLM
       depends_on "mistral-ai"
 
       @client = Mistral.new(
-        credentials: {api_key: ENV["MISTRAL_AI_API_KEY"]},
+        credentials: {api_key: api_key},
         options: {server_sent_events: true}
       )
 
