@@ -5,7 +5,7 @@ module Langchain::LLM
   #    gem "mistral-ai"
   #
   # Usage:
-  #    llm = Langchain::LLM::MistralAI.new(api_key: ENV["OPENAI_API_KEY"])
+  #    llm = Langchain::LLM::MistralAI.new(api_key: ENV["MISTRAL_AI_API_KEY"])
   class MistralAI < Base
     DEFAULTS = {
       chat_completion_model_name: "mistral-medium",
@@ -18,7 +18,7 @@ module Langchain::LLM
       depends_on "mistral-ai"
 
       @client = Mistral.new(
-        credentials: {api_key: ENV["MISTRAL_AI_API_KEY"]},
+        credentials: {api_key: api_key},
         options: {server_sent_events: true}
       )
 
