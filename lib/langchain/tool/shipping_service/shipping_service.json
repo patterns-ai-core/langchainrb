@@ -1,0 +1,69 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "shipping_service-validate_address",
+      "description": "Shipping Service: Validate a given address",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Full inline address string"
+          }
+        },
+        "required": ["address"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "shipping_service-create_shipping_label",
+      "description": "Shipping Service: Create a shipping label for a given customer name, address and shipping provider",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "customer_name": {
+            "type": "string",
+            "description": "Customer's full name"
+          },
+          "address": {
+            "type": "string",
+            "description": "Full inline address string"
+          },
+          "provider": {
+            "type": "string",
+            "enum": ["usps", "ups", "fedex", "dhl"]
+          }
+        },
+        "required": ["customer_name", "address", "provider"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "shipping_service-create_return_label",
+      "description": "Shipping Service: Create a return label from a given customer name, address and shipping provider",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "customer_name": {
+            "type": "string",
+            "description": "Customer's full name"
+          },
+          "address": {
+            "type": "string",
+            "description": "Full inline address string"
+          },
+          "provider": {
+            "type": "string",
+            "enum": ["usps", "ups", "fedex", "dhl"]
+          }
+        },
+        "required": ["customer_name", "address", "provider"]
+      }
+    }
+  }
+]

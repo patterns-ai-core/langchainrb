@@ -1,0 +1,44 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "payment_gateway-charge_customer",
+      "description": "Payment Gateway Service: Charge customer for a specific amount",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "Customer ID"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount (USD) to charge, e.g.: 156.24"
+          }
+        },
+        "required": ["customer_id", "amount"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "payment_gateway-refund_customer",
+      "description": "Payment Gateway Service: Refund customer for a specific amount",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "Customer ID"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount (USD) to refund, e.g.: 44.59"
+          }
+        },
+        "required": ["customer_id", "amount"]
+      }
+    }
+  }
+]
