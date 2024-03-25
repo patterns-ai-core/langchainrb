@@ -124,7 +124,7 @@ if ENV["POSTGRES_URL"]
         expect(ids.length).to eq(2)
 
         result = subject.remove_texts(ids: ids)
-        expect(result.size).to eq(2)
+        expect(result).to eq(2)
       end
     end
 
