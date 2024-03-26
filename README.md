@@ -29,6 +29,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 - [Evaluations](#evaluations-evals)
 - [Examples](#examples)
 - [Logging](#logging)
+- [Problem](#problems)
 - [Development](#development)
 - [Discord](#discord)
 
@@ -499,6 +500,12 @@ To show all log messages:
 
 ```ruby
 Langchain.logger.level = :debug
+```
+
+## Problems
+If you're having issues installing `unicode` gem required by `pragmatic_segmenter`, try running:
+```bash
+gem install unicode -- --with-cflags="-Wno-incompatible-function-pointer-types"
 ```
 
 ## Development
