@@ -29,7 +29,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 - [Evaluations](#evaluations-evals)
 - [Examples](#examples)
 - [Logging](#logging)
-- [Problem](#problems)
+- [Problems](#problems)
 - [Development](#development)
 - [Discord](#discord)
 
