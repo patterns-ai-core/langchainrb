@@ -131,9 +131,14 @@ module Langchain::LLM
 
         req.options.on_data = proc do |chunk, size|
           chunk.split("\n").each do |line_chunk|
-            json_chunk = JSON.parse(line_chunk)
+            json_chunk = begin
+              JSON.parse(line_chunk)
+            # In some instance the chunk exceeds the buffer size and the JSON parser fails
+            rescue JSON::ParserError
+              nil
+            end
 
-            response += json_chunk.dig("response")
+            response += json_chunk.dig("response") unless json_chunk.blank?
           end
 
           yield json_chunk, size if block
