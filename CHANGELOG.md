@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.10.3]
+- Bump dependencies
+- Ollama#complete fix
+- Misc fixes
+
 ## [0.10.2]
 - New Langchain::LLM::Mistral
 - Drop Ruby 3.0 support
