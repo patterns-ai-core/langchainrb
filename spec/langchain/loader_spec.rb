@@ -16,12 +16,15 @@ RSpec.describe Langchain::Loader do
     context "Directory" do
       let(:path) { "spec/fixtures/loaders/data" }
       let(:result) do
+        csv_result = <<~EXPECTED_OUTPUT.chomp
+          Username,Identifier,First name,Last name
+
+          booker12,9012,Rachel,Booker
+
+          grey07,2070,Laura,Grey
+        EXPECTED_OUTPUT
         [
-          [
-            ["Username", "Identifier", "First name", "Last name"],
-            ["booker12", "9012", "Rachel", "Booker"],
-            ["grey07", "2070", "Laura", "Grey"]
-          ],
+          csv_result,
           [
             {"name" => "Luke Skywalker", "height" => "172", "mass" => "77"},
             {"name" => "C-3PO", "height" => "167", "mass" => "75"}
@@ -134,16 +137,21 @@ RSpec.describe Langchain::Loader do
     end
 
     context "CSV" do
-      let(:result) do
-        [
-          ["Username", "Identifier", "First name", "Last name"],
-          ["booker12", "9012", "Rachel", "Booker"],
-          ["grey07", "2070", "Laura", "Grey"],
-          ["johnson81", "4081", "Craig", "Johnson"],
-          ["jenkins46", "9346", "Mary", "Jenkins"],
-          ["smith79", "5079", "Jamie", "Smith"]
-        ]
-      end
+      let(:result) {
+        <<~EXPECTED_OUTPUT.chomp
+          Username,Identifier,First name,Last name
+
+          booker12,9012,Rachel,Booker
+
+          grey07,2070,Laura,Grey
+
+          johnson81,4081,Craig,Johnson
+
+          jenkins46,9346,Mary,Jenkins
+
+          smith79,5079,Jamie,Smith
+        EXPECTED_OUTPUT
+      }
 
       context "from local file" do
         context "with default options" do
@@ -158,12 +166,13 @@ RSpec.describe Langchain::Loader do
         context "with custom options" do
           let(:path) { "spec/fixtures/loaders/semicolon_example.csv" }
           let(:options) { {col_sep: ";"} }
+          let(:semicolon_result) { result.tr(",", ";") }
 
           subject { described_class.new(path, options).load }
 
           it "loads data from csv file separated by semicolon" do
             expect(subject).to be_a(Langchain::Data)
-            expect(subject.value).to eq(result)
+            expect(subject.value).to eq(semicolon_result)
           end
         end
       end
