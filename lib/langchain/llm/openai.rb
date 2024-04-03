@@ -54,7 +54,7 @@ module Langchain::LLM
       model: defaults[:embeddings_model_name],
       encoding_format: nil,
       user: nil,
-      dimensions: EMBEDDING_SIZES.fetch(model.to_sym, nil)
+      dimensions: nil
     )
       raise ArgumentError.new("text argument is required") if text.empty?
       raise ArgumentError.new("model argument is required") if model.empty?
@@ -67,8 +67,10 @@ module Langchain::LLM
       parameters[:encoding_format] = encoding_format if encoding_format
       parameters[:user] = user if user
 
-      if ["text-embedding-3-small", "text-embedding-3-large"].include?(model)
-        parameters[:dimensions] = EMBEDDING_SIZES[model.to_sym] if EMBEDDING_SIZES.key?(model.to_sym)
+      if dimensions
+        parameters[:dimensions] = dimensions
+      elsif if EMBEDDING_SIZES.key?(model.to_sym)
+        parameters[:dimensions] = EMBEDDING_SIZES[model.to_sym]
       end
 
       validate_max_tokens(text, parameters[:model])
