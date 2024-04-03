@@ -69,7 +69,7 @@ module Langchain::LLM
 
       if dimensions
         parameters[:dimensions] = dimensions
-      elsif if EMBEDDING_SIZES.key?(model.to_sym)
+      elsif EMBEDDING_SIZES.key?(model.to_sym)
         parameters[:dimensions] = EMBEDDING_SIZES[model.to_sym]
       end
 
