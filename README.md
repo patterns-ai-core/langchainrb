@@ -55,18 +55,21 @@ require "langchain"
 Langchain.rb wraps supported LLMs in a unified interface allowing you to easily swap out and test out different models.
 
 #### Supported LLMs and features:
-| LLM providers                                                                                   | `embed()`            | `complete()`         | `chat()`              | `summarize()`        | Notes              |
+| LLM providers                                                                                   | `embed()`          | `complete()`       | `chat()`            | `summarize()`      | Notes              |
 | --------                                                                                        |:------------------:| :-------:          | :-----------------: | :-------:          | :----------------- |
 | [OpenAI](https://openai.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ❌                 | Including Azure OpenAI |
 | [AI21](https://ai21.com/?utm_source=langchainrb&utm_medium=github)                              | ❌                 | ✅                 | ❌                  | ✅                 |                    |
-| [Anthropic](https://anthropic.com/?utm_source=langchainrb&utm_medium=github)                        | ❌                 | ✅                 | ❌                  | ❌                 |                    |
+| [Anthropic](https://anthropic.com/?utm_source=langchainrb&utm_medium=github)                    | ❌                 | ✅                 | ❌                  | ❌                 |                    |
 | [AWS Bedrock](https://aws.amazon.com/bedrock?utm_source=langchainrb&utm_medium=github)          | ✅                 | ✅                 | ❌                  | ❌                 | Provides AWS, Cohere, AI21, Antropic and Stability AI models |
-| [Cohere](https://cohere.com/?utm_source=langchainrb&utm_medium=github)                     | ✅                 | ✅                 | ✅                  | ✅                 |                    |
+| [Cohere](https://cohere.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [GooglePalm](https://ai.google/discover/palm2?utm_source=langchainrb&utm_medium=github)         | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Google Vertex AI](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ✅                 | ❌                  | ✅                 |                    |
 | [HuggingFace](https://huggingface.co/?utm_source=langchainrb&utm_medium=github)                 | ✅                 | ❌                 | ❌                  | ❌                 |                    |
+| [Mistral AI](https://mistral.ai/?utm_source=langchainrb&utm_medium=github)                      | ✅                 | ❌                 | ✅                  | ❌                 |                    |
 | [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Replicate](https://replicate.com/?utm_source=langchainrb&utm_medium=github)                    | ✅                 | ✅                 | ✅                  | ✅                 |                    |
+
+
 
 #### Using standalone LLMs:
 
