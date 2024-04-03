@@ -21,9 +21,9 @@ module Langchain::LLM
     }.freeze
 
     EMBEDDING_SIZES = {
-      "text-embedding-ada-002": 1536,
-      "text-embedding-3-large": 3072,
-      "text-embedding-3-small": 1536
+      "text-embedding-ada-002" => 1536,
+      "text-embedding-3-large" => 3072,
+      "text-embedding-3-small" => 1536
     }.freeze
 
     LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
@@ -69,8 +69,8 @@ module Langchain::LLM
 
       if dimensions
         parameters[:dimensions] = dimensions
-      elsif EMBEDDING_SIZES.key?(model.to_sym)
-        parameters[:dimensions] = EMBEDDING_SIZES[model.to_sym]
+      elsif EMBEDDING_SIZES.key?(model)
+        parameters[:dimensions] = EMBEDDING_SIZES[model]
       end
 
       validate_max_tokens(text, parameters[:model])
@@ -185,7 +185,7 @@ module Langchain::LLM
     end
 
     def default_dimension
-      @defaults[:dimension] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name].to_sym)
+      @defaults[:dimension] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name])
     end
 
     private
