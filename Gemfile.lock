@@ -417,6 +417,12 @@ GEM
       standard
     stringio (3.1.0)
     thor (1.3.0)
+    tiktoken_ruby (0.0.7-aarch64-linux)
+    tiktoken_ruby (0.0.7-arm-linux)
+    tiktoken_ruby (0.0.7-arm64-darwin)
+    tiktoken_ruby (0.0.7-x86_64-darwin)
+    tiktoken_ruby (0.0.7-x86_64-linux)
+    tiktoken_ruby (0.0.7-x86_64-linux-musl)
     tiktoken_ruby (0.0.8)
       rb_sys (>= 0.9.86)
     timeout (0.4.1)
