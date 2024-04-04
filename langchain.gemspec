@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activesupport", ">= 7.0.8"
   spec.add_dependency "baran", "~> 0.1.9"
   spec.add_dependency "colorize", "~> 1.1.0"
-  spec.add_dependency "tiktoken_ruby", "~> 0.0.7"
+  spec.add_dependency "tiktoken_ruby", "~> 0.0.8"
   spec.add_dependency "json-schema", "~> 4"
   spec.add_dependency "zeitwerk", "~> 2.5"
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
