@@ -403,6 +403,10 @@ client.ask(question: "...")
 ## Assistants
 Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries. Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
 
+### Demos
+1. [Building an AI Assistant that operates a simulated E-commerce Store](https://www.loom.com/share/83aa4fd8dccb492aad4ca95da40ed0b2)
+2. [New Langchain.rb Assistants interface](https://www.loom.com/share/e883a4a49b8746c1b0acf9d58cf6da36)
+
 ### Creating an Assistant
 1. Instantiate an LLM of your choice
 ```ruby
