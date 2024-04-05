@@ -14,10 +14,6 @@ module Langchain::Tool
     NAME = "ruby_code_interpreter"
     ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
-    description <<~DESC
-      A Ruby code interpreter. Use this to execute ruby expressions. Input should be a valid ruby expression. If you want to see the output of the tool, make sure to return a value.
-    DESC
-
     def initialize(timeout: 30)
       depends_on "safe_ruby"
 

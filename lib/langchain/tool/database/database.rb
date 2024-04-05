@@ -12,12 +12,6 @@ module Langchain::Tool
     NAME = "database"
     ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
-    description <<~DESC
-      Useful for getting the result of a database query.
-
-      The input to this tool should be valid SQL.
-    DESC
-
     attr_reader :db, :requested_tables, :excluded_tables
 
     # Establish a database connection

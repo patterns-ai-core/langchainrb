@@ -19,17 +19,6 @@ module Langchain::Tool
     NAME = "weather"
     ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
-    description <<~DESC
-      Useful for getting current weather data
-
-      The input to this tool should be a city name followed by the units (imperial, metric, or standard)
-      Usage:
-        Action Input: St Louis, Missouri; metric
-        Action Input: Boston, Massachusetts; imperial
-        Action Input: Dubai, AE; imperial
-        Action Input: Kiev, Ukraine; metric
-    DESC
-
     attr_reader :client, :units
 
     # Initializes the Weather tool

@@ -22,8 +22,6 @@ loader.inflector.inflect(
   "openai_validator" => "OpenAIValidator",
   "openai_response" => "OpenAIResponse",
   "pdf" => "PDF",
-  "react_agent" => "ReActAgent",
-  "sql_query_agent" => "SQLQueryAgent"
 )
 loader.collapse("#{__dir__}/langchain/llm/response")
 loader.collapse("#{__dir__}/langchain/assistants")
