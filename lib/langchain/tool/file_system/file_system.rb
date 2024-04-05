@@ -29,6 +29,8 @@ module Langchain::Tool
 
     def write_to_file(file_path:, content:)
       File.write(file_path, content)
+    rescue Errno::EACCES
+      "Permission denied: #{file_path}"
     end
   end
 end
