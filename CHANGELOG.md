@@ -1,5 +1,8 @@
 ## [Unreleased]
+
+## [0.11.0]
 - Delete previously deprecated `Langchain::Agent::ReActAgent` and `Langchain::Agent::SQLQueryAgent` classes
+- New `Langchain::Agent::FileSystem` tool that can read files, write to files, and list the contents of a directory
 
 ## [0.10.3]
 - Bump dependencies
