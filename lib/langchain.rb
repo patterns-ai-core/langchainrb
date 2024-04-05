@@ -32,6 +32,7 @@ loader.collapse("#{__dir__}/langchain/tool/calculator")
 loader.collapse("#{__dir__}/langchain/tool/database")
 loader.collapse("#{__dir__}/langchain/tool/google_search")
 loader.collapse("#{__dir__}/langchain/tool/ruby_code_interpreter")
+loader.collapse("#{__dir__}/langchain/tool/vectorsearch")
 loader.collapse("#{__dir__}/langchain/tool/weather")
 loader.collapse("#{__dir__}/langchain/tool/wikipedia")
 
