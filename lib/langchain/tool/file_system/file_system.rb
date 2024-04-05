@@ -11,10 +11,6 @@ module Langchain::Tool
     NAME = "file_system"
     ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
-    description <<~DESC
-      A tool that wraps the Ruby File class, for interacting with the file system.
-    DESC
-
     def list_directory(directory_path:)
       Dir.entries(directory_path)
     rescue Errno::ENOENT
