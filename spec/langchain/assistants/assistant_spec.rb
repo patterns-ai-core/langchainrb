@@ -125,5 +125,19 @@ RSpec.describe Langchain::Assistant do
         expect(subject.thread.messages[-1].content).to eq("The result of 2 + 2 is 4.")
       end
     end
+
+    context "when messages are empty" do
+      let(:instructions) { nil }
+
+      before do
+        allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages in the thread")
+      end
+
+      it "logs a warning" do
+        expect(subject.thread.messages).to be_empty
+        subject.run
+        expect(Langchain.logger).to have_received(:warn).with("No messages in the thread")
+      end
+    end
   end
 end

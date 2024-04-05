@@ -53,6 +53,11 @@ module Langchain
     # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
     # @return [Array<Langchain::Message>] The messages in the thread
     def run(auto_tool_execution: false)
+      if thread.messages.empty?
+        Langchain.logger.warn("No messages in the thread")
+        return
+      end
+
       running = true
 
       while running

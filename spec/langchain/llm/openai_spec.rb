@@ -78,7 +78,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with text and parameters" do
       let(:parameters) do
-        {parameters: {input: "Hello World", model: "text-embedding-ada-002", user: "id"}}
+        {parameters: {input: "Hello World", model: "text-embedding-ada-002", user: "id", dimensions: Langchain::LLM::OpenAI::EMBEDDING_SIZES["text-embedding-ada-002"]}}
       end
 
       it "returns an embedding" do
@@ -142,12 +142,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         let(:expected_parameters) do
-          # Si el modelo requiere `:dimensions`, inclúyelo en los parámetros esperados
-          if model == "text-embedding-3-small" || model == "text-embedding-3-large"
-            base_parameters.merge({dimensions: dimensions})
-          else
-            base_parameters
-          end
+          base_parameters.merge({dimensions: dimensions})
         end
 
         let(:response) do
@@ -172,6 +167,19 @@ RSpec.describe Langchain::LLM::OpenAI do
           expect(embedding_response.prompt_tokens).to eq(2)
           expect(embedding_response.total_tokens).to eq(2)
         end
+      end
+    end
+
+    context "when dimensions are explicitly provided" do
+      let(:parameters) do
+        {parameters: {input: "Hello World", model: "text-embedding-3-small", dimensions: 999}}
+      end
+
+      it "they are passed to the API" do
+        allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
+        subject.embed(text: "Hello World", model: "text-embedding-3-small", dimensions: 999)
+
+        expect(subject.client).to have_received(:embeddings).with(parameters)
       end
     end
   end
