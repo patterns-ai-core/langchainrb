@@ -6,9 +6,9 @@ module Langchain::Tool
     # A tool that wraps the Ruby File class.
     #
     # Usage:
-    #    file = Langchain::Tool::File.new
-    #    file.execute(input: { operation: :read, file_path: "file.rb" })
-    #    file.execute(input: { operation: :write, file_path: "file.rb", content: "file contents" })
+    #    file_tool = Langchain::Tool::File.new
+    #    file_tool.execute(input: { operation: :read, file_path: "file.rb" })
+    #    file_tool.execute(input: { operation: :write, file_path: "file.rb", content: "file contents" })
     #
     NAME = "file"
     ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
