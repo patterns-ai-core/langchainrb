@@ -9,6 +9,7 @@ module Langchain::Tool
   #
   # - {Langchain::Tool::Calculator}: calculate the result of a math expression
   # - {Langchain::Tool::Database}: executes SQL queries
+  # - {Langchain::Tool::FileSystem}: interacts with files
   # - {Langchain::Tool::GoogleSearch}: search on Google (via SerpAPI)
   # - {Langchain::Tool::RubyCodeInterpreter}: runs ruby code
   # - {Langchain::Tool::Weather}: gets current weather data
