@@ -15,7 +15,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 
 ## Use Cases
 * Retrieval Augmented Generation (RAG) and vector search
-* [Assistants](#assistants) (chat bots) & [AI Agents](https://github.com/andreibondarev/langchainrb/tree/main/lib/langchain/agent/agents.md)
+* [Assistants](#assistants) (chat bots)
 
 ## Table of Contents
 
@@ -402,6 +402,17 @@ client.ask(question: "...")
 
 ## Assistants
 Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries. Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
+
+### Available Tools 🛠️
+
+| Name         | Description                                        | ENV Requirements                                              | Gem Requirements                          |
+| ------------ | :------------------------------------------------: | :-----------------------------------------------------------: | :---------------------------------------: |
+| "calculator" | Useful for getting the result of a math expression |                                                               | `gem "eqn", "~> 1.6.5"`                   |
+| "database"   | Useful for querying a SQL database |                                                               | `gem "sequel", "~> 5.68.0"`                   |
+| "ruby_code_interpreter" | Interprets Ruby expressions             |                                                               | `gem "safe_ruby", "~> 1.0.4"`             |
+| "google_search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |
+| "weather"  | Calls Open Weather API to retrieve the current weather        |      `ENV["OPEN_WEATHER_API_KEY"]` (https://home.openweathermap.org/api_keys)               | `gem "open-weather-ruby-client", "~> 0.3.0"`    |
+| "wikipedia"  | Calls Wikipedia API to retrieve the summary        |                                                               | `gem "wikipedia-client", "~> 1.17.0"`     |
 
 ### Demos
 1. [Building an AI Assistant that operates a simulated E-commerce Store](https://www.loom.com/share/83aa4fd8dccb492aad4ca95da40ed0b2)

@@ -1,4 +1,5 @@
 ## [Unreleased]
+- Delete previously deprecated `Langchain::Agent::ReActAgent` and `Langchain::Agent::SQLQueryAgent` classes
 
 ## [0.10.3]
 - Bump dependencies

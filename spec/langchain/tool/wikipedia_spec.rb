@@ -13,7 +13,7 @@ RSpec.describe Langchain::Tool::Wikipedia do
     end
 
     it "returns a wikipedia summary" do
-      expect(described_class.execute(input: "Ruby")).to include("Ruby is an interpreted, high-level, general-purpose programming language.")
+      expect(subject.execute(input: "Ruby")).to include("Ruby is an interpreted, high-level, general-purpose programming language.")
     end
   end
 end

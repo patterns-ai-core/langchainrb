@@ -15,12 +15,6 @@ module Langchain::Tool
     NAME = "google_search"
     ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
-    description <<~DESC
-      A wrapper around SerpApi's Google Search API.
-
-      Useful for when you need to answer questions about current events. Always one of the first options when you need to find information on internet. Input should be a search query.
-    DESC
-
     attr_reader :api_key
 
     #
