@@ -46,6 +46,8 @@ module Langchain::LLM
       }
     }.freeze
 
+    attr_reader :client, :defaults
+
     SUPPORTED_COMPLETION_PROVIDERS = %i[anthropic cohere ai21].freeze
     SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[anthropic].freeze
     SUPPORTED_EMBEDDING_PROVIDERS = %i[amazon].freeze
@@ -108,11 +110,23 @@ module Langchain::LLM
       parse_response response
     end
 
+    # Generate a chat completion for a given prompt
+    # Currently only configured to work with the Anthropic provider and 
+    # the claude-3 model family
+    # @param messages [Array] The messages to generate a completion for
+    # @param system [String] The system prompt to provide instructions
+    # @param model [String] The model to use for completion defaults to @defaults[:chat_completion_model_name]
+    # @param max_tokens [Integer] The maximum number of tokens to generate
+    # @param stop_sequences [Array] The stop sequences to use for completion
+    # @param temperature [Float] The temperature to use for completion
+    # @param top_p [Float] The top p to use for completion
+    # @param top_k [Integer] The top k to use for completion
+    # @return [Langchain::LLM::AnthropicMessagesResponse] Response object
     def chat(
       messages: [],
       system: nil,
-      model: @defaults[:chat_completion_model_name],
-      max_tokens: @defaults[:max_tokens_to_sample],
+      model: defaults[:completion_model_name],
+      max_tokens: defaults[:max_tokens_to_sample],
       stop_sequences: nil,
       temperature: nil,
       top_p: nil,
@@ -124,22 +138,22 @@ module Langchain::LLM
 
       raise "Model #{@defaults[:completion_model_name]} does not support chat completions." unless @defaults[:completion_model_name].include?("claude-3")
 
-      parameters = compose_parameters_anthropic_messaging(params)
-
-      parameters[:system] = system if system
-      parameters[:messages] = messages
-
       inference_parameters = {
-        max_tokens: max_tokens
+        messages: messages,
+        max_tokens: max_tokens,
+        anthropic_version: @defaults[:anthropic_version]
       }
+      inference_parameters[:system] = system if system
       inference_parameters[:stop_sequences] = stop_sequences if stop_sequences
       inference_parameters[:temperature] = temperature if temperature
       inference_parameters[:top_p] = top_p if top_p
       inference_parameters[:top_k] = top_k if top_k
 
+      puts inference_parameters.to_json
+
       response = client.invoke_model({
         model_id: model,
-        body: parameters.to_json,
+        body: inference_parameters.to_json,
         content_type: "application/json",
         accept: "application/json"
       })
@@ -215,19 +229,6 @@ module Langchain::LLM
         temperature: default_params[:temperature],
         top_k: default_params[:top_k],
         top_p: default_params[:top_p],
-        stop_sequences: default_params[:stop_sequences],
-        anthropic_version: default_params[:anthropic_version]
-      }
-    end
-
-    def compose_parameters_anthropic_messaging(params)
-      default_params = @defaults.merge(params)
-
-      {
-        max_tokens: default_params[:max_tokens_to_sample],
-        temperature: default_params[:temperature],
-        top_p: default_params[:top_p],
-        top_k: default_params[:top_k],
         stop_sequences: default_params[:stop_sequences],
         anthropic_version: default_params[:anthropic_version]
       }

@@ -19,7 +19,7 @@ module Langchain::LLM
     end
 
     def completions
-      [raw_response.dig("content")]
+      raw_response.dig("completions")
     end
 
     def stop_reason
