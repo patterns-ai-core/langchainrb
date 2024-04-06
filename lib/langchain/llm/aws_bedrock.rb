@@ -134,9 +134,7 @@ module Langchain::LLM
     )
       raise ArgumentError.new("messages argument is required") if messages.empty?
 
-      raise "Completion provider #{completion_provider} is not supported." unless SUPPORTED_CHAT_COMPLETION_PROVIDERS.include?(completion_provider)
-
-      raise "Model #{@defaults[:completion_model_name]} does not support chat completions." unless @defaults[:completion_model_name].include?("claude-3")
+      raise "Model #{model} does not support chat completions." unless model.include?("claude-3")
 
       inference_parameters = {
         messages: messages,
@@ -148,8 +146,6 @@ module Langchain::LLM
       inference_parameters[:temperature] = temperature if temperature
       inference_parameters[:top_p] = top_p if top_p
       inference_parameters[:top_k] = top_k if top_k
-
-      puts inference_parameters.to_json
 
       response = client.invoke_model({
         model_id: model,
