@@ -11,13 +11,13 @@ module Langchain::LLM
   #
   class AwsBedrock < Base
     DEFAULTS = {
-      completion_model_name: "anthropic.claude-3-sonnet-20240229-v1:0",
+      completion_model_name: "anthropic.claude-v2",
       embedding_model_name: "amazon.titan-embed-text-v1",
       max_tokens_to_sample: 300,
       temperature: 1,
       top_k: 250,
       top_p: 0.999,
-      stop_sequences: [],
+      stop_sequences: ["\n\nHuman:"],
       anthropic_version: "bedrock-2023-05-31",
       return_likelihoods: "NONE",
       count_penalty: {
@@ -92,6 +92,8 @@ module Langchain::LLM
     def complete(prompt:, **params)
       raise "Completion provider #{completion_provider} is not supported." unless SUPPORTED_COMPLETION_PROVIDERS.include?(completion_provider)
 
+      raise "Model #{@defaults[:completion_model_name]} does not support chat completions." if @defaults[:completion_model_name].include?("claude-3")
+
       parameters = compose_parameters params
 
       parameters[:prompt] = wrap_prompt prompt
@@ -106,18 +108,37 @@ module Langchain::LLM
       parse_response response
     end
 
-    def chat(messages: [], system: nil, **params)
+    def chat(
+      messages: [],
+      system: nil,
+      model: @defaults[:chat_completion_model_name],
+      max_tokens: @defaults[:max_tokens_to_sample],
+      stop_sequences: nil,
+      temperature: nil,
+      top_p: nil,
+      top_k: nil
+    )
       raise ArgumentError.new("messages argument is required") if messages.empty?
 
       raise "Completion provider #{completion_provider} is not supported." unless SUPPORTED_CHAT_COMPLETION_PROVIDERS.include?(completion_provider)
+
+      raise "Model #{@defaults[:completion_model_name]} does not support chat completions." unless @defaults[:completion_model_name].include?("claude-3")
 
       parameters = compose_parameters_anthropic_messaging(params)
 
       parameters[:system] = system if system
       parameters[:messages] = messages
 
+      inference_parameters = {
+        max_tokens: max_tokens
+      }
+      inference_parameters[:stop_sequences] = stop_sequences if stop_sequences
+      inference_parameters[:temperature] = temperature if temperature
+      inference_parameters[:top_p] = top_p if top_p
+      inference_parameters[:top_k] = top_k if top_k
+
       response = client.invoke_model({
-        model_id: @defaults[:completion_model_name],
+        model_id: model,
         body: parameters.to_json,
         content_type: "application/json",
         accept: "application/json"
@@ -199,14 +220,14 @@ module Langchain::LLM
       }
     end
 
-    def compose_parameters_antrhopic_messaging(params)
+    def compose_parameters_anthropic_messaging(params)
       default_params = @defaults.merge(params)
 
       {
-        max_tokens: default_params[:max_tokens],
+        max_tokens: default_params[:max_tokens_to_sample],
         temperature: default_params[:temperature],
-        top_k: default_params[:top_k],
         top_p: default_params[:top_p],
+        top_k: default_params[:top_k],
         stop_sequences: default_params[:stop_sequences],
         anthropic_version: default_params[:anthropic_version]
       }
