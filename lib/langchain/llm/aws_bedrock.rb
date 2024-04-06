@@ -111,7 +111,7 @@ module Langchain::LLM
     end
 
     # Generate a chat completion for a given prompt
-    # Currently only configured to work with the Anthropic provider and 
+    # Currently only configured to work with the Anthropic provider and
     # the claude-3 model family
     # @param messages [Array] The messages to generate a completion for
     # @param system [String] The system prompt to provide instructions

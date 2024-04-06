@@ -40,9 +40,9 @@ RSpec.describe Langchain::LLM::AwsBedrock do
           })
           .and_return(response_object)
       end
-    
+
       it "returns a completion" do
-        expect(subject.chat(messages: [{ role: "user", content: "What is the capital of France?" }], model: "anthropic.claude-3-sonnet-20240229-v1:0").chat_completion).to eq("The capital of France is Paris.")
+        expect(subject.chat(messages: [{role: "user", content: "What is the capital of France?"}], model: "anthropic.claude-3-sonnet-20240229-v1:0").chat_completion).to eq("The capital of France is Paris.")
       end
     end
   end
