@@ -287,6 +287,9 @@ GEM
       dry-validation (~> 1.10.0)
       httparty (~> 0.21.0)
     polyglot (0.3.5)
+    power_point_pptx (0.1.0)
+      nokogiri (~> 1.13, >= 1.13.0)
+      rubyzip (~> 2.0)
     pragmatic_segmenter (0.3.23)
       unicode
     pry (0.14.2)
@@ -494,6 +497,7 @@ DEPENDENCIES
   pg (~> 1.5)
   pgvector (~> 0.2.1)
   pinecone (~> 0.1.6)
+  power_point_pptx (~> 0.1.0)
   pry-byebug (~> 3.10.0)
   qdrant-ruby (~> 0.9.4)
   rake (~> 13.0)
