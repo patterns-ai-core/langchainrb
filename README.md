@@ -372,7 +372,7 @@ my_docx = Langchain.root.join("path/to/my.docx")
 
 client.add_data(paths: [my_pdf, my_text, my_docx])
 ```
-Supported file formats: docx, html, pdf, text, json, jsonl, csv, xlsx, eml.
+Supported file formats: docx, html, pdf, text, json, jsonl, csv, xlsx, eml, pptx.
 
 Retrieve similar documents based on the query string passed in:
 ```ruby
