@@ -71,13 +71,14 @@ module Langchain::Vectorsearch
       end
     end
 
+    # Deletes a list of texts in the index
+    # @param ids The ids of texts to delete
+    # @return [Hash] The response from the server
     def remove_texts(ids:)
-      ids.map do |id|
-        client.objects.delete(
-          class_name: index_name,
-          id: id
-        )
-      end
+      client.objects.batch_delete(
+        class_name: index_name,
+        where: "{ path: [\"__id\"], operator: ContainsAny, valueString: \"#{ids}\" }"
+      )
     end
 
     # Create default schema
