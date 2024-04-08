@@ -1,0 +1,20 @@
+{
+  "dryRun": false,
+  "match": {
+    "class": "Products",
+    "where": {
+      "operands": null,
+      "operator": "ContainsAny",
+      "path": ["__id"],
+      "valueTextArray": ["999"]
+    }
+  },
+  "output": "minimal",
+  "results": {
+    "failed": 0,
+    "limit": 100000,
+    "matches": 1,
+    "objects": null,
+    "successful": 1
+  }
+}

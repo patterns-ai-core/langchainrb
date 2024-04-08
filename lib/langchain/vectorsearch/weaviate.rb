@@ -9,7 +9,7 @@ module Langchain::Vectorsearch
     #     gem "weaviate-ruby", "~> 0.8.9"
     #
     # Usage:
-    #     weaviate = Langchain::Vectorsearch::Weaviate.new(url:, api_key:, index_name:, llm:)
+    #     weaviate = Langchain::Vectorsearch::Weaviate.new(url: ENV["WEAVIATE_URL"], api_key: ENV["WEAVIATE_API_KEY"], index_name: "Docs", llm: llm)
     #
 
     # Initialize the Weaviate adapter
@@ -69,6 +69,22 @@ module Langchain::Vectorsearch
           vector: llm.embed(text: text).embedding
         )
       end
+    end
+
+    # Deletes a list of texts in the index
+    # @param ids [Array] The ids of texts to delete
+    # @return [Hash] The response from the server
+    def remove_texts(ids:)
+      raise ArgumentError, "ids must be an array" unless ids.is_a?(Array)
+
+      client.objects.batch_delete(
+        class_name: index_name,
+        where: {
+          path: ["__id"],
+          operator: "ContainsAny",
+          valueTextArray: ids
+        }
+      )
     end
 
     # Create default schema
