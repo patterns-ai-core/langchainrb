@@ -94,7 +94,7 @@ module Langchain::LLM
     def complete(prompt:, **params)
       raise "Completion provider #{completion_provider} is not supported." unless SUPPORTED_COMPLETION_PROVIDERS.include?(completion_provider)
 
-      raise "Model #{@defaults[:completion_model_name]} does not support chat completions." if @defaults[:completion_model_name].include?("claude-3")
+      raise "Model #{@defaults[:completion_model_name]} only supports #chat." if @defaults[:completion_model_name].include?("claude-3")
 
       parameters = compose_parameters params
 
@@ -134,7 +134,7 @@ module Langchain::LLM
     )
       raise ArgumentError.new("messages argument is required") if messages.empty?
 
-      raise "Model #{model} does not support chat completions." unless model.include?("claude-3")
+      raise "Model #{model} does not support chat completions." unless Langchain::LLM::AwsBedrock::SUPPORTED_CHAT_COMPLETION_PROVIDERS.include?(completion_provider)
 
       inference_parameters = {
         messages: messages,
