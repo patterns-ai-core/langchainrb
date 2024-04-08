@@ -121,7 +121,6 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
   end
 
   describe "#remove_texts" do
-
     let(:record) {
       [{"_additional" => {"id" => "372ba500-01af-4448-aa03-21f3dd25a456"}}]
     }
