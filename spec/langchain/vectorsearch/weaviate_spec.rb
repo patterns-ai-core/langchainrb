@@ -120,6 +120,22 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     end
   end
 
+  describe "#remove_texts" do
+
+    let(:record) {
+      [{"_additional" => {"id" => "372ba500-01af-4448-aa03-21f3dd25a456"}}]
+    }
+
+    before do
+      allow(subject.client.query).to receive(:get).and_return(record)
+      allow(subject.client.objects).to receive(:delete).and_return(true)
+    end
+
+    it "removes texts" do
+      expect(subject.remove_texts(ids: [1])).to eq([true])
+    end
+  end
+
   describe "#similarity_search" do
     let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/search.json")) }
 

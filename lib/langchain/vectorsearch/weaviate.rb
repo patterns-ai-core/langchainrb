@@ -71,6 +71,15 @@ module Langchain::Vectorsearch
       end
     end
 
+    def remove_texts(ids:)
+      ids.map do |id|
+        client.objects.delete(
+          class_name: index_name,
+          id: id
+        )
+      end
+    end
+
     # Create default schema
     # @return [Hash] The response from the server
     def create_default_schema
