@@ -7,7 +7,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     described_class.new(
       url: "http://localhost:8080",
       api_key: "123",
-      index_name: "products",
+      index_name: "Products",
       llm: Langchain::LLM::OpenAI.new(api_key: "123")
     )
   }
@@ -55,7 +55,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
       ).to receive(:batch_create)
         .with(
           objects: [{
-            class: "products",
+            class: "Products",
             properties: {__id: id.to_s, content: "Hello World"},
             vector: [-0.0018150936, 0.0017554426, -0.022715086]
           }]
@@ -120,6 +120,23 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
     end
   end
 
+  describe "#remove_texts" do
+    let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/batch_delete.json")) }
+
+    let(:record) {
+      [{"_additional" => {"id" => "372ba500-01af-4448-aa03-21f3dd25a456"}}]
+    }
+
+    before do
+      allow(subject.client.query).to receive(:get).and_return(record)
+      allow(subject.client.objects).to receive(:batch_delete).and_return(fixture)
+    end
+
+    it "removes texts" do
+      expect(subject.remove_texts(ids: [1]).dig("results", "successful")).to eq(1)
+    end
+  end
+
   describe "#similarity_search" do
     let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/weaviate/search.json")) }
 
@@ -128,7 +145,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
         subject.client.query
       ).to receive(:get)
         .with(
-          class_name: "products",
+          class_name: "Products",
           near_vector: "{ vector: [-0.0018150936, 0.0017554426, -0.022715086] }",
           limit: "4",
           fields: "__id content _additional { id }"
@@ -158,7 +175,7 @@ RSpec.describe Langchain::Vectorsearch::Weaviate do
         subject.client.query
       ).to receive(:get)
         .with(
-          class_name: "products",
+          class_name: "Products",
           near_vector: "{ vector: [0.1, 0.2, 0.3] }",
           limit: "4",
           fields: "__id content _additional { id }"
