@@ -184,16 +184,17 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     context "when dimensions are explicitly provided to the initialize default options" do
-      let(:subject) { described_class.new(api_key: "123", default_options: { dimensions: dimensions })}
-      let(:dimensions) { 999 }
-      let(:model) { "text-embedding-3-small" }
+      let(:subject) {described_class.new(api_key: "123", default_options: {dimensions: dimensions})}
+      let(:dimensions) {999}
+      let(:model) {"text-embedding-3-small"}
+      let(:text) {"Hello World"}
       let(:parameters) do
-        {parameters: {input: "Hello World", model: model, dimensions: dimensions}}
+        {parameters: {input: text, model: model, dimensions: dimensions}}
       end
 
       it "they are passed to the API" do
         allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
-        subject.embed(text: "Hello World", model: "text-embedding-3-small")
+        subject.embed(text: text, model: model)
 
         expect(subject.client).to have_received(:embeddings).with(parameters)
       end
