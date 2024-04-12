@@ -1,3 +1,4 @@
+require "dotenv/load"
 require "langchain"
 require "openai"
 require "reline"
