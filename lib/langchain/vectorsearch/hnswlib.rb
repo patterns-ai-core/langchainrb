@@ -89,7 +89,7 @@ module Langchain::Vectorsearch
     # TODO: Add the ask() method
     # def ask
     # end
-    
+
     private
 
     #
