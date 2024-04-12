@@ -1,6 +1,9 @@
 ## [Unreleased]
 
 ## [0.11.0]
+- Langchain::Tool::Vectorsearch that wraps Langchain::Vectorsearch::* classes. This allows the Assistant to call the tool and inject data from vector DBs.
+
+## [0.11.0]
 - Delete previously deprecated `Langchain::Agent::ReActAgent` and `Langchain::Agent::SQLQueryAgent` classes
 - New `Langchain::Agent::FileSystem` tool that can read files, write to files, and list the contents of a directory
 
