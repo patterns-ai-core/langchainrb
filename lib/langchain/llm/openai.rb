@@ -54,7 +54,7 @@ module Langchain::LLM
       model: defaults[:embeddings_model_name],
       encoding_format: nil,
       user: nil,
-      dimensions: nil
+      dimensions: @defaults[:dimensions]
     )
       raise ArgumentError.new("text argument is required") if text.empty?
       raise ArgumentError.new("model argument is required") if model.empty?
@@ -185,7 +185,7 @@ module Langchain::LLM
     end
 
     def default_dimension
-      @defaults[:dimension] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name])
+      @defaults[:dimensions] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name])
     end
 
     private
