@@ -378,7 +378,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:subject) do
         described_class.new(api_key: "123", default_options: {
           embeddings_model_name: "text-embedding-3-small",
-          dimension: 512
+          dimensions: 512
         })
       end
 
