@@ -86,6 +86,10 @@ module Langchain::Vectorsearch
       client.search_knn(embedding, k)
     end
 
+    # TODO: Add the ask() method
+    # def ask
+    # end
+
     private
 
     #
