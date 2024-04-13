@@ -140,4 +140,8 @@ RSpec.describe Langchain::Assistant do
       end
     end
   end
+
+  xdescribe "#clear_thread!"
+
+  xdescribe "#instructions="
 end

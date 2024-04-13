@@ -1,6 +1,9 @@
 ## [Unreleased]
 
-## [0.11.0]
+## [0.11.2]
+- New `Langchain::Assistant#clear_thread!` and `Langchain::Assistant#instructions=` methods
+
+## [0.11.1]
 - Langchain::Tool::Vectorsearch that wraps Langchain::Vectorsearch::* classes. This allows the Assistant to call the tool and inject data from vector DBs.
 
 ## [0.11.0]

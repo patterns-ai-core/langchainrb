@@ -125,12 +125,36 @@ module Langchain
       add_message(role: "tool", content: output, tool_call_id: tool_call_id)
     end
 
+    # Delete all messages in the thread
+    #
+    # @return [Array] Empty messages array
+    def clear_thread!
+      thread.messages = []
+    end
+
+    # Set new instructions
+    #
+    # @param [String] New instructions that will be set as a system message
+    # @return [Array<Langchain::Message>] The messages in the thread
+    def instructions=(new_instructions)
+      @instructions = new_instructions
+
+      # Find message with role: "system" in thread.messages and delete it from the thread.messages array
+      thread.messages.delete_if(&:system?)
+
+      # Set new instructions by adding new system message
+      message = build_message(role: "system", content: new_instructions)
+      thread.messages.unshift(message)
+    end
+
     private
 
     # Call to the LLM#chat() method
     #
     # @return [Langchain::LLM::BaseResponse] The LLM response object
     def chat_with_llm
+      Langchain.logger.info("Sending a call to #{llm.class}", for: self.class)
+
       params = {messages: thread.openai_messages}
 
       if tools.any?
