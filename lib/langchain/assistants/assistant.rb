@@ -129,6 +129,7 @@ module Langchain
     #
     # @return [Array] Empty messages array
     def clear_thread!
+      # TODO: If this a bug? Should we keep the "system" message?
       thread.messages = []
     end
 
