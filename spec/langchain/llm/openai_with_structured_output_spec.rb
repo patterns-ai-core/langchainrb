@@ -29,7 +29,10 @@ RSpec.describe Langchain::LLM::OpenAI, "with structured output" do
       tools: [EasyTalk::Tools::FunctionBuilder.new(user_details)]
     )
 
-    puts response
-    binding.pry
+    result = response.by_function_name(user_details.function_name)
+    parsed_result = JSON.parse(result)
+
+    expect(user_details.validate_json(parsed_result)).to eq(true)
+    expect(parsed_result).to eq("name" => "James", "age" => 25)
   end
 end
