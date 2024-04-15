@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
   spec.add_dependency "to_bool", "~> 2.0.0"
   spec.add_dependency "matrix"
-  spec.add_dependency "easy_talk", "~> 0.1.4"
+  spec.add_dependency "easy_talk", "~> 0.1.5"
 
   # development dependencies
   spec.add_development_dependency "dotenv-rails", "~> 2.7.6"
