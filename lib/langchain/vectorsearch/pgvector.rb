@@ -16,7 +16,8 @@ module Langchain::Vectorsearch
     # The operators supported by the PostgreSQL vector search adapter
     OPERATORS = {
       "cosine_distance" => "cosine",
-      "euclidean_distance" => "euclidean"
+      "euclidean_distance" => "euclidean",
+      "inner_product_distance" => "inner_product"
     }
     DEFAULT_OPERATOR = "cosine_distance"
 
