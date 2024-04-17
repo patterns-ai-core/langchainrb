@@ -1,4 +1,7 @@
 ## [Unreleased]
+- New `Langchain::Processors::Pptx` to parse .pptx files
+- New `Langchain::LLM::Anthropic#chat()` support
+- Misc fixes
 
 ## [0.11.3]
 - New `Langchain::Processors::Pptx` to parse .pptx files
