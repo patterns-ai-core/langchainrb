@@ -1,7 +1,15 @@
+GIT
+  remote: https://github.com/svs/anthropic.git
+  revision: dd382a83d3f66e6365504d0a2bf1fd8c72d6027c
+  specs:
+    anthropic (0.1.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
+
 PATH
   remote: .
   specs:
-    langchainrb (0.10.3)
+    langchainrb (0.11.3)
       activesupport (>= 7.0.8)
       baran (~> 0.1.9)
       colorize (~> 1.1.0)
@@ -46,9 +54,6 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     afm (0.2.2)
     ai21 (0.2.1)
-    anthropic (0.1.0)
-      faraday (>= 1)
-      faraday-multipart (>= 1)
     ast (2.4.2)
     aws-eventstream (1.3.0)
     aws-partitions (1.890.0)
@@ -294,6 +299,9 @@ GEM
       dry-validation (~> 1.10.0)
       httparty (~> 0.21.0)
     polyglot (0.3.5)
+    power_point_pptx (0.1.0)
+      nokogiri (~> 1.13, >= 1.13.0)
+      rubyzip (~> 2.0)
     pragmatic_segmenter (0.3.23)
       unicode
     pry (0.14.2)
@@ -424,14 +432,14 @@ GEM
       standard
     stringio (3.1.0)
     thor (1.3.0)
-    tiktoken_ruby (0.0.7-aarch64-linux)
-    tiktoken_ruby (0.0.7-arm-linux)
-    tiktoken_ruby (0.0.7-arm64-darwin)
-    tiktoken_ruby (0.0.7-x86_64-darwin)
-    tiktoken_ruby (0.0.7-x86_64-linux)
-    tiktoken_ruby (0.0.7-x86_64-linux-musl)
     tiktoken_ruby (0.0.8)
       rb_sys (>= 0.9.86)
+    tiktoken_ruby (0.0.8-aarch64-linux)
+    tiktoken_ruby (0.0.8-arm-linux)
+    tiktoken_ruby (0.0.8-arm64-darwin)
+    tiktoken_ruby (0.0.8-x86_64-darwin)
+    tiktoken_ruby (0.0.8-x86_64-linux)
+    tiktoken_ruby (0.0.8-x86_64-linux-musl)
     timeout (0.4.1)
     to_bool (2.0.0)
     trailblazer-option (0.1.2)
@@ -475,7 +483,7 @@ PLATFORMS
 
 DEPENDENCIES
   ai21 (~> 0.2.1)
-  anthropic (~> 0.1.0)
+  anthropic!
   aws-sdk-bedrockruntime (~> 1.1)
   chroma-db (~> 0.6.0)
   cohere-ruby (~> 0.9.8)
@@ -502,6 +510,7 @@ DEPENDENCIES
   pg (~> 1.5)
   pgvector (~> 0.2.1)
   pinecone (~> 0.1.6)
+  power_point_pptx (~> 0.1.0)
   pry-byebug (~> 3.10.0)
   qdrant-ruby (~> 0.9.4)
   rake (~> 13.0)

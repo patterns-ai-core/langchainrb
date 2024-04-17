@@ -54,7 +54,7 @@ module Langchain::LLM
       model: defaults[:embeddings_model_name],
       encoding_format: nil,
       user: nil,
-      dimensions: nil
+      dimensions: @defaults[:dimensions]
     )
       raise ArgumentError.new("text argument is required") if text.empty?
       raise ArgumentError.new("model argument is required") if model.empty?
@@ -100,7 +100,7 @@ module Langchain::LLM
     end
     # rubocop:enable Style/ArgumentsForwarding
 
-    # Generate a chat completion for a given prompt or messages.
+    # Generate a chat completion for given messages.
     #
     # @param messages [Array<Hash>] List of messages comprising the conversation so far
     # @param model [String] ID of the model to use
@@ -185,7 +185,7 @@ module Langchain::LLM
     end
 
     def default_dimension
-      @defaults[:dimension] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name])
+      @defaults[:dimensions] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name])
     end
 
     private

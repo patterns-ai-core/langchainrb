@@ -1,0 +1,18 @@
+{
+  "id": "msg_01HkuUDaEiLoLfp89nMjcvdh",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-3-sonnet-20240229",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 13,
+    "output_tokens": 230
+  },
+  "content": [
+    {
+      "type": "text",
+      "text": "The sky doesn't have a defined height or upper limit."
+    }
+  ],
+  "stop_reason": "end_turn"
+}

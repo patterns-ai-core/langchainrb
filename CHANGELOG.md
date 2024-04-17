@@ -1,4 +1,22 @@
 ## [Unreleased]
+- New `Langchain::Processors::Pptx` to parse .pptx files
+- New `Langchain::LLM::Anthropic#chat()` support
+- Misc fixes
+
+## [0.11.3]
+- New `Langchain::Processors::Pptx` to parse .pptx files
+- New `Langchain::LLM::Anthropic#chat()` support
+- Misc fixes
+
+## [0.11.2]
+- New `Langchain::Assistant#clear_thread!` and `Langchain::Assistant#instructions=` methods
+
+## [0.11.1]
+- Langchain::Tool::Vectorsearch that wraps Langchain::Vectorsearch::* classes. This allows the Assistant to call the tool and inject data from vector DBs.
+
+## [0.11.0]
+- Delete previously deprecated `Langchain::Agent::ReActAgent` and `Langchain::Agent::SQLQueryAgent` classes
+- New `Langchain::Agent::FileSystem` tool that can read files, write to files, and list the contents of a directory
 
 ## [0.10.3]
 - Bump dependencies
