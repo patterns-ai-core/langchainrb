@@ -29,7 +29,7 @@ RSpec.describe Langchain::LLM::Anthropic do
   end
 
   describe "#chat" do
-    let(:messages) { [{ role: "user", content: "How high is the sky?" }] }
+    let(:messages) { [{role: "user", content: "How high is the sky?"}] }
     let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat.json") }
     let(:response) { JSON.parse(fixture) }
 
