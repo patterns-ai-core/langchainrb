@@ -59,7 +59,7 @@ Langchain.rb wraps supported LLMs in a unified interface allowing you to easily 
 | --------                                                                                        |:------------------:| :-------:          | :-----------------: | :-------:          | :----------------- |
 | [OpenAI](https://openai.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ❌                 | Including Azure OpenAI |
 | [AI21](https://ai21.com/?utm_source=langchainrb&utm_medium=github)                              | ❌                 | ✅                 | ❌                  | ✅                 |                    |
-| [Anthropic](https://anthropic.com/?utm_source=langchainrb&utm_medium=github)                    | ❌                 | ✅                 | ❌                  | ❌                 |                    |
+| [Anthropic](https://anthropic.com/?utm_source=langchainrb&utm_medium=github)                    | ❌                 | ✅                 | ✅                  | ❌                 |                    |
 | [AWS Bedrock](https://aws.amazon.com/bedrock?utm_source=langchainrb&utm_medium=github)          | ✅                 | ✅                 | ❌                  | ❌                 | Provides AWS, Cohere, AI21, Antropic and Stability AI models |
 | [Cohere](https://cohere.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [GooglePalm](https://ai.google/discover/palm2?utm_source=langchainrb&utm_medium=github)         | ✅                 | ✅                 | ✅                  | ✅                 |                    |
