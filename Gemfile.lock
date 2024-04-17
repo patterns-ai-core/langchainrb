@@ -9,7 +9,7 @@ GIT
 PATH
   remote: .
   specs:
-    langchainrb (0.11.2)
+    langchainrb (0.11.3)
       activesupport (>= 7.0.8)
       baran (~> 0.1.9)
       colorize (~> 1.1.0)

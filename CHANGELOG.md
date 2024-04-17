@@ -3,6 +3,11 @@
 - New `Langchain::LLM::Anthropic#chat()` support
 - Misc fixes
 
+## [0.11.3]
+- New `Langchain::Processors::Pptx` to parse .pptx files
+- New `Langchain::LLM::Anthropic#chat()` support
+- Misc fixes
+
 ## [0.11.2]
 - New `Langchain::Assistant#clear_thread!` and `Langchain::Assistant#instructions=` methods
 
