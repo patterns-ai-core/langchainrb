@@ -100,7 +100,7 @@ module Langchain::LLM
     end
     # rubocop:enable Style/ArgumentsForwarding
 
-    # Generate a chat completion for a given prompt or messages.
+    # Generate a chat completion for given messages.
     #
     # @param messages [Array<Hash>] List of messages comprising the conversation so far
     # @param model [String] ID of the model to use
