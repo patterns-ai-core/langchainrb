@@ -154,7 +154,7 @@ module Langchain::LLM
         accept: "application/json"
       })
 
-      AnthropicMessagesResponse.new(JSON.parse(response.body.string))
+      parse_response response
     end
 
     private
