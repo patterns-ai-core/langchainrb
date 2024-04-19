@@ -44,5 +44,9 @@ module Langchain::LLM
     def completion_tokens
       raw_response.dig("eval_count")
     end
+
+    def total_tokens
+      prompt_tokens + completion_tokens
+    end
   end
 end

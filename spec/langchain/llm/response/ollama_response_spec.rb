@@ -23,5 +23,9 @@ RSpec.describe Langchain::LLM::OllamaResponse do
     it "created_at returns correct value" do
       expect(subject.created_at).to eq(Time.parse(raw_chat_completions_response.dig("created_at")))
     end
+
+    it "total_tokens return correct value" do
+      expect(subject.total_tokens).to eq(188)
+    end
   end
 end
