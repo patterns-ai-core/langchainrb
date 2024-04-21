@@ -46,7 +46,10 @@ module Langchain::LLM
       }
     }.freeze
 
+    attr_reader :client, :defaults
+
     SUPPORTED_COMPLETION_PROVIDERS = %i[anthropic cohere ai21].freeze
+    SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[anthropic].freeze
     SUPPORTED_EMBEDDING_PROVIDERS = %i[amazon].freeze
 
     def initialize(completion_model: DEFAULTS[:completion_model_name], embedding_model: DEFAULTS[:embedding_model_name], aws_client_options: {}, default_options: {})
@@ -91,6 +94,8 @@ module Langchain::LLM
     def complete(prompt:, **params)
       raise "Completion provider #{completion_provider} is not supported." unless SUPPORTED_COMPLETION_PROVIDERS.include?(completion_provider)
 
+      raise "Model #{@defaults[:completion_model_name]} only supports #chat." if @defaults[:completion_model_name].include?("claude-3")
+
       parameters = compose_parameters params
 
       parameters[:prompt] = wrap_prompt prompt
@@ -98,6 +103,53 @@ module Langchain::LLM
       response = client.invoke_model({
         model_id: @defaults[:completion_model_name],
         body: parameters.to_json,
+        content_type: "application/json",
+        accept: "application/json"
+      })
+
+      parse_response response
+    end
+
+    # Generate a chat completion for a given prompt
+    # Currently only configured to work with the Anthropic provider and
+    # the claude-3 model family
+    # @param messages [Array] The messages to generate a completion for
+    # @param system [String] The system prompt to provide instructions
+    # @param model [String] The model to use for completion defaults to @defaults[:chat_completion_model_name]
+    # @param max_tokens [Integer] The maximum number of tokens to generate
+    # @param stop_sequences [Array] The stop sequences to use for completion
+    # @param temperature [Float] The temperature to use for completion
+    # @param top_p [Float] The top p to use for completion
+    # @param top_k [Integer] The top k to use for completion
+    # @return [Langchain::LLM::AnthropicMessagesResponse] Response object
+    def chat(
+      messages: [],
+      system: nil,
+      model: defaults[:completion_model_name],
+      max_tokens: defaults[:max_tokens_to_sample],
+      stop_sequences: nil,
+      temperature: nil,
+      top_p: nil,
+      top_k: nil
+    )
+      raise ArgumentError.new("messages argument is required") if messages.empty?
+
+      raise "Model #{model} does not support chat completions." unless Langchain::LLM::AwsBedrock::SUPPORTED_CHAT_COMPLETION_PROVIDERS.include?(completion_provider)
+
+      inference_parameters = {
+        messages: messages,
+        max_tokens: max_tokens,
+        anthropic_version: @defaults[:anthropic_version]
+      }
+      inference_parameters[:system] = system if system
+      inference_parameters[:stop_sequences] = stop_sequences if stop_sequences
+      inference_parameters[:temperature] = temperature if temperature
+      inference_parameters[:top_p] = top_p if top_p
+      inference_parameters[:top_k] = top_k if top_k
+
+      response = client.invoke_model({
+        model_id: model,
+        body: inference_parameters.to_json,
         content_type: "application/json",
         accept: "application/json"
       })

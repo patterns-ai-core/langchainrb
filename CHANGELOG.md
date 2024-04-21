@@ -1,9 +1,10 @@
 ## [Unreleased]
-- New `Langchain::Processors::Pptx` to parse .pptx files
-- New `Langchain::LLM::Anthropic#chat()` support
-- Misc fixes
 
-## [0.11.3]
+## [0.11.4] - 2024-04-19
+- New `Langchain::LLM::AWSBedrock#chat()` to wrap Bedrock Claude requests
+- New `Langchain::LLM::OllamaResponse#total_tokens()` method
+
+## [0.11.3] - 2024-04-16
 - New `Langchain::Processors::Pptx` to parse .pptx files
 - New `Langchain::LLM::Anthropic#chat()` support
 - Misc fixes
