@@ -21,6 +21,7 @@ loader.inflector.inflect(
   "openai" => "OpenAI",
   "openai_validator" => "OpenAIValidator",
   "openai_response" => "OpenAIResponse",
+  "openai_message" => "OpenAIMessage",
   "pdf" => "PDF"
 )
 loader.collapse("#{__dir__}/langchain/llm/response")

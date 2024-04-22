@@ -2,7 +2,7 @@
   {
     "type": "function",
     "function": {
-      "name": "weather_execute",
+      "name": "weather__execute",
       "description": "Returns current weather for a city",
       "parameters": {
         "type": "object",

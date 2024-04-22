@@ -2,7 +2,7 @@
   {
     "type": "function",
     "function": {
-      "name": "file_system-list_directory",
+      "name": "file_system__list_directory",
       "description": "File System Tool: Lists out the content of a specified directory",
       "parameters": {
         "type": "object",
@@ -19,7 +19,7 @@
   {
     "type": "function",
     "function": {
-      "name": "file_system-read_file",
+      "name": "file_system__read_file",
       "description": "File System Tool: Reads the contents of a file",
       "parameters": {
         "type": "object",
@@ -36,7 +36,7 @@
   {
     "type": "function",
     "function": {
-      "name": "file_system-write_to_file",
+      "name": "file_system__write_to_file",
       "description": "File System Tool: Write content to a file",
       "parameters": {
         "type": "object",

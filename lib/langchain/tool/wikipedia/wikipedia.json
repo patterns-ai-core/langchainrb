@@ -2,7 +2,7 @@
   {
     "type": "function",
     "function": {
-      "name": "wikipedia-execute",
+      "name": "wikipedia__execute",
       "description": "Executes Wikipedia API search and returns the answer",
       "parameters": {
         "type": "object",

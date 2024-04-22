@@ -2,10 +2,7 @@
 
 module Langchain::LLM
   class GoogleGeminiResponse < BaseResponse
-    attr_reader :prompt_tokens
-
-    def initialize(raw_response, model: nil, prompt_tokens: nil)
-      @prompt_tokens = prompt_tokens
+    def initialize(raw_response, model: nil)
       super(raw_response, model: model)
     end
 

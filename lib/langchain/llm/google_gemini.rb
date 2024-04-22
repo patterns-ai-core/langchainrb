@@ -2,11 +2,10 @@
 
 module Langchain::LLM
   # Usage:
-  #     google_gemini = Langchain::LLM::GoogleGemini.new(project_id: ENV['GOOGLE_VERTEX_AI_PROJECT_ID'])
+  #     llm = Langchain::LLM::GoogleGemini.new(project_id: ENV['GOOGLE_VERTEX_AI_PROJECT_ID'])
   class GoogleGemini < Base
-
     DEFAULTS = {
-      chat_completion_model_name: "gemini-pro",
+      chat_completion_model_name: "gemini-pro"
     }
 
     attr_reader :defaults
@@ -18,11 +17,11 @@ module Langchain::LLM
 
       @client = Gemini.new(
         credentials: {
-          service: 'vertex-ai-api',
-          region: 'us-east4',
+          service: "vertex-ai-api",
+          region: "us-east4",
           project_id: project_id
         },
-        options: { model: defaults[:chat_completion_model_name], server_sent_events: true }
+        options: {model: defaults[:chat_completion_model_name], server_sent_events: true}
       )
     end
 
@@ -32,7 +31,7 @@ module Langchain::LLM
       tool_choice: nil # Do we need this param?
     )
       params = {contents: messages}
-      params.merge!(tools: { function_declarations: tools }) if tools.any?
+      params[:tools] = {function_declarations: tools} if tools.any?
 
       response = client.generate_content(params)
 
