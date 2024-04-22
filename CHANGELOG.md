@@ -1,4 +1,5 @@
 ## [Unreleased]
+- [BREAKING] Rename `dimension` parameter to `dimensions` everywhere
 
 ## [0.11.4] - 2024-04-19
 - New `Langchain::LLM::AWSBedrock#chat()` to wrap Bedrock Claude requests
