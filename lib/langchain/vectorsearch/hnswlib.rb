@@ -26,7 +26,7 @@ module Langchain::Vectorsearch
 
       super(llm: llm)
 
-      @client = ::Hnswlib::HierarchicalNSW.new(space: DEFAULT_METRIC, dim: llm.default_dimension)
+      @client = ::Hnswlib::HierarchicalNSW.new(space: DEFAULT_METRIC, dim: llm.default_dimensions)
       @path_to_index = path_to_index
 
       initialize_index

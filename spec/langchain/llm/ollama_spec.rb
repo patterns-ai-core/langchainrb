@@ -68,44 +68,44 @@ RSpec.describe Langchain::LLM::Ollama do
     end
   end
 
-  describe "#default_dimension" do
+  describe "#default_dimensions" do
     it "returns size of llama2 embeddings" do
       subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "llama2"})
 
-      expect(subject.default_dimension).to eq(4_096)
+      expect(subject.default_dimensions).to eq(4_096)
     end
 
     it "returns size of llava embeddings" do
       subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "llava"})
 
-      expect(subject.default_dimension).to eq(4_096)
+      expect(subject.default_dimensions).to eq(4_096)
     end
 
     it "returns size of mistral embeddings" do
       subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mistral"})
 
-      expect(subject.default_dimension).to eq(4_096)
+      expect(subject.default_dimensions).to eq(4_096)
     end
 
     it "returns size of mixtral embeddings" do
       subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mixtral"})
 
-      expect(subject.default_dimension).to eq(4_096)
+      expect(subject.default_dimensions).to eq(4_096)
     end
 
     it "returns size of dolphin-mixtral embeddings" do
       subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "dolphin-mixtral"})
-      expect(subject.default_dimension).to eq(4_096)
+      expect(subject.default_dimensions).to eq(4_096)
     end
 
     it "returns size of mistral-openorca embeddings" do
       subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mistral-openorca"})
-      expect(subject.default_dimension).to eq(4_096)
+      expect(subject.default_dimensions).to eq(4_096)
     end
 
     it "returns size of codellama embeddings" do
       subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "codellama"})
-      expect(subject.default_dimension).to eq(4_096)
+      expect(subject.default_dimensions).to eq(4_096)
     end
 
     # this one has not been hardcoded, but will be looked up
@@ -113,7 +113,7 @@ RSpec.describe Langchain::LLM::Ollama do
     it "returns size of tinydolphin embeddings", vcr: true do
       subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "tinydolphin"})
 
-      expect(subject.default_dimension).to eq(2_048)
+      expect(subject.default_dimensions).to eq(2_048)
     end
   end
 end

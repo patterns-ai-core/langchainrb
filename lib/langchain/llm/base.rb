@@ -24,8 +24,8 @@ module Langchain::LLM
     # A client for communicating with the LLM
     attr_reader :client
 
-    def default_dimension
-      self.class.const_get(:DEFAULTS).dig(:dimension)
+    def default_dimensions
+      self.class.const_get(:DEFAULTS).dig(:dimensions)
     end
 
     #

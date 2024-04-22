@@ -13,7 +13,7 @@ module Langchain::LLM
   class GooglePalm < Base
     DEFAULTS = {
       temperature: 0.0,
-      dimension: 768, # This is what the `embedding-gecko-001` model generates
+      dimensions: 768, # This is what the `embedding-gecko-001` model generates
       completion_model_name: "text-bison-001",
       chat_completion_model_name: "chat-bison-001",
       embeddings_model_name: "embedding-gecko-001"

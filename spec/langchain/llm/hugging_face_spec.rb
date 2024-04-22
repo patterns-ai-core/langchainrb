@@ -17,9 +17,9 @@ RSpec.describe Langchain::LLM::HuggingFace do
     end
   end
 
-  describe "#default_dimension" do
-    it "returns the default dimension" do
-      expect(subject.default_dimension).to eq(384)
+  describe "#default_dimensions" do
+    it "returns the default dimensions" do
+      expect(subject.default_dimensions).to eq(384)
     end
   end
 end

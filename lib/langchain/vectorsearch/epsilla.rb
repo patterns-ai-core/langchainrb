@@ -54,7 +54,7 @@ module Langchain::Vectorsearch
       @db_path = db_path
       @table_name = index_name
 
-      @vector_dimension = llm.default_dimension
+      @vector_dimensions = llm.default_dimensions
 
       super(llm: llm)
     end
@@ -64,7 +64,7 @@ module Langchain::Vectorsearch
       status_code, response = @client.database.create_table(@table_name, [
         {"name" => "ID", "dataType" => "STRING", "primaryKey" => true},
         {"name" => "Doc", "dataType" => "STRING"},
-        {"name" => "Embedding", "dataType" => "VECTOR_FLOAT", "dimensions" => @vector_dimension}
+        {"name" => "Embedding", "dataType" => "VECTOR_FLOAT", "dimensions" => @vector_dimensions}
       ])
       raise "Failed to create table: #{response}" if status_code != 200
 
