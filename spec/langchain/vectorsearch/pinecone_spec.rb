@@ -21,7 +21,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
       allow(subject.client).to receive(:create_index).with(
         metric: described_class::DEFAULT_METRIC,
         name: index_name,
-        dimension: subject.llm.default_dimension
+        dimension: subject.llm.default_dimensions
       ).and_return(true)
       expect(subject.create_default_schema).to eq(true)
     end

@@ -87,9 +87,9 @@ RSpec.describe Langchain::LLM::Cohere do
     end
   end
 
-  describe "#default_dimension" do
-    it "returns the default dimension" do
-      expect(subject.default_dimension).to eq(1024)
+  describe "#default_dimensions" do
+    it "returns the default dimensions" do
+      expect(subject.default_dimensions).to eq(1024)
     end
   end
 

@@ -104,7 +104,7 @@ module Langchain::Vectorsearch
       client.create_index(
         metric: DEFAULT_METRIC,
         name: index_name,
-        dimension: llm.default_dimension
+        dimension: llm.default_dimensions
       )
     end
 

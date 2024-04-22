@@ -15,7 +15,7 @@ module Langchain::LLM
       temperature: 0.0,
       completion_model_name: "command",
       embeddings_model_name: "small",
-      dimension: 1024,
+      dimensions: 1024,
       truncate: "START"
     }.freeze
 

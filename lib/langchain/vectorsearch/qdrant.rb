@@ -93,7 +93,7 @@ module Langchain::Vectorsearch
         collection_name: index_name,
         vectors: {
           distance: DEFAULT_METRIC.capitalize,
-          size: llm.default_dimension
+          size: llm.default_dimensions
         }
       )
     end
