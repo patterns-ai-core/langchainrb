@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.12.0] - 2024-04-22
 - [BREAKING] Rename `dimension` parameter to `dimensions` everywhere
 
 ## [0.11.4] - 2024-04-19
