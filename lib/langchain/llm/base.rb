@@ -24,6 +24,15 @@ module Langchain::LLM
     # A client for communicating with the LLM
     attr_reader :client
 
+    # Ensuring backward compatibility after https://github.com/patterns-ai-core/langchainrb/pull/586
+    # TODO: Delete this method later
+    def default_dimension
+      default_dimensions
+    end
+
+    # Returns the number of vector dimensions used by DEFAULTS[:chat_completion_model_name]
+    #
+    # @return [Integer] Vector dimensions
     def default_dimensions
       self.class.const_get(:DEFAULTS).dig(:dimensions)
     end
