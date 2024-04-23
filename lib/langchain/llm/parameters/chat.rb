@@ -10,6 +10,7 @@ module Langchain::LLM::Parameters
     SCHEMA = {
       # Either "messages" or "prompt" is required
       messages: Array,
+      model: String,
       prompt: String,
 
       # Allows to force the model to produce specific output format.

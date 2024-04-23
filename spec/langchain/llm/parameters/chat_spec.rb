@@ -7,6 +7,7 @@ RSpec.describe Langchain::LLM::Parameters::Chat do
   let(:valid_params) do
     {
       messages: [{role: "system", content: "You're too cool."}],
+      model: "gpt-4",
       prompt: "How warm is your water?",
       response_format: "json_object",
       stop: "--STOP--",
@@ -30,6 +31,7 @@ RSpec.describe Langchain::LLM::Parameters::Chat do
       params_with_extras = valid_params.merge(blah: 1, beep: "beep", boop: "boop")
       expect(described_class.call(params_with_extras, aliases: aliases)).to match(
         messages: [{role: "system", content: "You're too cool."}],
+        model: "gpt-4",
         prompt: "How warm is your water?",
         response_format: "json_object",
         stop: "--STOP--",
