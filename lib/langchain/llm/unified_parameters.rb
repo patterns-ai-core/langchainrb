@@ -2,6 +2,8 @@
 
 module Langchain::LLM
   class UnifiedParameters
+    include Enumerable
+
     attr_reader :schema, :aliases, :parameters
 
     class Null < self
@@ -27,6 +29,18 @@ module Langchain::LLM
 
     def to_h
       @parameters.to_h
+    end
+
+    def each(&)
+      to_params.each(&)
+    end
+
+    def <=>(other)
+      to_params.<=>(other.to_params)
+    end
+
+    def [](key)
+      to_params[key]
     end
   end
 end
