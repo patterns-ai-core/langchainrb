@@ -42,10 +42,10 @@ module Langchain::Tool
   #
   # == Adding Tools
   #
-  # 1. Create a new file in lib/langchain/tool/your_tool_name.rb
-  # 2. Create a class in the file that inherits from {Langchain::Tool::Base}
+  # 1. Create a new folder in lib/langchain/tool/your_tool_name/
+  # 2. Inside of this folder create a file with a class YourToolName that inherits from {Langchain::Tool::Base}
   # 3. Add `NAME=` and `ANNOTATIONS_PATH=` constants in your Tool class
-  # 4. Implement various methods in your tool class
+  # 4. Implement various public methods in your tool class
   # 5. Create a sidecar .json file in the same directory as your tool file annotating the methods in the Open API format
   # 6. Add your tool to the {file:README.md}
   class Base
