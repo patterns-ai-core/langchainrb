@@ -12,6 +12,13 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
   end
   let(:subject) { described_class.new(schema: schema, aliases: aliases) }
 
+  it "provides a Null object" do
+    null_unified_params = described_class::Null.new
+    expect(null_unified_params).to be_kind_of(described_class)
+    expect(null_unified_params.to_params(beep: 1, boop: 2, bop: 3)).to eq({})
+    expect(null_unified_params.to_h).to eq({})
+  end
+
   describe "#to_params" do
     let(:params) do
       {beep: 1, boop: 2, bop: 3}

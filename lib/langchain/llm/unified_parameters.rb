@@ -4,6 +4,12 @@ module Langchain::LLM
   class UnifiedParameters
     attr_reader :schema, :aliases, :parameters
 
+    class Null < self
+      def initialize
+        super(schema: {})
+      end
+    end
+
     def initialize(schema:, aliases: {}, parameters: {})
       @schema = schema || {}
       @aliases = aliases || {}
