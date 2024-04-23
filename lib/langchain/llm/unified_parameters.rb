@@ -7,8 +7,8 @@ module Langchain::LLM
     attr_reader :schema, :aliases, :parameters
 
     class Null < self
-      def initialize
-        super(schema: {})
+      def initialize(aliases: {}, parameters: {})
+        super(schema: {}, aliases: aliases, parameters: parameters)
       end
     end
 
