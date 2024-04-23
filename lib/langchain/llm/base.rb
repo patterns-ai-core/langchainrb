@@ -70,5 +70,17 @@ module Langchain::LLM
     def summarize(...)
       raise NotImplementedError, "#{self.class.name} does not support summarization"
     end
+
+    #
+    # Return the parameters for a specific API of the LLM.
+    #
+    def parameters_for(api_name, params = {})
+      case api_name.to_sym
+      when :chat
+        Langchain::LLM::Parameters::Chat.new(parameters: params)
+      else
+        Langchain::LLM::UnifiedParameters::Null.new(parameters: params)
+      end
+    end
   end
 end
