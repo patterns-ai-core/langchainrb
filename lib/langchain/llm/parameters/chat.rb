@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require "delegate"
+
 module Langchain::LLM::Parameters
-  class Chat
+  class Chat < SimpleDelegator
     # TODO: At the moment, the UnifiedParamters only considers keys.  In the
     # future, we'll consider ActiveModel-style validations and further typed
     # options here.
@@ -35,12 +37,18 @@ module Langchain::LLM::Parameters
       logit_bias: Hash # TODO: consider validating this as Map { [key: number]: number },
     }
 
+    def initialize(parameters: {}, aliases: {})
+      super(
+        ::Langchain::LLM::UnifiedParameters.new(
+          schema: SCHEMA,
+          aliases: aliases,
+          parameters: parameters
+        )
+      )
+    end
+
     def self.call(params, aliases: {})
-      ::Langchain::LLM::UnifiedParameters.new(
-        schema: SCHEMA,
-        aliases: aliases,
-        parameters: params
-      ).to_params
+      new(parameters: params, aliases: aliases).to_params
     end
   end
 end
