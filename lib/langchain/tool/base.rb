@@ -3,13 +3,13 @@
 module Langchain::Tool
   # = Tools
   #
-  # Tools are used by Agents to perform specific tasks. Basically anything is possible with enough code!
+  # Tools are used by Agents to perform specific tasks. A 'Tool' is a collection of functions ("methods").
   #
   # == Available Tools
   #
   # - {Langchain::Tool::Calculator}: calculate the result of a math expression
   # - {Langchain::Tool::Database}: executes SQL queries
-  # - {Langchain::Tool::FileSystem}: interacts with files
+  # - {Langchain::Tool::FileSystem}: interacts with the file system
   # - {Langchain::Tool::GoogleSearch}: search on Google (via SerpAPI)
   # - {Langchain::Tool::RubyCodeInterpreter}: runs ruby code
   # - {Langchain::Tool::Weather}: gets current weather data
