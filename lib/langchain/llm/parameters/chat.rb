@@ -5,7 +5,7 @@ module Langchain::LLM::Parameters
     # TODO: At the moment, the UnifiedParamters only considers keys.  In the
     # future, we'll consider ActiveModel-style validations and further typed
     # options here.
-    @schema = {
+    SCHEMA = {
       # Either "messages" or "prompt" is required
       messages: Array,
       prompt: String,
@@ -37,7 +37,7 @@ module Langchain::LLM::Parameters
 
     def self.call(params, aliases: {})
       ::Langchain::LLM::UnifiedParameters.new(
-        schema: @schema,
+        schema: SCHEMA,
         aliases: aliases,
         parameters: params
       ).to_params
