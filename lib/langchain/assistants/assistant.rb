@@ -170,10 +170,11 @@ module Langchain
       params = {messages: thread.array_of_message_hashes}
 
       if tools.any?
-        params[:tools] = if llm.is_a?(Langchain::LLM::OpenAI)
-          tools.map(&:to_openai_tools).flatten
+        if llm.is_a?(Langchain::LLM::OpenAI)
+          params[:tools] = tools.map(&:to_openai_tools).flatten
         elsif llm.is_a?(Langchain::LLM::GoogleGemini)
-          tools.map(&:to_google_gemini_tools).flatten
+          params[:tools] = tools.map(&:to_google_gemini_tools).flatten
+          params[:system] = instructions if instructions
         end
         # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
         params[:tool_choice] = "auto"
