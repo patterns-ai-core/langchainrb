@@ -91,34 +91,34 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     describe "the model dimension" do
       let(:model) { "text-embedding-3-small" }
-      let(:dimension_size) { 1536 }
+      let(:dimensions_size) { 1536 }
       let(:parameters) do
-        {parameters: {input: "Hello World", model: model, dimensions: dimension_size}}
+        {parameters: {input: "Hello World", model: model, dimensions: dimensions_size}}
       end
 
-      context "when dimension is not provided" do
-        it "forwards the models default dimension" do
+      context "when dimensions is not provided" do
+        it "forwards the models default dimensions" do
           subject.embed(text: "Hello World", model: model)
 
           expect(subject.client).to have_received(:embeddings).with(parameters)
         end
       end
 
-      context "when dimension is provided" do
-        let(:dimension_size) { 1536 }
+      context "when dimensions is provided" do
+        let(:dimensions_size) { 1536 }
 
         let(:parameters) do
-          {parameters: {input: "Hello World", model: model, dimensions: dimension_size}}
+          {parameters: {input: "Hello World", model: model, dimensions: dimensions_size}}
         end
 
         let(:subject) do
           described_class.new(api_key: "123", default_options: {
             embeddings_model_name: model,
-            dimension: dimension_size
+            dimensions: dimensions_size
           })
         end
 
-        it "forwards the model's default dimension" do
+        it "forwards the model's default dimensions" do
           allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
           subject.embed(text: "Hello World", model: model)
 
@@ -369,12 +369,12 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
   end
 
-  describe "#default_dimension" do
-    it "returns the default dimension" do
-      expect(subject.default_dimension).to eq(1536)
+  describe "#default_dimensions" do
+    it "returns the default dimensions" do
+      expect(subject.default_dimensions).to eq(1536)
     end
 
-    context "when the dimension is passed as an argument" do
+    context "when the dimensions is passed as an argument" do
       let(:subject) do
         described_class.new(api_key: "123", default_options: {
           embeddings_model_name: "text-embedding-3-small",
@@ -382,8 +382,8 @@ RSpec.describe Langchain::LLM::OpenAI do
         })
       end
 
-      it "sets the default_dimension" do
-        expect(subject.default_dimension).to eq 512
+      it "sets the default_dimensions" do
+        expect(subject.default_dimensions).to eq 512
       end
     end
   end

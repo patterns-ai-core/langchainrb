@@ -16,7 +16,7 @@ module Langchain::LLM
       max_output_tokens: 1000,
       top_p: 0.8,
       top_k: 40,
-      dimension: 768,
+      dimensions: 768,
       completion_model_name: "text-bison", # Optional: tect-bison@001
       embeddings_model_name: "textembedding-gecko"
     }.freeze

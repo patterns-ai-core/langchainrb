@@ -24,7 +24,7 @@ module Langchain::LLM
       # TODO: Design the interface to pass and use different models
       completion_model_name: "replicate/vicuna-13b",
       embeddings_model_name: "creatorrr/all-mpnet-base-v2",
-      dimension: 384
+      dimensions: 384
     }.freeze
 
     #

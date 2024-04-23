@@ -41,9 +41,9 @@ module Langchain::LLM
 
     # Returns the # of vector dimensions for the embeddings
     # @return [Integer] The # of vector dimensions
-    def default_dimension
+    def default_dimensions
       # since Ollama can run multiple models, look it up or generate an embedding and return the size
-      @default_dimension ||=
+      @default_dimensions ||=
         EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name].to_sym) do
           embed(text: "test").embedding.size
         end

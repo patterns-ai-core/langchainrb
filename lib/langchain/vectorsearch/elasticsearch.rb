@@ -104,7 +104,7 @@ module Langchain::Vectorsearch
     end
 
     def default_vector_settings
-      {type: "dense_vector", dims: llm.default_dimension}
+      {type: "dense_vector", dims: llm.default_dimensions}
     end
 
     def vector_settings

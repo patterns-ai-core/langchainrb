@@ -8,7 +8,7 @@ RSpec.describe Langchain::Vectorsearch::Hnswlib do
   end
 
   before do
-    allow_any_instance_of(Langchain::LLM::GooglePalm).to receive(:default_dimension).and_return(3)
+    allow_any_instance_of(Langchain::LLM::GooglePalm).to receive(:default_dimensions).and_return(3)
   end
 
   let(:llm) { Langchain::LLM::GooglePalm.new(api_key: "123") }
