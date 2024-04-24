@@ -32,7 +32,7 @@ module Langchain::Tool
 
     # Database Tool: Returns a list of tables in the database
     def list_tables
-      db.tables
+      db.tables.join(", ")
     end
 
     # Database Tool: Returns the schema for a list of tables
@@ -93,7 +93,7 @@ module Langchain::Tool
 
       db[input].to_a
     rescue Sequel::DatabaseError => e
-      Langchain.logger.error(e.message, for: self.class)
+      e.message
     end
   end
 end
