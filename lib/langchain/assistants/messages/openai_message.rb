@@ -13,6 +13,12 @@ module Langchain
 
       TOOL_ROLE = "tool"
 
+      # Initialize a new OpenAI message
+      #
+      # @param [String] The role of the message
+      # @param [String] The content of the message
+      # @param [Array<Hash>] The tool calls made in the message
+      # @param [String] The ID of the tool call
       def initialize(role:, content: nil, tool_calls: [], tool_call_id: nil) # TODO: Implement image_file: reference (https://platform.openai.com/docs/api-reference/messages/object#messages/object-content)
         raise ArgumentError, "Role must be one of #{ROLES.join(", ")}" unless ROLES.include?(role)
         raise ArgumentError, "Tool calls must be an array of hashes" unless tool_calls.is_a?(Array) && tool_calls.all? { |tool_call| tool_call.is_a?(Hash) }
@@ -24,7 +30,7 @@ module Langchain
         @tool_call_id = tool_call_id
       end
 
-      # Was this message produced by an LLM?
+      # Check if the message came from an LLM
       #
       # @return [Boolean] true/false whether this message was produced by an LLM
       def llm?
@@ -43,14 +49,23 @@ module Langchain
         end
       end
 
+      # Check if the message came from an LLM
+      #
+      # @return [Boolean] true/false whether this message was produced by an LLM
       def assistant?
         role == "assistant"
       end
 
+      # Check if the message are system instructions
+      #
+      # @return [Boolean] true/false whether this message are system instructions
       def system?
         role == "system"
       end
 
+      # Check if the message is a tool call
+      #
+      # @return [Boolean] true/false whether this message is a tool call
       def tool?
         role == "tool"
       end

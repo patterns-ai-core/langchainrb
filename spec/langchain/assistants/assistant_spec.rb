@@ -68,7 +68,7 @@ RSpec.describe Langchain::Assistant do
                 {
                   "id" => "call_9TewGANaaIjzY31UCpAAGLeV",
                   "type" => "function",
-                  "function" => {"name" => "calculator-execute", "arguments" => "{\"input\":\"2+2\"}"}
+                  "function" => {"name" => "calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}
                 }
               ]
             },
@@ -144,4 +144,8 @@ RSpec.describe Langchain::Assistant do
   xdescribe "#clear_thread!"
 
   xdescribe "#instructions="
+
+  xdescribe "#extract_openai_tool_call"
+
+  xdescribe "#extract_google_gemini_tool_call"
 end

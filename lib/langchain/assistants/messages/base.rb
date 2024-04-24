@@ -2,10 +2,12 @@
 
 module Langchain
   module Messages
-    # Langchain::Message are the messages that are sent to LLM chat methods
     class Base
       attr_reader :role, :content, :tool_calls, :tool_call_id
 
+      # Check if the message came from a user
+      #
+      # @param [Boolean] true/false whether the message came from a user
       def user?
         role == "user"
       end

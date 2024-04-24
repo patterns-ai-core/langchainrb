@@ -32,9 +32,8 @@ module Langchain
       # TODO: What if the user added old messages and the system instructions are already in there? Should this overwrite the existing instructions?
       if llm.is_a?(Langchain::LLM::OpenAI)
         add_message(role: "system", content: instructions) if instructions
-      elsif llm.is_a?(Langchain::LLM::GoogleGemini)
-        # TODO: Figure out what to do with Google Gemini
       end
+      # For Google Gemini, system instructions are added to the `system:` param in the `chat` method
     end
 
     # Add a user message to the thread
@@ -213,6 +212,10 @@ module Langchain
       end
     end
 
+    # Extract the tool call information from the OpenAI tool call hash
+    #
+    # @param tool_call [Hash] The tool call hash
+    # @return [Array] The tool call information
     def extract_openai_tool_call(tool_call:)
       tool_call_id = tool_call.dig("id")
 
@@ -223,6 +226,10 @@ module Langchain
       [tool_call_id, tool_name, method_name, tool_arguments]
     end
 
+    # Extract the tool call information from the Google Gemini tool call hash
+    #
+    # @param tool_call [Hash] The tool call hash, format: {"functionCall"=>{"name"=>"weather__execute", "args"=>{"input"=>"NYC"}}}
+    # @return [Array] The tool call information
     def extract_google_gemini_tool_call(tool_call:)
       tool_call_id = tool_call.dig("functionCall", "name")
 

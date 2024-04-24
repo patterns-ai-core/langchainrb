@@ -33,7 +33,7 @@ module Langchain::LLM
         contents: messages
       }
       params[:tools] = {function_declarations: tools} if tools.any?
-      params[:tool_config] = {function_calling_config: {mode: tool_choice}} if tool_choice
+      params[:tool_config] = {function_calling_config: {mode: tool_choice.upcase}} if tool_choice
       # When system_instruction is set, getting: {"error"=>{"code"=>400, "message"=>"Developer instruction is not enabled for models/gemini-pro", "status"=>"INVALID_ARGUMENT"}}
       params[:system_instruction] = {parts: [{text: system}]} if system
 

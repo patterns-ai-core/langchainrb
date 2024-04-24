@@ -12,6 +12,12 @@ module Langchain
 
       TOOL_ROLE = "function"
 
+      # Initialize a new Google Gemini message
+      #
+      # @param [String] The role of the message
+      # @param [String] The content of the message
+      # @param [Array<Hash>] The tool calls made in the message
+      # @param [String] The ID of the tool call
       def initialize(role:, content: nil, tool_calls: [], tool_call_id: nil)
         raise ArgumentError, "Role must be one of #{ROLES.join(", ")}" unless ROLES.include?(role)
         raise ArgumentError, "Tool calls must be an array of hashes" unless tool_calls.is_a?(Array) && tool_calls.all? { |tool_call| tool_call.is_a?(Hash) }
@@ -23,13 +29,16 @@ module Langchain
         @tool_call_id = tool_call_id
       end
 
-      # Was this message produced by an LLM?
+      # Check if the message came from an LLM
       #
       # @return [Boolean] true/false whether this message was produced by an LLM
       def llm?
         model?
       end
 
+      # Convert the message to a Google Gemini API-compatible hash
+      #
+      # @return [Hash] The message as a Google Gemini API-compatible hash
       def to_hash
         {}.tap do |h|
           h[:role] = role
