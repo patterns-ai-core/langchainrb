@@ -81,5 +81,30 @@ module Langchain::Tool
         )
       )
     end
+
+    private
+
+    def generate_method_annotations
+      # One-shot example
+      prompt_template = Langchain::Prompt.load_from_path(
+        file_path: Langchain.root.join("langchain/tool/prompts/generate_method_annotations.yaml")
+      )
+      prompt_template.format(example_method_definitions: example_method_definitions, example_method_annotations: example_method_annotations)
+      # Extract the method annotations
+      # Save the output to JSON file.
+    end
+
+    def example_method_definitions
+      # Random tool class to be used as an example
+      klass = Langchain::Tool::FileSystem
+      # Get the source code of each instance method in the class
+      klass.instance_methods(false).map do |i_method|
+        klass.instance_method(i_method).source
+      end
+    end
+
+    def example_method_annotations
+      Langchain::Tool::FileSystem.new.method_annotations
+    end
   end
 end

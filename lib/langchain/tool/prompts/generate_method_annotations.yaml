@@ -1,0 +1,15 @@
+_type: prompt
+input_variables:
+  - method_definitions
+  - method_annotations
+template: |
+  Examples:
+  
+  Method definitions:
+  {method_definitions}
+
+  JSON method annotations:
+  {method_annotations}
+
+  Generate matching JSON method annotations for these method definitions:
+  {new_method_definitions}
