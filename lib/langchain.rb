@@ -34,6 +34,7 @@ loader.collapse("#{__dir__}/langchain/tool/ruby_code_interpreter")
 loader.collapse("#{__dir__}/langchain/tool/vectorsearch")
 loader.collapse("#{__dir__}/langchain/tool/weather")
 loader.collapse("#{__dir__}/langchain/tool/wikipedia")
+loader.collapse("#{__dir__}/langchain/tool/quicknode_bitcoin")
 
 # RubyCodeInterpreter does not work with Ruby 3.3;
 # https://github.com/ukutaht/safe_ruby/issues/4

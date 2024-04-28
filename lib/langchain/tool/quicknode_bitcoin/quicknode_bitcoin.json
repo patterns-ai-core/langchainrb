@@ -142,11 +142,15 @@
         "type": "object",
         "properties": {
           "hash_or_height": {
-            "type": "string",
-            "description": "The block hash or height of the target block"
+            "oneOf": [
+              { "type": "string" },
+              { "type": "number" }
+            ],
+            "description": "The block hash or height of the target block. Can be a string hash or numeric block height."
           },
           "stats": {
             "type": "array",
+            "items": { "type": "string" },
             "description": "JSON array of values to filter from"
           }
         },
@@ -165,6 +169,11 @@
           "blockhash": {
             "type": "string",
             "description": "The hash of the block"
+          },
+          "verbose": {
+            "type": "boolean",
+            "description": "default = 1, 0 for hex-encoded data, 1 for a JSON object, and 2 for JSON object with transaction data",
+            "default": true
           }
         },
         "required": ["blockhash"]
@@ -338,8 +347,7 @@
         "properties": {
           "txid": {
             "type": "string",
-            "description": "The transaction id",
-            "required": true
+            "description": "The transaction id"
           },
           "verbose": {
             "type": "integer",
@@ -368,8 +376,7 @@
             "description": "An array of transaction hashes",
             "items": {
               "type": "string"
-            },
-            "required": true
+            }
           },
           "blockhash": {
             "type": "string",
@@ -417,13 +424,11 @@
         "properties": {
           "txid": {
             "type": "string",
-            "description": "The transaction id",
-            "required": true
+            "description": "The transaction id"
           },
           "n": {
             "type": "number",
-            "description": "Vout number",
-            "required": true
+            "description": "Vout number"
           },
           "include_mempool": {
             "type": "boolean",
@@ -445,8 +450,7 @@
         "properties": {
           "hexstring": {
             "type": "string",
-            "description": "The transaction hex string",
-            "required": true
+            "description": "The transaction hex string"
           },
           "maxfeerate": {
             "type": ["string"],
@@ -471,8 +475,7 @@
             "description": "An array of raw transactions",
             "items": {
               "type": "string"
-            },
-            "required": true
+            }
           }
         },
         "required": ["package"]
@@ -492,8 +495,7 @@
             "description": "An array of raw transactions in the form of a hex string",
             "items": {
               "type": "string"
-            },
-            "required": true
+            }
           },
           "maxfeerate": {
             "type": ["string"],
@@ -515,8 +517,7 @@
         "properties": {
           "address": {
             "type": "string",
-            "description": "The Bitcoin address to validate",
-            "required": true
+            "description": "The Bitcoin address to validate"
           }
         },
         "required": ["address"]
@@ -533,18 +534,15 @@
         "properties": {
           "address": {
             "type": "string",
-            "description": "The Bitcoin address to use for the signature",
-            "required": true
+            "description": "The Bitcoin address to use for the signature"
           },
           "signature": {
             "type": "string",
-            "description": "The signature provided by the signer in base 64 encoding",
-            "required": true
+            "description": "The signature provided by the signer in base 64 encoding"
           },
           "message": {
             "type": "string",
-            "description": "The message that was signed",
-            "required": true
+            "description": "The message that was signed"
           }
         },
         "required": ["address", "signature", "message"]
