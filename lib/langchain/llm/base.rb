@@ -77,7 +77,8 @@ module Langchain::LLM
     def parameters_for(api_name, params = {})
       case api_name.to_sym
       when :chat
-        Langchain::LLM::Parameters::Chat.new(parameters: params)
+        instance_variable_get(:"@#{api_name}") ||
+          instance_variable_set(:"@#{api_name}", Langchain::LLM::Parameters::Chat.new(parameters: params))
       else
         Langchain::LLM::UnifiedParameters::Null.new(parameters: params)
       end

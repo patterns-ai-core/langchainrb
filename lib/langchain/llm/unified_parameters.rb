@@ -27,6 +27,12 @@ module Langchain::LLM
       @parameters
     end
 
+    def add(schema: {}, aliases: {})
+      @schema.merge!(schema)
+      @aliases.merge!(aliases || {})
+      self
+    end
+
     def to_h
       @parameters.to_h
     end
