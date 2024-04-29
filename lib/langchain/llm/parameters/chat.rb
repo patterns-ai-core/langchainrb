@@ -9,47 +9,40 @@ module Langchain::LLM::Parameters
     # options here.
     SCHEMA = {
       # Either "messages" or "prompt" is required
-      messages: Array,
-      model: String,
-      prompt: String,
+      messages: {},
+      model: {},
+      prompt: {},
 
       # Allows to force the model to produce specific output format.
-      response_format: String,
+      response_format: {},
 
-      stop: String, # TODO: handle multiple types (e.g. OpenAI also allows Array, null)
-      stream: TrueClass, # Enable streaming
+      stop: {}, # TODO: handle multiple types (e.g. OpenAI also allows Array, null)
+      stream: {}, # Enable streaming
 
-      max_tokens: Integer, # Range: [1, context_length)
-      temperature: Integer, # Range: [0, 2]
-      top_p: Integer, # Range: (0, 1]
-      top_k: Integer, # Range: [1, Infinity) Not available for OpenAI models
-      frequency_penalty: Integer, # Range: [-2, 2]
-      presence_penalty: Integer, # Range: [-2, 2]
-      repetition_penalty: Integer, # Range: (0, 2]
-      seed: Integer, # OpenAI only
+      max_tokens: {}, # Range: [1, context_length)
+      temperature: {}, # Range: [0, 2]
+      top_p: {}, # Range: (0, 1]
+      top_k: {}, # Range: [1, Infinity) Not available for OpenAI models
+      frequency_penalty: {}, # Range: [-2, 2]
+      presence_penalty: {}, # Range: [-2, 2]
+      repetition_penalty: {}, # Range: (0, 2]
+      seed: {}, # OpenAI only
 
       # Function-calling
-      # Only natively suported by OpenAI models. For others, we submit
-      # a YAML-formatted string with these tools at the end of the prompt.
-      tools: Array, # TODO: consider what validating Tool objects here looks like
-      tool_choice: Hash, # TODO: consider what validating a ToolChoice object would look like
+      tools: {},
+      tool_choice: {},
 
       # Additional optional parameters
-      logit_bias: Hash # TODO: consider validating this as Map { [key: number]: number },
+      logit_bias: {}
     }
 
-    def initialize(parameters: {}, aliases: {})
+    def initialize(parameters: {})
       super(
         ::Langchain::LLM::UnifiedParameters.new(
           schema: SCHEMA,
-          aliases: aliases,
           parameters: parameters
         )
       )
-    end
-
-    def self.call(params, aliases: {})
-      new(parameters: params, aliases: aliases).to_params
     end
   end
 end

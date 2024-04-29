@@ -5,12 +5,9 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
   # to introduce an ActiveModel-style validator to restrict inputs to conform to
   # types required of the LLMs APIs
   let(:schema) do
-    {beep: Integer, boop: Integer}
+    {beep: {defaults: "beep"}, boop: {aliases: [:booop]}}
   end
-  let(:aliases) do
-    {booop: :boop}
-  end
-  let(:subject) { described_class.new(schema: schema, aliases: aliases) }
+  let(:subject) { described_class.new(schema: schema) }
 
   it "provides a Null object" do
     null_unified_params = described_class::Null.new
@@ -51,7 +48,6 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
     let(:subject) do
       described_class.new(
         schema: schema,
-        aliases: aliases,
         parameters: {beep: 1, boop: 2, bop: 3}
       )
     end
@@ -60,20 +56,18 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
     end
   end
 
-  describe "#add" do
+  describe "#amend_schema(amended_schema)" do
     let(:subject) do
-      described_class.new(
-        schema: schema,
-        aliases: aliases
-      )
+      described_class.new(schema: schema)
     end
 
     it "adds the additional fields to the schema" do
-      instance = described_class.new(
-        schema: schema,
-        aliases: aliases
+      instance = described_class.new(schema: schema)
+      result = instance.amend_schema(
+        beep: {default: "beepy"},
+        boop: {},
+        bop: {}
       )
-      result = instance.add(schema: {beep: 1, boop: 2, bop: 3})
       expect(result).to be_instance_of(described_class)
       expect(instance.schema.keys).to contain_exactly(:beep, :boop, :bop)
       expect(instance.to_params({beep: 1, boop: 2, bop: 3})).to match(
@@ -83,16 +77,12 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
       )
     end
 
-    it "adds any additional aliases" do
-      subject.add(aliases: {bopity: :boop})
-      expect(subject.to_params({beep: 1, bopity: 2, bop: 3})).to match(
-        beep: 1,
-        boop: 2
-      )
-    end
-
     it "allows amending schema and adding additional aliases" do
-      result = subject.add(schema: {beep: 1, boop: 2, bop: 3}, aliases: {bopity: :boop})
+      result = subject.amend_schema(
+        beep: {},
+        boop: {aliases: [:bopity]},
+        bop: {}
+      )
       expect(result).to be_instance_of(described_class)
       expect(subject.schema.keys).to contain_exactly(:beep, :boop, :bop)
       expect(subject.to_params({beep: 1, boop: 2, bop: 3})).to match(
@@ -100,6 +90,25 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
         boop: 2,
         bop: 3
       )
+    end
+  end
+
+  describe "#alias_field(field, as:)" do
+    it "adds any additional aliases" do
+      subject.alias_field(:boop, as: :bopity)
+      expect(subject.to_params({beep: 1, bopity: 2, bop: 3})).to match(
+        beep: 1,
+        boop: 2
+      )
+    end
+
+    it "doesn't duplicate aliases" do
+      subject.alias_field(:boop, as: :bopity)
+      subject.alias_field(:boop, as: :bopity)
+      expect(subject.aliases[:boop]).to match([
+        :booop,
+        :bopity
+      ])
     end
   end
 end

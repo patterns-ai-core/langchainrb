@@ -7,30 +7,46 @@ module Langchain::LLM
     attr_reader :schema, :aliases, :parameters
 
     class Null < self
-      def initialize(aliases: {}, parameters: {})
-        super(schema: {}, aliases: aliases, parameters: parameters)
+      def initialize(parameters: {})
+        super(schema: {}, parameters: parameters)
       end
     end
 
-    def initialize(schema:, aliases: {}, parameters: {})
+    def initialize(schema:, parameters: {})
       @schema = schema || {}
-      @aliases = aliases || {}
+      @aliases = {}
+      @schema.each do |name, param|
+        @aliases[name] = Set.new(Array(param[:aliases])) if param[:aliases]
+      end
       @parameters = to_params(parameters.to_h) if !parameters.to_h.empty?
     end
 
     def to_params(params = {})
       @parameters ||= params.slice(*schema.keys)
-      @aliases.each do |new_key, existing_key|
-        # favor existing keys in case of conflicts
-        @parameters[existing_key] ||= params[new_key]
+      @aliases.each do |field, aliased_keys|
+        # favor existing keys in case of conflicts,
+        # and check for multiples
+        aliased_keys.each do |alias_key|
+          @parameters[field] ||= params[alias_key]
+        end
       end
       @parameters
     end
 
-    def add(schema: {}, aliases: {})
+    def amend_schema(schema = {})
       @schema.merge!(schema)
-      @aliases.merge!(aliases || {})
+      schema.each do |name, param|
+        if param[:aliases]
+          @aliases[name] ||= Set.new
+          @aliases[name] << param[:aliases]
+        end
+      end
       self
+    end
+
+    def alias_field(field_name, as:)
+      @aliases[field_name] ||= Set.new
+      @aliases[field_name] << as
     end
 
     def to_h
