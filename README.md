@@ -64,7 +64,8 @@ Langchain.rb wraps supported LLMs in a unified interface allowing you to easily 
 | [Cohere](https://cohere.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [GooglePalm](https://ai.google/discover/palm2?utm_source=langchainrb&utm_medium=github)         | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Google Vertex AI](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ✅                 | ❌                  | ✅                 |                    |
-| [HuggingFace](https://huggingface.co/?utm_source=langchainrb&utm_medium=github)                 | ✅                 | ❌                 | ❌                  | ❌                 |                    |
+| [Groq OpenAI](https://groq.com?utm_source=langchainrb&utm_medium=github)                        | ❌                 | ❌                 | ✅                  | ❌                 |
+| [HuggingFace](https://huggingface.co/?utm_source=langchainrb&utm_medium=github)                 |  ❌                 | ❌                 | ❌                  | ❌                 |                    |
 | [Mistral AI](https://mistral.ai/?utm_source=langchainrb&utm_medium=github)                      | ✅                 | ❌                 | ✅                  | ❌                 |                    |
 | [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Replicate](https://replicate.com/?utm_source=langchainrb&utm_medium=github)                    | ✅                 | ✅                 | ✅                  | ✅                 |                    |
@@ -103,6 +104,32 @@ llm.summarize(text: "...").completion
 You can use any other LLM by invoking the same interface:
 ```ruby
 llm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"], default_options: { ... })
+```
+
+#### Groq OpenAI Compatible
+
+Add `gem "ruby-openai", "~> 7.0"` to your Gemfile.
+
+```ruby
+llm = Langchain::LLM::GroqOpenAI.new(api_key: ENV["GROQ_API_KEY"]) # Defaults to Meta Llama 3
+```
+Or you can specify a specific model for chat:
+```ruby
+llm = Langchain::LLM::GroqOpenAI.new(api_key: ENV["GROQ_API_KEY"] , default_options: {chat_completion_model_name: "mixtral-8x7b-32768"})
+```
+You can pass additional parameters to the constructor, it will be passed to the OpenAI client:
+```ruby
+llm = Langchain::LLM::GroqOpenAI.new(api_key: ENV["GROQ_API_KEY"], llm_options: { ... })
+```
+
+Generate a chat completion:
+```ruby
+llm.chat(messages: [{role: "user", content: "What is the meaning of life?"}]).completion
+```
+Or chat with a specific model:
+```ruby
+llm.chat(messages: [{role: "user", content: "What is the meaning of life?"}], model: 'llama3-70b-8192').completion
+```ruby
 ```
 
 ### Prompt Management
