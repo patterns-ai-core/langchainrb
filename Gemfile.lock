@@ -1,11 +1,3 @@
-GIT
-  remote: https://github.com/svs/anthropic.git
-  revision: dd382a83d3f66e6365504d0a2bf1fd8c72d6027c
-  specs:
-    anthropic (0.1.0)
-      faraday (>= 1)
-      faraday-multipart (>= 1)
-
 PATH
   remote: .
   specs:
@@ -54,6 +46,9 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     afm (0.2.2)
     ai21 (0.2.1)
+    anthropic (0.2.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ast (2.4.2)
     aws-eventstream (1.3.0)
     aws-partitions (1.890.0)
@@ -77,7 +72,7 @@ GEM
       dry-monads (~> 1.6)
       ruby-next (>= 0.15.0)
     coderay (1.1.3)
-    cohere-ruby (0.9.8)
+    cohere-ruby (0.9.9)
       faraday (>= 2.0.1, < 3.0)
     colorize (1.1.0)
     concurrent-ruby (1.2.3)
@@ -139,6 +134,10 @@ GEM
       dry-initializer (~> 3.0)
       dry-schema (>= 1.12, < 2)
       zeitwerk (~> 2.6)
+    easy_talk (0.1.8)
+      activesupport (~> 7.0)
+      json-schema (~> 4)
+      sorbet-runtime (~> 0.5)
     elastic-transport (8.3.2)
       faraday (< 3)
       multi_json
@@ -409,6 +408,7 @@ GEM
       faraday (>= 0.17.5, < 3.a)
       jwt (>= 1.5, < 3.0)
       multi_json (~> 1.10)
+    sorbet-runtime (0.5.11357)
     standard (1.34.0)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.0)
@@ -476,12 +476,13 @@ PLATFORMS
 
 DEPENDENCIES
   ai21 (~> 0.2.1)
-  anthropic!
+  anthropic
   aws-sdk-bedrockruntime (~> 1.1)
   chroma-db (~> 0.6.0)
   cohere-ruby (~> 0.9.8)
   docx (~> 0.8.0)
   dotenv-rails (~> 2.7.6)
+  easy_talk
   elasticsearch (~> 8.2.0)
   epsilla-ruby (~> 0.0.4)
   eqn (~> 1.6.5)
