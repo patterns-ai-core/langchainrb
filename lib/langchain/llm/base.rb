@@ -12,6 +12,7 @@ module Langchain::LLM
   # - {Langchain::LLM::Cohere}
   # - {Langchain::LLM::GooglePalm}
   # - {Langchain::LLM::GoogleVertexAi}
+  # - {Langchain::LLM::GroqOpenAi}
   # - {Langchain::LLM::HuggingFace}
   # - {Langchain::LLM::LlamaCpp}
   # - {Langchain::LLM::OpenAI}
