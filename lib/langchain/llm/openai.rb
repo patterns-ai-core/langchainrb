@@ -49,6 +49,7 @@ module Langchain::LLM
         tools: {default: []},
         user: {}
       )
+      chat_parameters.ignore(:top_k)
     end
 
     # Generate an embedding for a given text
