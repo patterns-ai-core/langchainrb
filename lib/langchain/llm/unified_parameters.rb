@@ -30,10 +30,15 @@ module Langchain::LLM
           @parameters[field] ||= params[alias_key]
         end
       end
+      @schema.each do |field, param_options|
+        param_options ||= {}
+        default = param_options[:default] || param_options[:defaults]
+        @parameters[field] ||= default if !default.nil? && (!default.is_a?(Enumerable) || !default.empty?)
+      end
       @parameters
     end
 
-    def amend_schema(schema = {})
+    def update(schema = {})
       @schema.merge!(schema)
       schema.each do |name, param|
         if param[:aliases]

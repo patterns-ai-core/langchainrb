@@ -56,29 +56,29 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
     end
   end
 
-  describe "#amend_schema(amended_schema)" do
+  describe "#update(amended_schema)" do
     let(:subject) do
       described_class.new(schema: schema)
     end
 
     it "adds the additional fields to the schema" do
       instance = described_class.new(schema: schema)
-      result = instance.amend_schema(
+      result = instance.update(
         beep: {default: "beepy"},
-        boop: {},
+        boop: {defaults: "boops"},
         bop: {}
       )
       expect(result).to be_instance_of(described_class)
       expect(instance.schema.keys).to contain_exactly(:beep, :boop, :bop)
-      expect(instance.to_params({beep: 1, boop: 2, bop: 3})).to match(
-        beep: 1,
-        boop: 2,
+      expect(instance.to_params({bop: 3})).to match(
+        beep: "beepy",
+        boop: "boops",
         bop: 3
       )
     end
 
     it "allows amending schema and adding additional aliases" do
-      result = subject.amend_schema(
+      result = subject.update(
         beep: {},
         boop: {aliases: [:bopity]},
         bop: {}
