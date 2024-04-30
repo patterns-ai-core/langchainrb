@@ -4,7 +4,7 @@ module Langchain::LLM
   class UnifiedParameters
     include Enumerable
 
-    attr_reader :schema, :aliases, :parameters
+    attr_reader :schema, :aliases, :parameters, :ignored
 
     class Null < self
       def initialize(parameters: {})
@@ -19,6 +19,7 @@ module Langchain::LLM
         @aliases[name] = Set.new(Array(param[:aliases])) if param[:aliases]
       end
       @parameters = to_params(parameters.to_h) if !parameters.to_h.empty?
+      @ignored = Set.new
     end
 
     def to_params(params = {})
@@ -35,7 +36,7 @@ module Langchain::LLM
         default = param_options[:default] || param_options[:defaults]
         @parameters[field] ||= default if !default.nil? && (!default.is_a?(Enumerable) || !default.empty?)
       end
-      @parameters
+      @parameters.except(*@ignored)
     end
 
     def update(schema = {})
@@ -47,6 +48,10 @@ module Langchain::LLM
         end
       end
       self
+    end
+
+    def ignore(*field_names)
+      @ignored.merge(field_names)
     end
 
     def alias_field(field_name, as:)

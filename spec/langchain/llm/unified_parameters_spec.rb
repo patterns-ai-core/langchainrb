@@ -42,6 +42,17 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
         expect(subject.to_params(params)).to match(beep: 1, boop: 2)
       end
     end
+
+    context "with ignored fields" do
+      let(:params) do
+        {beep: 1, boop: 2, bop: 3, booop: 4}
+      end
+      it "favors explicit params over aliases" do
+        subject.update(bop: {})
+        subject.ignore(:boop, :bop)
+        expect(subject.to_params(params)).to match(beep: 1)
+      end
+    end
   end
 
   describe "#to_h" do
