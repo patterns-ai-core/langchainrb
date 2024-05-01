@@ -117,8 +117,8 @@ module Langchain::LLM
     def chat(params = {}, &block)
       parameters = chat_parameters.to_params(params)
 
-      raise ArgumentError.new("messages argument is required") if parameters[:messages].empty?
-      raise ArgumentError.new("model argument is required") if parameters[:model].empty?
+      raise ArgumentError.new("messages argument is required") if Array(parameters[:messages]).empty?
+      raise ArgumentError.new("model argument is required") if parameters[:model].to_s.empty?
       if parameters[:tool_choice] && Array(parameters[:tools]).empty?
         raise ArgumentError.new("'tool_choice' is only allowed when 'tools' are specified.")
       end
