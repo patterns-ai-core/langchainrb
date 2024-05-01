@@ -2,17 +2,22 @@
   {
     "type": "function",
     "function": {
-      "name": "weather-execute",
-      "description": "Returns current weather for a city",
+      "name": "weather-current_weather",
+      "description": "Returns current weather for a city in the requested units",
       "parameters": {
         "type": "object",
         "properties": {
-          "input": {
+          "city": {
             "type": "string",
-            "description": "comma separated city and unit (optional: imperial, metric, or standard)"
+            "description": "city name"
+          },
+          "units": {
+            "type": "string",
+            "enum": ["standard", "metric", "imperial"],
+            "description": "units"
           }
         },
-        "required": ["input"]
+        "required": ["city"]
       }
     }
   }
