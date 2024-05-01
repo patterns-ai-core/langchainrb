@@ -41,7 +41,7 @@ module Langchain::LLM
 
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
-        model: {default: "gpt-3.5-turbo"},
+        model: {default: @defaults[:chat_completion_model_name]},
         logprobs: {},
         top_logprobs: {},
         n: {default: @defaults[:n]},
