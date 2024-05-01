@@ -23,7 +23,7 @@ module Langchain::LLM
     end
 
     def to_params(params = {})
-      @parameters ||= params.slice(*schema.keys)
+      @parameters = params.slice(*schema.keys)
       @aliases.each do |field, aliased_keys|
         # favor existing keys in case of conflicts,
         # and check for multiples
