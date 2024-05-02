@@ -1,4 +1,5 @@
 ## [Unreleased]
+- Langchain::LLM::Ollama now uses `llama3` by default
 
 ## [0.12.0] - 2024-04-22
 - [BREAKING] Rename `dimension` parameter to `dimensions` everywhere
