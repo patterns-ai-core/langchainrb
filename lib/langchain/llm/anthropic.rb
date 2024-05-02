@@ -110,8 +110,14 @@ module Langchain::LLM
       raise ArgumentError.new("model argument is required") if model.empty?
       raise ArgumentError.new("max_tokens argument is required") if max_tokens.nil?
 
+      # For compatibility with OpenAI, etc.,
+      # system role messages are extracted and integrated with the system parameter.
+      system_messages, user_assistant_messages =
+        messages.partition { |msg| msg[:role].to_sym == :system }
+      system = ([system] + system_messages.map { |msg| msg[:content] }).compact.join("\n")
+
       parameters = {
-        messages: messages,
+        messages: user_assistant_messages,
         model: model,
         max_tokens: max_tokens,
         temperature: temperature
@@ -119,7 +125,7 @@ module Langchain::LLM
       parameters[:metadata] = metadata if metadata
       parameters[:stop_sequences] = stop_sequences if stop_sequences
       parameters[:stream] = stream if stream
-      parameters[:system] = system if system
+      parameters[:system] = system if system != ""
       parameters[:tools] = tools if tools.any?
       parameters[:top_k] = top_k if top_k
       parameters[:top_p] = top_p if top_p
