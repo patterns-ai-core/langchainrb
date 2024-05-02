@@ -7,22 +7,23 @@ module Langchain::LLM
   # Available models: https://ollama.ai/library
   #
   # Usage:
-  #    ollama = Langchain::LLM::Ollama.new(url: ENV["OLLAMA_URL"], default_options: {})
+  #    llm = Langchain::LLM::Ollama.new(url: ENV["OLLAMA_URL"], default_options: {})
   #
   class Ollama < Base
     attr_reader :url, :defaults
 
     DEFAULTS = {
       temperature: 0.8,
-      completion_model_name: "llama2",
-      embeddings_model_name: "llama2",
-      chat_completion_model_name: "llama2"
+      completion_model_name: "llama3",
+      embeddings_model_name: "llama3",
+      chat_completion_model_name: "llama3"
     }.freeze
 
     EMBEDDING_SIZES = {
       codellama: 4_096,
       "dolphin-mixtral": 4_096,
       llama2: 4_096,
+      llama3: 4_096,
       llava: 4_096,
       mistral: 4_096,
       "mistral-openorca": 4_096,

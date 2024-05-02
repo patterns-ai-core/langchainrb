@@ -3,7 +3,7 @@
 require "faraday"
 
 RSpec.describe Langchain::LLM::Ollama do
-  let(:subject) { described_class.new(url: "http://localhost:11434", default_options: {completion_model_name: "llama2", embeddings_model_name: "llama2"}) }
+  let(:subject) { described_class.new(url: "http://localhost:11434", default_options: {completion_model_name: "llama3", embeddings_model_name: "llama3"}) }
 
   describe "#initialize" do
     it "initializes the client without any errors" do
@@ -31,7 +31,7 @@ RSpec.describe Langchain::LLM::Ollama do
       response = subject.complete(prompt: "In one word, life is ")
 
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
-      expect(response.completion).to eq("\nIn one word, life is... complex.")
+      expect(response.completion).to eq("fragile.")
     end
   end
 
@@ -64,13 +64,13 @@ RSpec.describe Langchain::LLM::Ollama do
 
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
       expect(response.completion).not_to match(/summary/)
-      expect(response.completion).to start_with("Mary had a little lamb that followed her everywhere she went")
+      expect(response.completion).to start_with("A little lamb follows Mary everywhere she goes")
     end
   end
 
   describe "#default_dimensions" do
-    it "returns size of llama2 embeddings" do
-      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "llama2"})
+    it "returns size of llama3 embeddings" do
+      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "llama3"})
 
       expect(subject.default_dimensions).to eq(4_096)
     end
