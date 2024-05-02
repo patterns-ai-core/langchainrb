@@ -9,6 +9,11 @@ RSpec.describe Langchain::LLM::Ollama do
     it "initializes the client without any errors" do
       expect { subject }.not_to raise_error
     end
+
+    it "initialize with default arguments" do
+      expect { described_class.new }.not_to raise_error
+      expect(described_class.new.url).to eq("http://localhost:11434")
+    end
   end
 
   describe "#embed" do

@@ -7,6 +7,7 @@ module Langchain::LLM
   # Available models: https://ollama.ai/library
   #
   # Usage:
+  #    llm = Langchain::LLM::Ollama.new
   #    llm = Langchain::LLM::Ollama.new(url: ENV["OLLAMA_URL"], default_options: {})
   #
   class Ollama < Base
@@ -34,7 +35,7 @@ module Langchain::LLM
     # @param url [String] The URL of the Ollama instance
     # @param default_options [Hash] The default options to use
     #
-    def initialize(url:, default_options: {})
+    def initialize(url: "http://localhost:11434", default_options: {})
       depends_on "faraday"
       @url = url
       @defaults = DEFAULTS.deep_merge(default_options)
