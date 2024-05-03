@@ -9,12 +9,12 @@
         "properties": {
           "city": {
             "type": "string",
-            "description": "city name"
+            "description": "City name, optional ISO 3166 state code (USA only), and optional ISO 3166 country code divided by comma."
           },
           "units": {
             "type": "string",
             "enum": ["standard", "metric", "imperial"],
-            "description": "units"
+            "description": "Units"
           }
         },
         "required": ["city"]

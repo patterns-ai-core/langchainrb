@@ -14,7 +14,11 @@ module Langchain::Tool
     #
     # Usage:
     #     weather = Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
-    #     weather.current_weather(city: "Los Angeles", units: "imperial")
+    #
+    #     # Examples:
+    #     weather.current_weather(city: "Boston")
+    #     weather.current_weather(city: "Los Angeles, CA", units: "imperial")
+    #     weather.current_weather(city: "Rome, IT", units: "metric")
     #
     NAME = "weather"
     ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
@@ -37,7 +41,7 @@ module Langchain::Tool
     end
 
     # Returns current weather for a city
-    # @param city [String] City name
+    # @param city [String] City name, optional ISO 3166 state code (USA only), and optional ISO 3166 country code divided by comma.
     # @param units [String] Units for response. One of "standard", "metric", or "imperial".
     # @return [String] Description of the weather
     def current_weather(city:, units: "standard")
