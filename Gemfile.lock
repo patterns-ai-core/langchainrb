@@ -1,11 +1,3 @@
-GIT
-  remote: https://github.com/svs/anthropic.git
-  revision: dd382a83d3f66e6365504d0a2bf1fd8c72d6027c
-  specs:
-    anthropic (0.1.0)
-      faraday (>= 1)
-      faraday-multipart (>= 1)
-
 PATH
   remote: .
   specs:
@@ -54,6 +46,9 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     afm (0.2.2)
     ai21 (0.2.1)
+    anthropic (0.2.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ast (2.4.2)
     aws-eventstream (1.3.0)
     aws-partitions (1.890.0)
@@ -477,7 +472,7 @@ PLATFORMS
 
 DEPENDENCIES
   ai21 (~> 0.2.1)
-  anthropic!
+  anthropic (~> 0.2)
   aws-sdk-bedrockruntime (~> 1.1)
   chroma-db (~> 0.6.0)
   cohere-ruby (~> 0.9.8)
