@@ -1,23 +1,9 @@
 require "dotenv/load"
 require "langchain"
 require "openai"
-require "reline"
-
-# gem install reline
-# or add `gem "reline"` to your Gemfile
-
-@assistant = Langchain::Assistant.new(
-  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]),
-  thread: Langchain::Thread.new,
-  instructions: "You are a Meteorologist Assistant that is able to pull the weather for any city in imperial units.",
-  tools: [
-    Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
-  ]
-)
+require "reline"  # gem install reline
 
 DONE = %w[done end eof print exit].freeze
-
-puts "Welcome to your Meteorological assistant!"
 
 def prompt_for_message
   puts "(multiline input; type 'end' on its own line when done. or 'print' to print thread, or 'exit' to exit)"
@@ -42,8 +28,8 @@ def prompt_for_message
   user_message
 end
 
-def print_thread
-  @assistant.thread.messages.each do |message|
+def print_thread(assistant)
+  assistant.thread.messages.each do |message|
     puts "----"
     puts message.role + ": " + message.content
     case message.role
@@ -59,6 +45,17 @@ def print_thread
 end
 
 begin
+  assistant = Langchain::Assistant.new(
+    llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"]),
+    thread: Langchain::Thread.new,
+    instructions: "You are a Meteorologist Assistant that is able to pull the weather for any city in imperial units.",
+    tools: [
+      Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
+    ]
+  )
+
+  puts "Welcome to your Meteorological assistant!"
+
   loop do
     user_message = prompt_for_message
 
@@ -66,14 +63,14 @@ begin
     when :noop
       next
     when :print
-      print_thread
+      print_thread(assistant)
       next
     when :exit
       break
     end
 
-    @assistant.add_message_and_run content: user_message, auto_tool_execution: true
-    puts @assistant.thread.messages.last.content
+    assistant.add_message_and_run content: user_message, auto_tool_execution: true
+    puts assistant.thread.messages.last.content
   end
 rescue Interrupt
   exit 0
