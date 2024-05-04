@@ -26,8 +26,6 @@ module Langchain::LLM
     attr_reader :defaults
 
     def initialize(api_key:, default_options: {})
-      warn "DEPRECATED: Google had deprecated their Google Palm APIs hence this class is deprecated as well. Please use `Langchain::LLM::GoogleGemini` instead."
-
       depends_on "google_palm_api"
 
       @client = ::GooglePalmApi::Client.new(api_key: api_key)

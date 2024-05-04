@@ -65,14 +65,23 @@ module Langchain
         false
       end
 
+      # Check if the message is a tool call
+      #
+      # @return [Boolean] true/false whether this message is a tool call
       def tool?
         function?
       end
 
+      # Check if the message is a tool call
+      #
+      # @return [Boolean] true/false whether this message is a tool call
       def function?
         role == "function"
       end
 
+      # Check if the message came from an LLM
+      #
+      # @return [Boolean] true/false whether this message was produced by an LLM
       def model?
         role == "model"
       end

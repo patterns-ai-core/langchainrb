@@ -11,7 +11,6 @@ module Langchain::LLM
     attr_reader :defaults, :api_key
 
     def initialize(api_key:, default_options: {})
-      depends_on "faraday"
       @api_key = api_key
       @defaults = DEFAULTS.merge(default_options)
     end
@@ -19,6 +18,7 @@ module Langchain::LLM
     # Generate a chat completion for a given prompt
     #
     # @param messages [Array<Hash>] List of messages comprising the conversation so far
+    # @param model [String] The model to use
     # @param tools [Array<Hash>] A list of Tools the model may use to generate the next response
     # @param tool_choice [String] Specifies the mode in which function calling should execute. If unspecified, the default value will be set to AUTO. Possible values: AUTO, ANY, NONE
     # @param system [String] Developer set system instruction
