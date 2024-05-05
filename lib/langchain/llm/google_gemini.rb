@@ -37,11 +37,17 @@ module Langchain::LLM
       # When system_instruction is set, getting: {"error"=>{"code"=>400, "message"=>"Developer instruction is not enabled for models/gemini-pro", "status"=>"INVALID_ARGUMENT"}}
       params[:system_instruction] = {parts: [{text: system}]} if system
 
+      # TODO: Convert this to use Net::HTTP
       response = HTTParty.post(
         "https://generativelanguage.googleapis.com/v1beta/models/#{model}:generateContent?key=#{api_key}",
         body: params.to_json,
         headers: {"Content-Type" => "application/json"}
       )
+
+      if response.code != 200
+        raise StandardError.new(response)
+      end
+
       Langchain::LLM::GoogleGeminiResponse.new(response, model: defaults[:chat_completion_model_name])
     end
   end
