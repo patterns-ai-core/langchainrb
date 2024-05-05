@@ -28,6 +28,8 @@ module Langchain::Tool
       page_size: nil,
       page: nil
     )
+      Langchain.logger.info("Retrieving all news", for: self.class)
+
       params = {apiKey: @api_key}
       params[:q] = q if q
       params[:searchIn] = search_in if search_in
@@ -60,6 +62,8 @@ module Langchain::Tool
       page_size: nil,
       page: nil
     )
+      Langchain.logger.info("Retrieving top news headlines", for: self.class)
+
       params = {apiKey: @api_key}
       params[:country] = country if country
       params[:category] = category if category
@@ -84,6 +88,8 @@ module Langchain::Tool
       language: nil,
       country: nil
     )
+      Langchain.logger.info("Retrieving news sources", for: self.class)
+
       params = {apiKey: @api_key}
       params[:country] = country if country
       params[:category] = category if category
