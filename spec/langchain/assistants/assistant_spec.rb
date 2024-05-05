@@ -83,11 +83,21 @@ RSpec.describe Langchain::Assistant do
       end
 
       context "when auto_tool_execution is false" do
+        before do
+          allow(subject.llm).to receive(:chat)
+            .with(
+              messages: [
+                {role: "system", content: instructions},
+                {role: "user", content: "Please calculate 2+2"}
+              ],
+              tools: calculator.to_openai_tools,
+              tool_choice: "auto"
+            )
+            .and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response))
+        end
+
         it "runs the assistant" do
-          allow(subject.llm).to receive(:chat).and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response))
-
           subject.add_message(role: "user", content: "Please calculate 2+2")
-
           subject.run(auto_tool_execution: false)
 
           expect(subject.thread.messages.last.role).to eq("assistant")
@@ -108,8 +118,28 @@ RSpec.describe Langchain::Assistant do
           }
         end
 
+        before do
+          allow(subject.llm).to receive(:chat)
+            .with(
+              messages: [
+                {role: "system", content: instructions},
+                {role: "user", content: "Please calculate 2+2"},
+                {role: "assistant", content: "", tool_calls: [
+                  {
+                    "function" => {"arguments" => "{\"input\":\"2+2\"}", "name" => "calculator__execute"},
+                    "id" => "call_9TewGANaaIjzY31UCpAAGLeV",
+                    "type" => "function"
+                  }
+                ]},
+                {content: "4.0", role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
+              ],
+              tools: calculator.to_openai_tools,
+              tool_choice: "auto"
+            )
+            .and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response2))
+        end
+
         it "runs the assistant and automatically executes tool calls" do
-          allow(subject.llm).to receive(:chat).and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response2))
           allow(subject.tools[0]).to receive(:execute).with(
             input: "2+2"
           ).and_return("4.0")
@@ -219,11 +249,19 @@ RSpec.describe Langchain::Assistant do
       end
 
       context "when auto_tool_execution is false" do
+        before do
+          allow(subject.llm).to receive(:chat)
+            .with(
+              messages: [{role: "user", parts: [{text: "Please calculate 2+2"}]}],
+              tools: calculator.to_google_gemini_tools,
+              tool_choice: "auto",
+              system: instructions
+            )
+            .and_return(Langchain::LLM::GoogleGeminiResponse.new(raw_google_gemini_response))
+        end
+
         it "runs the assistant" do
-          allow(subject.llm).to receive(:chat).and_return(Langchain::LLM::GoogleGeminiResponse.new(raw_google_gemini_response))
-
           subject.add_message(role: "user", content: "Please calculate 2+2")
-
           subject.run(auto_tool_execution: false)
 
           expect(subject.thread.messages.last.role).to eq("model")
@@ -248,8 +286,22 @@ RSpec.describe Langchain::Assistant do
           }
         end
 
+        before do
+          allow(subject.llm).to receive(:chat)
+            .with(
+              messages: [
+                {role: "user", parts: [{text: "Please calculate 2+2"}]},
+                {role: "model", parts: [{"functionCall" => {"name" => "calculator__execute", "args" => {"input" => "2+2"}}}]},
+                {role: "function", parts: [{functionResponse: {name: "calculator__execute", response: {name: "calculator__execute", content: "4.0"}}}]}
+              ],
+              tools: calculator.to_google_gemini_tools,
+              tool_choice: "auto",
+              system: instructions
+            )
+            .and_return(Langchain::LLM::GoogleGeminiResponse.new(raw_google_gemini_response2))
+        end
+
         it "runs the assistant and automatically executes tool calls" do
-          allow(subject.llm).to receive(:chat).and_return(Langchain::LLM::GoogleGeminiResponse.new(raw_google_gemini_response2))
           allow(subject.tools[0]).to receive(:execute).with(
             input: "2+2"
           ).and_return("4.0")
