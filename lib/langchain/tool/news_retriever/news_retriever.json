@@ -48,7 +48,7 @@
           },
           "page_size": {
             "type": "integer",
-            "description": "The number of results to return per page (request). 20 is the default, 100 is the maximum."
+            "description": "The number of results to return per page (request). 5 is the default, 100 is the maximum."
           },
           "page": {
             "type": "integer",
@@ -81,7 +81,7 @@
           },
           "page_size": {
             "type": "integer",
-            "description": "The number of results to return per page (request). 20 is the default, 100 is the maximum."
+            "description": "The number of results to return per page (request). 5 is the default, 100 is the maximum."
           },
           "page": {
             "type": "integer",
