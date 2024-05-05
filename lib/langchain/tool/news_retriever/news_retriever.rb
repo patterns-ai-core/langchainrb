@@ -3,7 +3,8 @@
 module Langchain::Tool
   class NewsRetriever < Base
     #
-    # A tool that execute Ruby code in a sandboxed environment.
+    # A tool that retrieves latest news from various sources via https://newsapi.org/.
+    # An API key needs to be obtained from https://newsapi.org/ to use this tool.
     #
     # Usage:
     #    news_retriever = Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])
@@ -43,15 +44,7 @@ module Langchain::Tool
       params[:pageSize] = page_size if page_size
       params[:page] = page if page
 
-      uri = URI.parse("https://newsapi.org/v2/everything?#{URI.encode_www_form(params)}")
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request["Content-Type"] = "application/json"
-
-      response = http.request(request)
-      response.body
+      send_request(path: "everything", params: params)
     end
 
     def get_top_headlines(
@@ -72,15 +65,7 @@ module Langchain::Tool
       params[:pageSize] = page_size if page_size
       params[:page] = page if page
 
-      uri = URI.parse("https://newsapi.org/v2/top-headlines?#{URI.encode_www_form(params)}")
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request["Content-Type"] = "application/json"
-
-      response = http.request(request)
-      response.body
+      send_request(path: "top-headlines", params: params)
     end
 
     def get_sources(
@@ -95,7 +80,13 @@ module Langchain::Tool
       params[:category] = category if category
       params[:language] = language if language
 
-      uri = URI.parse("https://newsapi.org/v2/top-headlines/sources?#{URI.encode_www_form(params)}")
+      send_request(path: "top-headlines/sources", params: params)
+    end
+
+    private
+
+    def send_request(path:, params:)
+      uri = URI.parse("https://newsapi.org/v2/#{path}?#{URI.encode_www_form(params)}")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
 
