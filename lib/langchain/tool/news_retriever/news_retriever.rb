@@ -101,12 +101,3 @@ module Langchain::Tool
     end
   end
 end
-
-llm = Langchain::LLM::GoogleGemini.new(api_key: ENV['GOOGLE_GEMINI_API_KEY'])
-thread = Langchain::Thread.new
-assistant = Langchain::Assistant.new(
-  llm: llm,
-  thread: thread,
-  instructions: "You are a news assistant. I want you to retrieve the top headlines for me.",
-  tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
-)
