@@ -24,35 +24,6 @@ module Langchain::LLM
     # A client for communicating with the LLM
     attr_reader :client
 
-    UNIFIED_CHAT_SCHEMA = {
-      # Either "messages" or "prompt" is required
-      messages: {},
-      model: {},
-      prompt: {},
-
-      # Allows to force the model to produce specific output format.
-      response_format: {},
-
-      stop: {}, # multiple types (e.g. OpenAI allows Array, null)
-      stream: {}, # Enable streaming
-
-      max_tokens: {}, # Range: [1, context_length)
-      temperature: {}, # Range: [0, 2]
-      top_p: {}, # Range: (0, 1]
-      top_k: {}, # Range: [1, Infinity) Not available for OpenAI models
-      frequency_penalty: {}, # Range: [-2, 2]
-      presence_penalty: {}, # Range: [-2, 2]
-      repetition_penalty: {}, # Range: (0, 2]
-      seed: {}, # OpenAI only
-
-      # Function-calling
-      tools: {},
-      tool_choice: {},
-
-      # Additional optional parameters
-      logit_bias: {}
-    }
-
     # Ensuring backward compatibility after https://github.com/patterns-ai-core/langchainrb/pull/586
     # TODO: Delete this method later
     def default_dimension
@@ -101,13 +72,13 @@ module Langchain::LLM
     end
 
     #
-    # @returns UnifiedParameters for the chat API of the LLM.
+    # Returns an instance of Langchain::LLM::Parameters::Chat
     #
     def chat_parameters(params = {})
-      @chat_parameters ||= ::Langchain::LLM::UnifiedParameters.new(
-        schema: UNIFIED_CHAT_SCHEMA,
+      @chat_parameters ||= Langchain::LLM::Parameters::Chat.new(
         parameters: params
       )
+      @chat_parameters
     end
   end
 end

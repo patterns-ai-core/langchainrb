@@ -23,7 +23,7 @@ module Langchain::LLM
     end
 
     def to_params(params = {})
-      @parameters = params.slice(*schema.keys)
+      @parameters = (@parameters || {}).merge!(params).slice(*schema.keys)
       @aliases.each do |field, aliased_keys|
         # favor existing keys in case of conflicts,
         # and check for multiples
@@ -36,7 +36,7 @@ module Langchain::LLM
         default = param_options[:default] || param_options[:defaults]
         @parameters[field] ||= default if !default.nil? && (!default.is_a?(Enumerable) || !default.empty?)
       end
-      @parameters.except(*@ignored)
+      @parameters = @parameters.except(*@ignored)
     end
 
     def update(schema = {})
