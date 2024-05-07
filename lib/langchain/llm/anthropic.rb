@@ -13,7 +13,7 @@ module Langchain::LLM
   class Anthropic < Base
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "claude-2",
+      completion_model_name: "claude-2.1",
       chat_completion_model_name: "claude-3-sonnet-20240229",
       max_tokens_to_sample: 256
     }.freeze
@@ -72,9 +72,6 @@ module Langchain::LLM
       parameters[:metadata] = metadata if metadata
       parameters[:stream] = stream if stream
 
-      # TODO: Implement token length validator for Anthropic
-      # parameters[:max_tokens_to_sample] = validate_max_tokens(prompt, parameters[:completion_model_name])
-
       response = client.complete(parameters: parameters)
       Langchain::LLM::AnthropicResponse.new(response)
     end
@@ -128,10 +125,5 @@ module Langchain::LLM
 
       Langchain::LLM::AnthropicResponse.new(response)
     end
-
-    # TODO: Implement token length validator for Anthropic
-    # def validate_max_tokens(messages, model)
-    #   LENGTH_VALIDATOR.validate_max_tokens!(messages, model)
-    # end
   end
 end
