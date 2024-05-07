@@ -476,7 +476,7 @@ PLATFORMS
 
 DEPENDENCIES
   ai21 (~> 0.2.1)
-  anthropic
+  anthropic (~> 0.2)
   aws-sdk-bedrockruntime (~> 1.1)
   chroma-db (~> 0.6.0)
   cohere-ruby (~> 0.9.8)
