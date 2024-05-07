@@ -36,7 +36,8 @@ RSpec.describe Langchain::LLM::Ollama do
       response = subject.complete(prompt: "In one word, life is ")
 
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
-      expect(response.completion).to eq("fragile.")
+      message = {"message" => "fragile."}
+      expect(response.completion).to eq(message)
     end
   end
 
@@ -56,6 +57,12 @@ RSpec.describe Langchain::LLM::Ollama do
 
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
       expect(response.chat_completion).to eq(fixture.dig("message", "content"))
+
+      expect(response.completions).to be_a(Array)
+      expect(response.completion).to be_a(Hash)
+      expect(response.completion.dig("message")).to be_a(Hash)
+      expect(response.completion.dig("message", "role")).to eq("assistant")
+      expect(response.completion.dig("message", "content").strip).to start_with("Of course, I'd be happy")
     end
   end
 
@@ -68,8 +75,8 @@ RSpec.describe Langchain::LLM::Ollama do
       response = subject.summarize(text: mary_had_a_little_lamb_text)
 
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
-      expect(response.completion).not_to match(/summary/)
-      expect(response.completion).to start_with("A little lamb follows Mary everywhere she goes")
+      expect(response.completion).to be_a(Hash)
+      expect(response.completion["message"]).to start_with("A little lamb follows Mary everywhere she goes")
     end
   end
 

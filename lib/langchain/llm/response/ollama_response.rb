@@ -22,7 +22,14 @@ module Langchain::LLM
     end
 
     def completions
-      raw_response.is_a?(String) ? [raw_response] : []
+      if raw_response.is_a?(String)
+        [{"message" => raw_response}]
+      elsif raw_response.is_a?(Hash)
+        [raw_response]
+      else
+        warn "[ollama] Unexpected response type: #{raw_response.class}"
+        []
+      end
     end
 
     def embedding
