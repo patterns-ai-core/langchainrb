@@ -63,6 +63,12 @@ RSpec.describe Langchain::LLM::Ollama do
       expect(response.completion.dig("message")).to be_a(Hash)
       expect(response.completion.dig("message", "role")).to eq("assistant")
       expect(response.completion.dig("message", "content").strip).to start_with("Of course, I'd be happy")
+
+      expect(response.chat_completions).to be_a(Array)
+      expect(response.chat_completions.first).to be_a(Hash)
+      expect(response.chat_completions.first.dig("message")).to be_a(Hash)
+      expect(response.chat_completions.first.dig("message", "role")).to eq("assistant")
+      expect(response.chat_completions.first.dig("message", "content").strip).to start_with("Of course, I'd be happy")
     end
   end
 

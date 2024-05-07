@@ -13,6 +13,10 @@ module Langchain::LLM
       end
     end
 
+    def chat_completions
+      [raw_response]
+    end
+
     def chat_completion
       raw_response.dig("message", "content")
     end
