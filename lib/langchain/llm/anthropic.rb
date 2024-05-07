@@ -32,6 +32,16 @@ module Langchain::LLM
 
       @client = ::Anthropic::Client.new(access_token: api_key, **llm_options)
       @defaults = DEFAULTS.merge(default_options)
+      chat_parameters.update(
+        model: {default: @defaults[:chat_completion_model_name]},
+        temperature: {default: @defaults[:temperature]},
+        max_tokens: {default: @defaults[:max_tokens_to_sample]},
+        user: {},
+        metadata: {},
+        system: {}
+      )
+      chat_parameters.ignore(:n, :user)
+      chat_parameters.alias_field(:stop, as: :stop_sequences)
     end
 
     # Generate a completion for a given prompt
@@ -90,36 +100,12 @@ module Langchain::LLM
     # @param top_k [Integer] Only sample from the top K options for each subsequent token
     # @param top_p [Float] Use nucleus sampling.
     # @return [Langchain::LLM::AnthropicResponse] The chat completion
-    def chat(
-      messages: [],
-      model: @defaults[:chat_completion_model_name],
-      max_tokens: @defaults[:max_tokens_to_sample],
-      metadata: nil,
-      stop_sequences: nil,
-      stream: nil,
-      system: nil,
-      temperature: @defaults[:temperature],
-      tools: [],
-      top_k: nil,
-      top_p: nil
-    )
-      raise ArgumentError.new("messages argument is required") if messages.empty?
-      raise ArgumentError.new("model argument is required") if model.empty?
-      raise ArgumentError.new("max_tokens argument is required") if max_tokens.nil?
+    def chat(params = {})
+      parameters = chat_parameters.to_params(params)
 
-      parameters = {
-        messages: messages,
-        model: model,
-        max_tokens: max_tokens,
-        temperature: temperature
-      }
-      parameters[:metadata] = metadata if metadata
-      parameters[:stop_sequences] = stop_sequences if stop_sequences
-      parameters[:stream] = stream if stream
-      parameters[:system] = system if system
-      parameters[:tools] = tools if tools.any?
-      parameters[:top_k] = top_k if top_k
-      parameters[:top_p] = top_p if top_p
+      raise ArgumentError.new("messages argument is required") if Array(parameters[:messages]).empty?
+      raise ArgumentError.new("model argument is required") if parameters[:model].empty?
+      raise ArgumentError.new("max_tokens argument is required") if parameters[:max_tokens].nil?
 
       response = client.messages(parameters: parameters)
 
