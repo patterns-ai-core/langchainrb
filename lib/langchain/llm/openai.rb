@@ -46,7 +46,6 @@ module Langchain::LLM
         top_logprobs: {},
         n: {default: @defaults[:n]},
         temperature: {default: @defaults[:temperature]},
-        tools: {default: []},
         user: {}
       )
       chat_parameters.ignore(:top_k)

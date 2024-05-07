@@ -29,7 +29,7 @@ module Langchain::LLM::Parameters
       seed: {}, # OpenAI only
 
       # Function-calling
-      tools: {},
+      tools: {default: []},
       tool_choice: {},
 
       # Additional optional parameters
