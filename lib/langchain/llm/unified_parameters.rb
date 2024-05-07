@@ -28,13 +28,13 @@ module Langchain::LLM
         # favor existing keys in case of conflicts,
         # and check for multiples
         aliased_keys.each do |alias_key|
-          @parameters[field] ||= params[alias_key]
+          @parameters[field] ||= params[alias_key] if value_present?(params[alias_key])
         end
       end
       @schema.each do |field, param_options|
         param_options ||= {}
         default = param_options[:default] || param_options[:defaults]
-        @parameters[field] ||= default if !default.nil? && (!default.is_a?(Enumerable) || !default.empty?)
+        @parameters[field] ||= default if value_present?(default)
       end
       @parameters = @parameters.except(*@ignored)
     end
@@ -73,6 +73,12 @@ module Langchain::LLM
 
     def [](key)
       to_params[key]
+    end
+
+    private
+
+    def value_present?(value)
+      !value.nil? && (!value.is_a?(Enumerable) || !value.empty?)
     end
   end
 end

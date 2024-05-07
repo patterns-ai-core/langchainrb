@@ -34,8 +34,35 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
       let(:params) do
         {beep: 1, booop: 4, bop: 3}
       end
+      before { subject.update({boop: {aliases: [:booop], default: "boop"}}) }
+
       it "translates alias schema fields" do
         expect(subject.to_params(params)).to match(beep: 1, boop: 4)
+      end
+
+      it "preserves defaults" do
+        expect(subject.to_params(params)).to match(beep: 1, boop: "boop")
+      end
+
+      context "when aliased field is nil" do
+        let(:params) do
+          {beep: nil, booop: nil, bop: 3}
+        end
+        before { subject.update({boop: {aliases: [:booop]}}) }
+        it "excludes the field" do
+          expect(subject.to_params(params)).to match(beep: "beep")
+        end
+      end
+
+      context "when aliased field is empty" do
+        let(:params) do
+          {beep: 1, booop: [], bop: 3}
+        end
+        it "excludes the field" do
+          # ensure field has no default
+          subject.update({boop: {default: []}})
+          expect(subject.to_params(params)).to match(beep: 1)
+        end
       end
     end
 
