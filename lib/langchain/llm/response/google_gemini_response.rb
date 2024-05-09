@@ -22,6 +22,14 @@ module Langchain::LLM
       end
     end
 
+    def embedding
+      embeddings.first
+    end
+
+    def embeddings
+      [raw_response.dig("predictions", 0, "embeddings", "values")]
+    end
+
     def prompt_tokens
       raw_response.dig("usageMetadata", "promptTokenCount")
     end

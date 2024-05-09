@@ -48,7 +48,7 @@ module Langchain::LLM
         raise StandardError.new(response)
       end
 
-      Langchain::LLM::GoogleGeminiResponse.new(response, model: defaults[:chat_completion_model_name])
+      Langchain::LLM::GoogleGeminiResponse.new(response, model: model)
     end
   end
 end

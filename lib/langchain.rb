@@ -12,6 +12,7 @@ loader.inflector.inflect(
   "ai21_response" => "AI21Response",
   "ai21_validator" => "AI21Validator",
   "csv" => "CSV",
+  "google_vertex_ai" => "GoogleVertexAI",
   "html" => "HTML",
   "json" => "JSON",
   "jsonl" => "JSONL",

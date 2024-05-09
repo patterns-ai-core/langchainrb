@@ -19,7 +19,9 @@ module Langchain
       tools: [],
       instructions: nil
     )
-      raise ArgumentError, "Invalid LLM; currently only Langchain::LLM::OpenAI and Langchain::LLM::GoogleGemini are supported" unless [Langchain::LLM::OpenAI, Langchain::LLM::GoogleGemini].include?(llm.class)
+      unless [Langchain::LLM::OpenAI, Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
+        raise ArgumentError, "Invalid LLM; currently only Langchain::LLM::OpenAI and Langchain::LLM::GoogleGemini are supported"
+      end
       raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless thread.is_a?(Langchain::Thread)
       raise ArgumentError, "Tools must be an array of Langchain::Tool::Base instance(s)" unless tools.is_a?(Array) && tools.all? { |tool| tool.is_a?(Langchain::Tool::Base) }
 
@@ -127,7 +129,7 @@ module Langchain
     def submit_tool_output(tool_call_id:, output:)
       tool_role = if llm.is_a?(Langchain::LLM::OpenAI)
         Langchain::Messages::OpenAIMessage::TOOL_ROLE
-      elsif llm.is_a?(Langchain::LLM::GoogleGemini)
+      elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
         Langchain::Messages::GoogleGeminiMessage::TOOL_ROLE
       end
 
@@ -171,7 +173,7 @@ module Langchain
       if tools.any?
         if llm.is_a?(Langchain::LLM::OpenAI)
           params[:tools] = tools.map(&:to_openai_tools).flatten
-        elsif llm.is_a?(Langchain::LLM::GoogleGemini)
+        elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
           params[:tools] = tools.map(&:to_google_gemini_tools).flatten
           params[:system] = instructions if instructions
         end
@@ -190,7 +192,7 @@ module Langchain
       tool_calls.each do |tool_call|
         tool_call_id, tool_name, method_name, tool_arguments = if llm.is_a?(Langchain::LLM::OpenAI)
           extract_openai_tool_call(tool_call: tool_call)
-        elsif llm.is_a?(Langchain::LLM::GoogleGemini)
+        elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
           extract_google_gemini_tool_call(tool_call: tool_call)
         end
 
@@ -250,7 +252,7 @@ module Langchain
     def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
       if llm.is_a?(Langchain::LLM::OpenAI)
         Langchain::Messages::OpenAIMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
-      elsif llm.is_a?(Langchain::LLM::GoogleGemini)
+      elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
         Langchain::Messages::GoogleGeminiMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
       end
     end

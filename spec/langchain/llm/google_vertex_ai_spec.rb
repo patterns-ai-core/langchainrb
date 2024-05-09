@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "google-apis-aiplatform_v1"
+require "googleauth"
 
-RSpec.describe Langchain::LLM::GoogleVertexAi do
-  let(:subject) { described_class.new(project_id: "123") }
+RSpec.describe Langchain::LLM::GoogleVertexAI do
+  let(:subject) { described_class.new(project_id: "123", region: "us-central1") }
 
   describe "#embed" do
     let(:embedding) { [-0.00879860669374466, 0.007578692398965359, 0.021136576309800148] }
@@ -14,15 +14,13 @@ RSpec.describe Langchain::LLM::GoogleVertexAi do
         double("Google::Auth::UserRefreshCredentials")
       )
 
-      allow(subject.client).to receive(:predict_project_location_publisher_model).and_return(
-        double("Google::Apis::AiplatformV1::GoogleCloudAiplatformV1PredictResponse", to_h: raw_embedding_response)
-      )
+      allow(HTTParty).to receive(:post).and_return(raw_embedding_response)
     end
 
     it "returns valid llm response object" do
       response = subject.embed(text: "Hello world")
 
-      expect(response).to be_a(Langchain::LLM::GoogleVertexAiResponse)
+      expect(response).to be_a(Langchain::LLM::GoogleGeminiResponse)
       expect(response.model).to eq("textembedding-gecko")
       expect(response.embedding).to eq(embedding)
       expect(response.total_tokens).to eq(3)
