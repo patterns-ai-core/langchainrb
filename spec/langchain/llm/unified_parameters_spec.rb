@@ -41,7 +41,7 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
       end
 
       it "preserves defaults" do
-        expect(subject.to_params(params)).to match(beep: 1, boop: "boop")
+        expect(subject.to_params(params.except(:booop))).to match(beep: 1, boop: "boop")
       end
 
       context "when aliased field is nil" do
@@ -152,6 +152,33 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
         :booop,
         :bopity
       ])
+    end
+  end
+
+  describe "#remap({ original_field: :new_field })" do
+    before { subject.remap(beep: :beeps, boop: :boops) }
+    let(:params) do
+      {beep: "beeps", boops: "boops"}
+    end
+
+    it "modifies the output parameters to use the new named fields" do
+      expect(subject.to_params(params)).to match(
+        beeps: "beeps",
+        boops: "boops"
+      )
+    end
+
+    it "preserves any defined defaults" do
+      expect(subject.to_params).to match(
+        beeps: "beep"
+      )
+    end
+
+    it "preserves any defined aliases" do
+      expect(subject.to_params(booop: "aliased boops")).to match(
+        beeps: "beep",
+        boops: "aliased boops"
+      )
     end
   end
 end
