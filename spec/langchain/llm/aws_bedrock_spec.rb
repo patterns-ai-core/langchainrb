@@ -19,7 +19,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
           content: [{type: "text", text: "The capital of France is Paris."}],
           model: "claude-3-sonnet-28k-20240229",
           stop_reason: "end_turn",
-          stop_sequence: nil,
+          stop_sequences: ["stop"],
           usage: {input_tokens: 14, output_tokens: 10}
         }.to_json
       end
@@ -28,21 +28,28 @@ RSpec.describe Langchain::LLM::AwsBedrock do
         response_object = double("response_object")
         allow(response_object).to receive(:body).and_return(StringIO.new(response))
         allow(subject.client).to receive(:invoke_model)
-          .with({
+          .with(matching(
             model_id: "anthropic.claude-3-sonnet-20240229-v1:0",
             body: {
               messages: [{role: "user", content: "What is the capital of France?"}],
+              stop_sequences: ["stop"],
               max_tokens: 300,
               anthropic_version: "bedrock-2023-05-31"
             }.to_json,
             content_type: "application/json",
             accept: "application/json"
-          })
+          ))
           .and_return(response_object)
       end
 
       it "returns a completion" do
-        expect(subject.chat(messages: [{role: "user", content: "What is the capital of France?"}], model: "anthropic.claude-3-sonnet-20240229-v1:0").chat_completion).to eq("The capital of France is Paris.")
+        expect(
+          subject.chat(
+            messages: [{role: "user", content: "What is the capital of France?"}],
+            model: "anthropic.claude-3-sonnet-20240229-v1:0",
+            stop_sequences: ["stop"]
+          ).chat_completion
+        ).to eq("The capital of France is Paris.")
       end
     end
   end
