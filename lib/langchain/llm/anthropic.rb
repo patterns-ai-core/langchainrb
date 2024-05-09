@@ -36,12 +36,11 @@ module Langchain::LLM
         model: {default: @defaults[:chat_completion_model_name]},
         temperature: {default: @defaults[:temperature]},
         max_tokens: {default: @defaults[:max_tokens_to_sample]},
-        user: {},
         metadata: {},
         system: {}
       )
       chat_parameters.ignore(:n, :user)
-      chat_parameters.alias_field(:stop, as: :stop_sequences)
+      chat_parameters.remap(stop: :stop_sequences)
     end
 
     # Generate a completion for a given prompt
