@@ -84,7 +84,6 @@ module Langchain::LLM
       # params[:tool_config] = {function_calling_config: {mode: tool_choice.upcase}} if tool_choice
       params[:system_instruction] = {parts: [{text: system}]} if system
 
-      binding.pry
       response = HTTParty.post(
         "#{url}#{model}:generateContent",
         body: params.to_json,
