@@ -159,12 +159,13 @@ module Langchain::LLM
 
     # Generate a chat completion
     #
-    # @param model [String] Model name
-    # @param messages [Array<Hash>] Array of messages
-    # @param format [String] Format to return a response in. Currently the only accepted value is `json`
-    # @param temperature [Float] The temperature to use
-    # @param template [String] The prompt template to use (overrides what is defined in the `Modelfile`)
-    # @param stream [Boolean] Streaming the response. If false the response will be returned as a single response object, rather than a stream of objects
+    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @option params [String] :model Model name
+    # @option params [Array<Hash>] :messages Array of messages
+    # @option params [String] :format Format to return a response in. Currently the only accepted value is `json`
+    # @option params [Float] :temperature The temperature to use
+    # @option params [String] :template The prompt template to use (overrides what is defined in the `Modelfile`)
+    # @option params [Boolean] :stream Streaming the response. If false the response will be returned as a single response object, rather than a stream of objects
     #
     # The message object has the following fields:
     #   role: the role of the message, either system, user or assistant

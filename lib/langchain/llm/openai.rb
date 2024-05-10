@@ -111,8 +111,9 @@ module Langchain::LLM
 
     # Generate a chat completion for given messages.
     #
-    # @param messages [Array<Hash>] List of messages comprising the conversation so far
-    # @param model [String] ID of the model to use
+    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @option params [Array<Hash>] :messages List of messages comprising the conversation so far
+    # @option params [String] :model ID of the model to use
     def chat(params = {}, &block)
       parameters = chat_parameters.to_params(params)
 

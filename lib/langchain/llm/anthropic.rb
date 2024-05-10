@@ -87,17 +87,18 @@ module Langchain::LLM
 
     # Generate a chat completion for given messages
     #
-    # @param messages [Array<String>] Input messages
-    # @param model [String] The model that will complete your prompt
-    # @param max_tokens [Integer] Maximum number of tokens to generate before stopping
-    # @param metadata [Hash] Object describing metadata about the request
-    # @param stop_sequences [Array<String>] Custom text sequences that will cause the model to stop generating
-    # @param stream [Boolean] Whether to incrementally stream the response using server-sent events
-    # @param system [String] System prompt
-    # @param temperature [Float] Amount of randomness injected into the response
-    # @param tools [Array<String>] Definitions of tools that the model may use
-    # @param top_k [Integer] Only sample from the top K options for each subsequent token
-    # @param top_p [Float] Use nucleus sampling.
+    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @option params [Array<String>] :messages Input messages
+    # @option params [String] :model The model that will complete your prompt
+    # @option params [Integer] :max_tokens Maximum number of tokens to generate before stopping
+    # @option params [Hash] :metadata Object describing metadata about the request
+    # @option params [Array<String>] :stop_sequences Custom text sequences that will cause the model to stop generating
+    # @option params [Boolean] :stream Whether to incrementally stream the response using server-sent events
+    # @option params [String] :system System prompt
+    # @option params [Float] :temperature Amount of randomness injected into the response
+    # @option params [Array<String>] :tools Definitions of tools that the model may use
+    # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
+    # @option params [Float] :top_p Use nucleus sampling.
     # @return [Langchain::LLM::AnthropicResponse] The chat completion
     def chat(params = {})
       parameters = chat_parameters.to_params(params)

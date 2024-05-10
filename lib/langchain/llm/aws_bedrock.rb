@@ -124,14 +124,17 @@ module Langchain::LLM
     # Generate a chat completion for a given prompt
     # Currently only configured to work with the Anthropic provider and
     # the claude-3 model family
-    # @param messages [Array] The messages to generate a completion for
-    # @param system [String] The system prompt to provide instructions
-    # @param model [String] The model to use for completion defaults to @defaults[:chat_completion_model_name]
-    # @param max_tokens [Integer] The maximum number of tokens to generate
-    # @param stop_sequences [Array] The stop sequences to use for completion
-    # @param temperature [Float] The temperature to use for completion
-    # @param top_p [Float] The top p to use for completion
-    # @param top_k [Integer] The top k to use for completion
+    #
+    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @option params [Array<String>] :messages The messages to generate a completion for
+    # @option params [String] :system The system prompt to provide instructions
+    # @option params [String] :model The model to use for completion defaults to @defaults[:chat_completion_model_name]
+    # @option params [Integer] :max_tokens The maximum number of tokens to generate defaults to @defaults[:max_tokens_to_sample]
+    # @option params [Array<String>] :stop The stop sequences to use for completion
+    # @option params [Array<String>] :stop_sequences The stop sequences to use for completion
+    # @option params [Float] :temperature The temperature to use for completion
+    # @option params [Float] :top_p Use nucleus sampling.
+    # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
     # @return [Langchain::LLM::AnthropicMessagesResponse] Response object
     def chat(params = {})
       parameters = chat_parameters.to_params(params)
