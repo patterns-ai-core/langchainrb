@@ -36,7 +36,7 @@ module Langchain::LLM
       end
       @schema.each do |field, param_options|
         param_options ||= {}
-        default = param_options[:default] || param_options[:defaults]
+        default = param_options[:default]
         @parameters[field] ||= default if value_present?(default)
       end
       @remapped.each do |field, renamed_field|

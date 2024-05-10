@@ -5,7 +5,7 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
   # to introduce an ActiveModel-style validator to restrict inputs to conform to
   # types required of the LLMs APIs
   let(:schema) do
-    {beep: {defaults: "beep"}, boop: {aliases: [:booop]}}
+    {beep: {default: "beep"}, boop: {aliases: [:booop]}}
   end
   let(:subject) { described_class.new(schema: schema) }
 
@@ -113,7 +113,7 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
       instance = described_class.new(schema: schema)
       result = instance.update(
         beep: {default: "beepy"},
-        boop: {defaults: "boops"},
+        boop: {default: "boops"},
         bop: {}
       )
       expect(result).to be_instance_of(described_class)
