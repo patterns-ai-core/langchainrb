@@ -27,7 +27,12 @@ RSpec.describe Langchain::LLM::UnifiedParameters do
 
     it "re-builds the parameters on each call" do
       subject.to_params(params)
-      expect(subject.to_params(params.merge(boop: 30))).to match(beep: 1, boop: 30)
+      expect(subject.to_params(beep: 10, boop: 30)).to match(beep: 10, boop: 30)
+    end
+
+    it "re-builds the parameters on each call, even when they have defaults" do
+      subject.to_params(params)
+      expect(subject.to_params(boop: 30)).to match(beep: "beep", boop: 30)
     end
 
     context "with aliases" do

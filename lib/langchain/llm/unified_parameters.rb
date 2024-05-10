@@ -24,6 +24,8 @@ module Langchain::LLM
     end
 
     def to_params(params = {})
+      # if params are provided, reset any previously initialized
+      @parameters = params if !params.empty?
       @parameters = (@parameters || {}).merge!(params).slice(*schema.keys)
       @aliases.each do |field, aliased_keys|
         # favor existing keys in case of conflicts,
