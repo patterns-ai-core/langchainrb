@@ -78,7 +78,6 @@ module Langchain::LLM
       @chat_parameters ||= Langchain::LLM::Parameters::Chat.new(
         parameters: params
       )
-      @chat_parameters
     end
   end
 end

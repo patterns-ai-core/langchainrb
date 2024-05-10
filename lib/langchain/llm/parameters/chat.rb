@@ -39,7 +39,7 @@ module Langchain::LLM::Parameters
     def initialize(parameters: {})
       super(
         ::Langchain::LLM::UnifiedParameters.new(
-          schema: SCHEMA,
+          schema: SCHEMA.dup,
           parameters: parameters
         )
       )

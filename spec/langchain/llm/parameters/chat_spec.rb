@@ -26,6 +26,13 @@ RSpec.describe Langchain::LLM::Parameters::Chat do
     }
   end
 
+  it "does not cache schema between instances" do
+    first = described_class.new
+    first.update(version: {default: 1})
+    second = described_class.new
+    expect(first.schema).not_to eq(second.schema)
+  end
+
   context "delegations" do
     it "filters parameters to those provided" do
       params_with_extras = valid_params.merge(blah: 1, beep: "beep", boop: "boop")
