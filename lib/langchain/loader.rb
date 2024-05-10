@@ -29,8 +29,8 @@ module Langchain
     # @param path [String | Pathname] path to file or URL
     # @param options [Hash] options passed to the processor class used to process the data
     # @return [Data] data loaded from path
-    def self.load(path, options = {}, &block)
-      new(path, options).load(&block)
+    def self.load(path, options = {}, &)
+      new(path, options).load(&)
     end
 
     # Initialize Langchain::Loader
@@ -76,8 +76,8 @@ module Langchain
     # @yieldreturn [String] parsed data, as a String
     #
     # @return [Data] data that was loaded
-    def load(&block)
-      return process_data(load_from_url, &block) if url?
+    def load(&)
+      return process_data(load_from_url, &) if url?
       return load_from_directory(&block) if directory?
 
       process_data(load_from_path, &block)
@@ -95,10 +95,10 @@ module Langchain
       raise FileNotFound, "File #{@path} does not exist"
     end
 
-    def load_from_directory(&block)
+    def load_from_directory(&)
       Dir.glob(File.join(@path, "**/*")).map do |file|
         # Only load and add to result files with supported extensions
-        Langchain::Loader.new(file, @options).load(&block)
+        Langchain::Loader.new(file, @options).load(&)
       rescue
         UnknownFormatError nil
       end.flatten.compact

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "mistral-ai"
 
 RSpec.describe Langchain::LLM::MistralAI do
