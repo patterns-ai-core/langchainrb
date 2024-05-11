@@ -83,6 +83,7 @@ module Langchain::LLM
       parameters = chat_parameters.to_params(params)
 
       response = client.chat(**parameters)
+
       Langchain::LLM::CohereResponse.new(response)
     end
 
