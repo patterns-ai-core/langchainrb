@@ -5,7 +5,7 @@ RSpec.describe Langchain::LLM::CohereResponse do
     JSON.parse File.read("spec/fixtures/llm/cohere/chat.json")
   }
 
-  subject { described_class.new(raw_chat_completions_response)}
+  subject { described_class.new(raw_chat_completions_response) }
 
   describe "#chat_completion" do
     it "returns chat_completion" do
