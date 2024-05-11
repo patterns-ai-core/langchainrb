@@ -39,6 +39,13 @@ module Langchain::LLM
       depends_on "faraday"
       @url = url
       @defaults = DEFAULTS.deep_merge(default_options)
+      chat_parameters.update(
+        model: {default: @defaults[:chat_completion_model_name]},
+        temperature: {default: @defaults[:temperature]},
+        template: {},
+        stream: {default: false}
+      )
+      chat_parameters.remap(response_format: :format)
     end
 
     # Returns the # of vector dimensions for the embeddings
@@ -152,33 +159,20 @@ module Langchain::LLM
 
     # Generate a chat completion
     #
-    # @param model [String] Model name
-    # @param messages [Array<Hash>] Array of messages
-    # @param format [String] Format to return a response in. Currently the only accepted value is `json`
-    # @param temperature [Float] The temperature to use
-    # @param template [String] The prompt template to use (overrides what is defined in the `Modelfile`)
-    # @param stream [Boolean] Streaming the response. If false the response will be returned as a single response object, rather than a stream of objects
+    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @option params [String] :model Model name
+    # @option params [Array<Hash>] :messages Array of messages
+    # @option params [String] :format Format to return a response in. Currently the only accepted value is `json`
+    # @option params [Float] :temperature The temperature to use
+    # @option params [String] :template The prompt template to use (overrides what is defined in the `Modelfile`)
+    # @option params [Boolean] :stream Streaming the response. If false the response will be returned as a single response object, rather than a stream of objects
     #
     # The message object has the following fields:
     #   role: the role of the message, either system, user or assistant
     #   content: the content of the message
     #   images (optional): a list of images to include in the message (for multimodal models such as llava)
-    def chat(
-      model: defaults[:chat_completion_model_name],
-      messages: [],
-      format: nil,
-      temperature: defaults[:temperature],
-      template: nil,
-      stream: false # TODO: Fix streaming.
-    )
-      parameters = {
-        model: model,
-        messages: messages,
-        format: format,
-        temperature: temperature,
-        template: template,
-        stream: stream
-      }.compact
+    def chat(params = {})
+      parameters = chat_parameters.to_params(params)
 
       response = client.post("api/chat") do |req|
         req.body = parameters

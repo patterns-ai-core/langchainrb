@@ -3,7 +3,7 @@
 require "cohere"
 
 RSpec.describe Langchain::LLM::Cohere do
-  let(:subject) { described_class.new("123") }
+  let(:subject) { described_class.new(api_key: "123") }
 
   describe "#embed" do
     before do
@@ -84,6 +84,31 @@ RSpec.describe Langchain::LLM::Cohere do
         )
         subject.complete(prompt: "Hello World")
       end
+    end
+  end
+
+  describe "#chat" do
+    let(:fixture) { File.read("spec/fixtures/llm/cohere/chat.json") }
+    let(:response) { JSON.parse(fixture) }
+
+    before do
+      allow(subject.client).to receive(:chat)
+        .with(
+          model: "command-r-plus",
+          temperature: 0.0,
+          preamble: "You are a cheerful happy chatbot!",
+          chat_history: [{role: "user", message: "How are you?"}]
+        )
+        .and_return(response)
+    end
+
+    it "returns a response" do
+      expect(
+        subject.chat(
+          system: "You are a cheerful happy chatbot!",
+          messages: [{role: "user", message: "How are you?"}]
+        )
+      ).to be_a(Langchain::LLM::CohereResponse)
     end
   end
 
