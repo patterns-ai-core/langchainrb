@@ -6,6 +6,7 @@ RSpec.describe Langchain::LLM::Parameters::Chat do
   end
   let(:valid_params) do
     {
+      system: "You are a cheerful happy chatbot",
       messages: [{role: "system", content: "You're too cool."}],
       model: "gpt-4",
       prompt: "How warm is your water?",
@@ -39,6 +40,7 @@ RSpec.describe Langchain::LLM::Parameters::Chat do
       chat_params = described_class.new
       chat_params.alias_field(:max_tokens, as: :max_tokens_to_sample)
       expect(chat_params.to_params(params_with_extras)).to match(
+        system: "You are a cheerful happy chatbot",
         messages: [{role: "system", content: "You're too cool."}],
         model: "gpt-4",
         prompt: "How warm is your water?",

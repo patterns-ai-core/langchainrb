@@ -13,6 +13,9 @@ module Langchain::LLM::Parameters
       model: {},
       prompt: {},
 
+      # System instructions. Used by Cohere, Anthropic and Google Gemini.
+      system: {},
+
       # Allows to force the model to produce specific output format.
       response_format: {},
 
