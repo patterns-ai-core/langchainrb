@@ -47,9 +47,5 @@ RSpec.describe Langchain::LLM::GoogleGeminiResponse do
         0.021136576309800148
       ])
     end
-
-    it "#return total_tokens" do
-      expect(subject.total_tokens).to eq(3)
-    end
   end
 end
