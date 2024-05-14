@@ -84,16 +84,20 @@ module Langchain::LLM
       # params[:tool_config] = {function_calling_config: {mode: tool_choice.upcase}} if tool_choice
       params[:system_instruction] = {parts: [{text: system}]} if system
 
-      response = HTTParty.post(
-        "#{url}#{model}:generateContent",
-        body: params.to_json,
-        headers: {
-          "Content-Type" => "application/json",
-          "Authorization" => "Bearer #{@authorizer.fetch_access_token!["access_token"]}"
-        }
-      )
+      uri = URI("#{url}#{model}:generateContent")
 
-      Langchain::LLM::GoogleGeminiResponse.new(response, model: model)
+      request = Net::HTTP::Post.new(uri)
+      request.content_type = "application/json"
+      request["Authorization"] = "Bearer #{@authorizer.fetch_access_token!["access_token"]}"
+      request.body = params.to_json
+
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
+        http.request(request)
+      end
+
+      parsed_response = JSON.parse(response.body)
+
+      Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: model)
     end
   end
 end

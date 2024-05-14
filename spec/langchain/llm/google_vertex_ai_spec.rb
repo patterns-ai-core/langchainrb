@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "googleauth"
-require "httparty"
 
 RSpec.describe Langchain::LLM::GoogleVertexAI do
   let(:subject) { described_class.new(project_id: "123", region: "us-central1") }
