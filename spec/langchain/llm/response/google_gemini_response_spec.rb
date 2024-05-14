@@ -28,7 +28,7 @@ RSpec.describe Langchain::LLM::GoogleGeminiResponse do
   end
 
   describe "#embeddings" do
-    let(:raw_embedding_response) { JSON.parse(File.read("spec/fixtures/llm/google_vertex_ai/embed.json"), symbolize_names: true) }
+    let(:raw_embedding_response) { JSON.parse(File.read("spec/fixtures/llm/google_vertex_ai/embed.json")) }
 
     subject { described_class.new(raw_embedding_response) }
 
