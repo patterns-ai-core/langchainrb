@@ -2,150 +2,106 @@
 
 module Langchain::LLM
   #
-  # Wrapper around the Google Vertex AI APIs: https://cloud.google.com/vertex-ai?hl=en
+  # Wrapper around the Google Vertex AI APIs: https://cloud.google.com/vertex-ai
   #
   # Gem requirements:
-  #     gem "google-apis-aiplatform_v1", "~> 0.7"
+  #     gem "googleauth"
   #
   # Usage:
-  #     google_palm = Langchain::LLM::GoogleVertexAi.new(project_id: ENV["GOOGLE_VERTEX_AI_PROJECT_ID"])
+  #     llm = Langchain::LLM::GoogleVertexAI.new(project_id: ENV["GOOGLE_VERTEX_AI_PROJECT_ID"], region: "us-central1")
   #
-  class GoogleVertexAi < Base
+  class GoogleVertexAI < Base
     DEFAULTS = {
-      temperature: 0.1, # 0.1 is the default in the API, quite low ("grounded")
+      temperature: 0.1,
       max_output_tokens: 1000,
       top_p: 0.8,
       top_k: 40,
       dimensions: 768,
-      completion_model_name: "text-bison", # Optional: tect-bison@001
-      embeddings_model_name: "textembedding-gecko"
+      embeddings_model_name: "textembedding-gecko",
+      chat_completion_model_name: "gemini-1.0-pro"
     }.freeze
-
-    # TODO: Implement token length validation
-    # LENGTH_VALIDATOR = Langchain::Utils::TokenLength::...
 
     # Google Cloud has a project id and a specific region of deployment.
     # For GenAI-related things, a safe choice is us-central1.
-    attr_reader :project_id, :client, :region
+    attr_reader :defaults, :url, :authorizer
 
-    def initialize(project_id:, default_options: {})
-      depends_on "google-apis-aiplatform_v1"
+    def initialize(project_id:, region:, default_options: {})
+      depends_on "googleauth"
 
-      @project_id = project_id
-      @region = default_options.fetch :region, "us-central1"
-
-      @client = Google::Apis::AiplatformV1::AiplatformService.new
-
-      # TODO: Adapt for other regions; Pass it in via the constructor
-      # For the moment only us-central1 available so no big deal.
-      @client.root_url = "https://#{@region}-aiplatform.googleapis.com/"
-      @client.authorization = Google::Auth.get_application_default
+      @authorizer = ::Google::Auth.get_application_default
+      proj_id = project_id || @authorizer.project_id || @authorizer.quota_project_id
+      @url = "https://#{region}-aiplatform.googleapis.com/v1/projects/#{proj_id}/locations/#{region}/publishers/google/models/"
 
       @defaults = DEFAULTS.merge(default_options)
+
+      chat_parameters.update(
+        model: {default: @defaults[:chat_completion_model_name]},
+        temperature: {default: @defaults[:temperature]}
+      )
+      chat_parameters.remap(
+        messages: :contents,
+        system: :system_instruction,
+        tool_choice: :tool_config
+      )
     end
 
     #
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Langchain::LLM::GoogleVertexAiResponse] Response object
+    # @param model [String] ID of the model to use
+    # @return [Langchain::LLM::GoogleGeminiResponse] Response object
     #
-    def embed(text:)
-      content = [{content: text}]
-      request = Google::Apis::AiplatformV1::GoogleCloudAiplatformV1PredictRequest.new(instances: content)
+    def embed(
+      text:,
+      model: @defaults[:embeddings_model_name]
+    )
+      params = {instances: [{content: text}]}
 
-      api_path = "projects/#{@project_id}/locations/us-central1/publishers/google/models/#{@defaults[:embeddings_model_name]}"
-
-      # puts("api_path: #{api_path}")
-
-      response = client.predict_project_location_publisher_model(api_path, request)
-
-      Langchain::LLM::GoogleVertexAiResponse.new(response.to_h, model: @defaults[:embeddings_model_name])
-    end
-
-    #
-    # Generate a completion for a given prompt
-    #
-    # @param prompt [String] The prompt to generate a completion for
-    # @param params extra parameters passed to GooglePalmAPI::Client#generate_text
-    # @return [Langchain::LLM::GooglePalmResponse] Response object
-    #
-    def complete(prompt:, **params)
-      default_params = {
-        prompt: prompt,
-        temperature: @defaults[:temperature],
-        top_k: @defaults[:top_k],
-        top_p: @defaults[:top_p],
-        max_output_tokens: @defaults[:max_output_tokens],
-        model: @defaults[:completion_model_name]
-      }
-
-      if params[:stop_sequences]
-        default_params[:stop_sequences] = params.delete(:stop_sequences)
-      end
-
-      if params[:max_output_tokens]
-        default_params[:max_output_tokens] = params.delete(:max_output_tokens)
-      end
-
-      # to be tested
-      temperature = params.delete(:temperature) || @defaults[:temperature]
-      max_output_tokens = default_params.fetch(:max_output_tokens, @defaults[:max_output_tokens])
-
-      default_params.merge!(params)
-
-      # response = client.generate_text(**default_params)
-      request = Google::Apis::AiplatformV1::GoogleCloudAiplatformV1PredictRequest.new \
-        instances: [{
-          prompt: prompt # key used to be :content, changed to :prompt
-        }],
-        parameters: {
-          temperature: temperature,
-          maxOutputTokens: max_output_tokens,
-          topP: 0.8,
-          topK: 40
+      response = HTTParty.post(
+        "#{url}#{model}:predict",
+        body: params.to_json,
+        headers: {
+          "Content-Type" => "application/json",
+          "Authorization" => "Bearer #{@authorizer.fetch_access_token!["access_token"]}"
         }
+      )
 
-      response = client.predict_project_location_publisher_model \
-        "projects/#{project_id}/locations/us-central1/publishers/google/models/#{@defaults[:completion_model_name]}",
-        request
-
-      Langchain::LLM::GoogleVertexAiResponse.new(response, model: default_params[:model])
+      Langchain::LLM::GoogleGeminiResponse.new(response, model: model)
     end
 
+    # Generate a chat completion for given messages
     #
-    # Generate a summarization for a given text
-    #
-    # @param text [String] The text to generate a summarization for
-    # @return [String] The summarization
-    #
-    # TODO(ricc): add params for Temp, topP, topK, MaxTokens and have it default to these 4 values.
-    def summarize(text:)
-      prompt_template = Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/llm/prompts/summarize_template.yaml")
-      )
-      prompt = prompt_template.format(text: text)
+    # @param messages [Array<Hash>] Input messages
+    # @param model [String] The model that will complete your prompt
+    # @param tools [Array<Hash>] The tools to use
+    # @param tool_choice [String] The tool choice to use
+    # @param system [String] The system instruction to use
+    # @return [Langchain::LLM::GoogleGeminiResponse] Response object
+    def chat(params = {})
+      params[:system] = {parts: [{text: params[:system]}]} if params[:system]
+      params[:tools] = {function_declarations: params[:tools]} if params[:tools]
+      params[:tool_choice] = {function_calling_config: {mode: params[:tool_choice].upcase}} if params[:tool_choice]
 
-      complete(
-        prompt: prompt,
-        # For best temperature, topP, topK, MaxTokens for summarization: see
-        # https://cloud.google.com/vertex-ai/docs/samples/aiplatform-sdk-summarization
-        temperature: 0.2,
-        top_p: 0.95,
-        top_k: 40,
-        # Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
-        max_output_tokens: 256
-      )
+      raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
+
+      parameters = chat_parameters.to_params(params)
+      parameters[:generation_config] = {temperature: parameters.delete(:temperature)} if parameters[:temperature]
+
+      uri = URI("#{url}#{parameters[:model]}:generateContent")
+
+      request = Net::HTTP::Post.new(uri)
+      request.content_type = "application/json"
+      request["Authorization"] = "Bearer #{@authorizer.fetch_access_token!["access_token"]}"
+      request.body = parameters.to_json
+
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
+        http.request(request)
+      end
+
+      parsed_response = JSON.parse(response.body)
+
+      Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
     end
-
-    # def chat(...)
-    # https://cloud.google.com/vertex-ai/docs/samples/aiplatform-sdk-chathat
-    # Chat params: https://cloud.google.com/vertex-ai/docs/samples/aiplatform-sdk-chat
-    # \"temperature\": 0.3,\n"
-    #       + "  \"maxDecodeSteps\": 200,\n"
-    #       + "  \"topP\": 0.8,\n"
-    #       + "  \"topK\": 40\n"
-    #       + "}";
-    # end
   end
 end

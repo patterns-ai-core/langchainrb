@@ -2,7 +2,7 @@
   {
     "type": "function",
     "function": {
-      "name": "database-describe_tables",
+      "name": "database__describe_tables",
       "description": "Database Tool: Returns the schema for a list of tables",
       "parameters": {
         "type": "object",
@@ -18,7 +18,7 @@
   }, {
     "type": "function",
     "function": {
-      "name": "database-list_tables",
+      "name": "database__list_tables",
       "description": "Database Tool: Returns a list of tables in the database",
       "parameters": {
         "type": "object",
@@ -29,7 +29,7 @@
   }, {
     "type": "function",
     "function": {
-      "name": "database-execute",
+      "name": "database__execute",
       "description": "Database Tool: Executes a SQL query and returns the results",
       "parameters": { 
         "type": "object",
