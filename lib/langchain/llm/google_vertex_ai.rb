@@ -33,6 +33,16 @@ module Langchain::LLM
       @url = "https://#{region}-aiplatform.googleapis.com/v1/projects/#{proj_id}/locations/#{region}/publishers/google/models/"
 
       @defaults = DEFAULTS.merge(default_options)
+
+      chat_parameters.update(
+        model: {default: @defaults[:chat_completion_model_name]},
+        temperature: {default: @defaults[:temperature]}
+      )
+      chat_parameters.remap(
+        messages: :contents,
+        system: :system_instruction,
+        tool_choice: :tool_config
+      )
     end
 
     #
@@ -68,28 +78,22 @@ module Langchain::LLM
     # @param tool_choice [String] The tool choice to use
     # @param system [String] The system instruction to use
     # @return [Langchain::LLM::GoogleGeminiResponse] Response object
-    def chat(
-      messages: [],
-      model: defaults[:chat_completion_model_name],
-      tools: [],
-      tool_choice: nil,
-      system: nil
-    )
-      raise ArgumentError.new("messages argument is required") if messages.empty?
+    def chat(params = {})
+      params[:system] = {parts: [{text: params[:system]}]} if params[:system]
+      params[:tools] = {function_declarations: params[:tools]} if params[:tools]
+      params[:tool_choice] = {function_calling_config: {mode: params[:tool_choice].upcase}} if params[:tool_choice]
 
-      params = {
-        contents: messages
-      }
-      params[:tools] = {function_declarations: tools} if tools.any?
-      # params[:tool_config] = {function_calling_config: {mode: tool_choice.upcase}} if tool_choice
-      params[:system_instruction] = {parts: [{text: system}]} if system
+      raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
 
-      uri = URI("#{url}#{model}:generateContent")
+      parameters = chat_parameters.to_params(params)
+      parameters[:generation_config] = {temperature: parameters.delete(:temperature)} if parameters[:temperature]
+
+      uri = URI("#{url}#{parameters[:model]}:generateContent")
 
       request = Net::HTTP::Post.new(uri)
       request.content_type = "application/json"
       request["Authorization"] = "Bearer #{@authorizer.fetch_access_token!["access_token"]}"
-      request.body = params.to_json
+      request.body = parameters.to_json
 
       response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
         http.request(request)
@@ -97,7 +101,7 @@ module Langchain::LLM
 
       parsed_response = JSON.parse(response.body)
 
-      Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: model)
+      Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
     end
   end
 end
