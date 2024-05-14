@@ -7,6 +7,12 @@ module Langchain
     attr_reader :llm, :thread, :instructions
     attr_accessor :tools
 
+    SUPPORTED_LLMS = [
+      Langchain::LLM::OpenAI,
+      Langchain::LLM::GoogleGemini,
+      Langchain::LLM::GoogleVertexAI
+    ]
+
     # Create a new assistant
     #
     # @param llm [Langchain::LLM::Base] LLM instance that the assistant will use
@@ -19,8 +25,8 @@ module Langchain
       tools: [],
       instructions: nil
     )
-      unless [Langchain::LLM::OpenAI, Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
-        raise ArgumentError, "Invalid LLM; currently only Langchain::LLM::OpenAI and Langchain::LLM::GoogleGemini are supported"
+      unless SUPPORTED_LLMS.include?(llm.class)
+        raise ArgumentError, "Invalid LLM; currently only #{SUPPORTED_LLMS.join(", ")} are supported"
       end
       raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless thread.is_a?(Langchain::Thread)
       raise ArgumentError, "Tools must be an array of Langchain::Tool::Base instance(s)" unless tools.is_a?(Array) && tools.all? { |tool| tool.is_a?(Langchain::Tool::Base) }
@@ -133,7 +139,7 @@ module Langchain
         Langchain::Messages::GoogleGeminiMessage::TOOL_ROLE
       end
 
-      # TODO: Validate that `tool_call_id` is valid
+      # TODO: Validate that `tool_call_id` is valid by scanning messages and checking if this tool call ID was invoked
       add_message(role: tool_role, content: output, tool_call_id: tool_call_id)
     end
 

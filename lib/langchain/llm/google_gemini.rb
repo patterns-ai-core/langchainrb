@@ -43,14 +43,19 @@ module Langchain::LLM
       parameters = chat_parameters.to_params(params)
       params[:generation_config] = {temperature: parameters.delete(:temperature)} if parameters[:temperature]
 
-      # TODO: Convert this to use Net::HTTP
-      response = HTTParty.post(
-        "https://generativelanguage.googleapis.com/v1beta/models/#{parameters[:model]}:generateContent?key=#{api_key}",
-        body: parameters.to_json,
-        headers: {"Content-Type" => "application/json"}
-      )
+      uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{parameters[:model]}:generateContent?key=#{api_key}")
 
-      wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(response, model: parameters[:model])
+      request = Net::HTTP::Post.new(uri)
+      request.content_type = "application/json"
+      request.body = parameters.to_json
+
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
+        http.request(request)
+      end
+
+      parsed_response = JSON.parse(response.body)
+
+      wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
 
       if wrapped_response.chat_completion || Array(wrapped_response.tool_calls).any?
         wrapped_response

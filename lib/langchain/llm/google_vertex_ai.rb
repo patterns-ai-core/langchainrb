@@ -62,7 +62,7 @@ module Langchain::LLM
 
     # Generate a chat completion for given messages
     #
-    # @param messages [Array<String>] Input messages
+    # @param messages [Array<Hash>] Input messages
     # @param model [String] The model that will complete your prompt
     # @param tools [Array<Hash>] The tools to use
     # @param tool_choice [String] The tool choice to use
