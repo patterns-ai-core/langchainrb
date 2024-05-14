@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.13.0] - 2024-05-14
+- New 🛠️ `Langchain::Tool::NewsRetriever` tool to fetch news via newsapi.org
+
 ## [0.12.1] - 2024-05-13
 - Langchain::LLM::Ollama now uses `llama3` by default
 - Langchain::LLM::Anthropic#complete() now uses `claude-2.1` by default
