@@ -1,6 +1,11 @@
 ## [Unreleased]
+
+## [0.12.1] - 2024-05-13
 - Langchain::LLM::Ollama now uses `llama3` by default
 - Langchain::LLM::Anthropic#complete() now uses `claude-2.1` by default
+- Updated with new OpenAI models, including `gpt-4o`
+- New `Langchain::LLM::Cohere#chat()` method.
+- Introducing `UnifiedParameters` to unify parameters across LLM classes
 
 ## [0.12.0] - 2024-04-22
 - [BREAKING] Rename `dimension` parameter to `dimensions` everywhere
