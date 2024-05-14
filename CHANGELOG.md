@@ -2,6 +2,7 @@
 
 ## [0.13.0] - 2024-05-14
 - New 🛠️ `Langchain::Tool::NewsRetriever` tool to fetch news via newsapi.org
+- Langchain::Assistant works with `Langchain::LLM::GoogleVertexAI` and `Langchain::LLM::GoogleGemini` llms
 
 ## [0.12.1] - 2024-05-13
 - Langchain::LLM::Ollama now uses `llama3` by default
