@@ -7,14 +7,14 @@ RSpec.describe Langchain::LLM::GoogleVertexAI do
 
   describe "#embed" do
     let(:embedding) { [-0.00879860669374466, 0.007578692398965359, 0.021136576309800148] }
-    let(:raw_embedding_response) { JSON.parse(File.read("spec/fixtures/llm/google_vertex_ai/embed.json")) }
+    let(:raw_embedding_response) { double(body: File.read("spec/fixtures/llm/google_vertex_ai/embed.json")) }
 
     before do
       allow(Google::Auth).to receive(:get_application_default).and_return(
         double("Google::Auth::UserRefreshCredentials", fetch_access_token!: {access_token: 123})
       )
 
-      allow(HTTParty).to receive(:post).and_return(raw_embedding_response)
+      allow(Net::HTTP).to receive(:start).and_return(raw_embedding_response)
     end
 
     it "returns valid llm response object" do
@@ -23,6 +23,27 @@ RSpec.describe Langchain::LLM::GoogleVertexAI do
       expect(response).to be_a(Langchain::LLM::GoogleGeminiResponse)
       expect(response.model).to eq("textembedding-gecko")
       expect(response.embedding).to eq(embedding)
+    end
+  end
+
+  describe "#chat" do
+    let(:messages) { [{role: "user", parts: [{text: "How high is the sky?"}]}] }
+    let(:raw_chat_completions_response) { double(body: File.read("spec/fixtures/llm/google_vertex_ai/chat.json")) }
+
+    before do
+      allow(Google::Auth).to receive(:get_application_default).and_return(
+        double("Google::Auth::UserRefreshCredentials", fetch_access_token!: {access_token: 123})
+      )
+
+      allow(Net::HTTP).to receive(:start).and_return(raw_chat_completions_response)
+    end
+
+    it "returns valid llm response object" do
+      response = subject.chat(messages: messages)
+
+      expect(response).to be_a(Langchain::LLM::GoogleGeminiResponse)
+      expect(response.model).to eq("gemini-1.0-pro")
+      expect(response.chat_completion).to eq("The sky is not a physical object with a defined height.")
     end
   end
 end
