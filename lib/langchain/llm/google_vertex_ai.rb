@@ -58,16 +58,20 @@ module Langchain::LLM
     )
       params = {instances: [{content: text}]}
 
-      response = HTTParty.post(
-        "#{url}#{model}:predict",
-        body: params.to_json,
-        headers: {
-          "Content-Type" => "application/json",
-          "Authorization" => "Bearer #{@authorizer.fetch_access_token!["access_token"]}"
-        }
-      )
+      uri = URI("#{url}#{model}:predict")
 
-      Langchain::LLM::GoogleGeminiResponse.new(response, model: model)
+      request = Net::HTTP::Post.new(uri)
+      request.content_type = "application/json"
+      request["Authorization"] = "Bearer #{@authorizer.fetch_access_token!["access_token"]}"
+      request.body = params.to_json
+
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
+        http.request(request)
+      end
+
+      parsed_response = JSON.parse(response.body)
+
+      Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: model)
     end
 
     # Generate a chat completion for given messages
@@ -81,6 +85,7 @@ module Langchain::LLM
     def chat(params = {})
       params[:system] = {parts: [{text: params[:system]}]} if params[:system]
       params[:tools] = {function_declarations: params[:tools]} if params[:tools]
+      # This throws an error when tool_choice is passed
       params[:tool_choice] = {function_calling_config: {mode: params[:tool_choice].upcase}} if params[:tool_choice]
 
       raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
@@ -101,7 +106,13 @@ module Langchain::LLM
 
       parsed_response = JSON.parse(response.body)
 
-      Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
+      wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
+
+      if wrapped_response.chat_completion || Array(wrapped_response.tool_calls).any?
+        wrapped_response
+      else
+        raise StandardError.new(response)
+      end
     end
   end
 end
