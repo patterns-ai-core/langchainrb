@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.13.1] - 2024-05-14
+- Better error handling for `Langchain::LLM::GoogleVertexAI`
+
 ## [0.13.0] - 2024-05-14
 - New 🛠️ `Langchain::Tool::NewsRetriever` tool to fetch news via newsapi.org
 - Langchain::Assistant works with `Langchain::LLM::GoogleVertexAI` and `Langchain::LLM::GoogleGemini` llms
