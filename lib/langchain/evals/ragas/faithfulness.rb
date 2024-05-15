@@ -42,6 +42,8 @@ module Langchain
 
         def count_verified_statements(verifications)
           match = verifications.match(/Final verdict for each statement in order:\s*(.*)/)
+          return 0.0 unless match # no verified statements found
+
           verdicts = match.captures.first
           verdicts
             .split(".")
