@@ -428,6 +428,16 @@ RSpec.describe Langchain::LLM::OpenAI do
       allow(subject.client).to receive(:chat).with(parameters).and_return(response)
     end
 
+    it "ignores any invalid parameters provided" do
+      response = subject.chat(
+        messages: [{role: "user", content: "What is the meaning of life?"}],
+        top_k: 5,
+        beep: :boop
+      )
+
+      expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+    end
+
     it "returns valid llm response object" do
       response = subject.chat(messages: [{role: "user", content: "What is the meaning of life?"}])
 

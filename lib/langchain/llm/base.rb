@@ -11,7 +11,8 @@ module Langchain::LLM
   # - {Langchain::LLM::Azure}
   # - {Langchain::LLM::Cohere}
   # - {Langchain::LLM::GooglePalm}
-  # - {Langchain::LLM::GoogleVertexAi}
+  # - {Langchain::LLM::GoogleVertexAI}
+  # - {Langchain::LLM::GoogleGemini}
   # - {Langchain::LLM::HuggingFace}
   # - {Langchain::LLM::LlamaCpp}
   # - {Langchain::LLM::OpenAI}
@@ -69,6 +70,15 @@ module Langchain::LLM
     #
     def summarize(...)
       raise NotImplementedError, "#{self.class.name} does not support summarization"
+    end
+
+    #
+    # Returns an instance of Langchain::LLM::Parameters::Chat
+    #
+    def chat_parameters(params = {})
+      @chat_parameters ||= Langchain::LLM::Parameters::Chat.new(
+        parameters: params
+      )
     end
   end
 end

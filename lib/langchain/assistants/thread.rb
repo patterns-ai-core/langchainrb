@@ -8,16 +8,16 @@ module Langchain
 
     # @param messages [Array<Langchain::Message>]
     def initialize(messages: [])
-      raise ArgumentError, "messages array must only contain Langchain::Message instance(s)" unless messages.is_a?(Array) && messages.all? { |m| m.is_a?(Langchain::Message) }
+      raise ArgumentError, "messages array must only contain Langchain::Message instance(s)" unless messages.is_a?(Array) && messages.all? { |m| m.is_a?(Langchain::Messages::Base) }
 
       @messages = messages
     end
 
-    # Convert the thread to an OpenAI API-compatible array of hashes
+    # Convert the thread to an LLM APIs-compatible array of hashes
     #
     # @return [Array<Hash>] The thread as an OpenAI API-compatible array of hashes
-    def openai_messages
-      messages.map(&:to_openai_format)
+    def array_of_message_hashes
+      messages.map(&:to_hash)
     end
 
     # Add a message to the thread
@@ -25,7 +25,7 @@ module Langchain
     # @param message [Langchain::Message] The message to add
     # @return [Array<Langchain::Message>] The updated messages array
     def add_message(message)
-      raise ArgumentError, "message must be a Langchain::Message instance" unless message.is_a?(Langchain::Message)
+      raise ArgumentError, "message must be a Langchain::Message instance" unless message.is_a?(Langchain::Messages::Base)
 
       # Prepend the message to the thread
       messages << message

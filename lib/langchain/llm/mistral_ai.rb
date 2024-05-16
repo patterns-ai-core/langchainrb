@@ -23,28 +23,19 @@ module Langchain::LLM
       )
 
       @defaults = DEFAULTS.merge(default_options)
+      chat_parameters.update(
+        model: {default: @defaults[:chat_completion_model_name]},
+        n: {default: @defaults[:n]},
+        safe_prompt: {}
+      )
+      chat_parameters.remap(seed: :random_seed)
+      chat_parameters.ignore(:n, :top_k)
     end
 
-    def chat(
-      messages:,
-      model: defaults[:chat_completion_model_name],
-      temperature: nil,
-      top_p: nil,
-      max_tokens: nil,
-      safe_prompt: nil,
-      random_seed: nil
-    )
-      params = {
-        messages: messages,
-        model: model
-      }
-      params[:temperature] = temperature if temperature
-      params[:top_p] = top_p if top_p
-      params[:max_tokens] = max_tokens if max_tokens
-      params[:safe_prompt] = safe_prompt if safe_prompt
-      params[:random_seed] = random_seed if random_seed
+    def chat(params = {})
+      parameters = chat_parameters.to_params(params)
 
-      response = client.chat_completions(params)
+      response = client.chat_completions(parameters)
 
       Langchain::LLM::MistralAIResponse.new(response.to_h)
     end

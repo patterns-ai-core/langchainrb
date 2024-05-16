@@ -47,15 +47,15 @@ Gem::Specification.new do |spec|
 
   # optional dependencies
   spec.add_development_dependency "ai21", "~> 0.2.1"
-  spec.add_development_dependency "anthropic"
+  spec.add_development_dependency "anthropic", "~> 0.2"
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.1"
   spec.add_development_dependency "chroma-db", "~> 0.6.0"
-  spec.add_development_dependency "cohere-ruby", "~> 0.9.8"
+  spec.add_development_dependency "cohere-ruby", "~> 0.9.10"
   spec.add_development_dependency "docx", "~> 0.8.0"
   spec.add_development_dependency "elasticsearch", "~> 8.2.0"
   spec.add_development_dependency "epsilla-ruby", "~> 0.0.4"
   spec.add_development_dependency "eqn", "~> 1.6.5"
-  spec.add_development_dependency "google-apis-aiplatform_v1", "~> 0.7"
+  spec.add_development_dependency "googleauth"
   spec.add_development_dependency "google_palm_api", "~> 0.1.3"
   spec.add_development_dependency "google_search_results", "~> 2.0.0"
   spec.add_development_dependency "hnswlib", "~> 0.8.1"

@@ -25,6 +25,10 @@ RSpec.describe Langchain::LLM::Anthropic do
       it "returns a completion" do
         expect(subject.complete(prompt: completion).completion).to eq(" The sky has no definitive")
       end
+
+      it "returns model attribute" do
+        expect(subject.complete(prompt: completion).model).to eq("claude-2.1")
+      end
     end
   end
 
@@ -40,13 +44,22 @@ RSpec.describe Langchain::LLM::Anthropic do
             model: described_class::DEFAULTS[:chat_completion_model_name],
             messages: messages,
             temperature: described_class::DEFAULTS[:temperature],
-            max_tokens: described_class::DEFAULTS[:max_tokens_to_sample]
+            max_tokens: described_class::DEFAULTS[:max_tokens_to_sample],
+            stop_sequences: ["beep"]
           })
           .and_return(response)
       end
 
       it "returns a completion" do
-        expect(subject.chat(messages: messages).chat_completion).to eq("The sky doesn't have a defined height or upper limit.")
+        expect(
+          subject.chat(messages: messages, stop_sequences: ["beep"]).chat_completion
+        ).to eq("The sky doesn't have a defined height or upper limit.")
+      end
+
+      it "returns model attribute" do
+        expect(
+          subject.chat(messages: messages, stop_sequences: ["beep"]).model
+        ).to eq("claude-3-sonnet-20240229")
       end
     end
   end

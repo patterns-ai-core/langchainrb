@@ -2,16 +2,16 @@
 
 RSpec.describe Langchain::Thread do
   it "raises an error if messages array contains non-Langchain::Message instance(s)" do
-    expect { described_class.new(messages: [Langchain::Message.new, "foo"]) }.to raise_error(ArgumentError)
+    expect { described_class.new(messages: [Langchain::Messages::OpenAIMessage.new, "foo"]) }.to raise_error(ArgumentError)
   end
 
   describe "#openai_messages" do
     it "returns an array of messages in OpenAI format" do
-      messages = [Langchain::Message.new(role: "user", content: "hello"),
-        Langchain::Message.new(role: "assistant", content: "hi")]
+      messages = [Langchain::Messages::OpenAIMessage.new(role: "user", content: "hello"),
+        Langchain::Messages::OpenAIMessage.new(role: "assistant", content: "hi")]
       thread = described_class.new(messages: messages)
 
-      openai_messages = thread.openai_messages
+      openai_messages = thread.array_of_message_hashes
 
       expect(openai_messages).to be_an(Array)
       expect(openai_messages.length).to eq(messages.length)
@@ -24,7 +24,7 @@ RSpec.describe Langchain::Thread do
   end
 
   describe "#add_message" do
-    let(:message) { Langchain::Message.new(role: "user", content: "hello") }
+    let(:message) { Langchain::Messages::OpenAIMessage.new(role: "user", content: "hello") }
 
     it "adds a Langchain::Message instance to the messages array" do
       thread = described_class.new(messages: [])

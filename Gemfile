@@ -12,5 +12,3 @@ gem "rspec", "~> 3.0"
 gem "standardrb"
 # Lets add rubocop explicitly here, we are using only standardrb rules in .rubocop.yml
 gem "rubocop"
-
-gem "anthropic", git: "https://github.com/svs/anthropic.git"

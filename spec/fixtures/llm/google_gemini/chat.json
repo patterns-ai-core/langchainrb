@@ -1,0 +1,13 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [{"text": "The answer is 4.0"}],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "safetyRatings": []
+    }
+  ]
+}

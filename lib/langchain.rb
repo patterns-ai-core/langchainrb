@@ -12,6 +12,7 @@ loader.inflector.inflect(
   "ai21_response" => "AI21Response",
   "ai21_validator" => "AI21Validator",
   "csv" => "CSV",
+  "google_vertex_ai" => "GoogleVertexAI",
   "html" => "HTML",
   "json" => "JSON",
   "jsonl" => "JSONL",
@@ -21,6 +22,7 @@ loader.inflector.inflect(
   "openai" => "OpenAI",
   "openai_validator" => "OpenAIValidator",
   "openai_response" => "OpenAIResponse",
+  "openai_message" => "OpenAIMessage",
   "pdf" => "PDF"
 )
 loader.collapse("#{__dir__}/langchain/llm/response")
@@ -31,6 +33,7 @@ loader.collapse("#{__dir__}/langchain/tool/database")
 loader.collapse("#{__dir__}/langchain/tool/file_system")
 loader.collapse("#{__dir__}/langchain/tool/google_search")
 loader.collapse("#{__dir__}/langchain/tool/ruby_code_interpreter")
+loader.collapse("#{__dir__}/langchain/tool/news_retriever")
 loader.collapse("#{__dir__}/langchain/tool/vectorsearch")
 loader.collapse("#{__dir__}/langchain/tool/weather")
 loader.collapse("#{__dir__}/langchain/tool/wikipedia")
