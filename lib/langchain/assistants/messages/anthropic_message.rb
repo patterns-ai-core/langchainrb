@@ -29,8 +29,8 @@ module Langchain
         {}.tap do |h|
           h[:role] = tool? ? "user" : role
 
-          if tool?
-            h[:content] = [
+          h[:content] = if tool?
+            [
               {
                 type: "tool_result",
                 tool_use_id: tool_call_id,
@@ -38,9 +38,9 @@ module Langchain
               }
             ]
           elsif tool_calls.any?
-            h[:content] = tool_calls
+            tool_calls
           else
-            h[:content] = content
+            content
           end
         end
       end
