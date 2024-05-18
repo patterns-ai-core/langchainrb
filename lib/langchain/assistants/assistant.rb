@@ -8,6 +8,7 @@ module Langchain
     attr_accessor :tools
 
     SUPPORTED_LLMS = [
+      Langchain::LLM::Anthropic,
       Langchain::LLM::OpenAI,
       Langchain::LLM::GoogleGemini,
       Langchain::LLM::GoogleVertexAI
@@ -41,7 +42,7 @@ module Langchain
       if llm.is_a?(Langchain::LLM::OpenAI)
         add_message(role: "system", content: instructions) if instructions
       end
-      # For Google Gemini, system instructions are added to the `system:` param in the `chat` method
+      # For Google Gemini, and Anthropic system instructions are added to the `system:` param in the `chat` method
     end
 
     # Add a user message to the thread
@@ -137,6 +138,8 @@ module Langchain
         Langchain::Messages::OpenAIMessage::TOOL_ROLE
       elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
         Langchain::Messages::GoogleGeminiMessage::TOOL_ROLE
+      elsif llm.is_a?(Langchain::LLM::Anthropic)
+        Langchain::Messages::AnthropicMessage::TOOL_ROLE
       end
 
       # TODO: Validate that `tool_call_id` is valid by scanning messages and checking if this tool call ID was invoked
@@ -179,12 +182,17 @@ module Langchain
       if tools.any?
         if llm.is_a?(Langchain::LLM::OpenAI)
           params[:tools] = tools.map(&:to_openai_tools).flatten
+          params[:tool_choice] = "auto"
+        elsif llm.is_a?(Langchain::LLM::Anthropic)
+          params[:tools] = tools.map(&:to_anthropic_tools).flatten
+          params[:system] = instructions if instructions
+          params[:tool_choice] = {type: "auto"}
         elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
           params[:tools] = tools.map(&:to_google_gemini_tools).flatten
           params[:system] = instructions if instructions
+          params[:tool_choice] = "auto"
         end
         # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
-        params[:tool_choice] = "auto"
       end
 
       llm.chat(**params)
@@ -200,6 +208,8 @@ module Langchain
           extract_openai_tool_call(tool_call: tool_call)
         elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
           extract_google_gemini_tool_call(tool_call: tool_call)
+        elsif llm.is_a?(Langchain::LLM::Anthropic)
+          extract_anthropic_tool_call(tool_call: tool_call)
         end
 
         tool_instance = tools.find do |t|
@@ -234,6 +244,20 @@ module Langchain
       [tool_call_id, tool_name, method_name, tool_arguments]
     end
 
+    # Extract the tool call information from the Anthropic tool call hash
+    #
+    # @param tool_call [Hash] The tool call hash, format: {"type"=>"tool_use", "id"=>"toolu_01TjusbFApEbwKPRWTRwzadR", "name"=>"news_retriever__get_top_headlines", "input"=>{"country"=>"us", "page_size"=>10}}], "stop_reason"=>"tool_use"}
+    # @return [Array] The tool call information
+    def extract_anthropic_tool_call(tool_call:)
+      tool_call_id = tool_call.dig("id")
+
+      function_name = tool_call.dig("name")
+      tool_name, method_name = function_name.split("__")
+      tool_arguments = tool_call.dig("input").transform_keys(&:to_sym)
+
+      [tool_call_id, tool_name, method_name, tool_arguments]
+    end
+
     # Extract the tool call information from the Google Gemini tool call hash
     #
     # @param tool_call [Hash] The tool call hash, format: {"functionCall"=>{"name"=>"weather__execute", "args"=>{"input"=>"NYC"}}}
@@ -260,6 +284,8 @@ module Langchain
         Langchain::Messages::OpenAIMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
       elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
         Langchain::Messages::GoogleGeminiMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+      elsif llm.is_a?(Langchain::LLM::Anthropic)
+        Langchain::Messages::AnthropicMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
       end
     end
 
