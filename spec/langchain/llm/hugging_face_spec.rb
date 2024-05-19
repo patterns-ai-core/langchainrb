@@ -69,7 +69,7 @@ RSpec.describe Langchain::LLM::HuggingFace do
         })
       end
 
-      it "sets the dimensions to 1_024" do
+      it "sets the dimensions to 1_024", :vcr do
         expect(subject.default_dimensions).to eq 1_024
       end
     end
