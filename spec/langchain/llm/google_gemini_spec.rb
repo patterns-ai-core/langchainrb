@@ -4,7 +4,7 @@ RSpec.describe Langchain::LLM::GoogleGemini do
   let(:subject) { described_class.new(api_key: ENV["GEMINI_API_KEY"]) }
 
   describe "#embed" do
-    let(:embedding) { [0.013168523, -0.008711934, -0.046782676 ] }
+    let(:embedding) { [0.013168523, -0.008711934, -0.046782676] }
     let(:raw_embedding_response) { double(body: File.read("spec/fixtures/llm/google_gemini/embed.json")) }
 
     before do
