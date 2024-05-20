@@ -101,6 +101,8 @@ module Langchain::LLM
     # @option params [Float] :top_p Use nucleus sampling.
     # @return [Langchain::LLM::AnthropicResponse] The chat completion
     def chat(params = {})
+      set_extra_headers! if params[:tools]
+
       parameters = chat_parameters.to_params(params)
 
       raise ArgumentError.new("messages argument is required") if Array(parameters[:messages]).empty?
@@ -110,6 +112,12 @@ module Langchain::LLM
       response = client.messages(parameters: parameters)
 
       Langchain::LLM::AnthropicResponse.new(response)
+    end
+
+    private
+
+    def set_extra_headers!
+      ::Anthropic.configuration.extra_headers = {"anthropic-beta": "tools-2024-05-16"}
     end
   end
 end

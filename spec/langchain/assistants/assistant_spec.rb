@@ -343,6 +343,183 @@ RSpec.describe Langchain::Assistant do
     end
   end
 
+  context "when llm is Anthropic" do
+    let(:thread) { Langchain::Thread.new }
+    let(:llm) { Langchain::LLM::Anthropic.new(api_key: "123") }
+    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:instructions) { "You are an expert assistant" }
+
+    subject {
+      described_class.new(
+        llm: llm,
+        thread: thread,
+        tools: [calculator],
+        instructions: instructions
+      )
+    }
+
+    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
+      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
+    end
+
+    it "raises an error if LLM class does not implement `chat()` method" do
+      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
+    end
+
+    it "raises an error if thread is not an instance of Langchain::Thread" do
+      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
+    end
+
+    describe "#add_message" do
+      it "adds a message to the thread" do
+        subject.add_message(content: "foo")
+        expect(thread.messages.last.role).to eq("user")
+        expect(thread.messages.last.content).to eq("foo")
+      end
+    end
+
+    describe "submit_tool_output" do
+      it "adds a message to the thread" do
+        subject.submit_tool_output(tool_call_id: "123", output: "bar")
+        expect(thread.messages.last.role).to eq("tool_result")
+        expect(thread.messages.last.content).to eq("bar")
+      end
+    end
+
+    describe "#run" do
+      let(:raw_anthropic_response) do
+        {
+          "id" => "msg_01FqxtJoQCu8ixTCmrtCq6L5",
+          "type" => "message",
+          "role" => "assistant",
+          "model" => "claude-3-sonnet-20240229",
+          "stop_sequence" => nil,
+          "usage" => {
+            "input_tokens" => 272,
+            "output_tokens" => 55
+          },
+          "content" => [
+            {
+              "type" => "tool_use",
+              "id" => "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
+              "name" => "calculator__execute",
+              "input" => {
+                "input" => "2+2"
+              }
+            }
+          ],
+          "stop_reason" => "tool_use"
+        }
+      end
+
+      context "when auto_tool_execution is false" do
+        before do
+          allow(subject.llm).to receive(:chat)
+            .with(
+              messages: [{role: "user", content: "Please calculate 2+2"}],
+              tools: calculator.to_anthropic_tools,
+              tool_choice: {type: "auto"},
+              system: instructions
+            )
+            .and_return(Langchain::LLM::AnthropicResponse.new(raw_anthropic_response))
+        end
+
+        it "runs the assistant" do
+          subject.add_message(role: "user", content: "Please calculate 2+2")
+          subject.run(auto_tool_execution: false)
+
+          expect(subject.thread.messages.last.role).to eq("assistant")
+          expect(subject.thread.messages.last.tool_calls).to eq([raw_anthropic_response["content"].first])
+        end
+      end
+
+      context "when auto_tool_execution is true" do
+        let(:raw_anthropic_response2) do
+          {
+            "role" => "assistant",
+            "content" => [
+              {
+                "type" => "text",
+                "text" => "So 2 + 2 = 4."
+              }
+            ]
+          }
+        end
+
+        before do
+          allow(subject.llm).to receive(:chat)
+            .with(
+              messages: [
+                {role: "user", content: "Please calculate 2+2"},
+                {role: "assistant", content: [
+                  {
+                    "type" => "tool_use",
+                    "id" => "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
+                    "name" => "calculator__execute",
+                    "input" => {"input" => "2+2"}
+                  }
+                ]},
+                {role: "user", content: [{type: "tool_result", tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H", content: "4.0"}]}
+              ],
+              tools: calculator.to_anthropic_tools,
+              tool_choice: {type: "auto"},
+              system: instructions
+            )
+            .and_return(Langchain::LLM::AnthropicResponse.new(raw_anthropic_response2))
+        end
+
+        it "runs the assistant and automatically executes tool calls" do
+          allow(subject.tools[0]).to receive(:execute).with(
+            input: "2+2"
+          ).and_return("4.0")
+
+          subject.add_message(role: "user", content: "Please calculate 2+2")
+          subject.add_message(role: "assistant", tool_calls: raw_anthropic_response["content"])
+
+          subject.run(auto_tool_execution: true)
+
+          expect(subject.thread.messages[-2].role).to eq("tool_result")
+          expect(subject.thread.messages[-2].content).to eq("4.0")
+
+          expect(subject.thread.messages[-1].role).to eq("assistant")
+          expect(subject.thread.messages[-1].content).to eq("So 2 + 2 = 4.")
+        end
+      end
+
+      context "when messages are empty" do
+        let(:instructions) { nil }
+
+        before do
+          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages in the thread")
+        end
+
+        it "logs a warning" do
+          expect(subject.thread.messages).to be_empty
+          subject.run
+          expect(Langchain.logger).to have_received(:warn).with("No messages in the thread")
+        end
+      end
+    end
+
+    describe "#extract_anthropic_tool_call" do
+      let(:tool_call) {
+        {
+          "type" => "tool_use",
+          "id" => "toolu_01TjusbFApEbwKPRWTRwzadR",
+          "name" => "news_retriever__get_top_headlines",
+          "input" => {
+            "country" => "us",
+            "page_size" => 10
+          }
+        }
+      }
+
+      it "returns correct data" do
+        expect(subject.send(:extract_anthropic_tool_call, tool_call: tool_call)).to eq(["toolu_01TjusbFApEbwKPRWTRwzadR", "news_retriever", "get_top_headlines", {country: "us", page_size: 10}])
+      end
+    end
+  end
+
   xdescribe "#clear_thread!"
 
   xdescribe "#instructions="

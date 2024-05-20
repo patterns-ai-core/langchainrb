@@ -1,0 +1,28 @@
+{
+  "id": "msg_01N22NEgEsCZBTmXndCeuCet",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-3-sonnet-20240229",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 1644,
+    "output_tokens": 131
+  },
+  "content": [
+    {
+      "type": "text",
+      "text": "Okay, let's try to find the latest news related to Google I/O 2024 using the news retrieval tools."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01UEciZACvRZ6S4rqAwD1syH",
+      "name": "news_retriever__get_everything",
+      "input": {
+        "q": "Google I/O 2024",
+        "sort_by": "publishedAt",
+        "language": "en"
+      }
+    }
+  ],
+  "stop_reason": "tool_use"
+}

@@ -71,6 +71,18 @@ module Langchain::Tool
       method_annotations
     end
 
+    # Returns the tool as a list of Anthropic formatted functions
+    #
+    # @return [Array<Hash>] List of hashes representing the tool as Anthropic formatted functions
+    def to_anthropic_tools
+      method_annotations.map do |annotation|
+        # Slice out only the content of the "function" key
+        annotation["function"]
+          # Rename "parameters" to "input_schema" key
+          .transform_keys("parameters" => "input_schema")
+      end
+    end
+
     # Returns the tool as a list of Google Gemini formatted functions
     #
     # @return [Array<Hash>] List of hashes representing the tool as Google Gemini formatted functions
