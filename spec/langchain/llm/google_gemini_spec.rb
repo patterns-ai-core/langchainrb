@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::LLM::GoogleGemini do
-  let(:subject) { described_class.new(api_key: ENV["GEMINI_API_KEY"]) }
+  let(:subject) { described_class.new(api_key: "123") }
 
   describe "#embed" do
     let(:embedding) { [0.013168523, -0.008711934, -0.046782676] }
