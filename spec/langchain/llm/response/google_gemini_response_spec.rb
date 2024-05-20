@@ -28,24 +28,48 @@ RSpec.describe Langchain::LLM::GoogleGeminiResponse do
   end
 
   describe "#embeddings" do
-    let(:raw_embedding_response) { JSON.parse(File.read("spec/fixtures/llm/google_vertex_ai/embed.json")) }
+    context "with google vertex response" do
+      let(:raw_embedding_response) { JSON.parse(File.read("spec/fixtures/llm/google_vertex_ai/embed.json")) }
 
-    subject { described_class.new(raw_embedding_response) }
+      subject { described_class.new(raw_embedding_response) }
 
-    it "returns embeddings" do
-      expect(subject.embeddings).to eq([[
-        -0.00879860669374466,
-        0.007578692398965359,
-        0.021136576309800148
-      ]])
+      it "returns embeddings" do
+        expect(subject.embeddings).to eq([[
+          -0.00879860669374466,
+          0.007578692398965359,
+          0.021136576309800148
+        ]])
+      end
+
+      it "#returns embedding" do
+        expect(subject.embedding).to eq([
+          -0.00879860669374466,
+          0.007578692398965359,
+          0.021136576309800148
+        ])
+      end
     end
 
-    it "#returns embedding" do
-      expect(subject.embedding).to eq([
-        -0.00879860669374466,
-        0.007578692398965359,
-        0.021136576309800148
-      ])
+    context "with google gemini response" do
+      let(:raw_embeddings_response) { JSON.parse(File.read("spec/fixtures/llm/google_gemini/embed.json")) }
+
+      subject { described_class.new(raw_embeddings_response) }
+
+      it "returns embeddings" do
+        expect(subject.embeddings).to eq([[
+          0.013168523,
+          -0.008711934,
+          -0.046782676
+        ]])
+      end
+
+      it "#returns embedding" do
+        expect(subject.embedding).to eq([
+          0.013168523,
+          -0.008711934,
+          -0.046782676
+        ])
+      end
     end
   end
 end
