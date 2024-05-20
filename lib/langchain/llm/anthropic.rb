@@ -13,7 +13,7 @@ module Langchain::LLM
   class Anthropic < Base
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "claude-2",
+      completion_model_name: "claude-2.1",
       chat_completion_model_name: "claude-3-sonnet-20240229",
       max_tokens_to_sample: 256
     }.freeze
@@ -32,6 +32,15 @@ module Langchain::LLM
 
       @client = ::Anthropic::Client.new(access_token: api_key, **llm_options)
       @defaults = DEFAULTS.merge(default_options)
+      chat_parameters.update(
+        model: {default: @defaults[:chat_completion_model_name]},
+        temperature: {default: @defaults[:temperature]},
+        max_tokens: {default: @defaults[:max_tokens_to_sample]},
+        metadata: {},
+        system: {}
+      )
+      chat_parameters.ignore(:n, :user)
+      chat_parameters.remap(stop: :stop_sequences)
     end
 
     # Generate a completion for a given prompt
@@ -72,66 +81,43 @@ module Langchain::LLM
       parameters[:metadata] = metadata if metadata
       parameters[:stream] = stream if stream
 
-      # TODO: Implement token length validator for Anthropic
-      # parameters[:max_tokens_to_sample] = validate_max_tokens(prompt, parameters[:completion_model_name])
-
       response = client.complete(parameters: parameters)
       Langchain::LLM::AnthropicResponse.new(response)
     end
 
     # Generate a chat completion for given messages
     #
-    # @param messages [Array<String>] Input messages
-    # @param model [String] The model that will complete your prompt
-    # @param max_tokens [Integer] Maximum number of tokens to generate before stopping
-    # @param metadata [Hash] Object describing metadata about the request
-    # @param stop_sequences [Array<String>] Custom text sequences that will cause the model to stop generating
-    # @param stream [Boolean] Whether to incrementally stream the response using server-sent events
-    # @param system [String] System prompt
-    # @param temperature [Float] Amount of randomness injected into the response
-    # @param tools [Array<String>] Definitions of tools that the model may use
-    # @param top_k [Integer] Only sample from the top K options for each subsequent token
-    # @param top_p [Float] Use nucleus sampling.
+    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @option params [Array<String>] :messages Input messages
+    # @option params [String] :model The model that will complete your prompt
+    # @option params [Integer] :max_tokens Maximum number of tokens to generate before stopping
+    # @option params [Hash] :metadata Object describing metadata about the request
+    # @option params [Array<String>] :stop_sequences Custom text sequences that will cause the model to stop generating
+    # @option params [Boolean] :stream Whether to incrementally stream the response using server-sent events
+    # @option params [String] :system System prompt
+    # @option params [Float] :temperature Amount of randomness injected into the response
+    # @option params [Array<String>] :tools Definitions of tools that the model may use
+    # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
+    # @option params [Float] :top_p Use nucleus sampling.
     # @return [Langchain::LLM::AnthropicResponse] The chat completion
-    def chat(
-      messages: [],
-      model: @defaults[:chat_completion_model_name],
-      max_tokens: @defaults[:max_tokens_to_sample],
-      metadata: nil,
-      stop_sequences: nil,
-      stream: nil,
-      system: nil,
-      temperature: @defaults[:temperature],
-      tools: [],
-      top_k: nil,
-      top_p: nil
-    )
-      raise ArgumentError.new("messages argument is required") if messages.empty?
-      raise ArgumentError.new("model argument is required") if model.empty?
-      raise ArgumentError.new("max_tokens argument is required") if max_tokens.nil?
+    def chat(params = {})
+      set_extra_headers! if params[:tools]
 
-      parameters = {
-        messages: messages,
-        model: model,
-        max_tokens: max_tokens,
-        temperature: temperature
-      }
-      parameters[:metadata] = metadata if metadata
-      parameters[:stop_sequences] = stop_sequences if stop_sequences
-      parameters[:stream] = stream if stream
-      parameters[:system] = system if system
-      parameters[:tools] = tools if tools.any?
-      parameters[:top_k] = top_k if top_k
-      parameters[:top_p] = top_p if top_p
+      parameters = chat_parameters.to_params(params)
+
+      raise ArgumentError.new("messages argument is required") if Array(parameters[:messages]).empty?
+      raise ArgumentError.new("model argument is required") if parameters[:model].empty?
+      raise ArgumentError.new("max_tokens argument is required") if parameters[:max_tokens].nil?
 
       response = client.messages(parameters: parameters)
 
       Langchain::LLM::AnthropicResponse.new(response)
     end
 
-    # TODO: Implement token length validator for Anthropic
-    # def validate_max_tokens(messages, model)
-    #   LENGTH_VALIDATOR.validate_max_tokens!(messages, model)
-    # end
+    private
+
+    def set_extra_headers!
+      ::Anthropic.configuration.extra_headers = {"anthropic-beta": "tools-2024-05-16"}
+    end
   end
 end

@@ -59,6 +59,17 @@ module Langchain::LLM
       @defaults = DEFAULTS.merge(default_options)
         .merge(completion_model_name: completion_model)
         .merge(embedding_model_name: embedding_model)
+
+      chat_parameters.update(
+        model: {default: @defaults[:chat_completion_model_name]},
+        temperature: {},
+        max_tokens: {default: @defaults[:max_tokens_to_sample]},
+        metadata: {},
+        system: {},
+        anthropic_version: {default: "bedrock-2023-05-31"}
+      )
+      chat_parameters.ignore(:n, :user)
+      chat_parameters.remap(stop: :stop_sequences)
     end
 
     #
@@ -113,43 +124,28 @@ module Langchain::LLM
     # Generate a chat completion for a given prompt
     # Currently only configured to work with the Anthropic provider and
     # the claude-3 model family
-    # @param messages [Array] The messages to generate a completion for
-    # @param system [String] The system prompt to provide instructions
-    # @param model [String] The model to use for completion defaults to @defaults[:chat_completion_model_name]
-    # @param max_tokens [Integer] The maximum number of tokens to generate
-    # @param stop_sequences [Array] The stop sequences to use for completion
-    # @param temperature [Float] The temperature to use for completion
-    # @param top_p [Float] The top p to use for completion
-    # @param top_k [Integer] The top k to use for completion
+    #
+    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @option params [Array<String>] :messages The messages to generate a completion for
+    # @option params [String] :system The system prompt to provide instructions
+    # @option params [String] :model The model to use for completion defaults to @defaults[:chat_completion_model_name]
+    # @option params [Integer] :max_tokens The maximum number of tokens to generate defaults to @defaults[:max_tokens_to_sample]
+    # @option params [Array<String>] :stop The stop sequences to use for completion
+    # @option params [Array<String>] :stop_sequences The stop sequences to use for completion
+    # @option params [Float] :temperature The temperature to use for completion
+    # @option params [Float] :top_p Use nucleus sampling.
+    # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
     # @return [Langchain::LLM::AnthropicMessagesResponse] Response object
-    def chat(
-      messages: [],
-      system: nil,
-      model: defaults[:completion_model_name],
-      max_tokens: defaults[:max_tokens_to_sample],
-      stop_sequences: nil,
-      temperature: nil,
-      top_p: nil,
-      top_k: nil
-    )
-      raise ArgumentError.new("messages argument is required") if messages.empty?
+    def chat(params = {})
+      parameters = chat_parameters.to_params(params)
 
-      raise "Model #{model} does not support chat completions." unless Langchain::LLM::AwsBedrock::SUPPORTED_CHAT_COMPLETION_PROVIDERS.include?(completion_provider)
+      raise ArgumentError.new("messages argument is required") if Array(parameters[:messages]).empty?
 
-      inference_parameters = {
-        messages: messages,
-        max_tokens: max_tokens,
-        anthropic_version: @defaults[:anthropic_version]
-      }
-      inference_parameters[:system] = system if system
-      inference_parameters[:stop_sequences] = stop_sequences if stop_sequences
-      inference_parameters[:temperature] = temperature if temperature
-      inference_parameters[:top_p] = top_p if top_p
-      inference_parameters[:top_k] = top_k if top_k
+      raise "Model #{parameters[:model]} does not support chat completions." unless Langchain::LLM::AwsBedrock::SUPPORTED_CHAT_COMPLETION_PROVIDERS.include?(completion_provider)
 
       response = client.invoke_model({
-        model_id: model,
-        body: inference_parameters.to_json,
+        model_id: parameters[:model],
+        body: parameters.except(:model).to_json,
         content_type: "application/json",
         accept: "application/json"
       })

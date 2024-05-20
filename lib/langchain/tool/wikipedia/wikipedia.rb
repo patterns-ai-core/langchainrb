@@ -9,8 +9,8 @@ module Langchain::Tool
     #     gem "wikipedia-client", "~> 1.17.0"
     #
     # Usage:
-    #     weather = Langchain::Tool::Wikipedia.new
-    #     weather.execute(input: "The Roman Empire")
+    #     wikipedia = Langchain::Tool::Wikipedia.new
+    #     wikipedia.execute(input: "The Roman Empire")
     #
     NAME = "wikipedia"
     ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path

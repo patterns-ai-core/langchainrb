@@ -16,10 +16,10 @@ http_interactions:
         does the lamb love Mary so?\nMary so, Mary so?\nWhy does the lamb love Mary
         so?\"\nThe eager children cry.\n\n\"Why, Mary loves the lamb, you know,\nLamb,
         you know, lamb, you know,\nMary loves the lamb, you know,\"\nThe teacher did
-        reply.\n\nCONCISE SUMMARY:\n","model":"llama2","options":{"temperature":0.8}}'
+        reply.\n\nCONCISE SUMMARY:\n","model":"llama3","options":{"temperature":0.8}}'
     headers:
       User-Agent:
-      - Faraday v2.7.12
+      - Faraday v2.9.0
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -34,73 +34,64 @@ http_interactions:
       Content-Type:
       - application/x-ndjson
       Date:
-      - Mon, 05 Feb 2024 11:46:18 GMT
+      - Thu, 02 May 2024 21:12:22 GMT
       Transfer-Encoding:
       - chunked
     body:
       encoding: UTF-8
       string: |
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.652935Z","response":"M","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.683367Z","response":"ary","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.716371Z","response":" had","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.751117Z","response":" a","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.787399Z","response":" little","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.818076Z","response":" l","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.848835Z","response":"amb","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.878544Z","response":" that","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.909329Z","response":" followed","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.94095Z","response":" her","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:18.972627Z","response":" everywhere","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.002665Z","response":" she","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.032471Z","response":" went","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.065203Z","response":",","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.095966Z","response":" including","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.130874Z","response":" to","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.160959Z","response":" school","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.19115Z","response":",","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.221484Z","response":" which","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.251529Z","response":" was","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.282901Z","response":" against","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.312726Z","response":" the","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.342485Z","response":" rules","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.373426Z","response":".","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.406591Z","response":" The","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.436573Z","response":" children","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.466961Z","response":" were","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.498814Z","response":" am","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.52858Z","response":"used","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.55828Z","response":" by","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.58814Z","response":" the","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.619427Z","response":" sight","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.649776Z","response":" of","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.689323Z","response":" a","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.719069Z","response":" l","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.750731Z","response":"amb","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.780511Z","response":" at","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.810687Z","response":" school","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.843211Z","response":" and","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.879193Z","response":" asked","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.914542Z","response":" why","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.946944Z","response":" the","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:19.976769Z","response":" l","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.006943Z","response":"amb","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.036803Z","response":" loved","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.06955Z","response":" Mary","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.100604Z","response":" so","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.13055Z","response":" much","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.16078Z","response":".","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.190385Z","response":" The","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.227688Z","response":" teacher","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.257682Z","response":" replied","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.289382Z","response":" that","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.320851Z","response":" Mary","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.35083Z","response":" loved","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.380755Z","response":" the","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.410515Z","response":" l","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.440531Z","response":"amb","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.470793Z","response":".","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:46:20.502242Z","response":"","done":true,"context":[518,25580,29962,
-        3532,14816,29903,29958,5299,829,14816,29903,6778,13,13,6113,263,3022,895,15837,310,278,1494,323,12194,29889,1938,
-        451,3160,278,1734,15837,29892,925,3867,278,15837,29889,13,13,16975,29901,6182,750,263,2217,301,1117,29892,13,29931,1992,301,1117,29892,2217,301,1117,29889,13,29924,653,750,263,2217,301,1117,29892,13,29902,1372,9115,29872,346,471,4796,408,15007,29889,13,13,2855,16978,393,6182,3512,29892,13,29924,653,3512,29892,6182,3512,29892,13,26526,3062,393,6182,3512,29892,13,1576,301,1117,471,1854,304,748,29889,13,13,3112,5643,902,304,3762,697,2462,29892,13,4504,1507,697,2462,29892,3762,697,2462,29889,13,3112,5643,902,304,3762,697,2462,29892,13,8809,436,471,2750,278,6865,29889,13,13,3112,1754,278,4344,10569,322,1708,29892,13,29931,6334,322,1708,29892,10569,322,1708,29889,13,3112,1754,278,4344,10569,322,1708,13,1762,1074,263,301,1117,472,3762,29889,13,13,29908,11008,947,278,301,1117,5360,6182,577,29973,13,29924,653,577,29892,6182,577,29973,13,11008,947,278,301,1117,5360,6182,577,3026,13,1576,19888,4344,10901,29889,13,13,29908,11008,29892,6182,12355,267,278,301,1117,29892,366,1073,29892,13,29931,1117,29892,366,1073,29892,301,1117,29892,366,1073,29892,13,29924,653,12355,267,278,301,1117,29892,366,1073,1699,13,1576,15703,1258,8908,29889,13,13,6007,8426,1660,22753,1529,13207,29901,13,518,29914,25580,29962,13,29924,653,750,263,2217,301,1117,393,5643,902,16978,1183,3512,29892,3704,304,3762,29892,607,471,2750,278,6865,29889,450,4344,892,626,3880,491,278,11126,310,263,301,1117,472,3762,322,4433,2020,278,301,1117,18012,6182,577,1568,29889,450,15703,10352,393,6182,18012,278,301,1117,29889],"total_duration":3092663041,"load_duration":2254791,"prompt_eval_count":267,"prompt_eval_duration":1240554000,"eval_count":60,"eval_duration":1849238000}
-  recorded_at: Mon, 05 Feb 2024 11:46:20 GMT
+        {"model":"llama3","created_at":"2024-05-02T21:12:22.799922Z","response":"A","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:22.886112Z","response":" little","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:22.993763Z","response":" lamb","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:23.120848Z","response":" follows","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:23.261617Z","response":" Mary","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:23.40227Z","response":" everywhere","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:23.542628Z","response":" she","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:23.681772Z","response":" goes","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:23.822419Z","response":",","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:23.960783Z","response":" even","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:24.099418Z","response":" to","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:24.32169Z","response":" school","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:24.638111Z","response":" one","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:24.824203Z","response":" day","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:24.979542Z","response":" against","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:25.116132Z","response":" the","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:25.254932Z","response":" rules","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:25.38973Z","response":".","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:25.52837Z","response":" The","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:25.66836Z","response":" lamb","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:25.808258Z","response":"'s","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:25.953045Z","response":" presence","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:26.099542Z","response":" brings","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:26.251156Z","response":" joy","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:26.400116Z","response":" and","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:26.540395Z","response":" laughter","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:26.683285Z","response":" to","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:26.822671Z","response":" the","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:27.053324Z","response":" children","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:27.269884Z","response":",","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:27.431182Z","response":" and","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:27.57017Z","response":" when","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:27.732963Z","response":" they","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:27.913658Z","response":" ask","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:28.069079Z","response":" why","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:28.231358Z","response":" it","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:28.384434Z","response":" loves","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:28.539836Z","response":" Mary","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:28.699872Z","response":" so","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:28.868206Z","response":",","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:29.038676Z","response":" the","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:29.223547Z","response":" teacher","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:29.392196Z","response":" explains","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:29.546089Z","response":" that","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:29.683018Z","response":" it","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:29.8856Z","response":"'s","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:30.103913Z","response":" because","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:30.262797Z","response":" Mary","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:30.399786Z","response":" loves","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:30.542907Z","response":" the","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:30.715707Z","response":" lamb","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:30.889316Z","response":".","done":false}
+        {"model":"llama3","created_at":"2024-05-02T21:12:31.083557Z","response":"","done":true,"context":[128006,882,128007,198,198,8144,264,64694,12399,315,279,2768,16139,13,3234,539,2997,279,3492,12399,11,1120,3493,279,12399,627,198,12998,25,10455,1047,264,2697,39406,11,198,39203,39406,11,2697,39406,13,198,42584,1047,264,2697,39406,11,198,37220,93090,574,4251,439,12056,627,198,3112,17277,430,10455,4024,11,198,42584,4024,11,10455,4024,11,198,11769,2940,430,10455,4024,11,198,791,39406,574,2771,311,733,627,198,2181,8272,1077,311,2978,832,1938,11,198,33849,832,1938,11,2978,832,1938,13,198,2181,8272,1077,311,2978,832,1938,11,198,23956,574,2403,279,5718,627,198,2181,1903,279,2911,12835,323,1514,11,198,84967,323,1514,11,12835,323,1514,13,198,2181,1903,279,2911,12835,323,1514,198,1271,1518,264,39406,520,2978,382,77955,1587,279,39406,3021,10455,779,30,198,42584,779,11,10455,779,30,198,10445,1587,279,39406,3021,10455,779,7673,198,791,24450,2911,16106,382,77955,11,10455,16180,279,39406,11,499,1440,11,198,43,3042,11,499,1440,11,39406,11,499,1440,11,198,42584,16180,279,39406,11,499,1440,1359,198,791,11326,1550,10052,627,198,5910,34,9311,96885,512,128009,128006,78191,128007,198,198,32,2697,39406,11263,10455,17277,1364,5900,11,1524,311,2978,832,1938,2403,279,5718,13,578,39406,596,9546,12716,16267,323,43214,311,279,2911,11,323,994,814,2610,3249,433,16180,10455,779,11,279,11326,15100,430,433,596,1606,10455,16180,279,39406,13,128009],"total_duration":11517792709,"load_duration":3585125,"prompt_eval_count":232,"prompt_eval_duration":3229091000,"eval_count":53,"eval_duration":8283491000}
+  recorded_at: Thu, 02 May 2024 21:12:31 GMT
 recorded_with: VCR 6.2.0

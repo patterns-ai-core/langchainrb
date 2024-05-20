@@ -11,7 +11,17 @@ module Langchain::LLM
     end
 
     def chat_completion
-      raw_response.dig("content", 0, "text")
+      chat_completion = chat_completions.find { |h| h["type"] == "text" }
+      chat_completion.dig("text")
+    end
+
+    def tool_calls
+      tool_call = chat_completions.find { |h| h["type"] == "tool_use" }
+      tool_call ? [tool_call] : []
+    end
+
+    def chat_completions
+      raw_response.dig("content")
     end
 
     def completions

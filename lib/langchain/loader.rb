@@ -29,9 +29,11 @@ module Langchain
     # @param path [String | Pathname] path to file or URL
     # @param options [Hash] options passed to the processor class used to process the data
     # @return [Data] data loaded from path
+    # rubocop:disable Style/ArgumentsForwarding
     def self.load(path, options = {}, &block)
       new(path, options).load(&block)
     end
+    # rubocop:enable Style/ArgumentsForwarding
 
     # Initialize Langchain::Loader
     # @param path [String | Pathname] path to file or URL
@@ -76,12 +78,14 @@ module Langchain
     # @yieldreturn [String] parsed data, as a String
     #
     # @return [Data] data that was loaded
+    # rubocop:disable Style/ArgumentsForwarding
     def load(&block)
       return process_data(load_from_url, &block) if url?
       return load_from_directory(&block) if directory?
 
       process_data(load_from_path, &block)
     end
+    # rubocop:enable Style/ArgumentsForwarding
 
     private
 
@@ -95,6 +99,7 @@ module Langchain
       raise FileNotFound, "File #{@path} does not exist"
     end
 
+    # rubocop:disable Style/ArgumentsForwarding
     def load_from_directory(&block)
       Dir.glob(File.join(@path, "**/*")).map do |file|
         # Only load and add to result files with supported extensions
@@ -103,6 +108,7 @@ module Langchain
         UnknownFormatError nil
       end.flatten.compact
     end
+    # rubocop:enable Style/ArgumentsForwarding
 
     def process_data(data, &block)
       @raw_data = data

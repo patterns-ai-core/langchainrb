@@ -20,5 +20,15 @@ RSpec.describe Langchain::Evals::Ragas::Faithfulness do
     it "generates the faithfulness score" do
       expect(subject.score(question: question, answer: answer, context: context)).to eq(0.5)
     end
+
+    context "when no verified statements are found" do
+      before do
+        allow(subject).to receive(:statements_verification).and_return("No verified statements found.")
+      end
+
+      it "returns a faithfulness score of 0" do
+        expect(subject.score(question: question, answer: answer, context: context)).to eq(0.0)
+      end
+    end
   end
 end

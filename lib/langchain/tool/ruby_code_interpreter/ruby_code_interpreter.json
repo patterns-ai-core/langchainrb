@@ -2,7 +2,7 @@
   {
     "type": "function",
     "function": {
-      "name": "ruby_code_interpreter-execute",
+      "name": "ruby_code_interpreter__execute",
       "description": "Executes Ruby code in a sandboxes environment.",
       "parameters": {
         "type": "object",

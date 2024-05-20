@@ -2,7 +2,7 @@
   {
     "type": "function",
     "function": {
-      "name": "vectorsearch-similarity_search",
+      "name": "vectorsearch__similarity_search",
       "description": "Vectorsearch: Retrieves relevant document for the query",
       "parameters": {
         "type": "object",

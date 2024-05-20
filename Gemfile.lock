@@ -1,15 +1,7 @@
-GIT
-  remote: https://github.com/svs/anthropic.git
-  revision: dd382a83d3f66e6365504d0a2bf1fd8c72d6027c
-  specs:
-    anthropic (0.1.0)
-      faraday (>= 1)
-      faraday-multipart (>= 1)
-
 PATH
   remote: .
   specs:
-    langchainrb (0.12.0)
+    langchainrb (0.13.1)
       activesupport (>= 7.0.8)
       baran (~> 0.1.9)
       colorize (~> 1.1.0)
@@ -54,6 +46,9 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     afm (0.2.2)
     ai21 (0.2.1)
+    anthropic (0.2.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ast (2.4.2)
     aws-eventstream (1.3.0)
     aws-partitions (1.890.0)
@@ -77,7 +72,7 @@ GEM
       dry-monads (~> 1.6)
       ruby-next (>= 0.15.0)
     coderay (1.1.3)
-    cohere-ruby (0.9.8)
+    cohere-ruby (0.9.10)
       faraday (>= 2.0.1, < 3.0)
     colorize (1.1.0)
     concurrent-ruby (1.2.3)
@@ -87,7 +82,6 @@ GEM
       rexml
     crass (1.0.6)
     date (3.3.4)
-    declarative (0.0.20)
     diff-lcs (1.5.1)
     docx (0.8.0)
       nokogiri (~> 1.13, >= 1.13.0)
@@ -167,22 +161,12 @@ GEM
       faraday (~> 2.0)
       typhoeus (~> 1.4)
     ffi (1.16.3)
-    google-apis-aiplatform_v1 (0.13.0)
-      google-apis-core (>= 0.12.0, < 2.a)
-    google-apis-core (0.13.0)
-      addressable (~> 2.5, >= 2.5.1)
-      googleauth (~> 1.9)
-      httpclient (>= 2.8.1, < 3.a)
-      mini_mime (~> 1.0)
-      representable (~> 3.0)
-      retriable (>= 2.0, < 4.a)
-      rexml
     google-cloud-env (2.1.1)
       faraday (>= 1.0, < 3.a)
     google_palm_api (0.1.3)
       faraday (>= 2.0.1, < 3.0)
     google_search_results (2.0.1)
-    googleauth (1.10.0)
+    googleauth (1.11.0)
       faraday (>= 1.0, < 3.a)
       google-cloud-env (~> 2.1)
       jwt (>= 1.4, < 3.0)
@@ -203,7 +187,6 @@ GEM
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    httpclient (2.8.3)
     hugging-face (0.3.5)
       faraday (>= 1.0)
     i18n (1.14.1)
@@ -217,7 +200,8 @@ GEM
     json (2.7.1)
     json-schema (4.0.0)
       addressable (>= 2.8)
-    jwt (2.7.1)
+    jwt (2.8.1)
+      base64
     language_server-protocol (3.17.0.3)
     lint_roller (1.1.0)
     llama_cpp (0.9.5)
@@ -234,7 +218,7 @@ GEM
     milvus (0.9.2)
       faraday (>= 2.0.1, < 3)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.5)
+    mini_portile2 (2.8.6)
     minitest (5.22.2)
     mistral-ai (1.2.0)
       event_stream_parser (~> 1.0)
@@ -255,18 +239,18 @@ GEM
       timeout
     net-smtp (0.4.0.1)
       net-protocol
-    nokogiri (1.16.2)
+    nokogiri (1.16.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    nokogiri (1.16.2-aarch64-linux)
+    nokogiri (1.16.5-aarch64-linux)
       racc (~> 1.4)
-    nokogiri (1.16.2-arm-linux)
+    nokogiri (1.16.5-arm-linux)
       racc (~> 1.4)
-    nokogiri (1.16.2-arm64-darwin)
+    nokogiri (1.16.5-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.2-x86_64-darwin)
+    nokogiri (1.16.5-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.2-x86_64-linux)
+    nokogiri (1.16.5-x86_64-linux)
       racc (~> 1.4)
     open-weather-ruby-client (0.4.0)
       activesupport
@@ -346,13 +330,9 @@ GEM
       faraday (>= 1.0)
       faraday-multipart
       faraday-retry
-    representable (3.2.0)
-      declarative (< 0.1.0)
-      trailblazer-option (>= 0.1.1, < 0.2.0)
-      uber (< 0.2.0)
     require-hooks (0.2.2)
-    retriable (3.1.2)
-    rexml (3.2.6)
+    rexml (3.2.8)
+      strscan (>= 3.0.9)
     roo (2.10.1)
       nokogiri (~> 1)
       rubyzip (>= 1.3.0, < 3.0.0)
@@ -432,6 +412,7 @@ GEM
     standardrb (1.0.1)
       standard
     stringio (3.1.0)
+    strscan (3.1.0)
     thor (1.3.0)
     tiktoken_ruby (0.0.8)
       rb_sys (>= 0.9.86)
@@ -443,7 +424,6 @@ GEM
     tiktoken_ruby (0.0.8-x86_64-linux-musl)
     timeout (0.4.1)
     to_bool (2.0.0)
-    trailblazer-option (0.1.2)
     treetop (1.6.12)
       polyglot (~> 0.3)
     ttfunk (1.8.0)
@@ -452,7 +432,6 @@ GEM
       ethon (>= 0.9.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    uber (0.1.0)
     unicode (0.4.4.4)
     unicode-display_width (2.5.0)
     unparser (0.6.13)
@@ -484,19 +463,19 @@ PLATFORMS
 
 DEPENDENCIES
   ai21 (~> 0.2.1)
-  anthropic!
+  anthropic (~> 0.2)
   aws-sdk-bedrockruntime (~> 1.1)
   chroma-db (~> 0.6.0)
-  cohere-ruby (~> 0.9.8)
+  cohere-ruby (~> 0.9.10)
   docx (~> 0.8.0)
   dotenv-rails (~> 2.7.6)
   elasticsearch (~> 8.2.0)
   epsilla-ruby (~> 0.0.4)
   eqn (~> 1.6.5)
   faraday
-  google-apis-aiplatform_v1 (~> 0.7)
   google_palm_api (~> 0.1.3)
   google_search_results (~> 2.0.0)
+  googleauth
   hnswlib (~> 0.8.1)
   hugging-face (~> 0.3.4)
   langchainrb!

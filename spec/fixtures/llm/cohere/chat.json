@@ -1,0 +1,32 @@
+{
+  "response_id": "5a91d52b-c077-44ff-b7ac-b02146b36daf",
+  "text": "I am an AI chatbot and do not possess emotions or feelings, so the concept of \"being\" does not apply to me in the traditional sense. However, I am functioning properly and ready to assist you with any queries or tasks you may have. How can I help you today?",
+  "generation_id": "e86aa4fe-1161-4df1-b794-e53f5a3440cb",
+  "chat_history": [
+    {
+      "role": "USER",
+      "message": "How are you?"
+    },
+    {
+      "role": "USER"
+    },
+    {
+      "role": "CHATBOT",
+      "message": "I am an AI chatbot and do not possess emotions or feelings, so the concept of \"being\" does not apply to me in the traditional sense. However, I am functioning properly and ready to assist you with any queries or tasks you may have. How can I help you today?"
+    }
+  ],
+  "finish_reason": "COMPLETE",
+  "meta": {
+    "api_version": {
+      "version": "1"
+    },
+    "billed_units": {
+      "input_tokens": 4,
+      "output_tokens": 57
+    },
+    "tokens": {
+      "input_tokens": 70,
+      "output_tokens": 57
+    }
+  }
+}
