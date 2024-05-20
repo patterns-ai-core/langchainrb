@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.13.2] - 2024-05-20
+- New `Langchain::LLM::GoogleGemini#embed()` method
+- `Langchain::Assistant` works with `Langchain::LLM::Anthropic` llm
+- Fixes and improvements
+
 ## [0.13.1] - 2024-05-14
 - Better error handling for `Langchain::LLM::GoogleVertexAI`
 
