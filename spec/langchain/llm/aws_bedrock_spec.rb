@@ -51,6 +51,58 @@ RSpec.describe Langchain::LLM::AwsBedrock do
           ).chat_completion
         ).to eq("The capital of France is Paris.")
       end
+
+      context "with streaming" do
+        let(:chunks) do
+          [
+            {"type" => "message_start", "message" => {"id" => "msg_abcdefg", "type" => "message", "role" => "assistant", "content" => [], "model" => "anthropic.claude-3-sonnet-20240229-v1:0", "stop_reason" => nil, "stop_sequence" => nil, "usage" => {"input_tokens" => 17, "output_tokens" => 1}}},
+            {"type" => "content_block_start", "index" => 0, "content_block" => {"type" => "text", "text" => ""}},
+            {"type" => "content_block_delta", "index" => 0, "delta" => {"type" => "text_delta", "text" => "The"}},
+            {"type" => "content_block_delta", "index" => 0, "delta" => {"type" => "text_delta", "text" => " capital of France"}},
+            {"type" => "content_block_delta", "index" => 0, "delta" => {"type" => "text_delta", "text" => " is Paris."}},
+            {"type" => "content_block_stop", "index" => 0},
+            {"type" => "message_delta", "delta" => {"stop_reason" => "end_turn", "stop_sequence" => nil}, "usage" => {"output_tokens" => 10}},
+            {"type" => "message_stop", "amazon-bedrock-invocationMetrics" => {"inputTokenCount" => 17, "outputTokenCount" => 10, "invocationLatency" => 1234, "firstByteLatency" => 567}}
+          ]
+        end
+
+        before do
+          mock_stream = double("stream")
+          allow(mock_stream).to receive(:on_event) do |&block|
+            chunks.each do |chunk|
+              mock_event = double("event", bytes: chunk.to_json)
+              block.call(mock_event)
+            end
+          end
+          allow(subject.client).to receive(:invoke_model_with_response_stream)
+            .with(matching(
+              model_id: "anthropic.claude-3-sonnet-20240229-v1:0",
+              body: {
+                messages: [{role: "user", content: "What is the capital of France?"}],
+                stop_sequences: ["stop"],
+                max_tokens: 300,
+                anthropic_version: "bedrock-2023-05-31"
+              }.to_json,
+              content_type: "application/json",
+              accept: "application/json"
+            )).and_yield(mock_stream)
+        end
+
+        it "yields chunks and returns a completion" do
+          i = 0
+          response = subject.chat(
+            messages: [{role: "user", content: "What is the capital of France?"}],
+            model: "anthropic.claude-3-sonnet-20240229-v1:0",
+            stop_sequences: ["stop"]
+          ) do |chunk|
+            expect(chunk).to eq(chunks[i])
+            i += 1
+          end
+
+          expect(response).to be_a(Langchain::LLM::AnthropicResponse)
+          expect(response.chat_completion).to eq("The capital of France is Paris.")
+        end
+      end
     end
   end
 
