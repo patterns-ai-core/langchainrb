@@ -6,6 +6,7 @@ module Langchain::LLM
   class GoogleGemini < Base
     DEFAULTS = {
       chat_completion_model_name: "gemini-1.5-pro-latest",
+      embeddings_model_name: "text-embedding-004",
       temperature: 0.0
     }
 
@@ -62,6 +63,36 @@ module Langchain::LLM
       else
         raise StandardError.new(response)
       end
+    end
+
+    def embed(
+      text:,
+      model: @defaults[:embeddings_model_name]
+    )
+
+      params = {
+        content: {
+          parts: [
+            {
+              text: text
+            }
+          ]
+        }
+      }
+
+      uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{model}:embedContent?key=#{api_key}")
+
+      request = Net::HTTP::Post.new(uri)
+      request.content_type = "application/json"
+      request.body = params.to_json
+
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
+        http.request(request)
+      end
+
+      parsed_response = JSON.parse(response.body)
+
+      Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: model)
     end
   end
 end

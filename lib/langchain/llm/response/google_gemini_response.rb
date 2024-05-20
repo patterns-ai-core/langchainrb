@@ -27,7 +27,11 @@ module Langchain::LLM
     end
 
     def embeddings
-      [raw_response.dig("predictions", 0, "embeddings", "values")]
+      if raw_response.key?("embedding")
+        [raw_response.dig("embedding", "values")]
+      else
+        [raw_response.dig("predictions", 0, "embeddings", "values")]
+      end
     end
 
     def prompt_tokens
