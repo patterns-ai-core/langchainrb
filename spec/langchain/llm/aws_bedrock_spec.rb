@@ -499,4 +499,79 @@ RSpec.describe Langchain::LLM::AwsBedrock do
       end
     end
   end
+
+  describe "#response_from_chunks" do
+    let(:chunks) do
+      [
+        {"type" => "message_start", "message" => {"id" => "msg_abcdefg", "type" => "message", "role" => "assistant", "content" => [], "model" => "anthropic.claude-3-sonnet-20240229-v1:0", "stop_reason" => nil, "stop_sequence" => nil, "usage" => {"input_tokens" => 17, "output_tokens" => 1}}},
+        {"type" => "content_block_start", "index" => 0, "content_block" => {"type" => "text", "text" => ""}},
+        {"type" => "content_block_delta", "index" => 0, "delta" => {"type" => "text_delta", "text" => "The"}},
+        {"type" => "content_block_delta", "index" => 0, "delta" => {"type" => "text_delta", "text" => " capital of France"}},
+        {"type" => "content_block_delta", "index" => 0, "delta" => {"type" => "text_delta", "text" => " is Paris."}},
+        {"type" => "content_block_stop", "index" => 0},
+        {"type" => "message_delta", "delta" => {"stop_reason" => "end_turn", "stop_sequence" => nil}, "usage" => {"output_tokens" => 10}},
+        {"type" => "message_stop", "amazon-bedrock-invocationMetrics" => {"inputTokenCount" => 17, "outputTokenCount" => 10, "invocationLatency" => 1234, "firstByteLatency" => 567}}
+      ]
+    end
+
+    it "returns an AnthropicResponse" do
+      response = subject.send(:response_from_chunks, chunks)
+
+      expect(response).to be_a(Langchain::LLM::AnthropicResponse)
+      expect(response.chat_completion).to eq("The capital of France is Paris.")
+    end
+
+    it "returns the correct raw response" do
+      response = subject.send(:response_from_chunks, chunks)
+
+      expect(response.raw_response).to eq({
+        "id" => "msg_abcdefg",
+        "type" => "message",
+        "role" => "assistant",
+        "content" => [{"type" => "text", "text" => "The capital of France is Paris."}],
+        "model" => "anthropic.claude-3-sonnet-20240229-v1:0",
+        "stop_reason" => "end_turn",
+        "stop_sequence" => nil,
+        "usage" => {"input_tokens" => 17, "output_tokens" => 10}
+      })
+    end
+
+    context "with multiple content blocks" do
+      let(:chunks) do
+        [
+          {"type" => "message_start", "message" => {"id" => "msg_abcdefg", "type" => "message", "role" => "assistant", "content" => [], "model" => "anthropic.claude-3-sonnet-20240229-v1:0", "stop_reason" => nil, "stop_sequence" => nil, "usage" => {"input_tokens" => 17, "output_tokens" => 1}}},
+          {"type" => "content_block_start", "index" => 0, "content_block" => {"type" => "text", "text" => ""}},
+          {"type" => "content_block_delta", "index" => 0, "delta" => {"type" => "text_delta", "text" => "The"}},
+          {"type" => "content_block_delta", "index" => 0, "delta" => {"type" => "text_delta", "text" => " capital of France"}},
+          {"type" => "content_block_delta", "index" => 0, "delta" => {"type" => "text_delta", "text" => " is Paris."}},
+          {"type" => "content_block_stop", "index" => 0},
+          {"type" => "content_block_start", "index" => 1, "content_block" => {"type" => "text", "text" => ""}},
+          {"type" => "content_block_delta", "index" => 1, "delta" => {"type" => "text_delta", "text" => "The"}},
+          {"type" => "content_block_delta", "index" => 1, "delta" => {"type" => "text_delta", "text" => " capital of Chile"}},
+          {"type" => "content_block_delta", "index" => 1, "delta" => {"type" => "text_delta", "text" => " is Santiago."}},
+          {"type" => "content_block_stop", "index" => 1},
+          {"type" => "message_delta", "delta" => {"stop_reason" => "end_turn", "stop_sequence" => nil}, "usage" => {"output_tokens" => 20}},
+          {"type" => "message_stop", "amazon-bedrock-invocationMetrics" => {"inputTokenCount" => 17, "outputTokenCount" => 20, "invocationLatency" => 1234, "firstByteLatency" => 567}}
+        ]
+      end
+
+      it "returns the correct raw response" do
+        response = subject.send(:response_from_chunks, chunks)
+
+        expect(response.raw_response).to eq({
+          "id" => "msg_abcdefg",
+          "type" => "message",
+          "role" => "assistant",
+          "content" => [
+            {"type" => "text", "text" => "The capital of France is Paris."},
+            {"type" => "text", "text" => "The capital of Chile is Santiago."}
+          ],
+          "model" => "anthropic.claude-3-sonnet-20240229-v1:0",
+          "stop_reason" => "end_turn",
+          "stop_sequence" => nil,
+          "usage" => {"input_tokens" => 17, "output_tokens" => 20}
+        })
+      end
+    end
+  end
 end
