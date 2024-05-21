@@ -135,22 +135,43 @@ module Langchain::LLM
     # @option params [Float] :temperature The temperature to use for completion
     # @option params [Float] :top_p Use nucleus sampling.
     # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
+    # @yield [Hash] Provides chunks of the response as they are received
     # @return [Langchain::LLM::AnthropicMessagesResponse] Response object
-    def chat(params = {})
+    def chat(params = {}, &block)
       parameters = chat_parameters.to_params(params)
 
       raise ArgumentError.new("messages argument is required") if Array(parameters[:messages]).empty?
 
       raise "Model #{parameters[:model]} does not support chat completions." unless Langchain::LLM::AwsBedrock::SUPPORTED_CHAT_COMPLETION_PROVIDERS.include?(completion_provider)
 
-      response = client.invoke_model({
-        model_id: parameters[:model],
-        body: parameters.except(:model).to_json,
-        content_type: "application/json",
-        accept: "application/json"
-      })
+      if block
+        response_chunks = []
 
-      parse_response response
+        client.invoke_model_with_response_stream(
+          model_id: parameters[:model],
+          body: parameters.except(:model).to_json,
+          content_type: "application/json",
+          accept: "application/json"
+        ) do |stream|
+          stream.on_event do |event|
+            chunk = JSON.parse(event.bytes)
+            response_chunks << chunk
+
+            yield chunk
+          end
+        end
+
+        response_from_chunks(response_chunks)
+      else
+        response = client.invoke_model({
+          model_id: parameters[:model],
+          body: parameters.except(:model).to_json,
+          content_type: "application/json",
+          accept: "application/json"
+        })
+
+        parse_response response
+      end
     end
 
     private
@@ -259,6 +280,30 @@ module Langchain::LLM
           applyToEmojis: default_params[:frequency_penalty][:apply_to_emojis]
         }
       }
+    end
+
+    def response_from_chunks(chunks)
+      raw_response = {}
+
+      chunks.group_by { |chunk| chunk["type"] }.each do |type, chunks|
+        case type
+        when "message_start"
+          raw_response = chunks.first["message"]
+        when "content_block_start"
+          raw_response["content"] = chunks.map { |chunk| chunk["content_block"] }
+        when "content_block_delta"
+          chunks.group_by { |chunk| chunk["index"] }.each do |index, deltas|
+            raw_response["content"][index]["text"] = deltas.map { |delta| delta.dig("delta", "text") }.join
+          end
+        when "message_delta"
+          chunks.each do |chunk|
+            raw_response = raw_response.merge(chunk["delta"])
+            raw_response["usage"] = raw_response["usage"].merge(chunk["usage"]) if chunk["usage"]
+          end
+        end
+      end
+
+      Langchain::LLM::AnthropicResponse.new(raw_response)
     end
   end
 end
