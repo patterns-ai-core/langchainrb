@@ -207,6 +207,7 @@ RSpec.describe Langchain::Assistant do
     end
 
     it "raises an error if LLM class does not implement `chat()` method" do
+      llm = Langchain::LLM::Replicate.new(api_key: "123")
       expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
     end
 
@@ -369,6 +370,7 @@ RSpec.describe Langchain::Assistant do
     end
 
     it "raises an error if LLM class does not implement `chat()` method" do
+      llm = Langchain::LLM::Replicate.new(api_key: "123")
       expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
     end
 
