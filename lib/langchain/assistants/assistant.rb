@@ -3,7 +3,18 @@
 module Langchain
   # Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries.
   # Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
+  #
+  # Usage:
+  #     llm = Langchain::LLM::GoogleGemini.new(api_key: ENV["GOOGLE_GEMINI_API_KEY"])
+  #     assistant = Langchain::Assistant.new(
+  #       llm: llm,
+  #       instructions: "Are you a News Reporter AI",
+  #       tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
+  #     )
   class Assistant
+    extend Forwardable
+    def_delegators :thread, :messages, :messages=
+
     attr_reader :llm, :thread, :instructions
     attr_accessor :tools
 
@@ -22,20 +33,21 @@ module Langchain
     # @param instructions [String] The system instructions to include in the thread
     def initialize(
       llm:,
-      thread:,
+      thread: nil,
       tools: [],
       instructions: nil
     )
       unless SUPPORTED_LLMS.include?(llm.class)
         raise ArgumentError, "Invalid LLM; currently only #{SUPPORTED_LLMS.join(", ")} are supported"
       end
-      raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless thread.is_a?(Langchain::Thread)
       raise ArgumentError, "Tools must be an array of Langchain::Tool::Base instance(s)" unless tools.is_a?(Array) && tools.all? { |tool| tool.is_a?(Langchain::Tool::Base) }
 
       @llm = llm
-      @thread = thread
+      @thread = thread || Langchain::Thread.new
       @tools = tools
       @instructions = instructions
+
+      raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless @thread.is_a?(Langchain::Thread)
 
       # The first message in the thread should be the system instructions
       # TODO: What if the user added old messages and the system instructions are already in there? Should this overwrite the existing instructions?
