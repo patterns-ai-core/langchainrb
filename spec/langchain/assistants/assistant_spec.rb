@@ -21,6 +21,7 @@ RSpec.describe Langchain::Assistant do
     end
 
     it "raises an error if LLM class does not implement `chat()` method" do
+      llm = Langchain::LLM::Replicate.new(api_key: "123")
       expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
     end
 
@@ -33,6 +34,11 @@ RSpec.describe Langchain::Assistant do
         described_class.new(llm: llm, thread: thread, instructions: instructions)
         expect(thread.messages.first.role).to eq("system")
         expect(thread.messages.first.content).to eq("You are an expert assistant")
+      end
+
+      it "sets new thread if thread is not provided" do
+        subject = described_class.new(llm: llm, instructions: instructions)
+        expect(subject.thread).to be_a(Langchain::Thread)
       end
     end
 
@@ -201,6 +207,7 @@ RSpec.describe Langchain::Assistant do
     end
 
     it "raises an error if LLM class does not implement `chat()` method" do
+      llm = Langchain::LLM::Replicate.new(api_key: "123")
       expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
     end
 
@@ -363,6 +370,7 @@ RSpec.describe Langchain::Assistant do
     end
 
     it "raises an error if LLM class does not implement `chat()` method" do
+      llm = Langchain::LLM::Replicate.new(api_key: "123")
       expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
     end
 
