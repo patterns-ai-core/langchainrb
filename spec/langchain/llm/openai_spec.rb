@@ -598,6 +598,59 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
     end
 
+    context "with streaming and tool_calls" do
+      let(:tools) do
+        [{
+          "type" => "function",
+          "function" => {
+            "name" => "foo",
+            "parameters" => {
+              "type" => "object",
+              "properties" => {
+                "value" => {
+                  "type" => "string"
+                }
+              }
+            },
+            "required" => ["value"]
+          }
+        }]
+      end
+      let(:chunk_deltas) do
+        [
+          {"role" => "assistant", "content" => nil},
+          {"tool_calls" => [{"index" => 0, "id" => "call_123456", "type" => "function", "function" => {"name" => "foo", "arguments" => ""}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "{\"va"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "lue\":"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => " \"my_s"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "trin"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "g\"}"}}]}
+        ]
+      end
+      let(:chunks) { chunk_deltas.map { |delta| {"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => delta}]} } }
+      let(:expected_tool_calls) do
+        [
+          {"id" => "call_123456", "type" => "function", "function" => {"name" => "foo", "arguments" => "{\"value\": \"my_string\"}"}}
+        ]
+      end
+
+      it "handles streaming responses correctly" do
+        allow(subject.client).to receive(:chat) do |parameters|
+          chunks.each do |chunk|
+            parameters[:parameters][:stream].call(chunk)
+          end
+          chunks.last
+        end
+
+        response = subject.chat(messages: [content: prompt, role: "user"], tools:) do |chunk|
+          chunk
+        end
+
+        expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+        expect(response.raw_response.dig("choices", 0, "message", "tool_calls")).to eq(expected_tool_calls)
+      end
+    end
+
     context "with failed API call" do
       let(:response) do
         {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
@@ -628,6 +681,76 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     it "returns a summary" do
       expect(subject.summarize(text: text)).to eq("Summary")
+    end
+  end
+
+  describe "tool_calls_from_choice_chunks" do
+    context "without tool_calls" do
+      let(:chunks) do
+        [
+          {"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => {"role" => "assistant", "content" => nil}}]},
+          {"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => {"role" => "assistant", "content" => "Hello"}}]}
+        ]
+      end
+
+      it "returns nil" do
+        expect(subject.send(:tool_calls_from_choice_chunks, chunks)).to eq(nil)
+      end
+    end
+
+    context "with tool_calls" do
+      let(:chunk_deltas) do
+        [
+          {"role" => "assistant", "content" => nil},
+          {"tool_calls" => [{"index" => 0, "id" => "call_123456", "type" => "function", "function" => {"name" => "foo", "arguments" => ""}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "{\"va"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "lue\":"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => " \"my_s"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "trin"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "g\"}"}}]}
+        ]
+      end
+      let(:chunks) { chunk_deltas.map { |delta| {"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => delta}]} } }
+      let(:expected_tool_calls) do
+        [
+          {"id" => "call_123456", "type" => "function", "function" => {"name" => "foo", "arguments" => "{\"value\": \"my_string\"}"}}
+        ]
+      end
+
+      it "returns the tool_calls" do
+        expect(subject.send(:tool_calls_from_choice_chunks, chunks)).to eq(expected_tool_calls)
+      end
+    end
+
+    context "with multiple tool_calls" do
+      let(:chunk_deltas) do
+        [
+          {"role" => "assistant", "content" => nil},
+          {"tool_calls" => [{"index" => 0, "id" => "call_123", "type" => "function", "function" => {"name" => "foo", "arguments" => ""}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "{\"va"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "lue\":"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => " \"my_s"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "trin"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "g\"}"}}]},
+          {"tool_calls" => [{"index" => 1, "id" => "call_456", "type" => "function", "function" => {"name" => "bar", "arguments" => ""}}]},
+          {"tool_calls" => [{"index" => 1, "function" => {"arguments" => "{\"va"}}]},
+          {"tool_calls" => [{"index" => 1, "function" => {"arguments" => "lue\":"}}]},
+          {"tool_calls" => [{"index" => 1, "function" => {"arguments" => " \"other_s"}}]},
+          {"tool_calls" => [{"index" => 1, "function" => {"arguments" => "trin"}}]},
+          {"tool_calls" => [{"index" => 1, "function" => {"arguments" => "g\"}"}}]}
+        ]
+      end
+      let(:chunks) { chunk_deltas.map { |delta| {"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => delta}]} } }
+      let(:expected_tool_calls) do
+        [
+          {"id" => "call_123", "type" => "function", "function" => {"name" => "foo", "arguments" => "{\"value\": \"my_string\"}"}},
+          {"id" => "call_456", "type" => "function", "function" => {"name" => "bar", "arguments" => "{\"value\": \"other_string\"}"}}
+        ]
+      end
+
+      it "returns the tool_calls" do
+        expect(subject.send(:tool_calls_from_choice_chunks, chunks)).to eq(expected_tool_calls)
+      end
     end
   end
 end
