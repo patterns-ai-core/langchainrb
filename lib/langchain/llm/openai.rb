@@ -205,11 +205,11 @@ module Langchain::LLM
         first_chunk = chunks.first
 
         {
-          "id" => first_chunk.dig("choices", 0, "delta", "tool_calls", 0, "id"),
-          "type" => first_chunk.dig("choices", 0, "delta", "tool_calls", 0, "type"),
+          "id" => first_chunk.chat_completions.dig(0, "delta", "tool_calls", 0, "id"),
+          "type" => first_chunk.chat_completions.dig(0, "delta", "tool_calls", 0, "type"),
           "function" => {
-            "name" => first_chunk.dig("choices", 0, "delta", "tool_calls", 0, "function", "name"),
-            "arguments" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "tool_calls", 0, "function", "arguments") }.join
+            "name" => first_chunk.chat_completions.dig(0, "delta", "tool_calls", 0, "function", "name"),
+            "arguments" => chunks.map { |chunk| chunk.chat_completions.dig(0, "delta", "tool_calls", 0, "function", "arguments") }.join
           }
         }
       end
