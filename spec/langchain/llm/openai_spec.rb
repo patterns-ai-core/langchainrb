@@ -712,9 +712,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
       let(:chunks) { chunk_deltas.map { |delta| Langchain::LLM::OpenAIResponse.new({"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => delta}]}) } }
       let(:expected_tool_calls) do
-        [
-          Langchain::LLM::OpenAIResponse.new({"id" => "call_123456", "type" => "function", "function" => {"name" => "foo", "arguments" => "{\"value\": \"my_string\"}"}})
-        ]
+        [{"id" => "call_123456", "type" => "function", "function" => {"name" => "foo", "arguments" => "{\"value\": \"my_string\"}"}}]
       end
 
       it "returns the tool_calls" do
@@ -743,8 +741,8 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:chunks) { chunk_deltas.map { |delta| Langchain::LLM::OpenAIResponse.new({"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => delta}]}) } }
       let(:expected_tool_calls) do
         [
-          Langchain::LLM::OpenAIResponse.new({"id" => "call_123", "type" => "function", "function" => {"name" => "foo", "arguments" => "{\"value\": \"my_string\"}"}}),
-          Langchain::LLM::OpenAIResponse.new({"id" => "call_456", "type" => "function", "function" => {"name" => "bar", "arguments" => "{\"value\": \"other_string\"}"}})
+          {"id" => "call_123", "type" => "function", "function" => {"name" => "foo", "arguments" => "{\"value\": \"my_string\"}"}},
+          {"id" => "call_456", "type" => "function", "function" => {"name" => "bar", "arguments" => "{\"value\": \"other_string\"}"}}
         ]
       end
 
