@@ -188,12 +188,31 @@ module Langchain::LLM
           "index" => index,
           "message" => {
             "role" => "assistant",
-            "content" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
-          },
+            "content" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join,
+            "tool_calls" => tool_calls_from_choice_chunks(chunks)
+          }.compact,
           "finish_reason" => chunks.last.dig("choices", 0, "finish_reason")
         }
       end
       @response_chunks.first&.slice("id", "object", "created", "model")&.merge({"choices" => final_choices})
+    end
+
+    def tool_calls_from_choice_chunks(choice_chunks)
+      tool_call_chunks = choice_chunks.select { |chunk| chunk.dig("choices", 0, "delta", "tool_calls") }
+      return nil if tool_call_chunks.empty?
+
+      tool_call_chunks.group_by { |chunk| chunk.dig("choices", 0, "delta", "tool_calls", 0, "index") }.map do |index, chunks|
+        first_chunk = chunks.first
+
+        {
+          "id" => first_chunk.dig("choices", 0, "delta", "tool_calls", 0, "id"),
+          "type" => first_chunk.dig("choices", 0, "delta", "tool_calls", 0, "type"),
+          "function" => {
+            "name" => first_chunk.dig("choices", 0, "delta", "tool_calls", 0, "function", "name"),
+            "arguments" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "tool_calls", 0, "function", "arguments") }.join
+          }
+        }
+      end
     end
   end
 end
