@@ -26,8 +26,6 @@ module Langchain::LLM
       "text-embedding-3-small" => 1536
     }.freeze
 
-    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
-
     attr_reader :defaults
 
     # Initialize an OpenAI LLM instance
@@ -81,8 +79,6 @@ module Langchain::LLM
       elsif EMBEDDING_SIZES.key?(model)
         parameters[:dimensions] = EMBEDDING_SIZES[model]
       end
-
-      validate_max_tokens(text, parameters[:model])
 
       response = with_api_error_handling do
         client.embeddings(parameters: parameters)
@@ -175,10 +171,6 @@ module Langchain::LLM
       raise Langchain::LLM::ApiError.new "OpenAI API error: #{response.dig("error", "message")}" if response&.dig("error")
 
       response
-    end
-
-    def validate_max_tokens(messages, model, max_tokens = nil)
-      LENGTH_VALIDATOR.validate_max_tokens!(messages, model, max_tokens: max_tokens, llm: self)
     end
 
     def response_from_chunks
