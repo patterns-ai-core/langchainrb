@@ -2,13 +2,13 @@
 
 module Langchain
   # Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries.
-  # Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
+  # Assistants can be configured with an LLM of your choice, any vector search database and easily extended with additional tools.
   #
   # Usage:
   #     llm = Langchain::LLM::GoogleGemini.new(api_key: ENV["GOOGLE_GEMINI_API_KEY"])
   #     assistant = Langchain::Assistant.new(
   #       llm: llm,
-  #       instructions: "Are you a News Reporter AI",
+  #       instructions: "You're a News Reporter AI",
   #       tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
   #     )
   class Assistant
