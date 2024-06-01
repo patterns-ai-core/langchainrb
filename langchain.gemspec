@@ -29,7 +29,6 @@ Gem::Specification.new do |spec|
   # Not sure if we should require this as it only applies to OpenAI usecase.
   spec.add_dependency "baran", "~> 0.1.9"
   spec.add_dependency "colorize", "~> 1.1.0"
-  spec.add_dependency "tiktoken_ruby", "~> 0.0.9"
   spec.add_dependency "json-schema", "~> 4"
   spec.add_dependency "zeitwerk", "~> 2.5"
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
@@ -54,6 +53,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "elasticsearch", "~> 8.2.0"
   spec.add_development_dependency "epsilla-ruby", "~> 0.0.4"
   spec.add_development_dependency "eqn", "~> 1.6.5"
+  spec.add_development_dependency "faraday"
   spec.add_development_dependency "googleauth"
   spec.add_development_dependency "google_palm_api", "~> 0.1.3"
   spec.add_development_dependency "google_search_results", "~> 2.0.0"
@@ -78,6 +78,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "sequel", "~> 5.68.0"
   spec.add_development_dependency "weaviate-ruby", "~> 0.8.10"
   spec.add_development_dependency "wikipedia-client", "~> 1.17.0"
-  spec.add_development_dependency "faraday"
   spec.add_development_dependency "power_point_pptx", "~> 0.1.0"
+  spec.add_development_dependency "tiktoken_ruby", "~> 0.0.9"
 end
