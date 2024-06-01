@@ -414,6 +414,7 @@ Assistants are Agent-like objects that leverage helpful instructions, LLMs, tool
 | "ruby_code_interpreter" | Interprets Ruby expressions             |                                                               | `gem "safe_ruby", "~> 1.0.4"`             |
 | "google_search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |
 | "news_retriever"     | A wrapper around NewsApi.org                     | `ENV["NEWS_API_KEY"]` (https://newsapi.org/) |  |
+| "tavily"     | A wrapper around Tavily AI                     | `ENV["TAVILY_API_KEY"]` (https://tavily.com/) |  |
 | "weather"  | Calls Open Weather API to retrieve the current weather        |      `ENV["OPEN_WEATHER_API_KEY"]` (https://home.openweathermap.org/api_keys)               | `gem "open-weather-ruby-client", "~> 0.3.0"`    |
 | "wikipedia"  | Calls Wikipedia API to retrieve the summary        |                                                               | `gem "wikipedia-client", "~> 1.17.0"`     |
 
