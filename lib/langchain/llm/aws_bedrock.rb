@@ -136,7 +136,7 @@ module Langchain::LLM
     # @option params [Float] :top_p Use nucleus sampling.
     # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
     # @yield [Hash] Provides chunks of the response as they are received
-    # @return [Langchain::LLM::AnthropicMessagesResponse] Response object
+    # @return [Langchain::LLM::AnthropicResponse] Response object
     def chat(params = {}, &block)
       parameters = chat_parameters.to_params(params)
 

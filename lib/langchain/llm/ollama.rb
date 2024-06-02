@@ -65,7 +65,13 @@ module Langchain::LLM
     # @param model [String] The model to use
     #   For a list of valid parameters and values, see:
     #   https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values
+    # @option block [Proc] Receive the intermediate responses as a stream of +OllamaResponse+ objects.
     # @return [Langchain::LLM::OllamaResponse] Response object
+    #
+    # Example:
+    #
+    #  final_resp = ollama.complete(prompt:) { |resp| print resp.completion }
+    #  final_resp.total_tokens
     #
     def complete(
       prompt:,
@@ -75,7 +81,6 @@ module Langchain::LLM
       system: nil,
       template: nil,
       context: nil,
-      stream: nil,
       raw: nil,
       mirostat: nil,
       mirostat_eta: nil,
@@ -108,7 +113,7 @@ module Langchain::LLM
         system: system,
         template: template,
         context: context,
-        stream: stream,
+        stream: block.present?,
         raw: raw
       }.compact
 
@@ -132,53 +137,54 @@ module Langchain::LLM
       }
 
       parameters[:options] = llm_parameters.compact
+      responses_stream = []
 
-      response = ""
+      client.post("api/generate", parameters) do |req|
+        req.options.on_data = json_responses_chunk_handler do |parsed_chunk|
+          responses_stream << parsed_chunk
 
-      client.post("api/generate") do |req|
-        req.body = parameters
-
-        req.options.on_data = proc do |chunk, size|
-          chunk.split("\n").each do |line_chunk|
-            json_chunk = begin
-              JSON.parse(line_chunk)
-            # In some instance the chunk exceeds the buffer size and the JSON parser fails
-            rescue JSON::ParserError
-              nil
-            end
-
-            response += json_chunk.dig("response") unless json_chunk.blank?
-          end
-
-          yield json_chunk, size if block
+          block&.call(OllamaResponse.new(parsed_chunk, model: parameters[:model]))
         end
       end
 
-      Langchain::LLM::OllamaResponse.new(response, model: parameters[:model])
+      generate_final_completion_response(responses_stream, parameters)
     end
 
     # Generate a chat completion
     #
-    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
-    # @option params [String] :model Model name
+    # @param messages [Array] The chat messages
+    # @param model [String] The model to use
+    # @param params [Hash] Unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
     # @option params [Array<Hash>] :messages Array of messages
+    # @option params [String] :model Model name
     # @option params [String] :format Format to return a response in. Currently the only accepted value is `json`
     # @option params [Float] :temperature The temperature to use
     # @option params [String] :template The prompt template to use (overrides what is defined in the `Modelfile`)
-    # @option params [Boolean] :stream Streaming the response. If false the response will be returned as a single response object, rather than a stream of objects
+    # @option block [Proc] Receive the intermediate responses as a stream of +OllamaResponse+ objects.
+    # @return [Langchain::LLM::OllamaResponse] Response object
+    #
+    # Example:
+    #
+    #  final_resp = ollama.chat(messages:) { |resp| print resp.chat_completion }
+    #  final_resp.total_tokens
     #
     # The message object has the following fields:
     #   role: the role of the message, either system, user or assistant
     #   content: the content of the message
     #   images (optional): a list of images to include in the message (for multimodal models such as llava)
-    def chat(params = {})
-      parameters = chat_parameters.to_params(params)
+    def chat(messages:, model: nil, **params, &block)
+      parameters = chat_parameters.to_params(params.merge(messages:, model:, stream: block.present?))
+      responses_stream = []
 
-      response = client.post("api/chat") do |req|
-        req.body = parameters
+      client.post("api/chat", parameters) do |req|
+        req.options.on_data = json_responses_chunk_handler do |parsed_chunk|
+          responses_stream << parsed_chunk
+
+          block&.call(OllamaResponse.new(parsed_chunk, model: parameters[:model]))
+        end
       end
 
-      Langchain::LLM::OllamaResponse.new(response.body, model: parameters[:model])
+      generate_final_chat_completion_response(responses_stream, parameters)
     end
 
     #
@@ -239,7 +245,7 @@ module Langchain::LLM
         req.body = parameters
       end
 
-      Langchain::LLM::OllamaResponse.new(response.body, model: parameters[:model])
+      OllamaResponse.new(response.body, model: parameters[:model])
     end
 
     # Generate a summary for a given text
@@ -257,13 +263,40 @@ module Langchain::LLM
 
     private
 
-    # @return [Faraday::Connection] Faraday client
     def client
       @client ||= Faraday.new(url: url) do |conn|
         conn.request :json
         conn.response :json
         conn.response :raise_error
       end
+    end
+
+    def json_responses_chunk_handler(&block)
+      proc do |chunk, _size|
+        chunk.split("\n").each do |chunk_line|
+          parsed_chunk = JSON.parse(chunk_line)
+          block.call(parsed_chunk)
+        end
+      end
+    end
+
+    def generate_final_completion_response(responses_stream, parameters)
+      final_response = responses_stream.last.merge(
+        "response" => responses_stream.map { |resp| resp["response"] }.join
+      )
+
+      OllamaResponse.new(final_response, model: parameters[:model])
+    end
+
+    def generate_final_chat_completion_response(responses_stream, parameters)
+      final_response = responses_stream.last.merge(
+        "message" => {
+          "role" => "assistant",
+          "content" => responses_stream.map { |resp| resp.dig("message", "content") }.join
+        }
+      )
+
+      OllamaResponse.new(final_response, model: parameters[:model])
     end
   end
 end
