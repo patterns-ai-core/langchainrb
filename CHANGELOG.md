@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.13.3] - 2024-06-03
+- New 🛠️  `Langchain::Tool::Tavily` to execute search (better than the GoogleSearch tool)
+- Remove `activesupport` dependency
+- Misc fixes and improvements
+
 ## [0.13.2] - 2024-05-20
 - New `Langchain::LLM::GoogleGemini#embed()` method
 - `Langchain::Assistant` works with `Langchain::LLM::Anthropic` llm
