@@ -293,7 +293,14 @@ module Langchain::LLM
           raw_response["content"] = chunks.map { |chunk| chunk["content_block"] }
         when "content_block_delta"
           chunks.group_by { |chunk| chunk["index"] }.each do |index, deltas|
-            raw_response["content"][index]["text"] = deltas.map { |delta| delta.dig("delta", "text") }.join
+            deltas.group_by { |delta| delta.dig("delta", "type") }.each do |type, deltas|
+              case type
+              when "text_delta"
+                raw_response["content"][index]["text"] = deltas.map { |delta| delta.dig("delta", "text") }.join
+              when "input_json_delta"
+                raw_response["content"][index]["input"] = JSON.parse(deltas.map { |delta| delta.dig("delta", "partial_json") }.join)
+              end
+            end
           end
         when "message_delta"
           chunks.each do |chunk|
