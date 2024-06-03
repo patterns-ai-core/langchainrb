@@ -298,7 +298,8 @@ module Langchain::LLM
               when "text_delta"
                 raw_response["content"][index]["text"] = deltas.map { |delta| delta.dig("delta", "text") }.join
               when "input_json_delta"
-                raw_response["content"][index]["input"] = JSON.parse(deltas.map { |delta| delta.dig("delta", "partial_json") }.join)
+                json_string = deltas.map { |delta| delta.dig("delta", "partial_json") }.join
+                raw_response["content"][index]["input"] = json_string.empty? ? {} : JSON.parse(json_string)
               end
             end
           end
