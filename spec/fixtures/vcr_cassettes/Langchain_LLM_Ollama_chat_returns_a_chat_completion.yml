@@ -1,0 +1,34 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:11434/api/chat
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":"Hey! How are you?"}],"model":"llama3","stream":false,"temperature":0.8}'
+    headers:
+      User-Agent:
+      - Faraday v2.9.0
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 30 May 2024 15:46:49 GMT
+      Content-Length:
+      - '479'
+    body:
+      encoding: UTF-8
+      string: |
+        {"model":"llama3","created_at":"2024-05-30T15:46:49.179748131Z","message":{"role":"assistant","content":"I'm just an AI, so I don't have emotions like humans do, but I'm functioning properly and ready to help with any questions or topics you'd like to discuss! What's on your mind today?"},"done_reason":"stop","done":true,"total_duration":13560344173,"load_duration":2983640834,"prompt_eval_count":16,"prompt_eval_duration":2202291000,"eval_count":44,"eval_duration":8284912000}
+  recorded_at: Thu, 30 May 2024 15:46:49 GMT
+recorded_with: VCR 6.2.0

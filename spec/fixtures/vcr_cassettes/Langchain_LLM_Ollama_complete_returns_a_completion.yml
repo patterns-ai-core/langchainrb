@@ -5,7 +5,7 @@ http_interactions:
     uri: http://localhost:11434/api/generate
     body:
       encoding: UTF-8
-      string: '{"prompt":"In one word, life is ","model":"llama3","options":{"temperature":0.8}}'
+      string: '{"prompt":"In one word, life is ","model":"llama3","stream":false,"options":{"temperature":0.8}}'
     headers:
       User-Agent:
       - Faraday v2.9.0
@@ -21,17 +21,14 @@ http_interactions:
       message: OK
     headers:
       Content-Type:
-      - application/x-ndjson
+      - application/json; charset=utf-8
       Date:
-      - Thu, 02 May 2024 21:12:56 GMT
-      Transfer-Encoding:
-      - chunked
+      - Thu, 30 May 2024 16:14:08 GMT
+      Content-Length:
+      - '403'
     body:
       encoding: UTF-8
       string: |
-        {"model":"llama3","created_at":"2024-05-02T21:12:56.139822Z","response":"frag","done":false}
-        {"model":"llama3","created_at":"2024-05-02T21:12:56.255863Z","response":"ile","done":false}
-        {"model":"llama3","created_at":"2024-05-02T21:12:56.40195Z","response":".","done":false}
-        {"model":"llama3","created_at":"2024-05-02T21:12:56.542935Z","response":"","done":true,"context":[128006,882,128007,198,198,644,832,3492,11,2324,374,220,128009,128006,78191,128007,198,198,34298,458,13,128009],"total_duration":879372000,"load_duration":3692208,"prompt_eval_count":12,"prompt_eval_duration":470920000,"eval_count":4,"eval_duration":403041000}
+        {"model":"llama3","created_at":"2024-05-02T21:12:56.542935Z","response":"fragile.","done":true,"context":[128006,882,128007,198,198,644,832,3492,11,2324,374,220,128009,128006,78191,128007,198,198,34298,458,13,128009],"total_duration":879372000,"load_duration":3692208,"prompt_eval_count":12,"prompt_eval_duration":470920000,"eval_count":4,"eval_duration":403041000}
   recorded_at: Thu, 02 May 2024 21:12:56 GMT
 recorded_with: VCR 6.2.0

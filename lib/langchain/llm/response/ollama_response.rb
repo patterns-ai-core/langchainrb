@@ -8,9 +8,7 @@ module Langchain::LLM
     end
 
     def created_at
-      if raw_response.dig("created_at")
-        Time.parse(raw_response.dig("created_at"))
-      end
+      Time.parse(raw_response.dig("created_at")) if raw_response.dig("created_at")
     end
 
     def chat_completion
@@ -18,11 +16,11 @@ module Langchain::LLM
     end
 
     def completion
-      completions.first
+      raw_response.dig("response")
     end
 
     def completions
-      raw_response.is_a?(String) ? [raw_response] : []
+      [completion].compact
     end
 
     def embedding
@@ -38,15 +36,21 @@ module Langchain::LLM
     end
 
     def prompt_tokens
-      raw_response.dig("prompt_eval_count")
+      raw_response.dig("prompt_eval_count") if done?
     end
 
     def completion_tokens
-      raw_response.dig("eval_count")
+      raw_response.dig("eval_count") if done?
     end
 
     def total_tokens
-      prompt_tokens + completion_tokens
+      prompt_tokens + completion_tokens if done?
+    end
+
+    private
+
+    def done?
+      !!raw_response["done"]
     end
   end
 end
