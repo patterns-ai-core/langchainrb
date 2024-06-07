@@ -57,7 +57,7 @@ Langchain.rb wraps supported LLMs in a unified interface allowing you to easily 
 #### Supported LLMs and features:
 | LLM providers                                                                                   | `embed()`          | `complete()`       | `chat()`            | `summarize()`      | Notes              |
 | --------                                                                                        |:------------------:| :-------:          | :-----------------: | :-------:          | :----------------- |
-| [OpenAI](https://openai.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ❌                 | Including Azure OpenAI |
+| [OpenAI](https://openai.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ✅                 | Including Azure OpenAI |
 | [AI21](https://ai21.com/?utm_source=langchainrb&utm_medium=github)                              | ❌                 | ✅                 | ❌                  | ✅                 |                    |
 | [Anthropic](https://anthropic.com/?utm_source=langchainrb&utm_medium=github)                    | ❌                 | ✅                 | ✅                  | ❌                 |                    |
 | [AwsBedrock](https://aws.amazon.com/bedrock?utm_source=langchainrb&utm_medium=github)          | ✅                 | ✅                 | ✅                  | ❌                 | Provides AWS, Cohere, AI21, Antropic and Stability AI models |
