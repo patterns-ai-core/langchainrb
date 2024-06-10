@@ -42,7 +42,8 @@ module Langchain::LLM
       raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
 
       parameters = chat_parameters.to_params(params)
-      parameters[:generation_config] = {temperature: parameters.delete(:temperature)} if parameters[:temperature]
+      parameters[:generation_config] ||= {}
+      parameters[:generation_config].merge({temperature: parameters.delete(:temperature)}) if parameters[:temperature]
 
       uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{parameters[:model]}:generateContent?key=#{api_key}")
 
