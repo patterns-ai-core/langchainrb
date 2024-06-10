@@ -105,7 +105,7 @@ module Langchain
         # Only load and add to result files with supported extensions
         Langchain::Loader.new(file, @options).load(&block)
       rescue
-        UnknownFormatError nil
+        UnknownFormatError.new("Unknown format: #{source_type}")
       end.flatten.compact
     end
     # rubocop:enable Style/ArgumentsForwarding
@@ -123,7 +123,7 @@ module Langchain
     end
 
     def processor_klass
-      raise UnknownFormatError unless (kind = find_processor)
+      raise UnknownFormatError.new("Unknown format: #{source_type}") unless (kind = find_processor)
 
       Langchain::Processors.const_get(kind)
     end
