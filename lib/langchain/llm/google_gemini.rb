@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "active_support/core_ext/hash/keys"
-require "active_support/core_ext/string/inflections"
-
 module Langchain::LLM
   # Usage:
   #     llm = Langchain::LLM::GoogleGemini.new(api_key: ENV['GOOGLE_GEMINI_API_KEY'])
@@ -65,7 +62,7 @@ module Langchain::LLM
 
       request = Net::HTTP::Post.new(uri)
       request.content_type = "application/json"
-      request.body = parameters.deep_transform_keys { |key| key.to_s.camelize(:lower).to_sym }.to_json
+      request.body = Langchain::Utils::HashTransformer.deep_transform_keys(parameters) { |key| Langchain::Utils::HashTransformer.camelize_lower(key.to_s).to_sym }.to_json
 
       response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
         http.request(request)
