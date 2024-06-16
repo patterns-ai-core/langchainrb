@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.13.4] - 2024-06-16
+- Fix Chroma#remove_texts() method
+- Fix NewsRetriever Tool returning non UTF-8 characters
+- Misc fixes and improvements
+
 ## [0.13.3] - 2024-06-03
 - New 🛠️  `Langchain::Tool::Tavily` to execute search (better than the GoogleSearch tool)
 - Remove `activesupport` dependency
