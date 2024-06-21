@@ -75,6 +75,17 @@ module Langchain::Vectorsearch
       es_client.bulk(body: body)
     end
 
+    # Remove a list of texts from the index
+    # @param ids [Array<Integer>] The list of ids to delete
+    # @return [Elasticsearch::Response] from the Elasticsearch server
+    def remove_texts(ids: [])
+      body = ids.map do |id|
+        {delete: {_index: index_name, _id: id}}
+      end
+
+      es_client.bulk(body: body)
+    end
+
     # Create the index with the default schema
     # @return [Elasticsearch::Response] Index creation
     def create_default_schema
@@ -93,7 +104,7 @@ module Langchain::Vectorsearch
     end
 
     def default_vector_settings
-      {type: "dense_vector", dims: llm.default_dimension}
+      {type: "dense_vector", dims: llm.default_dimensions}
     end
 
     def vector_settings
@@ -132,7 +143,7 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, k: 4, &block)
+    def ask(question:, k: 4, &)
       search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
@@ -142,7 +153,7 @@ module Langchain::Vectorsearch
       prompt = generate_rag_prompt(question: question, context: context)
 
       messages = [{role: "user", content: prompt}]
-      response = llm.chat(messages: messages, &block)
+      response = llm.chat(messages: messages, &)
 
       response.context = context
       response

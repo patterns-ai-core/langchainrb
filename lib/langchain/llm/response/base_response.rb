@@ -45,14 +45,14 @@ module Langchain
 
       # Return the completion candidates
       #
-      # @return [Array]
+      # @return [Array<String>]
       def completions
         raise NotImplementedError
       end
 
       # Return the chat completion candidates
       #
-      # @return [Array]
+      # @return [Array<String>]
       def chat_completions
         raise NotImplementedError
       end

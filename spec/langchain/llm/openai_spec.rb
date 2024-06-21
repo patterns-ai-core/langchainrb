@@ -28,7 +28,11 @@ RSpec.describe Langchain::LLM::OpenAI do
   describe "#embed" do
     let(:result) { [-0.007097351, 0.0035200312, -0.0069700438] }
     let(:parameters) do
-      {parameters: {input: "Hello World", model: "text-embedding-ada-002"}}
+      {parameters: {
+        input: "Hello World",
+        model: "text-embedding-3-small",
+        dimensions: 1536
+      }}
     end
     let(:response) do
       {
@@ -56,7 +60,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       response = subject.embed(text: "Hello World")
 
       expect(response).to be_a(Langchain::LLM::OpenAIResponse)
-      expect(response.model).to eq("text-embedding-ada-002")
+      expect(response.model).to eq("text-embedding-3-small")
       expect(response.embedding).to eq([-0.007097351, 0.0035200312, -0.0069700438])
       expect(response.prompt_tokens).to eq(2)
       expect(response.completion_tokens).to eq(nil)
@@ -74,7 +78,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with text and parameters" do
       let(:parameters) do
-        {parameters: {input: "Hello World", model: "text-embedding-ada-002", user: "id"}}
+        {parameters: {input: "Hello World", model: "text-embedding-ada-002", user: "id", dimensions: Langchain::LLM::OpenAI::EMBEDDING_SIZES["text-embedding-ada-002"]}}
       end
 
       it "returns an embedding" do
@@ -82,6 +86,117 @@ RSpec.describe Langchain::LLM::OpenAI do
 
         expect(response).to be_a(Langchain::LLM::OpenAIResponse)
         expect(response.embedding).to eq(result)
+      end
+    end
+
+    describe "the model dimension" do
+      let(:model) { "text-embedding-3-small" }
+      let(:dimensions_size) { 1536 }
+      let(:parameters) do
+        {parameters: {input: "Hello World", model: model, dimensions: dimensions_size}}
+      end
+
+      context "when dimensions is not provided" do
+        it "forwards the models default dimensions" do
+          subject.embed(text: "Hello World", model: model)
+
+          expect(subject.client).to have_received(:embeddings).with(parameters)
+        end
+      end
+
+      context "when dimensions is provided" do
+        let(:dimensions_size) { 1536 }
+
+        let(:parameters) do
+          {parameters: {input: "Hello World", model: model, dimensions: dimensions_size}}
+        end
+
+        let(:subject) do
+          described_class.new(api_key: "123", default_options: {
+            embeddings_model_name: model,
+            dimensions: dimensions_size
+          })
+        end
+
+        it "forwards the model's default dimensions" do
+          allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
+          subject.embed(text: "Hello World", model: model)
+
+          expect(subject.client).to have_received(:embeddings).with(parameters)
+        end
+      end
+    end
+
+    Langchain::LLM::OpenAI::EMBEDDING_SIZES.each do |model_key, dimensions|
+      model = model_key.to_s
+
+      context "when using model #{model}" do
+        let(:text) { "Hello World" }
+        let(:result) { [0.001, 0.002, 0.003] } # Ejemplo de resultado esperado
+
+        let(:base_parameters) do
+          {
+            input: text,
+            model: model
+          }
+        end
+
+        let(:expected_parameters) do
+          base_parameters.merge({dimensions: dimensions})
+        end
+
+        let(:response) do
+          {
+            "object" => "list",
+            "model" => model,
+            "data" => [{"object" => "embedding", "index" => 0, "embedding" => result}],
+            "usage" => {"prompt_tokens" => 2, "total_tokens" => 2}
+          }
+        end
+
+        before do
+          allow(subject.client).to receive(:embeddings).with(parameters: expected_parameters).and_return(response)
+        end
+
+        it "generates an embedding using #{model}" do
+          embedding_response = subject.embed(text: text, model: model)
+
+          expect(embedding_response).to be_a(Langchain::LLM::OpenAIResponse)
+          expect(embedding_response.model).to eq(model)
+          expect(embedding_response.embedding).to eq(result)
+          expect(embedding_response.prompt_tokens).to eq(2)
+          expect(embedding_response.total_tokens).to eq(2)
+        end
+      end
+    end
+
+    context "when dimensions are explicitly provided" do
+      let(:parameters) do
+        {parameters: {input: "Hello World", model: "text-embedding-3-small", dimensions: 999}}
+      end
+
+      it "they are passed to the API" do
+        allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
+        subject.embed(text: "Hello World", model: "text-embedding-3-small", dimensions: 999)
+
+        expect(subject.client).to have_received(:embeddings).with(parameters)
+      end
+    end
+
+    context "when dimensions are explicitly provided to the initialize default options" do
+      let(:subject) { described_class.new(api_key: "123", default_options: {dimensions: dimensions}) }
+      let(:dimensions) { 999 }
+      let(:model) { "text-embedding-3-small" }
+      let(:text) { "Hello World" }
+      let(:parameters) do
+        {parameters: {input: text, model: model, dimensions: dimensions}}
+      end
+
+      it "they are passed to the API" do
+        allow(subject.client).to receive(:embeddings).with(parameters).and_return(response)
+        subject.embed(text: text, model: model)
+
+        expect(subject.client).to have_received(:embeddings).with(parameters)
       end
     end
   end
@@ -254,9 +369,22 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
   end
 
-  describe "#default_dimension" do
-    it "returns the default dimension" do
-      expect(subject.default_dimension).to eq(1536)
+  describe "#default_dimensions" do
+    it "returns the default dimensions" do
+      expect(subject.default_dimensions).to eq(1536)
+    end
+
+    context "when the dimensions is passed as an argument" do
+      let(:subject) do
+        described_class.new(api_key: "123", default_options: {
+          embeddings_model_name: "text-embedding-3-small",
+          dimensions: 512
+        })
+      end
+
+      it "sets the default_dimensions" do
+        expect(subject.default_dimensions).to eq 512
+      end
     end
   end
 
@@ -298,6 +426,16 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     before do
       allow(subject.client).to receive(:chat).with(parameters).and_return(response)
+    end
+
+    it "ignores any invalid parameters provided" do
+      response = subject.chat(
+        messages: [{role: "user", content: "What is the meaning of life?"}],
+        top_k: 5,
+        beep: :boop
+      )
+
+      expect(response).to be_a(Langchain::LLM::OpenAIResponse)
     end
 
     it "returns valid llm response object" do
@@ -460,6 +598,59 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
     end
 
+    context "with streaming and tool_calls" do
+      let(:tools) do
+        [{
+          "type" => "function",
+          "function" => {
+            "name" => "foo",
+            "parameters" => {
+              "type" => "object",
+              "properties" => {
+                "value" => {
+                  "type" => "string"
+                }
+              }
+            },
+            "required" => ["value"]
+          }
+        }]
+      end
+      let(:chunk_deltas) do
+        [
+          {"role" => "assistant", "content" => nil},
+          {"tool_calls" => [{"index" => 0, "id" => "call_123456", "type" => "function", "function" => {"name" => "foo", "arguments" => ""}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "{\"va"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "lue\":"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => " \"my_s"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "trin"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "g\"}"}}]}
+        ]
+      end
+      let(:chunks) { chunk_deltas.map { |delta| {"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => delta}]} } }
+      let(:expected_tool_calls) do
+        [
+          {"id" => "call_123456", "type" => "function", "function" => {"name" => "foo", "arguments" => "{\"value\": \"my_string\"}"}}
+        ]
+      end
+
+      it "handles streaming responses correctly" do
+        allow(subject.client).to receive(:chat) do |parameters|
+          chunks.each do |chunk|
+            parameters[:parameters][:stream].call(chunk)
+          end
+          chunks.last
+        end
+
+        response = subject.chat(messages: [content: prompt, role: "user"], tools:) do |chunk|
+          chunk
+        end
+
+        expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+        expect(response.raw_response.dig("choices", 0, "message", "tool_calls")).to eq(expected_tool_calls)
+      end
+    end
+
     context "with failed API call" do
       let(:response) do
         {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
@@ -490,6 +681,76 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     it "returns a summary" do
       expect(subject.summarize(text: text)).to eq("Summary")
+    end
+  end
+
+  describe "tool_calls_from_choice_chunks" do
+    context "without tool_calls" do
+      let(:chunks) do
+        [
+          {"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => {"role" => "assistant", "content" => nil}}]},
+          {"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => {"role" => "assistant", "content" => "Hello"}}]}
+        ]
+      end
+
+      it "returns nil" do
+        expect(subject.send(:tool_calls_from_choice_chunks, chunks)).to eq(nil)
+      end
+    end
+
+    context "with tool_calls" do
+      let(:chunk_deltas) do
+        [
+          {"role" => "assistant", "content" => nil},
+          {"tool_calls" => [{"index" => 0, "id" => "call_123456", "type" => "function", "function" => {"name" => "foo", "arguments" => ""}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "{\"va"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "lue\":"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => " \"my_s"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "trin"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "g\"}"}}]}
+        ]
+      end
+      let(:chunks) { chunk_deltas.map { |delta| {"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => delta}]} } }
+      let(:expected_tool_calls) do
+        [
+          {"id" => "call_123456", "type" => "function", "function" => {"name" => "foo", "arguments" => "{\"value\": \"my_string\"}"}}
+        ]
+      end
+
+      it "returns the tool_calls" do
+        expect(subject.send(:tool_calls_from_choice_chunks, chunks)).to eq(expected_tool_calls)
+      end
+    end
+
+    context "with multiple tool_calls" do
+      let(:chunk_deltas) do
+        [
+          {"role" => "assistant", "content" => nil},
+          {"tool_calls" => [{"index" => 0, "id" => "call_123", "type" => "function", "function" => {"name" => "foo", "arguments" => ""}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "{\"va"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "lue\":"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => " \"my_s"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "trin"}}]},
+          {"tool_calls" => [{"index" => 0, "function" => {"arguments" => "g\"}"}}]},
+          {"tool_calls" => [{"index" => 1, "id" => "call_456", "type" => "function", "function" => {"name" => "bar", "arguments" => ""}}]},
+          {"tool_calls" => [{"index" => 1, "function" => {"arguments" => "{\"va"}}]},
+          {"tool_calls" => [{"index" => 1, "function" => {"arguments" => "lue\":"}}]},
+          {"tool_calls" => [{"index" => 1, "function" => {"arguments" => " \"other_s"}}]},
+          {"tool_calls" => [{"index" => 1, "function" => {"arguments" => "trin"}}]},
+          {"tool_calls" => [{"index" => 1, "function" => {"arguments" => "g\"}"}}]}
+        ]
+      end
+      let(:chunks) { chunk_deltas.map { |delta| {"id" => "chatcmpl-abcdefg", "choices" => [{"index" => 0, "delta" => delta}]} } }
+      let(:expected_tool_calls) do
+        [
+          {"id" => "call_123", "type" => "function", "function" => {"name" => "foo", "arguments" => "{\"value\": \"my_string\"}"}},
+          {"id" => "call_456", "type" => "function", "function" => {"name" => "bar", "arguments" => "{\"value\": \"other_string\"}"}}
+        ]
+      end
+
+      it "returns the tool_calls" do
+        expect(subject.send(:tool_calls_from_choice_chunks, chunks)).to eq(expected_tool_calls)
+      end
     end
   end
 end

@@ -16,7 +16,8 @@ module Langchain::Vectorsearch
     # The operators supported by the PostgreSQL vector search adapter
     OPERATORS = {
       "cosine_distance" => "cosine",
-      "euclidean_distance" => "euclidean"
+      "euclidean_distance" => "euclidean",
+      "inner_product_distance" => "inner_product"
     }
     DEFAULT_OPERATOR = "cosine_distance"
 
@@ -89,15 +90,22 @@ module Langchain::Vectorsearch
       upsert_texts(texts: texts, ids: ids)
     end
 
+    # Remove a list of texts from the index
+    # @param ids [Array<Integer>] The ids of the texts to remove from the index
+    # @return [Integer] The number of texts removed from the index
+    def remove_texts(ids:)
+      @db[table_name.to_sym].where(id: ids).delete
+    end
+
     # Create default schema
     def create_default_schema
       db.run "CREATE EXTENSION IF NOT EXISTS vector"
       namespace_column = @namespace_column
-      vector_dimension = llm.default_dimension
+      vector_dimensions = llm.default_dimensions
       db.create_table? table_name.to_sym do
         primary_key :id
         text :content
-        column :vectors, "vector(#{vector_dimension})"
+        column :vectors, "vector(#{vector_dimensions})"
         text namespace_column.to_sym, default: nil
       end
     end
@@ -138,7 +146,7 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, k: 4, &block)
+    def ask(question:, k: 4, &)
       search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
@@ -149,7 +157,7 @@ module Langchain::Vectorsearch
       prompt = generate_rag_prompt(question: question, context: context)
 
       messages = [{role: "user", content: prompt}]
-      response = llm.chat(messages: messages, &block)
+      response = llm.chat(messages: messages, &)
 
       response.context = context
       response

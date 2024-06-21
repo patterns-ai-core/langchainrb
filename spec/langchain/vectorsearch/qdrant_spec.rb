@@ -101,6 +101,16 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
     end
   end
 
+  describe "remove_texts" do
+    before do
+      allow(subject.client).to receive_message_chain(:points, :delete).and_return(true)
+    end
+
+    it "removes texts" do
+      expect(subject.remove_texts(ids: [1])).to eq(true)
+    end
+  end
+
   describe "#similarity_search_by_vector" do
     before do
       allow(subject.client).to receive_message_chain(:points, :search).and_return(

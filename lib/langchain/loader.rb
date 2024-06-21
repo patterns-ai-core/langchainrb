@@ -29,9 +29,11 @@ module Langchain
     # @param path [String | Pathname] path to file or URL
     # @param options [Hash] options passed to the processor class used to process the data
     # @return [Data] data loaded from path
+    # rubocop:disable Style/ArgumentsForwarding
     def self.load(path, options = {}, &block)
       new(path, options).load(&block)
     end
+    # rubocop:enable Style/ArgumentsForwarding
 
     # Initialize Langchain::Loader
     # @param path [String | Pathname] path to file or URL
@@ -76,17 +78,21 @@ module Langchain
     # @yieldreturn [String] parsed data, as a String
     #
     # @return [Data] data that was loaded
+    # rubocop:disable Style/ArgumentsForwarding
     def load(&block)
       return process_data(load_from_url, &block) if url?
       return load_from_directory(&block) if directory?
 
       process_data(load_from_path, &block)
     end
+    # rubocop:enable Style/ArgumentsForwarding
 
     private
 
     def load_from_url
-      URI.parse(@path).open
+      unescaped_url = URI.decode_www_form_component(@path)
+      escaped_url = URI::DEFAULT_PARSER.escape(unescaped_url)
+      URI.parse(escaped_url).open
     end
 
     def load_from_path
@@ -95,14 +101,16 @@ module Langchain
       raise FileNotFound, "File #{@path} does not exist"
     end
 
+    # rubocop:disable Style/ArgumentsForwarding
     def load_from_directory(&block)
       Dir.glob(File.join(@path, "**/*")).map do |file|
         # Only load and add to result files with supported extensions
         Langchain::Loader.new(file, @options).load(&block)
       rescue
-        UnknownFormatError nil
+        UnknownFormatError.new("Unknown format: #{source_type}")
       end.flatten.compact
     end
+    # rubocop:enable Style/ArgumentsForwarding
 
     def process_data(data, &block)
       @raw_data = data
@@ -117,7 +125,7 @@ module Langchain
     end
 
     def processor_klass
-      raise UnknownFormatError unless (kind = find_processor)
+      raise UnknownFormatError.new("Unknown format: #{source_type}") unless (kind = find_processor)
 
       Langchain::Processors.const_get(kind)
     end

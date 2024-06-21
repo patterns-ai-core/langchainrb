@@ -12,26 +12,37 @@ loader.inflector.inflect(
   "ai21_response" => "AI21Response",
   "ai21_validator" => "AI21Validator",
   "csv" => "CSV",
+  "google_vertex_ai" => "GoogleVertexAI",
   "html" => "HTML",
   "json" => "JSON",
   "jsonl" => "JSONL",
   "llm" => "LLM",
+  "mistral_ai" => "MistralAI",
+  "mistral_ai_response" => "MistralAIResponse",
   "openai" => "OpenAI",
   "openai_validator" => "OpenAIValidator",
   "openai_response" => "OpenAIResponse",
-  "pdf" => "PDF",
-  "react_agent" => "ReActAgent",
-  "sql_query_agent" => "SQLQueryAgent"
+  "openai_message" => "OpenAIMessage",
+  "pdf" => "PDF"
 )
 loader.collapse("#{__dir__}/langchain/llm/response")
 loader.collapse("#{__dir__}/langchain/assistants")
 
 loader.collapse("#{__dir__}/langchain/tool/calculator")
 loader.collapse("#{__dir__}/langchain/tool/database")
+loader.collapse("#{__dir__}/langchain/tool/file_system")
 loader.collapse("#{__dir__}/langchain/tool/google_search")
 loader.collapse("#{__dir__}/langchain/tool/ruby_code_interpreter")
+loader.collapse("#{__dir__}/langchain/tool/news_retriever")
+loader.collapse("#{__dir__}/langchain/tool/tavily")
+loader.collapse("#{__dir__}/langchain/tool/vectorsearch")
 loader.collapse("#{__dir__}/langchain/tool/weather")
 loader.collapse("#{__dir__}/langchain/tool/wikipedia")
+
+# RubyCodeInterpreter does not work with Ruby 3.3;
+# https://github.com/ukutaht/safe_ruby/issues/4
+loader.ignore("#{__dir__}/langchain/tool/ruby_code_interpreter") if RUBY_VERSION >= "3.3.0"
+
 loader.setup
 
 # Langchain.rb a is library for building LLM-backed Ruby applications. It is an abstraction layer that sits on top of the emerging AI-related tools that makes it easy for developers to consume and string those services together.

@@ -1,5 +1,82 @@
 ## [Unreleased]
-- `Langchain::LLM::Ollama` can now `#summarize`
+
+## [0.13.4] - 2024-06-16
+- Fix Chroma#remove_texts() method
+- Fix NewsRetriever Tool returning non UTF-8 characters
+- Misc fixes and improvements
+
+## [0.13.3] - 2024-06-03
+- New 🛠️  `Langchain::Tool::Tavily` to execute search (better than the GoogleSearch tool)
+- Remove `activesupport` dependency
+- Misc fixes and improvements
+
+## [0.13.2] - 2024-05-20
+- New `Langchain::LLM::GoogleGemini#embed()` method
+- `Langchain::Assistant` works with `Langchain::LLM::Anthropic` llm
+- New XLS file processor
+- Fixes and improvements
+
+## [0.13.1] - 2024-05-14
+- Better error handling for `Langchain::LLM::GoogleVertexAI`
+
+## [0.13.0] - 2024-05-14
+- New 🛠️ `Langchain::Tool::NewsRetriever` tool to fetch news via newsapi.org
+- Langchain::Assistant works with `Langchain::LLM::GoogleVertexAI` and `Langchain::LLM::GoogleGemini` llms
+- [BREAKING] Introduce new `Langchain::Messages::Base` abstraction
+
+## [0.12.1] - 2024-05-13
+- Langchain::LLM::Ollama now uses `llama3` by default
+- Langchain::LLM::Anthropic#complete() now uses `claude-2.1` by default
+- Updated with new OpenAI models, including `gpt-4o`
+- New `Langchain::LLM::Cohere#chat()` method.
+- Introducing `UnifiedParameters` to unify parameters across LLM classes
+
+## [0.12.0] - 2024-04-22
+- [BREAKING] Rename `dimension` parameter to `dimensions` everywhere
+
+## [0.11.4] - 2024-04-19
+- New `Langchain::LLM::AWSBedrock#chat()` to wrap Bedrock Claude requests
+- New `Langchain::LLM::OllamaResponse#total_tokens()` method
+
+## [0.11.3] - 2024-04-16
+- New `Langchain::Processors::Pptx` to parse .pptx files
+- New `Langchain::LLM::Anthropic#chat()` support
+- Misc fixes
+
+## [0.11.2]
+- New `Langchain::Assistant#clear_thread!` and `Langchain::Assistant#instructions=` methods
+
+## [0.11.1]
+- Langchain::Tool::Vectorsearch that wraps Langchain::Vectorsearch::* classes. This allows the Assistant to call the tool and inject data from vector DBs.
+
+## [0.11.0]
+- Delete previously deprecated `Langchain::Agent::ReActAgent` and `Langchain::Agent::SQLQueryAgent` classes
+- New `Langchain::Agent::FileSystem` tool that can read files, write to files, and list the contents of a directory
+
+## [0.10.3]
+- Bump dependencies
+- Ollama#complete fix
+- Misc fixes
+
+## [0.10.2]
+- New Langchain::LLM::Mistral
+- Drop Ruby 3.0 support
+- Fixes Zeitwerk::NameError
+
+## [0.10.1] - GEM VERSION YANKED
+
+## [0.10.0]
+- Delete `Langchain::Conversation` class
+
+## [0.9.5]
+- Now using OpenAI's "text-embedding-3-small" model to generate embeddings
+- Added `remove_texts(ids:)` method to Qdrant and Chroma
+- Add Ruby 3.3 support
+
+## [0.9.4]
+- New `Ollama#summarize()` method
+- Improved README
+- Fixes + specs
 
 ## [0.9.3]
 - Add EML processor

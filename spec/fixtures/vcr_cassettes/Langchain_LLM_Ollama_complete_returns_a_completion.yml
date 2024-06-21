@@ -5,10 +5,10 @@ http_interactions:
     uri: http://localhost:11434/api/generate
     body:
       encoding: UTF-8
-      string: '{"prompt":"In one word, life is ","model":"llama2","options":{"temperature":0.8}}'
+      string: '{"prompt":"In one word, life is ","model":"llama3","stream":false,"options":{"temperature":0.8}}'
     headers:
       User-Agent:
-      - Faraday v2.7.12
+      - Faraday v2.9.0
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -21,28 +21,14 @@ http_interactions:
       message: OK
     headers:
       Content-Type:
-      - application/x-ndjson
+      - application/json; charset=utf-8
       Date:
-      - Mon, 05 Feb 2024 11:44:28 GMT
-      Transfer-Encoding:
-      - chunked
+      - Thu, 30 May 2024 16:14:08 GMT
+      Content-Length:
+      - '403'
     body:
       encoding: UTF-8
       string: |
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.264009Z","response":"\n","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.292576Z","response":"In","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.324707Z","response":" one","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.354829Z","response":" word","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.38412Z","response":",","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.412781Z","response":" life","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.441984Z","response":" is","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.472299Z","response":"...","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.501293Z","response":" ","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.560754Z","response":"co","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.596371Z","response":"m","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.625698Z","response":"pl","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.656449Z","response":"ex","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.656449Z","response":".","done":false}
-        {"model":"llama2","created_at":"2024-02-05T11:44:28.716485Z","response":"","done":true,"context":[518,25580,29962,3532,14816,29903,29958,5299,829,14816,29903,6778,13,13,797,697,1734,29892,2834,338,29871,518,29914,25580,29962,13,13,797,697,1734,29892,2834,338,29901,13,13,3904,29907,1001,6040,1177],"total_duration":586403084,"load_duration":290625,"prompt_eval_count":12,"prompt_eval_duration":133392000,"eval_count":16,"eval_duration":452484000}
-  recorded_at: Mon, 05 Feb 2024 11:44:28 GMT
+        {"model":"llama3","created_at":"2024-05-02T21:12:56.542935Z","response":"fragile.","done":true,"context":[128006,882,128007,198,198,644,832,3492,11,2324,374,220,128009,128006,78191,128007,198,198,34298,458,13,128009],"total_duration":879372000,"load_duration":3692208,"prompt_eval_count":12,"prompt_eval_duration":470920000,"eval_count":4,"eval_duration":403041000}
+  recorded_at: Thu, 02 May 2024 21:12:56 GMT
 recorded_with: VCR 6.2.0

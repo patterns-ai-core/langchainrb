@@ -8,22 +8,34 @@ module Langchain::LLM
   #     gem "cohere-ruby", "~> 0.9.6"
   #
   # Usage:
-  #     cohere = Langchain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
+  #     llm = Langchain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
   #
   class Cohere < Base
     DEFAULTS = {
       temperature: 0.0,
       completion_model_name: "command",
+      chat_completion_model_name: "command-r-plus",
       embeddings_model_name: "small",
-      dimension: 1024,
+      dimensions: 1024,
       truncate: "START"
     }.freeze
 
-    def initialize(api_key, default_options = {})
+    def initialize(api_key:, default_options: {})
       depends_on "cohere-ruby", req: "cohere"
 
-      @client = ::Cohere::Client.new(api_key)
+      @client = ::Cohere::Client.new(api_key: api_key)
       @defaults = DEFAULTS.merge(default_options)
+      chat_parameters.update(
+        model: {default: @defaults[:chat_completion_model_name]},
+        temperature: {default: @defaults[:temperature]}
+      )
+      chat_parameters.remap(
+        system: :preamble,
+        messages: :chat_history,
+        stop: :stop_sequences,
+        top_k: :k,
+        top_p: :p
+      )
     end
 
     #
@@ -68,9 +80,29 @@ module Langchain::LLM
       Langchain::LLM::CohereResponse.new response, model: @defaults[:completion_model_name]
     end
 
-    # TODO: Implement chat method: https://github.com/andreibondarev/cohere-ruby/issues/11
-    # def chat
-    # end
+    # Generate a chat completion for given messages
+    #
+    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @option params [Array<String>] :messages Input messages
+    # @option params [String] :model The model that will complete your prompt
+    # @option params [Integer] :max_tokens Maximum number of tokens to generate before stopping
+    # @option params [Array<String>] :stop Custom text sequences that will cause the model to stop generating
+    # @option params [Boolean] :stream Whether to incrementally stream the response using server-sent events
+    # @option params [String] :system System prompt
+    # @option params [Float] :temperature Amount of randomness injected into the response
+    # @option params [Array<String>] :tools Definitions of tools that the model may use
+    # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
+    # @option params [Float] :top_p Use nucleus sampling.
+    # @return [Langchain::LLM::CohereResponse] The chat completion
+    def chat(params = {})
+      raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
+
+      parameters = chat_parameters.to_params(params)
+
+      response = client.chat(**parameters)
+
+      Langchain::LLM::CohereResponse.new(response)
+    end
 
     # Generate a summary in English for a given text
     #

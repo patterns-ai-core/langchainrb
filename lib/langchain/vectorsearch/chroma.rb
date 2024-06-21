@@ -60,6 +60,15 @@ module Langchain::Vectorsearch
       collection.update(embeddings)
     end
 
+    # Remove a list of texts from the index
+    # @param ids [Array<String>] The list of ids to remove
+    # @return [Hash] The response from the server
+    def remove_texts(ids:)
+      collection.delete(
+        ids: ids.map(&:to_s)
+      )
+    end
+
     # Create the collection with the default schema
     # @return [::Chroma::Resources::Collection] Created collection
     def create_default_schema
@@ -115,7 +124,7 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, k: 4, &block)
+    def ask(question:, k: 4, &)
       search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
@@ -127,7 +136,7 @@ module Langchain::Vectorsearch
       prompt = generate_rag_prompt(question: question, context: context)
 
       messages = [{role: "user", content: prompt}]
-      response = llm.chat(messages: messages, &block)
+      response = llm.chat(messages: messages, &)
 
       response.context = context
       response

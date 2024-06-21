@@ -54,7 +54,7 @@ module Langchain::Vectorsearch
       @db_path = db_path
       @table_name = index_name
 
-      @vector_dimension = llm.default_dimension
+      @vector_dimensions = llm.default_dimensions
 
       super(llm: llm)
     end
@@ -64,7 +64,7 @@ module Langchain::Vectorsearch
       status_code, response = @client.database.create_table(@table_name, [
         {"name" => "ID", "dataType" => "STRING", "primaryKey" => true},
         {"name" => "Doc", "dataType" => "STRING"},
-        {"name" => "Embedding", "dataType" => "VECTOR_FLOAT", "dimensions" => @vector_dimension}
+        {"name" => "Embedding", "dataType" => "VECTOR_FLOAT", "dimensions" => @vector_dimensions}
       ])
       raise "Failed to create table: #{response}" if status_code != 200
 
@@ -129,7 +129,7 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, k: 4, &block)
+    def ask(question:, k: 4, &)
       search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
@@ -140,7 +140,7 @@ module Langchain::Vectorsearch
       prompt = generate_rag_prompt(question: question, context: context)
 
       messages = [{role: "user", content: prompt}]
-      response = llm.chat(messages: messages, &block)
+      response = llm.chat(messages: messages, &)
 
       response.context = context
       response

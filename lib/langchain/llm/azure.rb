@@ -32,6 +32,12 @@ module Langchain::LLM
         **llm_options
       )
       @defaults = DEFAULTS.merge(default_options)
+      chat_parameters.update(
+        logprobs: {},
+        top_logprobs: {},
+        user: {}
+      )
+      chat_parameters.ignore(:top_k)
     end
 
     def embed(...)

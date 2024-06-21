@@ -9,7 +9,7 @@ module Langchain::Vectorsearch
     #     gem "weaviate-ruby", "~> 0.8.9"
     #
     # Usage:
-    #     weaviate = Langchain::Vectorsearch::Weaviate.new(url:, api_key:, index_name:, llm:)
+    #     weaviate = Langchain::Vectorsearch::Weaviate.new(url: ENV["WEAVIATE_URL"], api_key: ENV["WEAVIATE_API_KEY"], index_name: "Docs", llm: llm)
     #
 
     # Initialize the Weaviate adapter
@@ -71,6 +71,22 @@ module Langchain::Vectorsearch
       end
     end
 
+    # Deletes a list of texts in the index
+    # @param ids [Array] The ids of texts to delete
+    # @return [Hash] The response from the server
+    def remove_texts(ids:)
+      raise ArgumentError, "ids must be an array" unless ids.is_a?(Array)
+
+      client.objects.batch_delete(
+        class_name: index_name,
+        where: {
+          path: ["__id"],
+          operator: "ContainsAny",
+          valueTextArray: ids
+        }
+      )
+    end
+
     # Create default schema
     # @return [Hash] The response from the server
     def create_default_schema
@@ -127,7 +143,7 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of results to have in context
     # @yield [String] Stream responses back one String at a time
     # @return [Hash] The answer
-    def ask(question:, k: 4, &block)
+    def ask(question:, k: 4, &)
       search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
@@ -138,7 +154,7 @@ module Langchain::Vectorsearch
       prompt = generate_rag_prompt(question: question, context: context)
 
       messages = [{role: "user", content: prompt}]
-      response = llm.chat(messages: messages, &block)
+      response = llm.chat(messages: messages, &)
 
       response.context = context
       response

@@ -26,7 +26,7 @@ module Langchain::Vectorsearch
 
       super(llm: llm)
 
-      @client = ::Hnswlib::HierarchicalNSW.new(space: DEFAULT_METRIC, dim: llm.default_dimension)
+      @client = ::Hnswlib::HierarchicalNSW.new(space: DEFAULT_METRIC, dim: llm.default_dimensions)
       @path_to_index = path_to_index
 
       initialize_index
@@ -58,7 +58,7 @@ module Langchain::Vectorsearch
     #
     # @param query [String] The text to search for
     # @param k [Integer] The number of results to return
-    # @return [Array] Results in the format `[[id1, distance3], [id2, distance2]]`
+    # @return [Array] Results in the format `[[id1, id2], [distance1, distance2]]`
     #
     def similarity_search(
       query:,
@@ -77,7 +77,7 @@ module Langchain::Vectorsearch
     #
     # @param embedding [Array<Float>] The embedding to search for
     # @param k [Integer] The number of results to return
-    # @return [Array] Results in the format `[[id1, distance3], [id2, distance2]]`
+    # @return [Array] Results in the format `[[id1, id2], [distance1, distance2]]`
     #
     def similarity_search_by_vector(
       embedding:,
@@ -85,6 +85,10 @@ module Langchain::Vectorsearch
     )
       client.search_knn(embedding, k)
     end
+
+    # TODO: Add the ask() method
+    # def ask
+    # end
 
     private
 

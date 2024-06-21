@@ -15,7 +15,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 
 ## Use Cases
 * Retrieval Augmented Generation (RAG) and vector search
-* [Assistants](#assistants) (chat bots) & [AI Agents](https://github.com/andreibondarev/langchainrb/tree/main/lib/langchain/agent/agents.md)
+* [Assistants](#assistants) (chat bots)
 
 ## Table of Contents
 
@@ -29,6 +29,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 - [Evaluations](#evaluations-evals)
 - [Examples](#examples)
 - [Logging](#logging)
+- [Problems](#problems)
 - [Development](#development)
 - [Discord](#discord)
 
@@ -54,18 +55,22 @@ require "langchain"
 Langchain.rb wraps supported LLMs in a unified interface allowing you to easily swap out and test out different models.
 
 #### Supported LLMs and features:
-| LLM providers                                                                                   | `embed()`            | `complete()`         | `chat()`              | `summarize()`        | Notes              |
+| LLM providers                                                                                   | `embed()`          | `complete()`       | `chat()`            | `summarize()`      | Notes              |
 | --------                                                                                        |:------------------:| :-------:          | :-----------------: | :-------:          | :----------------- |
-| [OpenAI](https://openai.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ❌                 | Including Azure OpenAI |
+| [OpenAI](https://openai.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ✅                 | Including Azure OpenAI |
 | [AI21](https://ai21.com/?utm_source=langchainrb&utm_medium=github)                              | ❌                 | ✅                 | ❌                  | ✅                 |                    |
-| [Anthropic](https://anthropic.com/?utm_source=langchainrb&utm_medium=github)                        | ❌                 | ✅                 | ❌                  | ❌                 |                    |
-| [AWS Bedrock](https://aws.amazon.com/bedrock?utm_source=langchainrb&utm_medium=github)          | ✅                 | ✅                 | ❌                  | ❌                 | Provides AWS, Cohere, AI21, Antropic and Stability AI models |
-| [Cohere](https://cohere.com/?utm_source=langchainrb&utm_medium=github)                     | ✅                 | ✅                 | ✅                  | ✅                 |                    |
+| [Anthropic](https://anthropic.com/?utm_source=langchainrb&utm_medium=github)                    | ❌                 | ✅                 | ✅                  | ❌                 |                    |
+| [AwsBedrock](https://aws.amazon.com/bedrock?utm_source=langchainrb&utm_medium=github)          | ✅                 | ✅                 | ✅                  | ❌                 | Provides AWS, Cohere, AI21, Antropic and Stability AI models |
+| [Cohere](https://cohere.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [GooglePalm](https://ai.google/discover/palm2?utm_source=langchainrb&utm_medium=github)         | ✅                 | ✅                 | ✅                  | ✅                 |                    |
-| [Google Vertex AI](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ✅                 | ❌                  | ✅                 |                    |
+| [GoogleVertexAI](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ❌                 | ✅                  | ❌                 | Requires Google Cloud service auth                   |
+| [GoogleGemini](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ❌                 | ✅                  | ❌                 | Requires Gemini API Key (Limited to US) |
 | [HuggingFace](https://huggingface.co/?utm_source=langchainrb&utm_medium=github)                 | ✅                 | ❌                 | ❌                  | ❌                 |                    |
+| [MistralAI](https://mistral.ai/?utm_source=langchainrb&utm_medium=github)                      | ✅                 | ❌                 | ✅                  | ❌                 |                    |
 | [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ✅                  | ✅                 |                    |
 | [Replicate](https://replicate.com/?utm_source=langchainrb&utm_medium=github)                    | ✅                 | ✅                 | ✅                  | ✅                 |                    |
+
+
 
 #### Using standalone LLMs:
 
@@ -368,7 +373,7 @@ my_docx = Langchain.root.join("path/to/my.docx")
 
 client.add_data(paths: [my_pdf, my_text, my_docx])
 ```
-Supported file formats: docx, html, pdf, text, json, jsonl, csv, xlsx, eml.
+Supported file formats: docx, html, pdf, text, json, jsonl, csv, xlsx, eml, pptx.
 
 Retrieve similar documents based on the query string passed in:
 ```ruby
@@ -399,6 +404,25 @@ client.ask(question: "...")
 ## Assistants
 Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries. Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
 
+### Available Tools 🛠️
+
+| Name         | Description                                        | ENV Requirements                                              | Gem Requirements                          |
+| ------------ | :------------------------------------------------: | :-----------------------------------------------------------: | :---------------------------------------: |
+| "calculator" | Useful for getting the result of a math expression |                                                               | `gem "eqn", "~> 1.6.5"`                   |
+| "database"   | Useful for querying a SQL database |                                                               | `gem "sequel", "~> 5.68.0"`                   |
+| "file_system"   | Interacts with the file system |                                                               |       |
+| "ruby_code_interpreter" | Interprets Ruby expressions             |                                                               | `gem "safe_ruby", "~> 1.0.4"`             |
+| "google_search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |
+| "news_retriever"     | A wrapper around NewsApi.org                     | `ENV["NEWS_API_KEY"]` (https://newsapi.org/) |  |
+| "tavily"     | A wrapper around Tavily AI                     | `ENV["TAVILY_API_KEY"]` (https://tavily.com/) |  |
+| "weather"  | Calls Open Weather API to retrieve the current weather        |      `ENV["OPEN_WEATHER_API_KEY"]` (https://home.openweathermap.org/api_keys)               | `gem "open-weather-ruby-client", "~> 0.3.0"`    |
+| "wikipedia"  | Calls Wikipedia API to retrieve the summary        |                                                               | `gem "wikipedia-client", "~> 1.17.0"`     |
+
+### Demos
+1. [Building an AI Assistant that operates a simulated E-commerce Store](https://www.loom.com/share/83aa4fd8dccb492aad4ca95da40ed0b2)
+2. [New Langchain.rb Assistants interface](https://www.loom.com/share/e883a4a49b8746c1b0acf9d58cf6da36)
+3. [Langchain.rb Assistant demo with NewsRetriever and function calling on Gemini](https://youtu.be/-ieyahrpDpM&t=1477s) - [code](https://github.com/palladius/gemini-news-crawler)
+
 ### Creating an Assistant
 1. Instantiate an LLM of your choice
 ```ruby
@@ -425,14 +449,14 @@ assistant = Langchain::Assistant.new(
   thread: thread,
   instructions: "You are a Meteorologist Assistant that is able to pull the weather for any location",
   tools: [
-    Langchain::Tool::GoogleSearch.new(api_key: ENV["SERPAPI_API_KEY"])
+    Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
   ]
 )
 ```
 ### Using an Assistant
 You can now add your message to an Assistant.
 ```ruby
-assistant.add_message content: "What's the weather in New York City?"
+assistant.add_message content: "What's the weather in New York, New York?"
 ```
 
 Run the Assistant to generate a response. 
@@ -499,6 +523,12 @@ To show all log messages:
 
 ```ruby
 Langchain.logger.level = :debug
+```
+
+## Problems
+If you're having issues installing `unicode` gem required by `pragmatic_segmenter`, try running:
+```bash
+gem install unicode -- --with-cflags="-Wno-incompatible-function-pointer-types"
 ```
 
 ## Development

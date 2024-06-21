@@ -15,17 +15,6 @@ module Langchain::Tool
     NAME = "calculator"
     ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
 
-    description <<~DESC
-      Useful for getting the result of a math expression.
-
-      The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.
-      Usage:
-        Action Input: 1 + 1
-        Action Input: 3 * 2 / 4
-        Action Input: 9 - 7
-        Action Input: (4.1 + 2.3) / (2.0 - 5.6) * 3
-    DESC
-
     def initialize
       depends_on "eqn"
     end

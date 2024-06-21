@@ -17,11 +17,14 @@ module Langchain::LLM
       n: 1,
       temperature: 0.0,
       chat_completion_model_name: "gpt-3.5-turbo",
-      embeddings_model_name: "text-embedding-ada-002",
-      dimension: 1536
+      embeddings_model_name: "text-embedding-3-small"
     }.freeze
 
-    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::OpenAIValidator
+    EMBEDDING_SIZES = {
+      "text-embedding-ada-002" => 1536,
+      "text-embedding-3-large" => 3072,
+      "text-embedding-3-small" => 1536
+    }.freeze
 
     attr_reader :defaults
 
@@ -35,6 +38,15 @@ module Langchain::LLM
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
 
       @defaults = DEFAULTS.merge(default_options)
+      chat_parameters.update(
+        model: {default: @defaults[:chat_completion_model_name]},
+        logprobs: {},
+        top_logprobs: {},
+        n: {default: @defaults[:n]},
+        temperature: {default: @defaults[:temperature]},
+        user: {}
+      )
+      chat_parameters.ignore(:top_k)
     end
 
     # Generate an embedding for a given text
@@ -48,7 +60,8 @@ module Langchain::LLM
       text:,
       model: defaults[:embeddings_model_name],
       encoding_format: nil,
-      user: nil
+      user: nil,
+      dimensions: @defaults[:dimensions]
     )
       raise ArgumentError.new("text argument is required") if text.empty?
       raise ArgumentError.new("model argument is required") if model.empty?
@@ -61,7 +74,11 @@ module Langchain::LLM
       parameters[:encoding_format] = encoding_format if encoding_format
       parameters[:user] = user if user
 
-      validate_max_tokens(text, parameters[:model])
+      if dimensions
+        parameters[:dimensions] = dimensions
+      elsif EMBEDDING_SIZES.key?(model)
+        parameters[:dimensions] = EMBEDDING_SIZES[model]
+      end
 
       response = with_api_error_handling do
         client.embeddings(parameters: parameters)
@@ -88,56 +105,19 @@ module Langchain::LLM
     end
     # rubocop:enable Style/ArgumentsForwarding
 
-    # Generate a chat completion for a given prompt or messages.
+    # Generate a chat completion for given messages.
     #
-    # @param messages [Array<Hash>] List of messages comprising the conversation so far
-    # @param model [String] ID of the model to use
-    def chat(
-      messages: [],
-      model: defaults[:chat_completion_model_name],
-      frequency_penalty: nil,
-      logit_bias: nil,
-      logprobs: nil,
-      top_logprobs: nil,
-      max_tokens: nil,
-      n: defaults[:n],
-      presence_penalty: nil,
-      response_format: nil,
-      seed: nil,
-      stop: nil,
-      stream: nil,
-      temperature: defaults[:temperature],
-      top_p: nil,
-      tools: [],
-      tool_choice: nil,
-      user: nil,
-      &block
-    )
-      raise ArgumentError.new("messages argument is required") if messages.empty?
-      raise ArgumentError.new("model argument is required") if model.empty?
-      raise ArgumentError.new("'tool_choice' is only allowed when 'tools' are specified.") if tool_choice && tools.empty?
+    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @option params [Array<Hash>] :messages List of messages comprising the conversation so far
+    # @option params [String] :model ID of the model to use
+    def chat(params = {}, &block)
+      parameters = chat_parameters.to_params(params)
 
-      parameters = {
-        messages: messages,
-        model: model
-      }
-      parameters[:frequency_penalty] = frequency_penalty if frequency_penalty
-      parameters[:logit_bias] = logit_bias if logit_bias
-      parameters[:logprobs] = logprobs if logprobs
-      parameters[:top_logprobs] = top_logprobs if top_logprobs
-      # TODO: Fix max_tokens validation to account for tools/functions
-      parameters[:max_tokens] = max_tokens if max_tokens # || validate_max_tokens(parameters[:messages], parameters[:model])
-      parameters[:n] = n if n
-      parameters[:presence_penalty] = presence_penalty if presence_penalty
-      parameters[:response_format] = response_format if response_format
-      parameters[:seed] = seed if seed
-      parameters[:stop] = stop if stop
-      parameters[:stream] = stream if stream
-      parameters[:temperature] = temperature if temperature
-      parameters[:top_p] = top_p if top_p
-      parameters[:tools] = tools if tools.any?
-      parameters[:tool_choice] = tool_choice if tool_choice
-      parameters[:user] = user if user
+      raise ArgumentError.new("messages argument is required") if Array(parameters[:messages]).empty?
+      raise ArgumentError.new("model argument is required") if parameters[:model].to_s.empty?
+      if parameters[:tool_choice] && Array(parameters[:tools]).empty?
+        raise ArgumentError.new("'tool_choice' is only allowed when 'tools' are specified.")
+      end
 
       # TODO: Clean this part up
       if block
@@ -172,6 +152,10 @@ module Langchain::LLM
       complete(prompt: prompt)
     end
 
+    def default_dimensions
+      @defaults[:dimensions] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name])
+    end
+
     private
 
     attr_reader :response_chunks
@@ -189,10 +173,6 @@ module Langchain::LLM
       response
     end
 
-    def validate_max_tokens(messages, model, max_tokens = nil)
-      LENGTH_VALIDATOR.validate_max_tokens!(messages, model, max_tokens: max_tokens, llm: self)
-    end
-
     def response_from_chunks
       grouped_chunks = @response_chunks.group_by { |chunk| chunk.dig("choices", 0, "index") }
       final_choices = grouped_chunks.map do |index, chunks|
@@ -200,12 +180,31 @@ module Langchain::LLM
           "index" => index,
           "message" => {
             "role" => "assistant",
-            "content" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join
-          },
+            "content" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "content") }.join,
+            "tool_calls" => tool_calls_from_choice_chunks(chunks)
+          }.compact,
           "finish_reason" => chunks.last.dig("choices", 0, "finish_reason")
         }
       end
       @response_chunks.first&.slice("id", "object", "created", "model")&.merge({"choices" => final_choices})
+    end
+
+    def tool_calls_from_choice_chunks(choice_chunks)
+      tool_call_chunks = choice_chunks.select { |chunk| chunk.dig("choices", 0, "delta", "tool_calls") }
+      return nil if tool_call_chunks.empty?
+
+      tool_call_chunks.group_by { |chunk| chunk.dig("choices", 0, "delta", "tool_calls", 0, "index") }.map do |index, chunks|
+        first_chunk = chunks.first
+
+        {
+          "id" => first_chunk.dig("choices", 0, "delta", "tool_calls", 0, "id"),
+          "type" => first_chunk.dig("choices", 0, "delta", "tool_calls", 0, "type"),
+          "function" => {
+            "name" => first_chunk.dig("choices", 0, "delta", "tool_calls", 0, "function", "name"),
+            "arguments" => chunks.map { |chunk| chunk.dig("choices", 0, "delta", "tool_calls", 0, "function", "arguments") }.join
+          }
+        }
+      end
     end
   end
 end

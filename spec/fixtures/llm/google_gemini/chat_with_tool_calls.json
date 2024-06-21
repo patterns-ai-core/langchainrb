@@ -1,0 +1,20 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "functionCall": {
+              "name": "calculator__execute",
+              "args": {"input": "2+2"}
+            }
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "safetyRatings": []
+    }
+  ]
+}

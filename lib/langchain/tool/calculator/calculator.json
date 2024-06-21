@@ -2,7 +2,7 @@
   {
     "type": "function",
     "function": {
-      "name": "calculator-execute",
+      "name": "calculator__execute",
       "description": "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
       "parameters": {
         "type": "object",

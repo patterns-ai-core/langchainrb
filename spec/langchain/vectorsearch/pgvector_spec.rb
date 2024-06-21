@@ -28,7 +28,8 @@ if ENV["POSTGRES_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
-              model: "text-embedding-ada-002",
+              dimensions: 1536,
+              model: "text-embedding-3-small",
               input: "Hello World"
             }
           )
@@ -61,7 +62,8 @@ if ENV["POSTGRES_URL"]
           ).to receive(:embeddings)
             .with(
               parameters: {
-                model: "text-embedding-ada-002",
+                dimensions: 1536,
+                model: "text-embedding-3-small",
                 input: input
               }
             )
@@ -96,6 +98,36 @@ if ENV["POSTGRES_URL"]
       end
     end
 
+    describe "#remove_texts" do
+      before do
+        allow_any_instance_of(
+          OpenAI::Client
+        ).to receive(:embeddings)
+          .with(
+            parameters: {
+              dimensions: 1536,
+              model: "text-embedding-3-small",
+              input: "Hello World"
+            }
+          )
+          .and_return({
+            "object" => "list",
+            "data" => [
+              {"embedding" => 1536.times.map { rand }}
+            ]
+          })
+      end
+
+      it "removes texts" do
+        values = subject.add_texts(texts: ["Hello World", "Hello World"])
+        ids = values.flatten
+        expect(ids.length).to eq(2)
+
+        result = subject.remove_texts(ids: ids)
+        expect(result).to eq(2)
+      end
+    end
+
     describe "#similarity_search" do
       before do
         allow_any_instance_of(
@@ -103,7 +135,8 @@ if ENV["POSTGRES_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
-              model: "text-embedding-ada-002",
+              dimensions: 1536,
+              model: "text-embedding-3-small",
               input: "earth"
             }
           )
@@ -173,7 +206,8 @@ if ENV["POSTGRES_URL"]
         ).to receive(:embeddings)
           .with(
             parameters: {
-              model: "text-embedding-ada-002",
+              dimensions: 1536,
+              model: "text-embedding-3-small",
               input: question
             }
           )
