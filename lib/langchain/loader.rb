@@ -90,7 +90,9 @@ module Langchain
     private
 
     def load_from_url
-      URI.parse(URI::DEFAULT_PARSER.escape(@path)).open
+      unescaped_url = URI.decode_www_form_component(@path)
+      escaped_url = URI::DEFAULT_PARSER.escape(unescaped_url)
+      URI.parse(escaped_url).open
     end
 
     def load_from_path
