@@ -104,7 +104,9 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
 
   describe "remove_texts" do
     before do
-      allow_any_instance_of(Chroma::Resources::Collection).to receive(:delete).and_return(true)
+      allow_any_instance_of(Chroma::Resources::Collection).to receive(:delete)
+        .with(ids: ["1"])
+        .and_return(true)
     end
 
     it "removes texts" do
