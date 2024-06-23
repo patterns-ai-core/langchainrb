@@ -79,54 +79,10 @@ module Langchain
         return
       end
 
-      running = true
+      state = :in_progress
+      state = handle_state(state, auto_tool_execution) until run_finished?(state)
 
-      while running
-        # TODO: I think we need to look at all messages and not just the last one.
-        last_message = thread.messages.last
-
-        if last_message.system?
-          # Do nothing
-          running = false
-        elsif last_message.llm?
-          if last_message.tool_calls.any?
-            if auto_tool_execution
-              run_tools(last_message.tool_calls)
-            else
-              # Maybe log and tell the user that there's outstanding tool calls?
-              running = false
-            end
-          else
-            # Last message was from the assistant without any tools calls.
-            # Do nothing
-            running = false
-          end
-        elsif last_message.user?
-          # Run it!
-          response = chat_with_llm
-
-          if response.tool_calls.any?
-            # Re-run the while(running) loop to process the tool calls
-            running = true
-            add_message(role: response.role, tool_calls: response.tool_calls)
-          elsif response.chat_completion
-            # Stop the while(running) loop and add the assistant's response to the thread
-            running = false
-            add_message(role: response.role, content: response.chat_completion)
-          end
-        elsif last_message.tool?
-          # Run it!
-          response = chat_with_llm
-          running = true
-
-          if response.tool_calls.any?
-            add_message(role: response.role, tool_calls: response.tool_calls)
-          elsif response.chat_completion
-            add_message(role: response.role, content: response.chat_completion)
-          end
-        end
-      end
-
+      # TODO: Should we return the final state along with the messages?
       thread.messages
     end
 
@@ -146,13 +102,7 @@ module Langchain
     # @param output [String] The output of the tool
     # @return [Array<Langchain::Message>] The messages in the thread
     def submit_tool_output(tool_call_id:, output:)
-      tool_role = if llm.is_a?(Langchain::LLM::OpenAI)
-        Langchain::Messages::OpenAIMessage::TOOL_ROLE
-      elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
-        Langchain::Messages::GoogleGeminiMessage::TOOL_ROLE
-      elsif llm.is_a?(Langchain::LLM::Anthropic)
-        Langchain::Messages::AnthropicMessage::TOOL_ROLE
-      end
+      tool_role = determine_tool_role
 
       # TODO: Validate that `tool_call_id` is valid by scanning messages and checking if this tool call ID was invoked
       add_message(role: tool_role, content: output, tool_call_id: tool_call_id)
@@ -182,6 +132,130 @@ module Langchain
     end
 
     private
+
+    # Check if the run is finished
+    #
+    # @param state [Symbol] The current state
+    # @return [Boolean] Whether the run is finished
+    def run_finished?(state)
+      [:completed, :failed, :expired].include?(state)
+    end
+
+    # Handle the current state and transition to the next state
+    #
+    # @param state [Symbol] The current state
+    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
+    # @return [Symbol] The next state
+    def handle_state(state, auto_tool_execution)
+      case state
+      when :in_progress
+        process_latest_message(auto_tool_execution)
+      when :running_tools
+        execute_tools
+      else
+        Langchain.logger.error("Unexpected state encountered: #{state}")
+        :failed
+      end
+    end
+
+    # Process the latest message in the thread
+    #
+    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
+    # @return [Symbol] The next state
+    def process_latest_message(auto_tool_execution)
+      last_message = thread.messages.last
+
+      case last_message.standard_role
+      when :system
+        handle_system_message
+      when :llm
+        handle_llm_message(auto_tool_execution)
+      when :user, :tool
+        handle_user_or_tool_message
+      else
+        handle_unexpected_message
+      end
+    end
+
+    # Handle system message scenario
+    #
+    # @return [Symbol] The completed state
+    def handle_system_message
+      Langchain.logger.info("At least one user message is required after a system message")
+      :completed
+    end
+
+    # Handle LLM message scenario
+    #
+    # @param auto_tool_execution [Boolean] Flag to indicate if tools should be executed automatically
+    # @return [Symbol] The next state
+    def handle_llm_message(auto_tool_execution)
+      last_message = thread.messages.last
+      if last_message.tool_calls.any?
+        # TODO: If `auto_tool_execution` is false, should we log a warning and notify the user about pending tool calls, or implement a new state for handling this?
+        auto_tool_execution ? :running_tools : :completed
+      else
+        :completed
+      end
+    end
+
+    # Handle unexpected message scenario
+    #
+    # @return [Symbol] The failed state
+    def handle_unexpected_message
+      last_message = thread.messages.last
+      Langchain.logger.error("Unexpected message role encountered: #{last_message.standard_role}")
+      :failed
+    end
+
+    # Handle user or tool message scenario by processing the LLM response
+    #
+    # @return [Symbol] The next state
+    def handle_user_or_tool_message
+      response = chat_with_llm
+      add_message(role: response.role, content: response.chat_completion, tool_calls: response.tool_calls)
+
+      if response.tool_calls.any?
+        :in_progress
+      elsif response.chat_completion
+        :completed
+      else
+        Langchain.logger.error("LLM response does not contain tool calls or chat completion")
+        :failed
+      end
+    end
+
+    # Execute the tools based on the tool calls in the last message
+    #
+    # @return [Symbol] The next state
+    def execute_tools
+      begin
+        # TODO: Should we create a method parameter to let the user change the value of the tool timeout?
+        Timeout.timeout(600) { run_tools(thread.messages.last.tool_calls) }
+        :in_progress
+      rescue Timeout::Error
+        # If the tool output is not provided within 10 minutes the run will transition to an expired status
+        Langchain.logger.error("Running tools timed out")
+        :expired
+      rescue StandardError => e
+        Langchain.logger.error("Error running tools: #{e.message}")
+        :failed
+      end
+    end
+
+    # Determine the tool role based on the LLM type
+    #
+    # @return [String] The tool role
+    def determine_tool_role
+      case llm
+      when Langchain::LLM::OpenAI
+        Langchain::Messages::OpenAIMessage::TOOL_ROLE
+      when Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI
+        Langchain::Messages::GoogleGeminiMessage::TOOL_ROLE
+      when Langchain::LLM::Anthropic
+        Langchain::Messages::AnthropicMessage::TOOL_ROLE
+      end
+    end
 
     # Call to the LLM#chat() method
     #
@@ -231,14 +305,6 @@ module Langchain
         output = tool_instance.send(method_name, **tool_arguments)
 
         submit_tool_output(tool_call_id: tool_call_id, output: output)
-      end
-
-      response = chat_with_llm
-
-      if response.tool_calls.any?
-        add_message(role: response.role, tool_calls: response.tool_calls)
-      elsif response.chat_completion
-        add_message(role: response.role, content: response.chat_completion)
       end
     end
 
