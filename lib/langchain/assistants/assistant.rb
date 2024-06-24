@@ -229,18 +229,16 @@ module Langchain
     #
     # @return [Symbol] The next state
     def execute_tools
-      begin
-        # TODO: Should we create a method parameter to let the user change the value of the tool timeout?
-        Timeout.timeout(600) { run_tools(thread.messages.last.tool_calls) }
-        :in_progress
-      rescue Timeout::Error
-        # If the tool output is not provided within 10 minutes the run will transition to an expired status
-        Langchain.logger.error("Running tools timed out")
-        :expired
-      rescue StandardError => e
-        Langchain.logger.error("Error running tools: #{e.message}")
-        :failed
-      end
+      # TODO: Should we create a method parameter to let the user change the value of the tool timeout?
+      Timeout.timeout(600) { run_tools(thread.messages.last.tool_calls) }
+      :in_progress
+    rescue Timeout::Error
+      # If the tool output is not provided within 10 minutes the run will transition to an expired status
+      Langchain.logger.error("Running tools timed out")
+      :expired
+    rescue => e
+      Langchain.logger.error("Error running tools: #{e.message}")
+      :failed
     end
 
     # Determine the tool role based on the LLM type
