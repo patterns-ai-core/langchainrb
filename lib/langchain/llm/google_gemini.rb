@@ -18,7 +18,9 @@ module Langchain::LLM
 
       chat_parameters.update(
         model: {default: @defaults[:chat_completion_model_name]},
-        temperature: {default: @defaults[:temperature]}
+        temperature: {default: @defaults[:temperature]},
+        generation_config: {default: nil},
+        safety_settings: {default: nil}
       )
       chat_parameters.remap(
         messages: :contents,
@@ -42,13 +44,25 @@ module Langchain::LLM
       raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
 
       parameters = chat_parameters.to_params(params)
-      parameters[:generation_config] = {temperature: parameters.delete(:temperature)} if parameters[:temperature]
+      parameters[:generation_config] ||= {}
+      parameters[:generation_config][:temperature] ||= parameters[:temperature] if parameters[:temperature]
+      parameters.delete(:temperature)
+      parameters[:generation_config][:top_p] ||= parameters[:top_p] if parameters[:top_p]
+      parameters.delete(:top_p)
+      parameters[:generation_config][:top_k] ||= parameters[:top_k] if parameters[:top_k]
+      parameters.delete(:top_k)
+      parameters[:generation_config][:max_output_tokens] ||= parameters[:max_tokens] if parameters[:max_tokens]
+      parameters.delete(:max_tokens)
+      parameters[:generation_config][:response_mime_type] ||= parameters[:response_format] if parameters[:response_format]
+      parameters.delete(:response_format)
+      parameters[:generation_config][:stop_sequences] ||= parameters[:stop] if parameters[:stop]
+      parameters.delete(:stop)
 
       uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{parameters[:model]}:generateContent?key=#{api_key}")
 
       request = Net::HTTP::Post.new(uri)
       request.content_type = "application/json"
-      request.body = parameters.to_json
+      request.body = Langchain::Utils::HashTransformer.deep_transform_keys(parameters) { |key| Langchain::Utils::HashTransformer.camelize_lower(key.to_s).to_sym }.to_json
 
       response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
         http.request(request)

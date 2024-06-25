@@ -64,7 +64,9 @@ module Langchain::Vectorsearch
     # @param ids [Array<String>] The list of ids to remove
     # @return [Hash] The response from the server
     def remove_texts(ids:)
-      collection.delete(ids)
+      collection.delete(
+        ids: ids.map(&:to_s)
+      )
     end
 
     # Create the collection with the default schema

@@ -90,7 +90,9 @@ module Langchain
     private
 
     def load_from_url
-      URI.parse(URI::DEFAULT_PARSER.escape(@path)).open
+      unescaped_url = URI.decode_www_form_component(@path)
+      escaped_url = URI::DEFAULT_PARSER.escape(unescaped_url)
+      URI.parse(escaped_url).open
     end
 
     def load_from_path
@@ -105,7 +107,7 @@ module Langchain
         # Only load and add to result files with supported extensions
         Langchain::Loader.new(file, @options).load(&block)
       rescue
-        UnknownFormatError nil
+        UnknownFormatError.new("Unknown format: #{source_type}")
       end.flatten.compact
     end
     # rubocop:enable Style/ArgumentsForwarding
@@ -123,7 +125,7 @@ module Langchain
     end
 
     def processor_klass
-      raise UnknownFormatError unless (kind = find_processor)
+      raise UnknownFormatError.new("Unknown format: #{source_type}") unless (kind = find_processor)
 
       Langchain::Processors.const_get(kind)
     end

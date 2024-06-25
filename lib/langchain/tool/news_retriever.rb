@@ -128,7 +128,10 @@ module Langchain::Tool
       request["Content-Type"] = "application/json"
 
       response = http.request(request)
-      response.body
+      response
+        .body
+        # Remove non-UTF-8 characters
+        .force_encoding(Encoding::UTF_8)
     end
   end
 end
