@@ -23,7 +23,7 @@ module Langchain::Tool
     # @param vectorsearch [Langchain::Vectorsearch::Base] Vectorsearch instance to use
     def initialize(vectorsearch:)
       super()
-      
+
       @vectorsearch = vectorsearch
     end
 

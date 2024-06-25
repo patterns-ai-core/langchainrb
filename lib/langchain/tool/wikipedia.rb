@@ -18,7 +18,7 @@ module Langchain::Tool
     # Initializes the Wikipedia tool
     def initialize
       super()
-      
+
       depends_on "wikipedia-client", req: "wikipedia"
     end
 

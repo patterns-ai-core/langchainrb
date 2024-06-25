@@ -27,7 +27,7 @@ module Langchain::Tool
     # @return [Langchain::Tool::Weather] Weather tool
     def initialize(api_key:, units: "metric")
       super()
-      
+
       depends_on "open-weather-ruby-client"
       require "open-weather-ruby-client"
 

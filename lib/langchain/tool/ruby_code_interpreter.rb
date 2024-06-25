@@ -16,7 +16,7 @@ module Langchain::Tool
 
     def initialize(timeout: 30)
       super()
-      
+
       depends_on "safe_ruby"
 
       @timeout = timeout

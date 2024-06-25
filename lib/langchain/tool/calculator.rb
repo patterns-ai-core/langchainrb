@@ -17,7 +17,7 @@ module Langchain::Tool
 
     def initialize
       super()
-      
+
       depends_on "eqn"
     end
 

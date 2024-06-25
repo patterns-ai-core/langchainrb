@@ -22,7 +22,7 @@ module Langchain::Tool
     # @return [Database] Database object
     def initialize(connection_string:, tables: [], exclude_tables: [])
       super()
-      
+
       depends_on "sequel"
 
       raise StandardError, "connection_string parameter cannot be blank" if connection_string.empty?

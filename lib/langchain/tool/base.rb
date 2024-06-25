@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "tool_tailor"
 
 module Langchain::Tool

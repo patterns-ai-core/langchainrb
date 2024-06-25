@@ -14,7 +14,7 @@ module Langchain::Tool
 
     def initialize(api_key: ENV["NEWS_API_KEY"])
       super()
-      
+
       @api_key = api_key
     end
 
