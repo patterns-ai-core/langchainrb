@@ -15,7 +15,7 @@ module Langchain
     extend Forwardable
     def_delegators :thread, :messages, :messages=
 
-    attr_reader :llm, :thread, :instructions
+    attr_reader :llm, :thread, :instructions, :state
     attr_accessor :tools
 
     SUPPORTED_LLMS = [
@@ -46,6 +46,7 @@ module Langchain
       @thread = thread || Langchain::Thread.new
       @tools = tools
       @instructions = instructions
+      @state = :ready
 
       raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless @thread.is_a?(Langchain::Thread)
 
@@ -66,7 +67,10 @@ module Langchain
     # @return [Array<Langchain::Message>] The messages in the thread
     def add_message(content: nil, role: "user", tool_calls: [], tool_call_id: nil)
       message = build_message(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
-      thread.add_message(message)
+      messages = thread.add_message(message)
+      @state = :ready
+
+      messages
     end
 
     # Run the assistant
@@ -76,13 +80,13 @@ module Langchain
     def run(auto_tool_execution: false)
       if thread.messages.empty?
         Langchain.logger.warn("No messages in the thread")
+        @state = :completed
         return
       end
 
-      state = :in_progress
-      state = handle_state(state, auto_tool_execution) until run_finished?(state)
+      @state = :in_progress
+      @state = handle_state until run_finished?(auto_tool_execution)
 
-      # TODO: Should we return the final state along with the messages?
       thread.messages
     end
 
@@ -135,41 +139,39 @@ module Langchain
 
     # Check if the run is finished
     #
-    # @param state [Symbol] The current state
+    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
     # @return [Boolean] Whether the run is finished
-    def run_finished?(state)
-      [:completed, :failed, :expired].include?(state)
+    def run_finished?(auto_tool_execution)
+      finished_states = [:completed, :failed]
+
+      requires_manual_action = (@state == :requires_action) && !auto_tool_execution
+      finished_states.include?(@state) || requires_manual_action
     end
 
     # Handle the current state and transition to the next state
     #
     # @param state [Symbol] The current state
-    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
     # @return [Symbol] The next state
-    def handle_state(state, auto_tool_execution)
-      case state
+    def handle_state
+      case @state
       when :in_progress
-        process_latest_message(auto_tool_execution)
-      when :running_tools
+        process_latest_message
+      when :requires_action
         execute_tools
-      else
-        Langchain.logger.error("Unexpected state encountered: #{state}")
-        :failed
       end
     end
 
     # Process the latest message in the thread
     #
-    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
     # @return [Symbol] The next state
-    def process_latest_message(auto_tool_execution)
+    def process_latest_message
       last_message = thread.messages.last
 
       case last_message.standard_role
       when :system
         handle_system_message
       when :llm
-        handle_llm_message(auto_tool_execution)
+        handle_llm_message
       when :user, :tool
         handle_user_or_tool_message
       else
@@ -181,7 +183,7 @@ module Langchain
     #
     # @return [Symbol] The completed state
     def handle_system_message
-      Langchain.logger.info("At least one user message is required after a system message")
+      Langchain.logger.warn("At least one user message is required after a system message")
       :completed
     end
 
@@ -189,22 +191,15 @@ module Langchain
     #
     # @param auto_tool_execution [Boolean] Flag to indicate if tools should be executed automatically
     # @return [Symbol] The next state
-    def handle_llm_message(auto_tool_execution)
-      last_message = thread.messages.last
-      if last_message.tool_calls.any?
-        # TODO: If `auto_tool_execution` is false, should we log a warning and notify the user about pending tool calls, or implement a new state for handling this?
-        auto_tool_execution ? :running_tools : :completed
-      else
-        :completed
-      end
+    def handle_llm_message
+      thread.messages.last.tool_calls.any? ? :requires_action : :completed
     end
 
     # Handle unexpected message scenario
     #
     # @return [Symbol] The failed state
     def handle_unexpected_message
-      last_message = thread.messages.last
-      Langchain.logger.error("Unexpected message role encountered: #{last_message.standard_role}")
+      Langchain.logger.error("Unexpected message role encountered: #{thread.messages.last.standard_role}")
       :failed
     end
 
@@ -229,13 +224,8 @@ module Langchain
     #
     # @return [Symbol] The next state
     def execute_tools
-      # TODO: Should we create a method parameter to let the user change the value of the tool timeout?
-      Timeout.timeout(600) { run_tools(thread.messages.last.tool_calls) }
+      run_tools(thread.messages.last.tool_calls)
       :in_progress
-    rescue Timeout::Error
-      # If the tool output is not provided within 10 minutes the run will transition to an expired status
-      Langchain.logger.error("Running tools timed out")
-      :expired
     rescue => e
       Langchain.logger.error("Error running tools: #{e.message}")
       :failed
