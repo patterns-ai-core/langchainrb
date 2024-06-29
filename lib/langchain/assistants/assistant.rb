@@ -20,9 +20,10 @@ module Langchain
 
     SUPPORTED_LLMS = [
       Langchain::LLM::Anthropic,
-      Langchain::LLM::OpenAI,
       Langchain::LLM::GoogleGemini,
-      Langchain::LLM::GoogleVertexAI
+      Langchain::LLM::GoogleVertexAI,
+      Langchain::LLM::Ollama,
+      Langchain::LLM::OpenAI
     ]
 
     # Create a new assistant
@@ -52,9 +53,7 @@ module Langchain
 
       # The first message in the thread should be the system instructions
       # TODO: What if the user added old messages and the system instructions are already in there? Should this overwrite the existing instructions?
-      if llm.is_a?(Langchain::LLM::OpenAI)
-        add_message(role: "system", content: instructions) if instructions
-      end
+      initialize_instructions
       # For Google Gemini, and Anthropic system instructions are added to the `system:` param in the `chat` method
     end
 
@@ -236,6 +235,8 @@ module Langchain
     # @return [String] The tool role
     def determine_tool_role
       case llm
+      when Langchain::LLM::Ollama
+        Langchain::Messages::OllamaMessage::TOOL_ROLE
       when Langchain::LLM::OpenAI
         Langchain::Messages::OpenAIMessage::TOOL_ROLE
       when Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI
@@ -243,6 +244,42 @@ module Langchain
       when Langchain::LLM::Anthropic
         Langchain::Messages::AnthropicMessage::TOOL_ROLE
       end
+    end
+
+    def initialize_instructions
+      if llm.is_a?(Langchain::LLM::Ollama)
+        add_message(role: "system", content: system_prompt_with_tools)
+      elsif llm.is_a?(Langchain::LLM::OpenAI)
+        add_message(role: "system", content: instructions)
+      end
+    end
+
+    def system_prompt_with_tools
+      Langchain::Prompt
+        .load_from_path(file_path: Langchain.root.join("langchain/assistants/prompts/system_with_tools.yaml"))
+        .format(
+          tools: tools
+            .map(&:to_openai_tools)
+            .flatten
+            .push(default_response_function)
+        )
+    end
+
+    def default_response_function
+      {
+        name: "__conversational_response",
+        description: "Respond conversationally if no other tools should be called for a given query.",
+        parameters: {
+          type: "object",
+          properties: {
+            response: {
+              type: "string",
+              description: "Conversational response to the user."
+            }
+          },
+          required: ["response"]
+        }
+      }
     end
 
     # Call to the LLM#chat() method
@@ -254,7 +291,11 @@ module Langchain
       params = {messages: thread.array_of_message_hashes}
 
       if tools.any?
-        if llm.is_a?(Langchain::LLM::OpenAI)
+        if llm.is_a?(Langchain::LLM::Ollama)
+          params[:format] = "json"
+          system_message = messages.find { |message| message.system? }
+          system_message.content = system_prompt_with_tools
+        elsif llm.is_a?(Langchain::LLM::OpenAI)
           params[:tools] = tools.map(&:to_openai_tools).flatten
           params[:tool_choice] = "auto"
         elsif llm.is_a?(Langchain::LLM::Anthropic)
@@ -346,7 +387,9 @@ module Langchain
     # @param tool_call_id [String] The ID of the tool call to include in the message
     # @return [Langchain::Message] The Message object
     def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
-      if llm.is_a?(Langchain::LLM::OpenAI)
+      if llm.is_a?(Langchain::LLM::Ollama)
+        Langchain::Messages::OllamaMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+      elsif llm.is_a?(Langchain::LLM::OpenAI)
         Langchain::Messages::OpenAIMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
       elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
         Langchain::Messages::GoogleGeminiMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)

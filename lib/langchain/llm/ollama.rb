@@ -176,6 +176,7 @@ module Langchain::LLM
       parameters = chat_parameters.to_params(params.merge(messages:, model:, stream: block.present?))
       responses_stream = []
 
+      binding.pry
       client.post("api/chat", parameters) do |req|
         req.options.on_data = json_responses_chunk_handler do |parsed_chunk|
           responses_stream << parsed_chunk

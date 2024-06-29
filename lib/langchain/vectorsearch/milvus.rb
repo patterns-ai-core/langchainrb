@@ -83,7 +83,7 @@ module Langchain::Vectorsearch
     # @return [Boolean] The response from the server
     def create_default_index
       client.indices.create(
-        collection_name: "Documents",
+        collection_name: index_name,
         field_name: "vectors",
         extra_params: [
           {key: "metric_type", value: "L2"},

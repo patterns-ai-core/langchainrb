@@ -47,6 +47,14 @@ module Langchain::LLM
       prompt_tokens + completion_tokens if done?
     end
 
+    def tool_calls
+      if chat_completion && (parsed_tool_calls = JSON.parse(chat_completion))
+        [parsed_tool_calls]
+      else
+        []
+      end
+    end
+
     private
 
     def done?
