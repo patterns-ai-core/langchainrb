@@ -140,7 +140,7 @@ module Langchain::Vectorsearch
 
       client.search(
         collection_name: index_name,
-        output_fields: ["id", "content", "vectors"],
+        output_fields: ["id", "content"], # Add "vectors" if need to have full vectors returned.
         top_k: k.to_s,
         vectors: [embedding],
         dsl_type: 1,
