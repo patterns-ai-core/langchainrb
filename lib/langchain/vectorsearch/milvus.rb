@@ -6,7 +6,7 @@ module Langchain::Vectorsearch
     # Wrapper around Milvus REST APIs.
     #
     # Gem requirements:
-    #     gem "milvus", "~> 0.9.2"
+    #     gem "milvus", "~> 0.9.3"
     #
     # Usage:
     # milvus = Langchain::Vectorsearch::Milvus.new(url:, index_name:, llm:, api_key:)
@@ -36,6 +36,21 @@ module Langchain::Vectorsearch
             field: Array(texts).map { |text| llm.embed(text: text).embedding }
           }
         ]
+      )
+    end
+
+    # Deletes a list of texts in the index
+    #
+    # @param ids [Array<Integer>] The ids of texts to delete
+    # @return [Boolean] The response from the server
+    def remove_texts(ids:)
+      raise ArgumentError, "ids must be an array" unless ids.is_a?(Array)
+      # Convert ids to integers if strings are passed
+      ids = ids.map(&:to_i)
+
+      client.entities.delete(
+        collection_name: index_name,
+        expression: "id in #{ids}"
       )
     end
 
@@ -83,7 +98,7 @@ module Langchain::Vectorsearch
     # @return [Boolean] The response from the server
     def create_default_index
       client.indices.create(
-        collection_name: "Documents",
+        collection_name: index_name,
         field_name: "vectors",
         extra_params: [
           {key: "metric_type", value: "L2"},
@@ -125,7 +140,7 @@ module Langchain::Vectorsearch
 
       client.search(
         collection_name: index_name,
-        output_fields: ["id", "content", "vectors"],
+        output_fields: ["id", "content"], # Add "vectors" if need to have full vectors returned.
         top_k: k.to_s,
         vectors: [embedding],
         dsl_type: 1,
