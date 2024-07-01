@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.13.5] - 2024-07-01
+- Add Milvus#remove_texts() method
+- Langchain::Assistant has a `state` now
+- Misc fixes and improvements
+
 ## [0.13.4] - 2024-06-16
 - Fix Chroma#remove_texts() method
 - Fix NewsRetriever Tool returning non UTF-8 characters
