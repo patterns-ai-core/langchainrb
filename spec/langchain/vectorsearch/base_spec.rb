@@ -111,7 +111,7 @@ RSpec.describe Langchain::Vectorsearch::Base do
     it "allows adding multiple paths" do
       paths = [
         Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
-        Langchain.root.join("../spec/fixtures/loaders/clearscan-with-image-removed.pdf"),
+        Langchain.root.join("../spec/fixtures/loaders/test_doc.pdf"),
         Langchain.root.join("../spec/fixtures/loaders/example.txt")
       ]
 

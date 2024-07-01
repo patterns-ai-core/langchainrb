@@ -64,7 +64,7 @@ module Langchain::LLM
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
-    # @return [Langchain::LLM::ReplicateResponse] Reponse object
+    # @return [Langchain::LLM::ReplicateResponse] Response object
     #
     def complete(prompt:, **params)
       response = completion_model.predict(prompt: prompt)

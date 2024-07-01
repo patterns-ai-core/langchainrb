@@ -15,7 +15,7 @@ module Langchain
     extend Forwardable
     def_delegators :thread, :messages, :messages=
 
-    attr_reader :llm, :thread, :instructions
+    attr_reader :llm, :thread, :instructions, :state
     attr_accessor :tools
 
     SUPPORTED_LLMS = [
@@ -47,6 +47,7 @@ module Langchain
       @thread = thread || Langchain::Thread.new
       @tools = tools
       @instructions = instructions
+      @state = :ready
       @block = block
 
       raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless @thread.is_a?(Langchain::Thread)
@@ -68,7 +69,10 @@ module Langchain
     # @return [Array<Langchain::Message>] The messages in the thread
     def add_message(content: nil, role: "user", tool_calls: [], tool_call_id: nil)
       message = build_message(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
-      thread.add_message(message)
+      messages = thread.add_message(message)
+      @state = :ready
+
+      messages
     end
 
     # Run the assistant
@@ -78,56 +82,12 @@ module Langchain
     def run(auto_tool_execution: false)
       if thread.messages.empty?
         Langchain.logger.warn("No messages in the thread")
+        @state = :completed
         return
       end
 
-      running = true
-
-      while running
-        # TODO: I think we need to look at all messages and not just the last one.
-        last_message = thread.messages.last
-
-        if last_message.system?
-          # Do nothing
-          running = false
-        elsif last_message.llm?
-          if last_message.tool_calls.any?
-            if auto_tool_execution
-              run_tools(last_message.tool_calls)
-            else
-              # Maybe log and tell the user that there's outstanding tool calls?
-              running = false
-            end
-          else
-            # Last message was from the assistant without any tools calls.
-            # Do nothing
-            running = false
-          end
-        elsif last_message.user?
-          # Run it!
-          response = chat_with_llm
-
-          if response.tool_calls.any?
-            # Re-run the while(running) loop to process the tool calls
-            running = true
-            add_message(role: response.role, tool_calls: response.tool_calls)
-          elsif response.chat_completion
-            # Stop the while(running) loop and add the assistant's response to the thread
-            running = false
-            add_message(role: response.role, content: response.chat_completion)
-          end
-        elsif last_message.tool?
-          # Run it!
-          response = chat_with_llm
-          running = true
-
-          if response.tool_calls.any?
-            add_message(role: response.role, tool_calls: response.tool_calls)
-          elsif response.chat_completion
-            add_message(role: response.role, content: response.chat_completion)
-          end
-        end
-      end
+      @state = :in_progress
+      @state = handle_state until run_finished?(auto_tool_execution)
 
       thread.messages
     end
@@ -148,13 +108,7 @@ module Langchain
     # @param output [String] The output of the tool
     # @return [Array<Langchain::Message>] The messages in the thread
     def submit_tool_output(tool_call_id:, output:)
-      tool_role = if llm.is_a?(Langchain::LLM::OpenAI)
-        Langchain::Messages::OpenAIMessage::TOOL_ROLE
-      elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
-        Langchain::Messages::GoogleGeminiMessage::TOOL_ROLE
-      elsif llm.is_a?(Langchain::LLM::Anthropic)
-        Langchain::Messages::AnthropicMessage::TOOL_ROLE
-      end
+      tool_role = determine_tool_role
 
       # TODO: Validate that `tool_call_id` is valid by scanning messages and checking if this tool call ID was invoked
       add_message(role: tool_role, content: output, tool_call_id: tool_call_id)
@@ -184,6 +138,114 @@ module Langchain
     end
 
     private
+
+    # Check if the run is finished
+    #
+    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
+    # @return [Boolean] Whether the run is finished
+    def run_finished?(auto_tool_execution)
+      finished_states = [:completed, :failed]
+
+      requires_manual_action = (@state == :requires_action) && !auto_tool_execution
+      finished_states.include?(@state) || requires_manual_action
+    end
+
+    # Handle the current state and transition to the next state
+    #
+    # @param state [Symbol] The current state
+    # @return [Symbol] The next state
+    def handle_state
+      case @state
+      when :in_progress
+        process_latest_message
+      when :requires_action
+        execute_tools
+      end
+    end
+
+    # Process the latest message in the thread
+    #
+    # @return [Symbol] The next state
+    def process_latest_message
+      last_message = thread.messages.last
+
+      case last_message.standard_role
+      when :system
+        handle_system_message
+      when :llm
+        handle_llm_message
+      when :user, :tool
+        handle_user_or_tool_message
+      else
+        handle_unexpected_message
+      end
+    end
+
+    # Handle system message scenario
+    #
+    # @return [Symbol] The completed state
+    def handle_system_message
+      Langchain.logger.warn("At least one user message is required after a system message")
+      :completed
+    end
+
+    # Handle LLM message scenario
+    #
+    # @param auto_tool_execution [Boolean] Flag to indicate if tools should be executed automatically
+    # @return [Symbol] The next state
+    def handle_llm_message
+      thread.messages.last.tool_calls.any? ? :requires_action : :completed
+    end
+
+    # Handle unexpected message scenario
+    #
+    # @return [Symbol] The failed state
+    def handle_unexpected_message
+      Langchain.logger.error("Unexpected message role encountered: #{thread.messages.last.standard_role}")
+      :failed
+    end
+
+    # Handle user or tool message scenario by processing the LLM response
+    #
+    # @return [Symbol] The next state
+    def handle_user_or_tool_message
+      response = chat_with_llm
+      add_message(role: response.role, content: response.chat_completion, tool_calls: response.tool_calls)
+
+      if response.tool_calls.any?
+        :in_progress
+      elsif response.chat_completion
+        :completed
+      else
+        Langchain.logger.error("LLM response does not contain tool calls or chat completion")
+        :failed
+      end
+    end
+
+    # Execute the tools based on the tool calls in the last message
+    #
+    # @return [Symbol] The next state
+    def execute_tools
+      run_tools(thread.messages.last.tool_calls)
+      :in_progress
+    rescue => e
+      Langchain.logger.error("Error running tools: #{e.message}")
+      :failed
+    end
+
+    # Determine the tool role based on the LLM type
+    #
+    # @return [String] The tool role
+    def determine_tool_role
+      case llm
+      when Langchain::LLM::OpenAI
+        Langchain::Messages::OpenAIMessage::TOOL_ROLE
+      when Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI
+        Langchain::Messages::GoogleGeminiMessage::TOOL_ROLE
+      when Langchain::LLM::Anthropic
+        Langchain::Messages::AnthropicMessage::TOOL_ROLE
+      end
+    end
 
     # Call to the LLM#chat() method
     #
@@ -233,14 +295,6 @@ module Langchain
         output = tool_instance.send(method_name, **tool_arguments)
 
         submit_tool_output(tool_call_id: tool_call_id, output: output)
-      end
-
-      response = chat_with_llm
-
-      if response.tool_calls.any?
-        add_message(role: response.role, tool_calls: response.tool_calls)
-      elsif response.chat_completion
-        add_message(role: response.role, content: response.chat_completion)
       end
     end
 
