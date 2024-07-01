@@ -89,6 +89,18 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
     end
   end
 
+  describe "remove_texts" do
+    let(:response) { {"status" => {}, "IDs" => {"IdField" => nil}, "delete_cnt" => 1} }
+
+    before do
+      allow(subject.client).to receive_message_chain(:entities, :delete).and_return(response)
+    end
+
+    it "adds texts" do
+      expect(subject.remove_texts(ids: [450847466900986695])).to eq(response)
+    end
+  end
+
   describe "#similarity_search_by_vector" do
     before do
       allow(subject.client.collections).to receive(:load).and_return(true)
