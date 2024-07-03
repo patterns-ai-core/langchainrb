@@ -5,10 +5,10 @@ module Langchain::LLM
   # Wrapper around Anthropic APIs.
   #
   # Gem requirements:
-  #   gem "anthropic", "~> 0.1.0"
+  #   gem "anthropic", "~> 0.3.0"
   #
   # Usage:
-  #     anthorpic = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
+  #     anthropic = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
   #
   class Anthropic < Base
     DEFAULTS = {
