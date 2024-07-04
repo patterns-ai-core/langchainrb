@@ -428,25 +428,10 @@ Assistants are Agent-like objects that leverage helpful instructions, LLMs, tool
 ```ruby
 llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 ```
-2. Instantiate a Thread. Threads keep track of the messages in the Assistant conversation.
-```ruby
-thread = Langchain::Thread.new
-```
-You can pass old message from previously using the Assistant:
-```ruby
-thread.messages = messages
-```
-Messages contain the conversation history and the whole message history is sent to the LLM every time. A Message belongs to 1 of the 4 roles:
-* `Message(role: "system")` message usually contains the instructions.
-* `Message(role: "user")` messages come from the user.
-* `Message(role: "assistant")` messages are produced by the LLM.
-* `Message(role: "tool")` messages are sent in response to tool calls with tool outputs.
-
-3. Instantiate an Assistant
+2. Instantiate an Assistant
 ```ruby
 assistant = Langchain::Assistant.new(
   llm: llm,
-  thread: thread,
   instructions: "You are a Meteorologist Assistant that is able to pull the weather for any location",
   tools: [
     Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
@@ -482,7 +467,7 @@ assistant.add_message_and_run content: "What about Sacramento, CA?", auto_tool_e
 ### Accessing Thread messages
 You can access the messages in a Thread by calling `assistant.thread.messages`.
 ```ruby
-assistant.thread.messages
+assistant.messages
 ```
 
 The Assistant checks the context window limits before every request to the LLM and remove oldest thread messages one by one if the context window is exceeded.
