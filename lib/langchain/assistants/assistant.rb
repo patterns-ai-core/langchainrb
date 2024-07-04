@@ -16,6 +16,7 @@ module Langchain
     def_delegators :thread, :messages, :messages=
 
     attr_reader :llm, :thread, :instructions, :state
+    attr_reader :total_prompt_tokens, :total_completion_tokens, :total_tokens
     attr_accessor :tools
 
     SUPPORTED_LLMS = [
@@ -47,6 +48,10 @@ module Langchain
       @tools = tools
       @instructions = instructions
       @state = :ready
+
+      @total_prompt_tokens = 0
+      @total_completion_tokens = 0
+      @total_tokens = 0
 
       raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless @thread.is_a?(Langchain::Thread)
 
@@ -150,7 +155,6 @@ module Langchain
 
     # Handle the current state and transition to the next state
     #
-    # @param state [Symbol] The current state
     # @return [Symbol] The next state
     def handle_state
       case @state
@@ -189,7 +193,6 @@ module Langchain
 
     # Handle LLM message scenario
     #
-    # @param auto_tool_execution [Boolean] Flag to indicate if tools should be executed automatically
     # @return [Symbol] The next state
     def handle_llm_message
       thread.messages.last.tool_calls.any? ? :requires_action : :completed
@@ -208,7 +211,9 @@ module Langchain
     # @return [Symbol] The next state
     def handle_user_or_tool_message
       response = chat_with_llm
+
       add_message(role: response.role, content: response.chat_completion, tool_calls: response.tool_calls)
+      record_used_tokens(response.prompt_tokens, response.completion_tokens, response.total_tokens)
 
       if response.tool_calls.any?
         :in_progress
@@ -353,6 +358,18 @@ module Langchain
       elsif llm.is_a?(Langchain::LLM::Anthropic)
         Langchain::Messages::AnthropicMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
       end
+    end
+
+    # Increment the tokens count based on the last interaction with the LLM
+    #
+    # @param prompt_tokens [Integer] The number of used prmopt tokens
+    # @param completion_tokens [Integer] The number of used completion tokens
+    # @param total_tokens [Integer] The total number of used tokens
+    # @return [Integer] The current total tokens count
+    def record_used_tokens(prompt_tokens, completion_tokens, total_tokens_from_operation)
+      @total_prompt_tokens += prompt_tokens if prompt_tokens
+      @total_completion_tokens += completion_tokens if completion_tokens
+      @total_tokens += total_tokens_from_operation if total_tokens_from_operation
     end
 
     # TODO: Fix the message truncation when context window is exceeded

@@ -100,14 +100,23 @@ RSpec.describe Langchain::Assistant do
               tool_choice: "auto"
             )
             .and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response))
+
+          subject.add_message(role: "user", content: "Please calculate 2+2")
         end
 
         it "runs the assistant" do
-          subject.add_message(role: "user", content: "Please calculate 2+2")
           subject.run(auto_tool_execution: false)
 
           expect(subject.thread.messages.last.role).to eq("assistant")
           expect(subject.thread.messages.last.tool_calls).to eq([raw_openai_response["choices"][0]["message"]["tool_calls"]][0])
+        end
+
+        it "records the used tokens totals" do
+          subject.run(auto_tool_execution: false)
+
+          expect(subject.total_tokens).to eq(109)
+          expect(subject.total_prompt_tokens).to eq(91)
+          expect(subject.total_completion_tokens).to eq(18)
         end
       end
 
@@ -143,16 +152,16 @@ RSpec.describe Langchain::Assistant do
               tool_choice: "auto"
             )
             .and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response2))
-        end
 
-        it "runs the assistant and automatically executes tool calls" do
           allow(subject.tools[0]).to receive(:execute).with(
             input: "2+2"
           ).and_return("4.0")
 
           subject.add_message(role: "user", content: "Please calculate 2+2")
           subject.add_message(role: "assistant", tool_calls: raw_openai_response["choices"][0]["message"]["tool_calls"])
+        end
 
+        it "runs the assistant and automatically executes tool calls" do
           subject.run(auto_tool_execution: true)
 
           expect(subject.thread.messages[-2].role).to eq("tool")
@@ -160,6 +169,14 @@ RSpec.describe Langchain::Assistant do
 
           expect(subject.thread.messages[-1].role).to eq("assistant")
           expect(subject.thread.messages[-1].content).to eq("The result of 2 + 2 is 4.")
+        end
+
+        it "records the used tokens totals" do
+          subject.run(auto_tool_execution: true)
+
+          expect(subject.total_tokens).to eq(134)
+          expect(subject.total_prompt_tokens).to eq(121)
+          expect(subject.total_completion_tokens).to eq(13)
         end
       end
 
