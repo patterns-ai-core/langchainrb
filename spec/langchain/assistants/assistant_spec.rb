@@ -437,6 +437,27 @@ RSpec.describe Langchain::Assistant do
         }
       end
 
+      context "when not using tools" do
+        subject {
+          described_class.new(
+            llm: llm,
+            thread: thread,
+            instructions: instructions
+          )
+        }
+
+        it "adds a system param to chat when instructions are given" do
+          expect(subject.llm).to receive(:chat)
+            .with(
+              hash_including(
+                system: instructions
+              )
+            ).and_return(Langchain::LLM::AnthropicResponse.new(raw_anthropic_response))
+          subject.add_message content: "Please calculate 2+2"
+          subject.run
+        end
+      end
+
       context "when auto_tool_execution is false" do
         before do
           allow(subject.llm).to receive(:chat)
@@ -455,6 +476,17 @@ RSpec.describe Langchain::Assistant do
 
           expect(subject.thread.messages.last.role).to eq("assistant")
           expect(subject.thread.messages.last.tool_calls).to eq([raw_anthropic_response["content"].first])
+        end
+
+        it "adds a system param to chat when instructions are given" do
+          expect(subject.llm).to receive(:chat)
+            .with(
+              hash_including(
+                system: instructions
+              )
+            ).and_return(Langchain::LLM::AnthropicResponse.new(raw_anthropic_response))
+          subject.add_message content: "Please calculate 2+2"
+          subject.run
         end
       end
 

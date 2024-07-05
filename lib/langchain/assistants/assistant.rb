@@ -258,21 +258,25 @@ module Langchain
 
       params = {messages: thread.array_of_message_hashes}
 
-      if tools.any?
-        if llm.is_a?(Langchain::LLM::OpenAI)
+      if llm.is_a?(Langchain::LLM::OpenAI)
+        if tools.any?
           params[:tools] = tools.map(&:to_openai_tools).flatten
           params[:tool_choice] = "auto"
-        elsif llm.is_a?(Langchain::LLM::Anthropic)
+        end
+      elsif llm.is_a?(Langchain::LLM::Anthropic)
+        if tools.any?
           params[:tools] = tools.map(&:to_anthropic_tools).flatten
-          params[:system] = instructions if instructions
           params[:tool_choice] = {type: "auto"}
-        elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
+        end
+        params[:system] = instructions if instructions
+      elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
+        if tools.any?
           params[:tools] = tools.map(&:to_google_gemini_tools).flatten
           params[:system] = instructions if instructions
           params[:tool_choice] = "auto"
         end
-        # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
       end
+      # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
 
       llm.chat(**params)
     end
