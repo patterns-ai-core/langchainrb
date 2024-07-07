@@ -36,7 +36,7 @@ module Langchain::LLM
     end
 
     def prompt_tokens
-      raw_response.dig("prompt_eval_count") if done?
+      raw_response.fetch("prompt_eval_count", 0) if done?
     end
 
     def completion_tokens
@@ -45,6 +45,24 @@ module Langchain::LLM
 
     def total_tokens
       prompt_tokens + completion_tokens if done?
+    end
+
+    def tool_calls
+      if chat_completion && (parsed_tool_calls = JSON.parse(chat_completion))
+        [parsed_tool_calls]
+      elsif completion && completion.include?("[TOOL_CALLS]") && (
+        parsed_tool_calls = JSON.parse(
+          completion
+            # Slice out the serialize JSON
+            .slice(/\{.*\}/)
+            # Replace hash rocket with colon
+            .gsub("=>", ":")
+        )
+      )
+        [parsed_tool_calls]
+      else
+        []
+      end
     end
 
     private

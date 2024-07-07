@@ -17,7 +17,13 @@ module Langchain
     #
     # @return [Array<Hash>] The thread as an OpenAI API-compatible array of hashes
     def array_of_message_hashes
-      messages.map(&:to_hash)
+      messages
+        .map(&:to_hash)
+        .compact
+    end
+
+    def prompt_of_concatenated_messages
+      messages.map(&:to_s).join
     end
 
     # Add a message to the thread
