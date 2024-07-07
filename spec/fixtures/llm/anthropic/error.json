@@ -1,0 +1,7 @@
+{
+  "type": "error",
+  "error": {
+    "type": "invalid_request_error",
+    "message": "The request is invalid. Please check the request and try again."
+  }
+}
