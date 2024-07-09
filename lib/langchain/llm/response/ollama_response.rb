@@ -50,7 +50,7 @@ module Langchain::LLM
     def tool_calls
       if chat_completion && (parsed_tool_calls = JSON.parse(chat_completion))
         [parsed_tool_calls]
-      elsif completion && completion.include?("[TOOL_CALLS]") && (
+      elsif completion&.include?("[TOOL_CALLS]") && (
         parsed_tool_calls = JSON.parse(
           completion
             # Slice out the serialize JSON

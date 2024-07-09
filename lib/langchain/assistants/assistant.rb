@@ -260,7 +260,7 @@ module Langchain
 
     def initialize_instructions
       if llm.is_a?(Langchain::LLM::Ollama)
-        content = String.new
+        content = "".unfreeze
         if tools.any?
           content << %([AVAILABLE_TOOLS] #{tools.map(&:to_openai_tools).flatten}[/AVAILABLE_TOOLS])
         end
