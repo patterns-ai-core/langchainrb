@@ -30,6 +30,25 @@ RSpec.describe Langchain::LLM::Anthropic do
         expect(subject.complete(prompt: completion).model).to eq("claude-2.1")
       end
     end
+
+    context "with failed API call" do
+      let(:fixture) { File.read("spec/fixtures/llm/anthropic/error.json") }
+
+      before do
+        allow(subject.client).to receive(:complete)
+          .with(parameters: {
+            model: described_class::DEFAULTS[:completion_model_name],
+            prompt: completion,
+            temperature: described_class::DEFAULTS[:temperature],
+            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens_to_sample]
+          })
+          .and_return(JSON.parse(fixture))
+      end
+
+      it "raises an error" do
+        expect { subject.complete(prompt: completion) }.to raise_error(Langchain::LLM::ApiError, "Anthropic API error: The request is invalid. Please check the request and try again.")
+      end
+    end
   end
 
   describe "#chat" do
