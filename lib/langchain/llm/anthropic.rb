@@ -18,9 +18,6 @@ module Langchain::LLM
       max_tokens_to_sample: 256
     }.freeze
 
-    # TODO: Implement token length validator for Anthropic
-    # LENGTH_VALIDATOR = Langchain::Utils::TokenLength::AnthropicValidator
-
     # Initialize an Anthropic LLM instance
     #
     # @param api_key [String] The API key to use

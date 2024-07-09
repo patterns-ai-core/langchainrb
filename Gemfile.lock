@@ -260,8 +260,8 @@ GEM
       hashie
     os (1.1.4)
     paco (0.2.3)
-    parallel (1.24.0)
-    parser (3.3.2.0)
+    parallel (1.25.1)
+    parser (3.3.3.0)
       ast (~> 2.4.1)
       racc
     pdf-reader (2.12.0)
@@ -319,7 +319,6 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.2.1)
-    rb_sys (0.9.87)
     rdiscount (2.2.7.3)
     rdoc (6.7.0)
       psych (>= 4.0.0)
@@ -332,8 +331,8 @@ GEM
       faraday-multipart
       faraday-retry
     require-hooks (0.2.2)
-    rexml (3.2.8)
-      strscan (>= 3.0.9)
+    rexml (3.3.1)
+      strscan
     roo (2.10.1)
       nokogiri (~> 1)
       rubyzip (>= 1.3.0, < 3.0.0)
@@ -354,7 +353,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.1)
-    rubocop (1.63.5)
+    rubocop (1.64.1)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -367,7 +366,7 @@ GEM
       unicode-display_width (>= 2.4.0, < 3.0)
     rubocop-ast (1.31.3)
       parser (>= 3.3.1.0)
-    rubocop-performance (1.21.0)
+    rubocop-performance (1.21.1)
       rubocop (>= 1.48.1, < 2.0)
       rubocop-ast (>= 1.31.1, < 2.0)
     ruby-next (1.0.3)
@@ -398,10 +397,10 @@ GEM
     spreadsheet (1.3.1)
       bigdecimal
       ruby-ole
-    standard (1.36.0)
+    standard (1.39.1)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.0)
-      rubocop (~> 1.63.0)
+      rubocop (~> 1.64.0)
       standard-custom (~> 1.0.0)
       standard-performance (~> 1.4)
     standard-custom (1.0.2)
@@ -413,14 +412,6 @@ GEM
     stringio (3.1.0)
     strscan (3.1.0)
     thor (1.3.1)
-    tiktoken_ruby (0.0.9)
-      rb_sys (= 0.9.87)
-    tiktoken_ruby (0.0.9-aarch64-linux)
-    tiktoken_ruby (0.0.9-arm-linux)
-    tiktoken_ruby (0.0.9-arm64-darwin)
-    tiktoken_ruby (0.0.9-x86_64-darwin)
-    tiktoken_ruby (0.0.9-x86_64-linux)
-    tiktoken_ruby (0.0.9-x86_64-linux-musl)
     timeout (0.4.1)
     to_bool (2.0.0)
     treetop (1.6.12)
@@ -502,7 +493,6 @@ DEPENDENCIES
   safe_ruby (~> 1.0.4)
   sequel (~> 5.68.0)
   standard (>= 1.35.1)
-  tiktoken_ruby (~> 0.0.9)
   vcr
   weaviate-ruby (~> 0.8.10)
   webmock
