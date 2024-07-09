@@ -42,6 +42,9 @@ module Langchain
       unless SUPPORTED_LLMS.include?(llm.class)
         raise ArgumentError, "Invalid LLM; currently only #{SUPPORTED_LLMS.join(", ")} are supported"
       end
+      if llm.is_a?(Langchain::LLM::Ollama)
+        raise ArgumentError, "Currently only `mistral:7b-instruct-v0.3-fp16` model is supported for Ollama LLM" unless llm.defaults[:completion_model_name] == "mistral:7b-instruct-v0.3-fp16"
+      end
       raise ArgumentError, "Tools must be an array of Langchain::Tool::Base instance(s)" unless tools.is_a?(Array) && tools.all? { |tool| tool.is_a?(Langchain::Tool::Base) }
 
       @llm = llm
@@ -270,7 +273,7 @@ module Langchain
 
         add_message(role: "system", content: content)
       elsif llm.is_a?(Langchain::LLM::OpenAI)
-        add_message(role: "system", content: instructions)
+        add_message(role: "system", content: instructions) if instructions
       end
     end
 
