@@ -1,6 +1,9 @@
 AllCops:
   SuggestExtensions: false
 
+Style/ArgumentsForwarding:
+  Enabled: false
+
 require:
   - standard
   - standard-custom
