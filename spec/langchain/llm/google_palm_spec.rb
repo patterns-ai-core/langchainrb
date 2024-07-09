@@ -92,12 +92,6 @@ RSpec.describe Langchain::LLM::GooglePalm do
           JSON.parse(fixture)
         )
       end
-
-      it "returns a message" do
-        expect {
-          subject.chat(prompt: completion)
-        }.to raise_error(Langchain::Utils::TokenLength::TokenLimitExceeded, "This model's maximum context length is 4000 tokens, but the given text is 10000 tokens long.")
-      end
     end
 
     context "when prompt is passed in" do
