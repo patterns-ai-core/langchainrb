@@ -22,6 +22,7 @@ module Langchain
         .compact
     end
 
+    # Only used by the Assistant when it calls the LLM#complete() method
     def prompt_of_concatenated_messages
       messages.map(&:to_s).join
     end

@@ -260,7 +260,7 @@ module Langchain
 
     def initialize_instructions
       if llm.is_a?(Langchain::LLM::Ollama)
-        content = "".unfreeze
+        content = String.new # rubocop: disable Performance/UnfreezeString
         if tools.any?
           content << %([AVAILABLE_TOOLS] #{tools.map(&:to_openai_tools).flatten}[/AVAILABLE_TOOLS])
         end
