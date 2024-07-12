@@ -206,15 +206,15 @@ RSpec.describe Langchain::Assistant do
     describe "#set_state_for" do
       context "when response contains tool_calls" do
         let(:tool_call) { {"name" => "weather__execute", "arguments" => {"input" => "SF"}} }
-        let(:response) { double(tool_calls: [tool_call])}
-  
+        let(:response) { double(tool_calls: [tool_call]) }
+
         it "it returns :in_progress" do
           expect(subject.send(:set_state_for, response: response)).to eq(:in_progress)
         end
       end
-  
+
       context "when response contains chat_completion" do
-        let(:response) { double(tool_calls: [], chat_completion: "The weather in SF is sunny")}
+        let(:response) { double(tool_calls: [], chat_completion: "The weather in SF is sunny") }
 
         it "it returns :completed" do
           expect(subject.send(:set_state_for, response: response)).to eq(:completed)
@@ -222,12 +222,12 @@ RSpec.describe Langchain::Assistant do
       end
 
       context "when response contains chat_completion" do
-        let(:response) { double(tool_calls: [], chat_completion: nil, completion: nil)}
+        let(:response) { double(tool_calls: [], chat_completion: nil, completion: nil) }
 
         it "it returns :completed" do
           expect(subject.send(:set_state_for, response: response)).to eq(:failed)
         end
-      end      
+      end
     end
   end
 
@@ -611,7 +611,7 @@ RSpec.describe Langchain::Assistant do
   xdescribe "when llm is Ollama" do
     xdescribe "#set_state_for" do
       xcontext "when response contains completion" do
-        let(:response) { double(tool_calls: [], completion: "The weather in SF is sunny")}
+        let(:response) { double(tool_calls: [], completion: "The weather in SF is sunny") }
 
         xit "it returns :completed" do
           expect(subject.send(:set_state_for, response: response)).to eq(:completed)
