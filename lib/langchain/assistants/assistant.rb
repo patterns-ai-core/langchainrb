@@ -224,12 +224,18 @@ module Langchain
       add_message(role: response.role, content: content, tool_calls: response.tool_calls)
       record_used_tokens(response.prompt_tokens, response.completion_tokens, response.total_tokens)
 
+      set_state_for(response: response)
+    end
+
+    def set_state_for(response:)
       if response.tool_calls.any?
         :in_progress
       elsif response.chat_completion
         :completed
+      elsif response.completion # Currently only used by Ollama
+        :completed
       else
-        Langchain.logger.error("LLM response does not contain tool calls or chat completion")
+        Langchain.logger.error("LLM response does not contain tool calls, chat or completion response")
         :failed
       end
     end

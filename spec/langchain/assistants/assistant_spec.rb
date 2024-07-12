@@ -50,7 +50,7 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    describe "submit_tool_output" do
+    describe "#submit_tool_output" do
       it "adds a message to the thread" do
         subject.submit_tool_output(tool_call_id: "123", output: "bar")
         expect(thread.messages.last.role).to eq("tool")
@@ -201,6 +201,33 @@ RSpec.describe Langchain::Assistant do
       it "returns correct data" do
         expect(subject.send(:extract_openai_tool_call, tool_call: tool_call)).to eq(["call_9TewGANaaIjzY31UCpAAGLeV", "calculator", "execute", {input: "2+2"}])
       end
+    end
+
+    describe "#set_state_for" do
+      context "when response contains tool_calls" do
+        let(:tool_call) { {"name" => "weather__execute", "arguments" => {"input" => "SF"}} }
+        let(:response) { double(tool_calls: [tool_call])}
+  
+        it "it returns :in_progress" do
+          expect(subject.send(:set_state_for, response: response)).to eq(:in_progress)
+        end
+      end
+  
+      context "when response contains chat_completion" do
+        let(:response) { double(tool_calls: [], chat_completion: "The weather in SF is sunny")}
+
+        it "it returns :completed" do
+          expect(subject.send(:set_state_for, response: response)).to eq(:completed)
+        end
+      end
+
+      context "when response contains chat_completion" do
+        let(:response) { double(tool_calls: [], chat_completion: nil, completion: nil)}
+
+        it "it returns :completed" do
+          expect(subject.send(:set_state_for, response: response)).to eq(:failed)
+        end
+      end      
     end
   end
 
@@ -580,4 +607,16 @@ RSpec.describe Langchain::Assistant do
   xdescribe "#clear_thread!"
 
   xdescribe "#instructions="
+
+  xdescribe "when llm is Ollama" do
+    xdescribe "#set_state_for" do
+      xcontext "when response contains completion" do
+        let(:response) { double(tool_calls: [], completion: "The weather in SF is sunny")}
+
+        xit "it returns :completed" do
+          expect(subject.send(:set_state_for, response: response)).to eq(:completed)
+        end
+      end
+    end
+  end
 end
