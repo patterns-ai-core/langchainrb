@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.14.0] - 2024-07-12
+- Removed TokenLength validators
+- Assistant works with a Mistral LLM now
+- Assistant keeps track of tokens used
+- Misc fixes and improvements
+
 ## [0.13.5] - 2024-07-01
 - Add Milvus#remove_texts() method
 - Langchain::Assistant has a `state` now
