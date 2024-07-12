@@ -49,5 +49,13 @@ RSpec.describe Langchain::LLM::OllamaResponse do
         expect(subject.total_tokens).to be_nil
       end
     end
+
+    describe "#tool_calls" do
+      let(:raw_response) { JSON.parse File.read("spec/fixtures/llm/ollama/complete_mistral_tool_calls.json") }
+
+      it "returns tool_calls" do
+        expect(subject.tool_calls).to eq([{"name" => "weather__execute", "arguments" => {"input" => "SF"}}])
+      end
+    end
   end
 end
