@@ -74,8 +74,6 @@ module Langchain::LLM
 
       default_params.merge!(params)
 
-      default_params[:max_tokens] = Langchain::Utils::TokenLength::CohereValidator.validate_max_tokens!(prompt, default_params[:model], llm: client)
-
       response = client.generate(**default_params)
       Langchain::LLM::CohereResponse.new response, model: @defaults[:completion_model_name]
     end
