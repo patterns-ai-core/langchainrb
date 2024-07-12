@@ -16,7 +16,7 @@ http_interactions:
         does the lamb love Mary so?\nMary so, Mary so?\nWhy does the lamb love Mary
         so?\"\nThe eager children cry.\n\n\"Why, Mary loves the lamb, you know,\nLamb,
         you know, lamb, you know,\nMary loves the lamb, you know,\"\nThe teacher did
-        reply.\n\nCONCISE SUMMARY:\n","model":"llama3","stream":false,"options":{"temperature":0.8}}'
+        reply.\n\nCONCISE SUMMARY:\n","model":"llama3","stream":false,"options":{"temperature":0.0}}'
     headers:
       User-Agent:
       - Faraday v2.9.0

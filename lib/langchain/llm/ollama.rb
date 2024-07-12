@@ -14,7 +14,7 @@ module Langchain::LLM
     attr_reader :url, :defaults
 
     DEFAULTS = {
-      temperature: 0.8,
+      temperature: 0.0,
       completion_model_name: "llama3",
       embeddings_model_name: "llama3",
       chat_completion_model_name: "llama3"

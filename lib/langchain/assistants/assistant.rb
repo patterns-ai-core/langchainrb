@@ -21,9 +21,10 @@ module Langchain
 
     SUPPORTED_LLMS = [
       Langchain::LLM::Anthropic,
-      Langchain::LLM::OpenAI,
       Langchain::LLM::GoogleGemini,
-      Langchain::LLM::GoogleVertexAI
+      Langchain::LLM::GoogleVertexAI,
+      Langchain::LLM::Ollama,
+      Langchain::LLM::OpenAI
     ]
 
     # Create a new assistant
@@ -41,6 +42,9 @@ module Langchain
       unless SUPPORTED_LLMS.include?(llm.class)
         raise ArgumentError, "Invalid LLM; currently only #{SUPPORTED_LLMS.join(", ")} are supported"
       end
+      if llm.is_a?(Langchain::LLM::Ollama)
+        raise ArgumentError, "Currently only `mistral:7b-instruct-v0.3-fp16` model is supported for Ollama LLM" unless llm.defaults[:completion_model_name] == "mistral:7b-instruct-v0.3-fp16"
+      end
       raise ArgumentError, "Tools must be an array of Langchain::Tool::Base instance(s)" unless tools.is_a?(Array) && tools.all? { |tool| tool.is_a?(Langchain::Tool::Base) }
 
       @llm = llm
@@ -57,9 +61,7 @@ module Langchain
 
       # The first message in the thread should be the system instructions
       # TODO: What if the user added old messages and the system instructions are already in there? Should this overwrite the existing instructions?
-      if llm.is_a?(Langchain::LLM::OpenAI)
-        add_message(role: "system", content: instructions) if instructions
-      end
+      initialize_instructions
       # For Google Gemini, and Anthropic system instructions are added to the `system:` param in the `chat` method
     end
 
@@ -212,7 +214,14 @@ module Langchain
     def handle_user_or_tool_message
       response = chat_with_llm
 
-      add_message(role: response.role, content: response.chat_completion, tool_calls: response.tool_calls)
+      # With Ollama, we're calling the `llm.complete()` method
+      content = if llm.is_a?(Langchain::LLM::Ollama)
+        response.completion
+      else
+        response.chat_completion
+      end
+
+      add_message(role: response.role, content: content, tool_calls: response.tool_calls)
       record_used_tokens(response.prompt_tokens, response.completion_tokens, response.total_tokens)
 
       if response.tool_calls.any?
@@ -241,6 +250,8 @@ module Langchain
     # @return [String] The tool role
     def determine_tool_role
       case llm
+      when Langchain::LLM::Ollama
+        Langchain::Messages::OllamaMessage::TOOL_ROLE
       when Langchain::LLM::OpenAI
         Langchain::Messages::OpenAIMessage::TOOL_ROLE
       when Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI
@@ -250,13 +261,29 @@ module Langchain
       end
     end
 
+    def initialize_instructions
+      if llm.is_a?(Langchain::LLM::Ollama)
+        content = String.new # rubocop: disable Performance/UnfreezeString
+        if tools.any?
+          content << %([AVAILABLE_TOOLS] #{tools.map(&:to_openai_tools).flatten}[/AVAILABLE_TOOLS])
+        end
+        if instructions
+          content << "[INST] #{instructions}[/INST]"
+        end
+
+        add_message(role: "system", content: content)
+      elsif llm.is_a?(Langchain::LLM::OpenAI)
+        add_message(role: "system", content: instructions) if instructions
+      end
+    end
+
     # Call to the LLM#chat() method
     #
     # @return [Langchain::LLM::BaseResponse] The LLM response object
     def chat_with_llm
       Langchain.logger.info("Sending a call to #{llm.class}", for: self.class)
 
-      params = {messages: thread.array_of_message_hashes}
+      params = {}
 
       if llm.is_a?(Langchain::LLM::OpenAI)
         if tools.any?
@@ -278,7 +305,14 @@ module Langchain
       end
       # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
 
-      llm.chat(**params)
+      if llm.is_a?(Langchain::LLM::Ollama)
+        params[:raw] = true
+        params[:prompt] = thread.prompt_of_concatenated_messages
+        llm.complete(**params)
+      else
+        params[:messages] = thread.array_of_message_hashes
+        llm.chat(**params)
+      end
     end
 
     # Run the tools automatically
@@ -287,7 +321,9 @@ module Langchain
     def run_tools(tool_calls)
       # Iterate over each function invocation and submit tool output
       tool_calls.each do |tool_call|
-        tool_call_id, tool_name, method_name, tool_arguments = if llm.is_a?(Langchain::LLM::OpenAI)
+        tool_call_id, tool_name, method_name, tool_arguments = if llm.is_a?(Langchain::LLM::Ollama)
+          extract_ollama_tool_call(tool_call: tool_call)
+        elsif llm.is_a?(Langchain::LLM::OpenAI)
           extract_openai_tool_call(tool_call: tool_call)
         elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
           extract_google_gemini_tool_call(tool_call: tool_call)
@@ -303,6 +339,12 @@ module Langchain
 
         submit_tool_output(tool_call_id: tool_call_id, output: output)
       end
+    end
+
+    def extract_ollama_tool_call(tool_call:)
+      tool_name, method_name = tool_call.dig("name").split("__")
+      tool_arguments = tool_call.dig("arguments").transform_keys(&:to_sym)
+      [nil, tool_name, method_name, tool_arguments]
     end
 
     # Extract the tool call information from the OpenAI tool call hash
@@ -355,7 +397,9 @@ module Langchain
     # @param tool_call_id [String] The ID of the tool call to include in the message
     # @return [Langchain::Message] The Message object
     def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
-      if llm.is_a?(Langchain::LLM::OpenAI)
+      if llm.is_a?(Langchain::LLM::Ollama)
+        Langchain::Messages::OllamaMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+      elsif llm.is_a?(Langchain::LLM::OpenAI)
         Langchain::Messages::OpenAIMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
       elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
         Langchain::Messages::GoogleGeminiMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)

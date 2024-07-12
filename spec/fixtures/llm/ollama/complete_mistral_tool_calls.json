@@ -1,0 +1,13 @@
+{
+  "model": "mistral:7b-instruct-v0.3-fp16",
+  "created_at": "2024-07-09T18:59:45.012781Z",
+  "response": "[TOOL_CALLS] [{\"name\":\"weather__execute\", \"arguments\":{\"input\":\"SF\"}}]",
+  "done": true,
+  "done_reason": "stop",
+  "total_duration": 3354694791,
+  "load_duration": 19451291,
+  "prompt_eval_count": 116,
+  "prompt_eval_duration": 2062292000,
+  "eval_count": 26,
+  "eval_duration": 1271839000
+}
