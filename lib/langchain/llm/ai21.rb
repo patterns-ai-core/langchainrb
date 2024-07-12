@@ -16,6 +16,8 @@ module Langchain::LLM
       model: "j2-ultra"
     }.freeze
 
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::AI21Validator
+
     def initialize(api_key:, default_options: {})
       depends_on "ai21"
 
@@ -32,6 +34,8 @@ module Langchain::LLM
     #
     def complete(prompt:, **params)
       parameters = complete_parameters params
+
+      parameters[:maxTokens] = LENGTH_VALIDATOR.validate_max_tokens!(prompt, parameters[:model], {llm: client})
 
       response = client.complete(prompt, parameters)
       Langchain::LLM::AI21Response.new response, model: parameters[:model]

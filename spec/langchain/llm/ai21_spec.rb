@@ -23,8 +23,10 @@ RSpec.describe Langchain::LLM::AI21 do
     context "with no additional parameters" do
       before do
         allow(subject.client).to receive(:complete)
-          .with("Hello World", {model: "j2-ultra", temperature: 0.0})
+          .with("Hello World", {maxTokens: 1000, model: "j2-ultra", temperature: 0.0})
           .and_return(response)
+
+        allow(Langchain::Utils::TokenLength::AI21Validator).to receive(:validate_max_tokens!).and_return(1000)
       end
 
       it "returns a completion" do
@@ -36,10 +38,13 @@ RSpec.describe Langchain::LLM::AI21 do
       before do
         allow(subject.client).to receive(:complete)
           .with("Hello World", {
+            maxTokens: 1000,
             temperature: 0.7,
             model: "j2-light"
           })
           .and_return(response)
+
+        allow(Langchain::Utils::TokenLength::AI21Validator).to receive(:validate_max_tokens!).and_return(1000)
       end
 
       it "returns a completion" do
@@ -50,6 +55,10 @@ RSpec.describe Langchain::LLM::AI21 do
     end
 
     context "with custom default_options" do
+      before do
+        allow(Langchain::Utils::TokenLength::AI21Validator).to receive(:validate_max_tokens!).and_return(1000)
+      end
+
       let(:subject) {
         described_class.new(
           api_key: "123",
@@ -61,6 +70,7 @@ RSpec.describe Langchain::LLM::AI21 do
         expect(subject.client).to receive(:complete).with(
           "Hello World",
           {
+            maxTokens: 1000,
             model: "j2-mid",
             temperature: 0.0
           }
