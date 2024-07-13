@@ -42,10 +42,16 @@ module Langchain
       unless SUPPORTED_LLMS.include?(llm.class)
         raise ArgumentError, "Invalid LLM; currently only #{SUPPORTED_LLMS.join(", ")} are supported"
       end
+
       if llm.is_a?(Langchain::LLM::Ollama)
-        raise ArgumentError, "Currently only `mistral:7b-instruct-v0.3-fp16` model is supported for Ollama LLM" unless llm.defaults[:completion_model_name] == "mistral:7b-instruct-v0.3-fp16"
+        unless llm.defaults[:completion_model_name] == "mistral:7b-instruct-v0.3-fp16"
+          raise ArgumentError, "Currently only `mistral:7b-instruct-v0.3-fp16` model is supported for Ollama LLM"
+        end
       end
-      raise ArgumentError, "Tools must be an array of Langchain::Tool::Base instance(s)" unless tools.is_a?(Array) && tools.all? { |tool| tool.is_a?(Langchain::Tool::Base) }
+
+      unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
+        raise ArgumentError, "Tools must be an array of objects extending Langchain::ToolDefinition"
+      end
 
       @llm = llm
       @thread = thread || Langchain::Thread.new
@@ -293,18 +299,18 @@ module Langchain
 
       if llm.is_a?(Langchain::LLM::OpenAI)
         if tools.any?
-          params[:tools] = tools.map(&:to_openai_tools).flatten
+          params[:tools] = tools.map { |tool| tool.class.action_schemas.to_openai_format }.flatten
           params[:tool_choice] = "auto"
         end
       elsif llm.is_a?(Langchain::LLM::Anthropic)
         if tools.any?
-          params[:tools] = tools.map(&:to_anthropic_tools).flatten
+          params[:tools] = tools.map { |tool| tool.class.action_schemas.to_anthropic_format }.flatten
           params[:tool_choice] = {type: "auto"}
         end
         params[:system] = instructions if instructions
       elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
         if tools.any?
-          params[:tools] = tools.map(&:to_google_gemini_tools).flatten
+          params[:tools] = tools.map { |tool| tool.class.action_schemas.to_google_gemini_format }.flatten
           params[:system] = instructions if instructions
           params[:tool_choice] = "auto"
         end
@@ -338,7 +344,7 @@ module Langchain
         end
 
         tool_instance = tools.find do |t|
-          t.name == tool_name
+          t.class.tool_name == tool_name
         end or raise ArgumentError, "Tool not found in assistant.tools"
 
         output = tool_instance.send(method_name, **tool_arguments)

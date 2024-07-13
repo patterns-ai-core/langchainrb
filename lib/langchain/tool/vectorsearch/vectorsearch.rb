@@ -1,20 +1,24 @@
 # frozen_string_literal: true
 
 module Langchain::Tool
-  class Vectorsearch < Base
-    #
-    # A tool wraps vectorsearch classes
-    #
-    # Usage:
-    #    # Initialize the LLM that will be used to generate embeddings
-    #    ollama = Langchain::LLM::Ollama.new(url: ENV["OLLAMA_URL"]
-    #    chroma = Langchain::Vectorsearch::Chroma.new(url: ENV["CHROMA_URL"], index_name: "my_index", llm: ollama)
-    #
-    #    # This tool can now be used by the Assistant
-    #    vectorsearch_tool = Langchain::Tool::Vectorsearch.new(vectorsearch: chroma)
-    #
-    NAME = "vectorsearch"
-    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
+  #
+  # A tool wraps vectorsearch classes
+  #
+  # Usage:
+  #    # Initialize the LLM that will be used to generate embeddings
+  #    ollama = Langchain::LLM::Ollama.new(url: ENV["OLLAMA_URL"]
+  #    chroma = Langchain::Vectorsearch::Chroma.new(url: ENV["CHROMA_URL"], index_name: "my_index", llm: ollama)
+  #
+  #    # This tool can now be used by the Assistant
+  #    vectorsearch_tool = Langchain::Tool::Vectorsearch.new(vectorsearch: chroma)
+  #
+  class Vectorsearch
+    extend Langchain::ToolDefinition
+
+    define_action :similarity_search, description: "Vectorsearch: Retrieves relevant document for the query" do
+      property :query, type: "string", description: "Query to find similar documents for", required: true
+      property :k, type: "integer", description: "Number of similar documents to retrieve. Default value: 4"
+    end
 
     attr_reader :vectorsearch
 

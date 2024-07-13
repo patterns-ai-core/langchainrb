@@ -1,18 +1,22 @@
 # frozen_string_literal: true
 
 module Langchain::Tool
-  class RubyCodeInterpreter < Base
-    #
-    # A tool that execute Ruby code in a sandboxed environment.
-    #
-    # Gem requirements:
-    #     gem "safe_ruby", "~> 1.0.4"
-    #
-    # Usage:
-    #    interpreter = Langchain::Tool::RubyCodeInterpreter.new
-    #
-    NAME = "ruby_code_interpreter"
-    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
+  #
+  # A tool that execute Ruby code in a sandboxed environment.
+  #
+  # Gem requirements:
+  #     gem "safe_ruby", "~> 1.0.4"
+  #
+  # Usage:
+  #    interpreter = Langchain::Tool::RubyCodeInterpreter.new
+  #
+  class RubyCodeInterpreter
+    extend Langchain::ToolDefinition
+    include Langchain::DependencyHelper
+
+    define_action :execute, description: "Executes Ruby code in a sandboxes environment" do
+      property :input, type: "string", description: "Ruby code expression", required: true
+    end
 
     def initialize(timeout: 30)
       depends_on "safe_ruby"

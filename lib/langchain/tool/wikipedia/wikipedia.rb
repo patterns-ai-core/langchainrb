@@ -1,19 +1,23 @@
 # frozen_string_literal: true
 
 module Langchain::Tool
-  class Wikipedia < Base
-    #
-    # Tool that adds the capability to search using the Wikipedia API
-    #
-    # Gem requirements:
-    #     gem "wikipedia-client", "~> 1.17.0"
-    #
-    # Usage:
-    #     wikipedia = Langchain::Tool::Wikipedia.new
-    #     wikipedia.execute(input: "The Roman Empire")
-    #
-    NAME = "wikipedia"
-    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
+  #
+  # Tool that adds the capability to search using the Wikipedia API
+  #
+  # Gem requirements:
+  #     gem "wikipedia-client", "~> 1.17.0"
+  #
+  # Usage:
+  #     wikipedia = Langchain::Tool::Wikipedia.new
+  #     wikipedia.execute(input: "The Roman Empire")
+  #
+  class Wikipedia
+    extend Langchain::ToolDefinition
+    include Langchain::DependencyHelper
+
+    define_action :execute, description: "Executes Wikipedia API search and returns the answer" do
+      property :input, type: "string", description: "Search query", required: true
+    end
 
     # Initializes the Wikipedia tool
     def initialize

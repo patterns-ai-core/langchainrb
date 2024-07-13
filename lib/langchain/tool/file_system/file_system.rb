@@ -1,15 +1,27 @@
 # frozen_string_literal: true
 
 module Langchain::Tool
-  class FileSystem < Base
-    #
-    # A tool that wraps the Ruby file system classes.
-    #
-    # Usage:
-    #    file_system = Langchain::Tool::FileSystem.new
-    #
-    NAME = "file_system"
-    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
+  #
+  # A tool that wraps the Ruby file system classes.
+  #
+  # Usage:
+  #    file_system = Langchain::Tool::FileSystem.new
+  #
+  class FileSystem
+    extend Langchain::ToolDefinition
+
+    define_action :list_directory, description: "File System Tool: Lists out the content of a specified directory" do
+      property :directory_path, type: "string", description: "Directory path to list", required: true
+    end
+
+    define_action :read_file, description: "File System Tool: Reads the contents of a file" do
+      property :file_path, type: "string", description: "Path to the file to read from", required: true
+    end
+
+    define_action :write_to_file, description: "File System Tool: Write content to a file" do
+      property :file_path, type: "string", description: "Path to the file to write", required: true
+      property :content, type: "string", description: "Content to write to the file", required: true
+    end
 
     def list_directory(directory_path:)
       Dir.entries(directory_path)

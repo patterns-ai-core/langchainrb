@@ -1,16 +1,28 @@
 module Langchain::Tool
-  class Database < Base
-    #
-    # Connects to a database, executes SQL queries, and outputs DB schema for Agents to use
-    #
-    # Gem requirements:
-    #     gem "sequel", "~> 5.68.0"
-    #
-    # Usage:
-    #     database = Langchain::Tool::Database.new(connection_string: "postgres://user:password@localhost:5432/db_name")
-    #
-    NAME = "database"
-    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
+  #
+  # Connects to a database, executes SQL queries, and outputs DB schema for Agents to use
+  #
+  # Gem requirements:
+  #     gem "sequel", "~> 5.68.0"
+  #
+  # Usage:
+  #     database = Langchain::Tool::Database.new(connection_string: "postgres://user:password@localhost:5432/db_name")
+  #
+  class Database
+    extend Langchain::ToolDefinition
+    include Langchain::DependencyHelper
+
+    define_action :list_tables, description: "Database Tool: Returns a list of tables in the database"
+
+    define_action :describe_tables, description: "Database Tool: Returns the schema for a list of tables" do
+      property :tables, type: "string", description: "The tables to describe", required: true
+    end
+
+    define_action :dump_schema, description: "Database Tool: Returns the database schema"
+
+    define_action :execute, description: "Database Tool: Executes a SQL query and returns the results" do
+      property :input, type: "string", description: "SQL query to be executed", required: true
+    end
 
     attr_reader :db, :requested_tables, :excluded_tables
 
@@ -25,9 +37,9 @@ module Langchain::Tool
 
       raise StandardError, "connection_string parameter cannot be blank" if connection_string.empty?
 
-      @db = Sequel.connect(connection_string)
-      @requested_tables = tables
-      @excluded_tables = exclude_tables
+      # @db = Sequel.connect(connection_string)
+      # @requested_tables = tables
+      # @excluded_tables = exclude_tables
     end
 
     # Database Tool: Returns a list of tables in the database

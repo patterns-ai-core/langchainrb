@@ -1,19 +1,23 @@
 # frozen_string_literal: true
 
 module Langchain::Tool
-  class GoogleSearch < Base
-    #
-    # Wrapper around SerpApi's Google Search API
-    #
-    # Gem requirements:
-    #     gem "google_search_results", "~> 2.0.0"
-    #
-    # Usage:
-    #     search = Langchain::Tool::GoogleSearch.new(api_key: "YOUR_API_KEY")
-    #     search.execute(input: "What is the capital of France?")
-    #
-    NAME = "google_search"
-    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
+  #
+  # Wrapper around SerpApi's Google Search API
+  #
+  # Gem requirements:
+  #     gem "google_search_results", "~> 2.0.0"
+  #
+  # Usage:
+  #     search = Langchain::Tool::GoogleSearch.new(api_key: "YOUR_API_KEY")
+  #     search.execute(input: "What is the capital of France?")
+  #
+  class GoogleSearch
+    extend Langchain::ToolDefinition
+    include Langchain::DependencyHelper
+
+    define_action :execute, description: "Executes Google Search and returns the result" do
+      property :input, type: "string", description: "Search query", required: true
+    end
 
     attr_reader :api_key
 
@@ -27,16 +31,6 @@ module Langchain::Tool
       depends_on "google_search_results"
 
       @api_key = api_key
-    end
-
-    #
-    # Executes Google Search and returns hash_results JSON
-    #
-    # @param input [String] search query
-    # @return [Hash] hash_results JSON
-    #
-    def self.execute_search(input:)
-      new.execute_search(input: input)
     end
 
     # Executes Google Search and returns the result
