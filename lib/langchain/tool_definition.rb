@@ -2,6 +2,40 @@
 
 require "json"
 
+#
+# Extends a class to be used as a tool in the assistant.
+# A tool is a collection of actions (methods) used to perform specific tasks.
+#
+# == Usage
+#
+# 1. Extend your class with {Langchain::ToolDefinition}
+# 2. Use {#define_action} to define each action of the tool
+#
+# == Key Concepts
+#
+# - {#define_action}: Defines a new action (method) for the tool
+# - {ParameterBuilder#property}: Defines properties for the action parameters
+# - {ParameterBuilder#item}: Alias for {ParameterBuilder#property}, used for array items
+#
+# These methods support various data types and nested structures, allowing for flexible and expressive tool definitions.
+#
+# @example Defining a tool with various property types and configurations
+#   define_action :sample_action, description: "Demonstrates various property types and configurations" do
+#     property :string_prop, type: "string", description: "A simple string property"
+#     property :number_prop, type: "number", description: "A number property"
+#     property :integer_prop, type: "integer", description: "An integer property"
+#     property :boolean_prop, type: "boolean", description: "A boolean property"
+#     property :enum_prop, type: "string", description: "An enum property", enum: ["option1", "option2", "option3"]
+#     property :required_prop, type: "string", description: "A required property", required: true
+#     property :array_prop, type: "array", description: "An array property" do
+#       item type: "string", description: "Array item"
+#     end
+#     property :object_prop, type: "object", description: "An object property" do
+#       property :nested_string, type: "string", description: "Nested string property"
+#       property :nested_number, type: "number", description: "Nested number property"
+#     end
+#   end
+#
 module Langchain::ToolDefinition
   # Defines an action for the tool
   #
