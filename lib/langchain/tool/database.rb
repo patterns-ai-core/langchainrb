@@ -12,15 +12,15 @@ module Langchain::Tool
     extend Langchain::ToolDefinition
     include Langchain::DependencyHelper
 
-    define_action :list_tables, description: "Database Tool: Returns a list of tables in the database"
+    define_function :list_tables, description: "Database Tool: Returns a list of tables in the database"
 
-    define_action :describe_tables, description: "Database Tool: Returns the schema for a list of tables" do
+    define_function :describe_tables, description: "Database Tool: Returns the schema for a list of tables" do
       property :tables, type: "string", description: "The tables to describe", required: true
     end
 
-    define_action :dump_schema, description: "Database Tool: Returns the database schema"
+    define_function :dump_schema, description: "Database Tool: Returns the database schema"
 
-    define_action :execute, description: "Database Tool: Executes a SQL query and returns the results" do
+    define_function :execute, description: "Database Tool: Executes a SQL query and returns the results" do
       property :input, type: "string", description: "SQL query to be executed", required: true
     end
 

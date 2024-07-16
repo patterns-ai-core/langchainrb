@@ -15,7 +15,7 @@ module Langchain::Tool
     extend Langchain::ToolDefinition
     include Langchain::DependencyHelper
 
-    define_action :execute, description: "Executes Wikipedia API search and returns the answer" do
+    define_function :execute, description: "Executes Wikipedia API search and returns the answer" do
       property :input, type: "string", description: "Search query", required: true
     end
 

@@ -96,7 +96,7 @@ RSpec.describe Langchain::Assistant do
                 {role: "system", content: instructions},
                 {role: "user", content: "Please calculate 2+2"}
               ],
-              tools: calculator.class.action_schemas.to_openai_format,
+              tools: calculator.class.function_schemas.to_openai_format,
               tool_choice: "auto"
             )
             .and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response))
@@ -148,7 +148,7 @@ RSpec.describe Langchain::Assistant do
                 ]},
                 {content: "4.0", role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
               ],
-              tools: calculator.class.action_schemas.to_openai_format,
+              tools: calculator.class.function_schemas.to_openai_format,
               tool_choice: "auto"
             )
             .and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response2))
@@ -304,7 +304,7 @@ RSpec.describe Langchain::Assistant do
           allow(subject.llm).to receive(:chat)
             .with(
               messages: [{role: "user", parts: [{text: "Please calculate 2+2"}]}],
-              tools: calculator.class.action_schemas.to_google_gemini_format,
+              tools: calculator.class.function_schemas.to_google_gemini_format,
               tool_choice: "auto",
               system: instructions
             )
@@ -345,7 +345,7 @@ RSpec.describe Langchain::Assistant do
                 {role: "model", parts: [{"functionCall" => {"name" => "langchain_tool_calculator__execute", "args" => {"input" => "2+2"}}}]},
                 {role: "function", parts: [{functionResponse: {name: "langchain_tool_calculator__execute", response: {name: "langchain_tool_calculator__execute", content: "4.0"}}}]}
               ],
-              tools: calculator.class.action_schemas.to_google_gemini_format,
+              tools: calculator.class.function_schemas.to_google_gemini_format,
               tool_choice: "auto",
               system: instructions
             )
@@ -490,7 +490,7 @@ RSpec.describe Langchain::Assistant do
           allow(subject.llm).to receive(:chat)
             .with(
               messages: [{role: "user", content: "Please calculate 2+2"}],
-              tools: calculator.class.action_schemas.to_anthropic_format,
+              tools: calculator.class.function_schemas.to_anthropic_format,
               tool_choice: {type: "auto"},
               system: instructions
             )
@@ -545,7 +545,7 @@ RSpec.describe Langchain::Assistant do
                 ]},
                 {role: "user", content: [{type: "tool_result", tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H", content: "4.0"}]}
               ],
-              tools: calculator.class.action_schemas.to_anthropic_format,
+              tools: calculator.class.function_schemas.to_anthropic_format,
               tool_choice: {type: "auto"},
               system: instructions
             )

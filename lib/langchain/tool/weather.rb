@@ -19,7 +19,7 @@ module Langchain::Tool
     extend Langchain::ToolDefinition
     include Langchain::DependencyHelper
 
-    define_action :execute, description: "Returns current weather for a city" do
+    define_function :execute, description: "Returns current weather for a city" do
       property :input, type: "string", description: "Comma separated city and unit (optional: imperial, metric, or standard)", required: true
     end
 

@@ -4,23 +4,23 @@ require "json"
 
 #
 # Extends a class to be used as a tool in the assistant.
-# A tool is a collection of actions (methods) used to perform specific tasks.
+# A tool is a collection of functions (methods) used to perform specific tasks.
 #
 # == Usage
 #
 # 1. Extend your class with {Langchain::ToolDefinition}
-# 2. Use {#define_action} to define each action of the tool
+# 2. Use {#define_function} to define each function of the tool
 #
 # == Key Concepts
 #
-# - {#define_action}: Defines a new action (method) for the tool
-# - {ParameterBuilder#property}: Defines properties for the action parameters
+# - {#define_function}: Defines a new function (method) for the tool
+# - {ParameterBuilder#property}: Defines properties for the function parameters
 # - {ParameterBuilder#item}: Alias for {ParameterBuilder#property}, used for array items
 #
 # These methods support various data types and nested structures, allowing for flexible and expressive tool definitions.
 #
 # @example Defining a tool with various property types and configurations
-#   define_action :sample_action, description: "Demonstrates various property types and configurations" do
+#   define_function :sample_function, description: "Demonstrates various property types and configurations" do
 #     property :string_prop, type: "string", description: "A simple string property"
 #     property :number_prop, type: "number", description: "A number property"
 #     property :integer_prop, type: "integer", description: "An integer property"
@@ -37,20 +37,20 @@ require "json"
 #   end
 #
 module Langchain::ToolDefinition
-  # Defines an action for the tool
+  # Defines a function for the tool
   #
   # @param method_name [Symbol] Name of the method to define
-  # @param description [String] Description of the action
-  # @yield Block that defines the parameters for the action
-  def define_action(method_name, description:, &)
-    action_schemas.add_action(method_name:, description:, &)
+  # @param description [String] Description of the function
+  # @yield Block that defines the parameters for the function
+  def define_function(method_name, description:, &)
+    function_schemas.add_function(method_name:, description:, &)
   end
 
-  # Returns the ActionSchemas instance for this tool
+  # Returns the FunctionSchemas instance for this tool
   #
-  # @return [ActionSchemas] The ActionSchemas instance
-  def action_schemas
-    @action_schemas ||= ActionSchemas.new(tool_name)
+  # @return [FunctionSchemas] The FunctionSchemas instance
+  def function_schemas
+    @function_schemas ||= FunctionSchemas.new(tool_name)
   end
 
   # Returns the snake_case version of the class name as the tool's name
@@ -60,27 +60,27 @@ module Langchain::ToolDefinition
     @tool_name ||= name.gsub(/([A-Z])/, '_\1').gsub(/^_/, "").gsub("::", "").downcase
   end
 
-  # Manages schemas for actions
-  class ActionSchemas
+  # Manages schemas for functions
+  class FunctionSchemas
     def initialize(tool_name)
       @schemas = {}
       @tool_name = tool_name
     end
 
-    # Adds an action to the schemas
+    # Adds a function to the schemas
     #
     # @param method_name [Symbol] Name of the method to add
-    # @param description [String] Description of the action
-    # @yield Block that defines the parameters for the action
-    # @raise [ArgumentError] If a block is defined and no parameters are specified for the action
-    def add_action(method_name:, description:, &)
+    # @param description [String] Description of the function
+    # @yield Block that defines the parameters for the function
+    # @raise [ArgumentError] If a block is defined and no parameters are specified for the function
+    def add_function(method_name:, description:, &)
       name = "#{@tool_name}__#{method_name}"
 
       if block_given?
         parameters = ParameterBuilder.new(parent_type: "object").build(&)
 
         if parameters.empty?
-          raise ArgumentError, "Action parameters must have at least one property defined within it, if a block is provided"
+          raise ArgumentError, "Function parameters must have at least one property defined within it, if a block is provided"
         end
       end
 
@@ -114,7 +114,7 @@ module Langchain::ToolDefinition
     end
   end
 
-  # Builds parameter schemas for actions
+  # Builds parameter schemas for functions
   class ParameterBuilder
     VALID_TYPES = %w[object array string number integer boolean].freeze
 

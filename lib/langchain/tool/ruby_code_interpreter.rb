@@ -14,7 +14,7 @@ module Langchain::Tool
     extend Langchain::ToolDefinition
     include Langchain::DependencyHelper
 
-    define_action :execute, description: "Executes Ruby code in a sandboxes environment" do
+    define_function :execute, description: "Executes Ruby code in a sandboxes environment" do
       property :input, type: "string", description: "Ruby code expression", required: true
     end
 

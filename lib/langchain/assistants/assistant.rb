@@ -299,18 +299,18 @@ module Langchain
 
       if llm.is_a?(Langchain::LLM::OpenAI)
         if tools.any?
-          params[:tools] = tools.map { |tool| tool.class.action_schemas.to_openai_format }.flatten
+          params[:tools] = tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten
           params[:tool_choice] = "auto"
         end
       elsif llm.is_a?(Langchain::LLM::Anthropic)
         if tools.any?
-          params[:tools] = tools.map { |tool| tool.class.action_schemas.to_anthropic_format }.flatten
+          params[:tools] = tools.map { |tool| tool.class.function_schemas.to_anthropic_format }.flatten
           params[:tool_choice] = {type: "auto"}
         end
         params[:system] = instructions if instructions
       elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
         if tools.any?
-          params[:tools] = tools.map { |tool| tool.class.action_schemas.to_google_gemini_format }.flatten
+          params[:tools] = tools.map { |tool| tool.class.function_schemas.to_google_gemini_format }.flatten
           params[:system] = instructions if instructions
           params[:tool_choice] = "auto"
         end

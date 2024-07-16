@@ -15,7 +15,7 @@ module Langchain::Tool
     extend Langchain::ToolDefinition
     include Langchain::DependencyHelper
 
-    define_action :execute, description: "Executes Google Search and returns the result" do
+    define_function :execute, description: "Executes Google Search and returns the result" do
       property :input, type: "string", description: "Search query", required: true
     end
 

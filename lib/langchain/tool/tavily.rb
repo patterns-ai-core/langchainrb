@@ -11,7 +11,7 @@ module Langchain::Tool
   class Tavily
     extend Langchain::ToolDefinition
 
-    define_action :search, description: "Tavily Tool: Robust search API" do
+    define_function :search, description: "Tavily Tool: Robust search API" do
       property :query, type: "string", description: "The search query string", required: true
       property :search_depth, type: "string", description: "The depth of the search: basic for quick results and advanced for indepth high quality results but longer response time", enum: ["basic", "advanced"]
       property :include_images, type: "boolean", description: "Include a list of query related images in the response"

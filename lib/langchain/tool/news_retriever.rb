@@ -11,7 +11,7 @@ module Langchain::Tool
   class NewsRetriever
     extend Langchain::ToolDefinition
 
-    define_action :get_everything, description: "News Retriever: Search through millions of articles from over 150,000 large and small news sources and blogs" do
+    define_function :get_everything, description: "News Retriever: Search through millions of articles from over 150,000 large and small news sources and blogs" do
       property :q, type: "string", description: 'Keywords or phrases to search for in the article title and body. Surround phrases with quotes (") for exact match. Alternatively you can use the AND / OR / NOT keywords, and optionally group these with parenthesis. Must be URL-encoded'
       property :search_in, type: "string", description: "The fields to restrict your q search to", enum: ["title", "description", "content"]
       property :sources, type: "string", description: "A comma-separated string of identifiers (maximum 20) for the news sources or blogs you want headlines from. Use the /sources endpoint to locate these programmatically or look at the sources index"
@@ -25,7 +25,7 @@ module Langchain::Tool
       property :page, type: "integer", description: "Use this to page through the results if the total results found is greater than the page size"
     end
 
-    define_action :get_top_headlines, description: "News Retriever: Provides live top and breaking headlines for a country, specific category in a country, single source, or multiple sources. You can also search with keywords. Articles are sorted by the earliest date published first" do
+    define_function :get_top_headlines, description: "News Retriever: Provides live top and breaking headlines for a country, specific category in a country, single source, or multiple sources. You can also search with keywords. Articles are sorted by the earliest date published first" do
       property :country, type: "string", description: "The 2-letter ISO 3166-1 code of the country you want to get headlines for", enum: ["ae", "ar", "at", "au", "be", "bg", "br", "ca", "ch", "cn", "co", "cu", "cz", "de", "eg", "fr", "gb", "gr", "hk", "hu", "id", "ie", "il", "in", "it", "jp", "kr", "lt", "lv", "ma", "mx", "my", "ng", "nl", "no", "nz", "ph", "pl", "pt", "ro", "rs", "ru", "sa", "se", "sg", "si", "sk", "th", "tr", "tw", "ua", "us", "ve", "za"]
       property :category, type: "string", description: "The category you want to get headlines for", enum: ["business", "entertainment", "general", "health", "science", "sports", "technology"]
       property :q, type: "string", description: "Keywords or a phrase to search for"
@@ -33,7 +33,7 @@ module Langchain::Tool
       property :page, type: "integer", description: "Use this to page through the results if the total results found is greater than the page size"
     end
 
-    define_action :get_sources, description: "News Retriever: This endpoint returns the subset of news publishers that top headlines (/v2/top-headlines) are available from. It's mainly a convenience endpoint that you can use to keep track of the publishers available on the API, and you can pipe it straight through to your users" do
+    define_function :get_sources, description: "News Retriever: This endpoint returns the subset of news publishers that top headlines (/v2/top-headlines) are available from. It's mainly a convenience endpoint that you can use to keep track of the publishers available on the API, and you can pipe it straight through to your users" do
       property :country, type: "string", description: "The 2-letter ISO 3166-1 code of the country you want to get headlines for. Default: all countries", enum: ["ae", "ar", "at", "au", "be", "bg", "br", "ca", "ch", "cn", "co", "cu", "cz", "de", "eg", "fr", "gb", "gr", "hk", "hu", "id", "ie", "il", "in", "it", "jp", "kr", "lt", "lv", "ma", "mx", "my", "ng", "nl", "no", "nz", "ph", "pl", "pt", "ro", "rs", "ru", "sa", "se", "sg", "si", "sk", "th", "tr", "tw", "ua", "us", "ve", "za"]
       property :category, type: "string", description: "The category you want to get headlines for. Default: all categories", enum: ["business", "entertainment", "general", "health", "science", "sports", "technology"]
       property :language, type: "string", description: "The 2-letter ISO-639-1 code of the language you want to get headlines for", enum: ["ar", "de", "en", "es", "fr", "he", "it", "nl", "no", "pt", "ru", "sv", "ud", "zh"]
