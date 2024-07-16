@@ -57,7 +57,10 @@ module Langchain::ToolDefinition
   #
   # @return [String] The snake_case version of the class name
   def tool_name
-    @tool_name ||= name.gsub(/([A-Z])/, '_\1').gsub(/^_/, "").gsub("::", "").downcase
+    @tool_name ||= name
+      .gsub("::", "_")
+      .gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
+      .downcase
   end
 
   # Manages schemas for functions
