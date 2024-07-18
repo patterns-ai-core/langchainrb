@@ -277,7 +277,7 @@ module Langchain
       if llm.is_a?(Langchain::LLM::Ollama)
         content = String.new # rubocop: disable Performance/UnfreezeString
         if tools.any?
-          content << %([AVAILABLE_TOOLS] #{tools.map(&:to_openai_tools).flatten}[/AVAILABLE_TOOLS])
+          content << %([AVAILABLE_TOOLS] #{tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten}[/AVAILABLE_TOOLS])
         end
         if instructions
           content << "[INST] #{instructions}[/INST]"
