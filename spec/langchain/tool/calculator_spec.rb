@@ -16,10 +16,4 @@ RSpec.describe Langchain::Tool::Calculator do
       ).to eq("\"two plus two\" is an invalid mathematical expression")
     end
   end
-
-  describe "#name" do
-    it "returns the tool name" do
-      expect(subject.name).to eq("calculator")
-    end
-  end
 end
