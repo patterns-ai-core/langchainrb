@@ -82,7 +82,7 @@ module Langchain::ToolDefinition
       if block_given?
         parameters = ParameterBuilder.new(parent_type: "object").build(&)
 
-        if parameters.empty?
+        if parameters[:properties].empty?
           raise ArgumentError, "Function parameters must have at least one property defined within it, if a block is provided"
         end
       end
@@ -154,7 +154,7 @@ module Langchain::ToolDefinition
 
         case type
         when "object"
-          if nested_schema.empty?
+          if nested_schema[:properties].empty?
             raise ArgumentError, "Object properties must have at least one property defined within it"
           end
           prop = nested_schema
