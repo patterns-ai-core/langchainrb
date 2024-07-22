@@ -4,6 +4,7 @@ PATH
     langchainrb (0.14.0)
       baran (~> 0.1.9)
       colorize (~> 1.1.0)
+      deep_merge
       json-schema (~> 4)
       matrix
       pragmatic_segmenter (~> 0.3.0)
@@ -81,6 +82,7 @@ GEM
       rexml
     crass (1.0.6)
     date (3.3.4)
+    deep_merge (1.2.2)
     diff-lcs (1.5.1)
     docx (0.8.0)
       nokogiri (~> 1.13, >= 1.13.0)
