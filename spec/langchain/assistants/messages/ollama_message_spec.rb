@@ -56,11 +56,11 @@ RSpec.describe Langchain::Messages::OllamaMessage do
     context "when tool_calls is not empty" do
       let(:tool_call) {
         {
-          "function": {
-            "name": "get_current_weather",
-            "arguments": {
-              "format": "celsius",
-              "location": "Paris"
+          function: {
+            name: "get_current_weather",
+            arguments: {
+              format: "celsius",
+              location: "Paris"
             }
           }
         }
@@ -73,7 +73,6 @@ RSpec.describe Langchain::Messages::OllamaMessage do
       end
     end
   end
-
 
   describe "#llm?" do
     context "when role is assistant" do

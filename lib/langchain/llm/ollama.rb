@@ -112,7 +112,7 @@ module Langchain::LLM
         system: system,
         template: template,
         context: context,
-        stream: block_given?,
+        stream: block_given?, # rubocop:disable Performance/BlockGivenWithExplicitBlock
         raw: raw
       }.compact
 
@@ -172,7 +172,7 @@ module Langchain::LLM
     #   content: the content of the message
     #   images (optional): a list of images to include in the message (for multimodal models such as llava)
     def chat(messages:, model: nil, **params, &block)
-      parameters = chat_parameters.to_params(params.merge(messages:, model:, stream: block_given?))
+      parameters = chat_parameters.to_params(params.merge(messages:, model:, stream: block_given?)) # rubocop:disable Performance/BlockGivenWithExplicitBlock
       responses_stream = []
 
       client.post("api/chat", parameters) do |req|
