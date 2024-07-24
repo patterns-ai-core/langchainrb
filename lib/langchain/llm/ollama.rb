@@ -19,15 +19,16 @@ module Langchain::LLM
     }.freeze
 
     EMBEDDING_SIZES = {
-      codellama: 4_096,
+      "codellama": 4_096,
       "dolphin-mixtral": 4_096,
-      llama2: 4_096,
-      llama3: 4_096,
-      llava: 4_096,
-      mistral: 4_096,
+      "llama2": 4_096,
+      "llama3": 4_096,
+      "llama3.1": 4_096,
+      "llava": 4_096,
+      "mistral": 4_096,
       "mistral-openorca": 4_096,
-      mixtral: 4_096,
-      tinydolphin: 2_048
+      "mixtral": 4_096,
+      "tinydolphin": 2_048
     }.freeze
 
     # Initialize the Ollama client
