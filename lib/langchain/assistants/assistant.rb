@@ -43,12 +43,6 @@ module Langchain
         raise ArgumentError, "Invalid LLM; currently only #{SUPPORTED_LLMS.join(", ")} are supported"
       end
 
-      if llm.is_a?(Langchain::LLM::Ollama)
-        unless llm.defaults[:completion_model_name] == "mistral:7b-instruct-v0.3-fp16"
-          raise ArgumentError, "Currently only `mistral:7b-instruct-v0.3-fp16` model is supported for Ollama LLM"
-        end
-      end
-
       unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
         raise ArgumentError, "Tools must be an array of objects extending Langchain::ToolDefinition"
       end
@@ -220,14 +214,7 @@ module Langchain
     def handle_user_or_tool_message
       response = chat_with_llm
 
-      # With Ollama, we're calling the `llm.complete()` method
-      content = if llm.is_a?(Langchain::LLM::Ollama)
-        response.completion
-      else
-        response.chat_completion
-      end
-
-      add_message(role: response.role, content: content, tool_calls: response.tool_calls)
+      add_message(role: response.role, content: response.chat_completion, tool_calls: response.tool_calls)
       record_used_tokens(response.prompt_tokens, response.completion_tokens, response.total_tokens)
 
       set_state_for(response: response)
@@ -253,7 +240,7 @@ module Langchain
       run_tools(thread.messages.last.tool_calls)
       :in_progress
     rescue => e
-      Langchain.logger.error("Error running tools: #{e.message}")
+      Langchain.logger.error("Error running tools: #{e.message}; #{e.backtrace.join('\n')}")
       :failed
     end
 
@@ -274,17 +261,7 @@ module Langchain
     end
 
     def initialize_instructions
-      if llm.is_a?(Langchain::LLM::Ollama)
-        content = String.new # rubocop: disable Performance/UnfreezeString
-        if tools.any?
-          content << %([AVAILABLE_TOOLS] #{tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten}[/AVAILABLE_TOOLS])
-        end
-        if instructions
-          content << "[INST] #{instructions}[/INST]"
-        end
-
-        add_message(role: "system", content: content)
-      elsif llm.is_a?(Langchain::LLM::OpenAI)
+      if llm.is_a?(Langchain::LLM::OpenAI)
         add_message(role: "system", content: instructions) if instructions
       end
     end
@@ -297,7 +274,7 @@ module Langchain
 
       params = {}
 
-      if llm.is_a?(Langchain::LLM::OpenAI)
+      if llm.is_a?(Langchain::LLM::OpenAI) || llm.is_a?(Langchain::LLM::Ollama)
         if tools.any?
           params[:tools] = tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten
           params[:tool_choice] = "auto"
@@ -317,14 +294,8 @@ module Langchain
       end
       # TODO: Not sure that tool_choice should always be "auto"; Maybe we can let the user toggle it.
 
-      if llm.is_a?(Langchain::LLM::Ollama)
-        params[:raw] = true
-        params[:prompt] = thread.prompt_of_concatenated_messages
-        llm.complete(**params)
-      else
-        params[:messages] = thread.array_of_message_hashes
-        llm.chat(**params)
-      end
+      params[:messages] = thread.array_of_message_hashes
+      llm.chat(**params)
     end
 
     # Run the tools automatically
@@ -333,14 +304,12 @@ module Langchain
     def run_tools(tool_calls)
       # Iterate over each function invocation and submit tool output
       tool_calls.each do |tool_call|
-        tool_call_id, tool_name, method_name, tool_arguments = if llm.is_a?(Langchain::LLM::Ollama)
-          extract_ollama_tool_call(tool_call: tool_call)
-        elsif llm.is_a?(Langchain::LLM::OpenAI)
+        tool_call_id, tool_name, method_name, tool_arguments = if llm.is_a?(Langchain::LLM::Anthropic)
+          extract_anthropic_tool_call(tool_call: tool_call)
+        elsif llm.is_a?(Langchain::LLM::OpenAI) || llm.is_a?(Langchain::LLM::Ollama)
           extract_openai_tool_call(tool_call: tool_call)
         elsif [Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI].include?(llm.class)
           extract_google_gemini_tool_call(tool_call: tool_call)
-        elsif llm.is_a?(Langchain::LLM::Anthropic)
-          extract_anthropic_tool_call(tool_call: tool_call)
         end
 
         tool_instance = tools.find do |t|
@@ -353,12 +322,6 @@ module Langchain
       end
     end
 
-    def extract_ollama_tool_call(tool_call:)
-      tool_name, method_name = tool_call.dig("name").split("__")
-      tool_arguments = tool_call.dig("arguments").transform_keys(&:to_sym)
-      [nil, tool_name, method_name, tool_arguments]
-    end
-
     # Extract the tool call information from the OpenAI tool call hash
     #
     # @param tool_call [Hash] The tool call hash
@@ -368,7 +331,13 @@ module Langchain
 
       function_name = tool_call.dig("function", "name")
       tool_name, method_name = function_name.split("__")
-      tool_arguments = JSON.parse(tool_call.dig("function", "arguments"), symbolize_names: true)
+
+      tool_arguments = tool_call.dig("function", "arguments")
+      tool_arguments = if tool_arguments.is_a?(Hash)
+        Langchain::Utils::HashTransformer.symbolize_keys(tool_arguments)
+      else
+        JSON.parse(tool_arguments, symbolize_names: true)
+      end
 
       [tool_call_id, tool_name, method_name, tool_arguments]
     end

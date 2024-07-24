@@ -30,27 +30,15 @@ module Langchain
         @tool_call_id = tool_call_id
       end
 
-      def to_s
-        send(:"to_#{role}_message_string")
-      end
-
-      def to_system_message_string
-        content
-      end
-
-      def to_user_message_string
-        "[INST] #{content}[/INST]"
-      end
-
-      def to_tool_message_string
-        "[TOOL_RESULTS] #{content}[/TOOL_RESULTS]"
-      end
-
-      def to_assistant_message_string
-        if tool_calls.any?
-          %("[TOOL_CALLS] #{tool_calls}")
-        else
-          content
+      # Convert the message to an OpenAI API-compatible hash
+      #
+      # @return [Hash] The message as an OpenAI API-compatible hash
+      def to_hash
+        {}.tap do |h|
+          h[:role] = role
+          h[:content] = content if content # Content is nil for tool calls
+          h[:tool_calls] = tool_calls if tool_calls.any?
+          h[:tool_call_id] = tool_call_id if tool_call_id
         end
       end
 

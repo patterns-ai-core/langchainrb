@@ -48,21 +48,7 @@ module Langchain::LLM
     end
 
     def tool_calls
-      if chat_completion && (parsed_tool_calls = JSON.parse(chat_completion))
-        [parsed_tool_calls]
-      elsif completion&.include?("[TOOL_CALLS]") && (
-        parsed_tool_calls = JSON.parse(
-          completion
-            # Slice out the serialize JSON
-            .slice(/\{.*\}/)
-            # Replace hash rocket with colon
-            .gsub("=>", ":")
-        )
-      )
-        [parsed_tool_calls]
-      else
-        []
-      end
+      Array(raw_response.dig("message", "tool_calls"))
     end
 
     private

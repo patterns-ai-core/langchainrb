@@ -13,9 +13,9 @@ module Langchain::LLM
 
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "llama3",
-      embeddings_model_name: "llama3",
-      chat_completion_model_name: "llama3"
+      completion_model_name: "llama3.1",
+      embeddings_model_name: "llama3.1",
+      chat_completion_model_name: "llama3.1"
     }.freeze
 
     EMBEDDING_SIZES = {
@@ -26,7 +26,8 @@ module Langchain::LLM
       llava: 4_096,
       mistral: 4_096,
       "mistral-openorca": 4_096,
-      mixtral: 4_096
+      mixtral: 4_096,
+      tinydolphin: 2_048
     }.freeze
 
     # Initialize the Ollama client
@@ -36,7 +37,7 @@ module Langchain::LLM
     def initialize(url: "http://localhost:11434", default_options: {})
       depends_on "faraday"
       @url = url
-      @defaults = DEFAULTS.deep_merge(default_options)
+      @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
         model: {default: @defaults[:chat_completion_model_name]},
         temperature: {default: @defaults[:temperature]},
@@ -111,7 +112,7 @@ module Langchain::LLM
         system: system,
         template: template,
         context: context,
-        stream: block.present?,
+        stream: block_given?,
         raw: raw
       }.compact
 
@@ -171,7 +172,7 @@ module Langchain::LLM
     #   content: the content of the message
     #   images (optional): a list of images to include in the message (for multimodal models such as llava)
     def chat(messages:, model: nil, **params, &block)
-      parameters = chat_parameters.to_params(params.merge(messages:, model:, stream: block.present?))
+      parameters = chat_parameters.to_params(params.merge(messages:, model:, stream: block_given?))
       responses_stream = []
 
       client.post("api/chat", parameters) do |req|
@@ -286,13 +287,10 @@ module Langchain::LLM
       OllamaResponse.new(final_response, model: parameters[:model])
     end
 
+    # BUG: If streamed, this method does not currently return the tool_calls response.
     def generate_final_chat_completion_response(responses_stream, parameters)
-      final_response = responses_stream.last.merge(
-        "message" => {
-          "role" => "assistant",
-          "content" => responses_stream.map { |resp| resp.dig("message", "content") }.join
-        }
-      )
+      final_response = responses_stream.last
+      final_response["message"]["content"] = responses_stream.map { |resp| resp.dig("message", "content") }.join
 
       OllamaResponse.new(final_response, model: parameters[:model])
     end

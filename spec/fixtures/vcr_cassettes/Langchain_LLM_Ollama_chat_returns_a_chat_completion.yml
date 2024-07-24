@@ -5,7 +5,7 @@ http_interactions:
     uri: http://localhost:11434/api/chat
     body:
       encoding: UTF-8
-      string: '{"messages":[{"role":"user","content":"Hey! How are you?"}],"model":"llama3","stream":false,"temperature":0.0}'
+      string: '{"messages":[{"role":"user","content":"Hey! How are you?"}],"model":"llama3.1","stream":false,"temperature":0.0}'
     headers:
       User-Agent:
       - Faraday v2.9.0
