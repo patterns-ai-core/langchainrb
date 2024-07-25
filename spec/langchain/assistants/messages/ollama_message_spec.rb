@@ -6,7 +6,7 @@ RSpec.describe Langchain::Messages::OllamaMessage do
   let(:valid_roles) { ["system", "assistant", "user", "tool"] }
   let(:role) { "assistant" }
   let(:content) { "This is a message" }
-  let(:raw_response) { JSON.parse(File.read("spec/fixtures/llm/ollama/complete_mistral_tool_calls.json")) }
+  let(:raw_response) { JSON.parse(File.read("spec/fixtures/llm/ollama/chat_with_tool_calls.json")) }
   let(:response) { Langchain::LLM::OllamaResponse.new(raw_response) }
   let(:tool_calls) { response.tool_calls }
   let(:tool_call_id) { "12345" }
@@ -36,39 +36,40 @@ RSpec.describe Langchain::Messages::OllamaMessage do
     end
   end
 
-  describe "#to_s" do
-    context "when role is system" do
-      it "returns the content as is" do
-        message = described_class.new(role: "system", content: content)
-        expect(message.to_s).to eq(content)
+  describe "#to_hash" do
+    context "when role and content are not nil" do
+      let(:message) { described_class.new(role: "user", content: "Hello, world!", tool_calls: [], tool_call_id: nil) }
+
+      it "returns a hash with the role and content key" do
+        expect(message.to_hash).to eq({role: "user", content: "Hello, world!"})
       end
     end
 
-    context "when role is user" do
-      it "returns the content wrapped with [INST] tags" do
-        message = described_class.new(role: "user", content: content)
-        expect(message.to_s).to eq("[INST] #{content}[/INST]")
+    context "when tool_call_id is not nil" do
+      let(:message) { described_class.new(role: "tool", content: "Hello, world!", tool_calls: [], tool_call_id: "123") }
+
+      it "returns a hash with the tool_call_id key" do
+        expect(message.to_hash).to eq({role: "tool", content: "Hello, world!", tool_call_id: "123"})
       end
     end
 
-    context "when role is tool" do
-      it "returns the content wrapped with [TOOL_RESULTS] tags" do
-        message = described_class.new(role: "tool", content: content)
-        expect(message.to_s).to eq("[TOOL_RESULTS] #{content}[/TOOL_RESULTS]")
-      end
-    end
+    context "when tool_calls is not empty" do
+      let(:tool_call) {
+        {
+          function: {
+            name: "get_current_weather",
+            arguments: {
+              format: "celsius",
+              location: "Paris"
+            }
+          }
+        }
+      }
 
-    context "when role is assistant and tool_calls are present" do
-      it "returns the tool_calls formatted as a string" do
-        message = described_class.new(role: "assistant", content: content, tool_calls: tool_calls)
-        expect(message.to_s).to eq(%("[TOOL_CALLS] #{tool_calls}"))
-      end
-    end
+      let(:message) { described_class.new(role: "assistant", content: "", tool_calls: [tool_call], tool_call_id: nil) }
 
-    context "when role is assistant and tool_calls are absent" do
-      it "returns the content as is" do
-        message = described_class.new(role: "assistant", content: content, tool_calls: [])
-        expect(message.to_s).to eq(content)
+      it "returns a hash with the tool_calls key" do
+        expect(message.to_hash).to eq({role: "assistant", content: "", tool_calls: [tool_call]})
       end
     end
   end
