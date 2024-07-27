@@ -195,11 +195,11 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    describe "#extract_openai_tool_call" do
+    describe "#extract_tool_call_args" do
       let(:tool_call) { {"id" => "call_9TewGANaaIjzY31UCpAAGLeV", "type" => "function", "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}} }
 
       it "returns correct data" do
-        expect(subject.send(:extract_openai_tool_call, tool_call: tool_call)).to eq(["call_9TewGANaaIjzY31UCpAAGLeV", "langchain_tool_calculator", "execute", {input: "2+2"}])
+        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["call_9TewGANaaIjzY31UCpAAGLeV", "langchain_tool_calculator", "execute", {input: "2+2"}])
       end
     end
 
@@ -385,11 +385,11 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    describe "#extract_google_gemini_tool_call" do
+    describe "#extract_tool_call_args" do
       let(:tool_call) { {"functionCall" => {"name" => "langchain_tool_calculator__execute", "args" => {"input" => "2+2"}}} }
 
       it "returns correct data" do
-        expect(subject.send(:extract_google_gemini_tool_call, tool_call: tool_call)).to eq(["langchain_tool_calculator__execute", "langchain_tool_calculator", "execute", {input: "2+2"}])
+        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["langchain_tool_calculator__execute", "langchain_tool_calculator", "execute", {input: "2+2"}])
       end
     end
   end
@@ -585,7 +585,7 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    describe "#extract_anthropic_tool_call" do
+    describe "#extract_tool_call_args" do
       let(:tool_call) {
         {
           "type" => "tool_use",
@@ -599,7 +599,7 @@ RSpec.describe Langchain::Assistant do
       }
 
       it "returns correct data" do
-        expect(subject.send(:extract_anthropic_tool_call, tool_call: tool_call)).to eq(["toolu_01TjusbFApEbwKPRWTRwzadR", "langchain_tool_news_retriever", "get_top_headlines", {country: "us", page_size: 10}])
+        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["toolu_01TjusbFApEbwKPRWTRwzadR", "langchain_tool_news_retriever", "get_top_headlines", {country: "us", page_size: 10}])
       end
     end
   end
