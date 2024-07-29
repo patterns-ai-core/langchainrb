@@ -96,7 +96,7 @@ module Langchain::Vectorsearch
 
       status_code, response = @client.database.insert(@table_name, data)
       raise "Failed to insert texts: #{response}" if status_code != 200
-      response
+      JSON.parse(response)
     end
 
     # Search for similar texts

@@ -333,10 +333,7 @@ module Langchain
       module Adapters
         class Base
           def build_chat_params(tools:, instructions:, messages:)
-            {
-              messages: messages,
-              tools: tools
-            }
+            raise NotImplementedError, "Subclasses must implement build_chat_params"
           end
 
           def extract_tool_call_args(tool_call:)
@@ -349,6 +346,14 @@ module Langchain
         end
 
         class Ollama < Base
+          def build_chat_params(tools:, instructions:, messages:)
+            params = {messages: messages}
+            if tools.any?
+              params[:tools] = tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten
+            end
+            params
+          end
+
           def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
             Langchain::Messages::OllamaMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
@@ -357,7 +362,7 @@ module Langchain
           #
           # @param tool_call [Hash] The tool call hash
           # @return [Array] The tool call information
-          def extract_tool_call_args(tool_call)
+          def extract_tool_call_args(tool_call:)
             tool_call_id = tool_call.dig("id")
 
             function_name = tool_call.dig("function", "name")
