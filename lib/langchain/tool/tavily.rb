@@ -1,16 +1,30 @@
 # frozen_string_literal: true
 
 module Langchain::Tool
-  class Tavily < Base
-    #
-    # Tavily Search is a robust search API tailored specifically for LLM Agents.
-    # It seamlessly integrates with diverse data sources to ensure a superior, relevant search experience.
-    #
-    # Usage:
-    #    tavily = Langchain::Tool::Tavily.new(api_key: ENV["TAVILY_API_KEY"])
-    #
-    NAME = "tavily"
-    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
+  #
+  # Tavily Search is a robust search API tailored specifically for LLM Agents.
+  # It seamlessly integrates with diverse data sources to ensure a superior, relevant search experience.
+  #
+  # Usage:
+  #    tavily = Langchain::Tool::Tavily.new(api_key: ENV["TAVILY_API_KEY"])
+  #
+  class Tavily
+    extend Langchain::ToolDefinition
+
+    define_function :search, description: "Tavily Tool: Robust search API" do
+      property :query, type: "string", description: "The search query string", required: true
+      property :search_depth, type: "string", description: "The depth of the search: basic for quick results and advanced for indepth high quality results but longer response time", enum: ["basic", "advanced"]
+      property :include_images, type: "boolean", description: "Include a list of query related images in the response"
+      property :include_answer, type: "boolean", description: "Include answers in the search results"
+      property :include_raw_content, type: "boolean", description: "Include raw content in the search results"
+      property :max_results, type: "integer", description: "The number of maximum search results to return"
+      property :include_domains, type: "array", description: "A list of domains to specifically include in the search results" do
+        item type: "string"
+      end
+      property :exclude_domains, type: "array", description: "A list of domains to specifically exclude from the search results" do
+        item type: "string"
+      end
+    end
 
     def initialize(api_key:)
       @api_key = api_key

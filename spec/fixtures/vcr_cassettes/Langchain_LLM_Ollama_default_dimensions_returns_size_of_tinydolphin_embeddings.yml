@@ -5,7 +5,7 @@ http_interactions:
     uri: http://localhost:11434/api/embeddings
     body:
       encoding: UTF-8
-      string: '{"prompt":"test","model":"tinydolphin","options":{"temperature":0.8}}'
+      string: '{"prompt":"test","model":"tinydolphin","options":{"temperature":0.0}}'
     headers:
       User-Agent:
       - Faraday v2.7.12

@@ -50,7 +50,7 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    describe "submit_tool_output" do
+    describe "#submit_tool_output" do
       it "adds a message to the thread" do
         subject.submit_tool_output(tool_call_id: "123", output: "bar")
         expect(thread.messages.last.role).to eq("tool")
@@ -75,7 +75,7 @@ RSpec.describe Langchain::Assistant do
                   {
                     "id" => "call_9TewGANaaIjzY31UCpAAGLeV",
                     "type" => "function",
-                    "function" => {"name" => "calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}
+                    "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}
                   }
                 ]
               },
@@ -96,7 +96,7 @@ RSpec.describe Langchain::Assistant do
                 {role: "system", content: instructions},
                 {role: "user", content: "Please calculate 2+2"}
               ],
-              tools: calculator.to_openai_tools,
+              tools: calculator.class.function_schemas.to_openai_format,
               tool_choice: "auto"
             )
             .and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response))
@@ -141,14 +141,14 @@ RSpec.describe Langchain::Assistant do
                 {role: "user", content: "Please calculate 2+2"},
                 {role: "assistant", content: "", tool_calls: [
                   {
-                    "function" => {"arguments" => "{\"input\":\"2+2\"}", "name" => "calculator__execute"},
+                    "function" => {"arguments" => "{\"input\":\"2+2\"}", "name" => "langchain_tool_calculator__execute"},
                     "id" => "call_9TewGANaaIjzY31UCpAAGLeV",
                     "type" => "function"
                   }
                 ]},
                 {content: "4.0", role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
               ],
-              tools: calculator.to_openai_tools,
+              tools: calculator.class.function_schemas.to_openai_format,
               tool_choice: "auto"
             )
             .and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response2))
@@ -195,11 +195,38 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    describe "#extract_openai_tool_call" do
-      let(:tool_call) { {"id" => "call_9TewGANaaIjzY31UCpAAGLeV", "type" => "function", "function" => {"name" => "calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}} }
+    describe "#extract_tool_call_args" do
+      let(:tool_call) { {"id" => "call_9TewGANaaIjzY31UCpAAGLeV", "type" => "function", "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}} }
 
       it "returns correct data" do
-        expect(subject.send(:extract_openai_tool_call, tool_call: tool_call)).to eq(["call_9TewGANaaIjzY31UCpAAGLeV", "calculator", "execute", {input: "2+2"}])
+        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["call_9TewGANaaIjzY31UCpAAGLeV", "langchain_tool_calculator", "execute", {input: "2+2"}])
+      end
+    end
+
+    describe "#set_state_for" do
+      context "when response contains tool_calls" do
+        let(:tool_call) { {"name" => "weather__execute", "arguments" => {"input" => "SF"}} }
+        let(:response) { double(tool_calls: [tool_call]) }
+
+        it "it returns :in_progress" do
+          expect(subject.send(:set_state_for, response: response)).to eq(:in_progress)
+        end
+      end
+
+      context "when response contains chat_completion" do
+        let(:response) { double(tool_calls: [], chat_completion: "The weather in SF is sunny") }
+
+        it "it returns :completed" do
+          expect(subject.send(:set_state_for, response: response)).to eq(:completed)
+        end
+      end
+
+      context "when response contains chat_completion" do
+        let(:response) { double(tool_calls: [], chat_completion: nil, completion: nil) }
+
+        it "it returns :completed" do
+          expect(subject.send(:set_state_for, response: response)).to eq(:failed)
+        end
       end
     end
   end
@@ -257,7 +284,7 @@ RSpec.describe Langchain::Assistant do
                 "parts" => [
                   {
                     "functionCall" => {
-                      "name" => "calculator__execute",
+                      "name" => "langchain_tool_calculator__execute",
                       "args" => {"input" => "2+2"}
                     }
                   }
@@ -277,7 +304,7 @@ RSpec.describe Langchain::Assistant do
           allow(subject.llm).to receive(:chat)
             .with(
               messages: [{role: "user", parts: [{text: "Please calculate 2+2"}]}],
-              tools: calculator.to_google_gemini_tools,
+              tools: calculator.class.function_schemas.to_google_gemini_format,
               tool_choice: "auto",
               system: instructions
             )
@@ -315,10 +342,10 @@ RSpec.describe Langchain::Assistant do
             .with(
               messages: [
                 {role: "user", parts: [{text: "Please calculate 2+2"}]},
-                {role: "model", parts: [{"functionCall" => {"name" => "calculator__execute", "args" => {"input" => "2+2"}}}]},
-                {role: "function", parts: [{functionResponse: {name: "calculator__execute", response: {name: "calculator__execute", content: "4.0"}}}]}
+                {role: "model", parts: [{"functionCall" => {"name" => "langchain_tool_calculator__execute", "args" => {"input" => "2+2"}}}]},
+                {role: "function", parts: [{functionResponse: {name: "langchain_tool_calculator__execute", response: {name: "langchain_tool_calculator__execute", content: "4.0"}}}]}
               ],
-              tools: calculator.to_google_gemini_tools,
+              tools: calculator.class.function_schemas.to_google_gemini_format,
               tool_choice: "auto",
               system: instructions
             )
@@ -358,11 +385,11 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    describe "#extract_google_gemini_tool_call" do
-      let(:tool_call) { {"functionCall" => {"name" => "calculator__execute", "args" => {"input" => "2+2"}}} }
+    describe "#extract_tool_call_args" do
+      let(:tool_call) { {"functionCall" => {"name" => "langchain_tool_calculator__execute", "args" => {"input" => "2+2"}}} }
 
       it "returns correct data" do
-        expect(subject.send(:extract_google_gemini_tool_call, tool_call: tool_call)).to eq(["calculator__execute", "calculator", "execute", {input: "2+2"}])
+        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["langchain_tool_calculator__execute", "langchain_tool_calculator", "execute", {input: "2+2"}])
       end
     end
   end
@@ -427,7 +454,7 @@ RSpec.describe Langchain::Assistant do
             {
               "type" => "tool_use",
               "id" => "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
-              "name" => "calculator__execute",
+              "name" => "langchain_tool_calculator__execute",
               "input" => {
                 "input" => "2+2"
               }
@@ -463,7 +490,7 @@ RSpec.describe Langchain::Assistant do
           allow(subject.llm).to receive(:chat)
             .with(
               messages: [{role: "user", content: "Please calculate 2+2"}],
-              tools: calculator.to_anthropic_tools,
+              tools: calculator.class.function_schemas.to_anthropic_format,
               tool_choice: {type: "auto"},
               system: instructions
             )
@@ -512,13 +539,13 @@ RSpec.describe Langchain::Assistant do
                   {
                     "type" => "tool_use",
                     "id" => "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
-                    "name" => "calculator__execute",
+                    "name" => "langchain_tool_calculator__execute",
                     "input" => {"input" => "2+2"}
                   }
                 ]},
                 {role: "user", content: [{type: "tool_result", tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H", content: "4.0"}]}
               ],
-              tools: calculator.to_anthropic_tools,
+              tools: calculator.class.function_schemas.to_anthropic_format,
               tool_choice: {type: "auto"},
               system: instructions
             )
@@ -558,12 +585,12 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    describe "#extract_anthropic_tool_call" do
+    describe "#extract_tool_call_args" do
       let(:tool_call) {
         {
           "type" => "tool_use",
           "id" => "toolu_01TjusbFApEbwKPRWTRwzadR",
-          "name" => "news_retriever__get_top_headlines",
+          "name" => "langchain_tool_news_retriever__get_top_headlines",
           "input" => {
             "country" => "us",
             "page_size" => 10
@@ -572,7 +599,7 @@ RSpec.describe Langchain::Assistant do
       }
 
       it "returns correct data" do
-        expect(subject.send(:extract_anthropic_tool_call, tool_call: tool_call)).to eq(["toolu_01TjusbFApEbwKPRWTRwzadR", "news_retriever", "get_top_headlines", {country: "us", page_size: 10}])
+        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["toolu_01TjusbFApEbwKPRWTRwzadR", "langchain_tool_news_retriever", "get_top_headlines", {country: "us", page_size: 10}])
       end
     end
   end
@@ -580,4 +607,16 @@ RSpec.describe Langchain::Assistant do
   xdescribe "#clear_thread!"
 
   xdescribe "#instructions="
+
+  xdescribe "when llm is Ollama" do
+    xdescribe "#set_state_for" do
+      xcontext "when response contains completion" do
+        let(:response) { double(tool_calls: [], completion: "The weather in SF is sunny") }
+
+        xit "it returns :completed" do
+          expect(subject.send(:set_state_for, response: response)).to eq(:completed)
+        end
+      end
+    end
+  end
 end

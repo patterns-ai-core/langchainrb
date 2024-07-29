@@ -36,7 +36,7 @@ module Langchain::LLM
     end
 
     def prompt_tokens
-      raw_response.dig("prompt_eval_count") if done?
+      raw_response.fetch("prompt_eval_count", 0) if done?
     end
 
     def completion_tokens
@@ -45,6 +45,10 @@ module Langchain::LLM
 
     def total_tokens
       prompt_tokens + completion_tokens if done?
+    end
+
+    def tool_calls
+      Array(raw_response.dig("message", "tool_calls"))
     end
 
     private

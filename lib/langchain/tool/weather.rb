@@ -1,23 +1,27 @@
 # frozen_string_literal: true
 
 module Langchain::Tool
-  class Weather < Base
-    #
-    # A weather tool that gets current weather data
-    #
-    # Current weather data is free for 1000 calls per day (https://home.openweathermap.org/api_keys)
-    # Forecast and historical data require registration with credit card, so not supported yet.
-    #
-    # Gem requirements:
-    #     gem "open-weather-ruby-client", "~> 0.3.0"
-    #     api_key: https://home.openweathermap.org/api_keys
-    #
-    # Usage:
-    #     weather = Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
-    #     weather.execute(input: "Boston, MA; imperial")
-    #
-    NAME = "weather"
-    ANNOTATIONS_PATH = Langchain.root.join("./langchain/tool/#{NAME}/#{NAME}.json").to_path
+  #
+  # A weather tool that gets current weather data
+  #
+  # Current weather data is free for 1000 calls per day (https://home.openweathermap.org/api_keys)
+  # Forecast and historical data require registration with credit card, so not supported yet.
+  #
+  # Gem requirements:
+  #     gem "open-weather-ruby-client", "~> 0.3.0"
+  #     api_key: https://home.openweathermap.org/api_keys
+  #
+  # Usage:
+  #     weather = Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
+  #     weather.execute(input: "Boston, MA; imperial")
+  #
+  class Weather
+    extend Langchain::ToolDefinition
+    include Langchain::DependencyHelper
+
+    define_function :execute, description: "Returns current weather for a city" do
+      property :input, type: "string", description: "Comma separated city and unit (optional: imperial, metric, or standard)", required: true
+    end
 
     attr_reader :client, :units
 
