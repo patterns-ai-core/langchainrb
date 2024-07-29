@@ -10,3 +10,6 @@ inherit_gem:
   standard: config/base.yml
   standard-performance: config/base.yml
   standard-custom: config/base.yml
+
+Style/ArgumentsForwarding:
+  Enabled: false
