@@ -138,7 +138,7 @@ module Langchain::Vectorsearch
     def similarity_search_by_vector(embedding:, k: 4)
       load_default_schema
 
-      client.hybrid_search(
+      client.search(
         collection_name: index_name,
         output_fields: ["id", "content"], # Add "vectors" if need to have full vectors returned.
         top_k: k.to_s,
