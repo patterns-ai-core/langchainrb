@@ -35,8 +35,8 @@ module Langchain
       @logger.respond_to?(method, include_private)
     end
 
-    def method_missing(method, *args, **kwargs, &)
-      return @logger.send(method, *args, **kwargs, &) unless @levels.include?(method)
+    def method_missing(method, *args, **kwargs, &block)
+      return @logger.send(method, *args, **kwargs, &block) unless @levels.include?(method)
 
       for_class = kwargs.delete(:for)
       for_class_name = for_class&.name
