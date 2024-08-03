@@ -10,7 +10,7 @@ module Langchain::LLM
       temperature: 0.0
     }
 
-    attr_reader :defaults, :api_key
+    attr_reader :defaults, :api_key, :model
 
     def initialize(api_key:, default_options: {})
       @api_key = api_key
@@ -27,6 +27,7 @@ module Langchain::LLM
         system: :system_instruction,
         tool_choice: :tool_config
       )
+      @model = @defaults[:chat_completion_model_name]
     end
 
     # Generate a chat completion for a given prompt
@@ -58,7 +59,7 @@ module Langchain::LLM
       parameters[:generation_config][:stop_sequences] ||= parameters[:stop] if parameters[:stop]
       parameters.delete(:stop)
 
-      uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{parameters[:model]}:generateContent?key=#{api_key}")
+      uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{model}:generateContent?key=#{api_key}")
 
       request = Net::HTTP::Post.new(uri)
       request.content_type = "application/json"
@@ -69,8 +70,7 @@ module Langchain::LLM
       end
 
       parsed_response = JSON.parse(response.body)
-
-      wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
+      wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: model)
 
       if wrapped_response.chat_completion || Array(wrapped_response.tool_calls).any?
         wrapped_response
