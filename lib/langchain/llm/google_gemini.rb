@@ -112,7 +112,15 @@ module Langchain::LLM
       parameters[:generation_config][:stop_sequences] ||= parameters[:stop] if parameters[:stop]
       parameters.delete(:stop)
 
-      Langchain::Utils::HashTransformer.deep_transform_keys(parameters) { |key| Langchain::Utils::HashTransformer.camelize_lower(key.to_s).to_sym }
+      cached_tools = parameters.dig(:tools, :function_declarations) || []
+
+      formatted_gemini_params = Langchain::Utils::HashTransformer.deep_transform_keys(parameters) { |key| Langchain::Utils::HashTransformer.camelize_lower(key.to_s).to_sym }
+
+      if formatted_gemini_params[:tools]
+        formatted_gemini_params[:tools][:functionDeclarations] = cached_tools
+      end
+
+      formatted_gemini_params
     end
   end
 end
