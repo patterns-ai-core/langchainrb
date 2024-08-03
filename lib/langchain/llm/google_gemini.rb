@@ -44,26 +44,11 @@ module Langchain::LLM
 
       raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
 
-      parameters = chat_parameters.to_params(params)
-      parameters[:generation_config] ||= {}
-      parameters[:generation_config][:temperature] ||= parameters[:temperature] if parameters[:temperature]
-      parameters.delete(:temperature)
-      parameters[:generation_config][:top_p] ||= parameters[:top_p] if parameters[:top_p]
-      parameters.delete(:top_p)
-      parameters[:generation_config][:top_k] ||= parameters[:top_k] if parameters[:top_k]
-      parameters.delete(:top_k)
-      parameters[:generation_config][:max_output_tokens] ||= parameters[:max_tokens] if parameters[:max_tokens]
-      parameters.delete(:max_tokens)
-      parameters[:generation_config][:response_mime_type] ||= parameters[:response_format] if parameters[:response_format]
-      parameters.delete(:response_format)
-      parameters[:generation_config][:stop_sequences] ||= parameters[:stop] if parameters[:stop]
-      parameters.delete(:stop)
-
       uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{model}:generateContent?key=#{api_key}")
 
       request = Net::HTTP::Post.new(uri)
       request.content_type = "application/json"
-      request.body = Langchain::Utils::HashTransformer.deep_transform_keys(parameters) { |key| Langchain::Utils::HashTransformer.camelize_lower(key.to_s).to_sym }.to_json
+      request.body = build_gemini_api_http_parameters(params).to_json
 
       response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
         http.request(request)
@@ -107,6 +92,27 @@ module Langchain::LLM
       parsed_response = JSON.parse(response.body)
 
       Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: model)
+    end
+
+    private
+
+    def build_gemini_api_http_parameters(params)
+      parameters = chat_parameters.to_params(params)
+      parameters[:generation_config] ||= {}
+      parameters[:generation_config][:temperature] ||= parameters[:temperature] if parameters[:temperature]
+      parameters.delete(:temperature)
+      parameters[:generation_config][:top_p] ||= parameters[:top_p] if parameters[:top_p]
+      parameters.delete(:top_p)
+      parameters[:generation_config][:top_k] ||= parameters[:top_k] if parameters[:top_k]
+      parameters.delete(:top_k)
+      parameters[:generation_config][:max_output_tokens] ||= parameters[:max_tokens] if parameters[:max_tokens]
+      parameters.delete(:max_tokens)
+      parameters[:generation_config][:response_mime_type] ||= parameters[:response_format] if parameters[:response_format]
+      parameters.delete(:response_format)
+      parameters[:generation_config][:stop_sequences] ||= parameters[:stop] if parameters[:stop]
+      parameters.delete(:stop)
+
+      Langchain::Utils::HashTransformer.deep_transform_keys(parameters) { |key| Langchain::Utils::HashTransformer.camelize_lower(key.to_s).to_sym }
     end
   end
 end
