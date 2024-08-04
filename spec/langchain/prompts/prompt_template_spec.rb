@@ -64,6 +64,23 @@ RSpec.describe Langchain::Prompt::PromptTemplate do
 
       expect(prompt.format(adjective: "funny", content: "chickens")).to eq("Tell me a funny joke about chickens.")
     end
+
+    it "replaces <code>{{}}</code> with <code>{}</code>" do
+      prompt = described_class.new(
+        template: "This is a {{test}} case.",
+        input_variables: []
+      )
+
+      expect(prompt.format).to eq("This is a {test} case.")
+    end
+
+    it "ignores json objects in the template" do
+      prompt = described_class.new(
+        template: "This is a json object: {\"phone\":{\"number\":100}}",
+        input_variables: []
+      )
+      expect(prompt.format).to eq("This is a json object: {\"phone\":{\"number\":100}}")
+    end
   end
 
   describe "#from_template" do
