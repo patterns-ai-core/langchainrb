@@ -76,10 +76,10 @@ RSpec.describe Langchain::Prompt::PromptTemplate do
 
     it "ignores json objects in the template" do
       prompt = described_class.new(
-        template: "This is a json object: {\"phone\":{\"number\":100}}",
-        input_variables: []
+        template: "This is a json object: {format_instructions}",
+        input_variables: ["format_instructions"]
       )
-      expect(prompt.format).to eq("This is a json object: {\"phone\":{\"number\":100}}")
+      expect(prompt.format(format_instructions: "{\"phone\":{\"number\":100}}")).to eq("This is a json object: {\"phone\":{\"number\":100}}")
     end
   end
 
