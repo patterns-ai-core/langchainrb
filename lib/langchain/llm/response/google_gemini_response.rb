@@ -3,7 +3,7 @@
 module Langchain::LLM
   class GoogleGeminiResponse < BaseResponse
     def initialize(raw_response, model: nil)
-      super
+      super(raw_response, model: model)
     end
 
     def chat_completion

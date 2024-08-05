@@ -18,7 +18,7 @@ module Langchain::LLM
       chat_completion_model_name: "chat-bison-001",
       embeddings_model_name: "embedding-gecko-001"
     }.freeze
-
+    LENGTH_VALIDATOR = Langchain::Utils::TokenLength::GooglePalmValidator
     ROLE_MAPPING = {
       "assistant" => "ai"
     }
@@ -95,6 +95,9 @@ module Langchain::LLM
         messages: compose_chat_messages(prompt: prompt, messages: messages),
         examples: compose_examples(examples)
       }
+
+      # chat-bison-001 is the only model that currently supports countMessageTokens functions
+      LENGTH_VALIDATOR.validate_max_tokens!(default_params[:messages], "chat-bison-001", llm: self)
 
       if options[:stop_sequences]
         default_params[:stop] = options.delete(:stop_sequences)

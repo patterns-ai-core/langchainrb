@@ -42,17 +42,17 @@ module Langchain::LLM
 
     def embed(...)
       @client = @embed_client
-      super
+      super(...)
     end
 
     def complete(...)
       @client = @chat_client
-      super
+      super(...)
     end
 
     def chat(...)
       @client = @chat_client
-      super
+      super(...)
     end
   end
 end
