@@ -270,14 +270,14 @@ module Langchain::LLM
         conn.request :json
         conn.response :json
         conn.response :raise_error
-        conn.response :logger, nil, { headers: true, bodies: true, errors: true }
+        conn.response :logger, nil, {headers: true, bodies: true, errors: true}
       end
     end
 
     def auth_headers
       return unless @api_key
 
-      { 'Authorization' => "Bearer #{@api_key}" }
+      {"Authorization" => "Bearer #{@api_key}"}
     end
 
     def json_responses_chunk_handler(&block)

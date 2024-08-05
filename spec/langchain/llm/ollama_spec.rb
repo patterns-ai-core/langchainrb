@@ -17,9 +17,9 @@ RSpec.describe Langchain::LLM::Ollama do
     end
 
     it "sets auth headers if api_key is passed" do
-      subject = described_class.new(url: "http://localhost)", api_key: 'abc123')
+      subject = described_class.new(url: "http://localhost)", api_key: "abc123")
 
-      expect(subject.send(:client).headers).to include('Authorization' => 'Bearer abc123')
+      expect(subject.send(:client).headers).to include("Authorization" => "Bearer abc123")
     end
   end
 
