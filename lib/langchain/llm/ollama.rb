@@ -33,11 +33,13 @@ module Langchain::LLM
 
     # Initialize the Ollama client
     # @param url [String] The URL of the Ollama instance
+    # @param api_key [String] The API key to use. This is optional and used when you expose Ollama API using Open WebUI
     # @param default_options [Hash] The default options to use
     #
-    def initialize(url: "http://localhost:11434", default_options: {})
+    def initialize(url: "http://localhost:11434", api_key: nil, default_options: {})
       depends_on "faraday"
       @url = url
+      @api_key = api_key
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
         model: {default: @defaults[:chat_completion_model_name]},
@@ -264,11 +266,18 @@ module Langchain::LLM
     private
 
     def client
-      @client ||= Faraday.new(url: url) do |conn|
+      @client ||= Faraday.new(url: url, headers: auth_headers) do |conn|
         conn.request :json
         conn.response :json
         conn.response :raise_error
+        conn.response :logger, nil, {headers: true, bodies: true, errors: true}
       end
+    end
+
+    def auth_headers
+      return unless @api_key
+
+      {"Authorization" => "Bearer #{@api_key}"}
     end
 
     def json_responses_chunk_handler(&block)
