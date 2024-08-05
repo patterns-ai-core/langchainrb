@@ -33,6 +33,7 @@ module Langchain::LLM
 
     # Initialize the Ollama client
     # @param url [String] The URL of the Ollama instance
+    # @param api_key [String] The API key to use. This is optional and used when you expose Ollama API using Open WebUI
     # @param default_options [Hash] The default options to use
     #
     def initialize(url: "http://localhost:11434", api_key: nil, default_options: {})
