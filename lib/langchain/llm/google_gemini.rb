@@ -10,7 +10,7 @@ module Langchain::LLM
       temperature: 0.0
     }
 
-    attr_reader :defaults, :api_key
+    attr_reader :defaults, :api_key, :model
 
     def initialize(api_key:, default_options: {})
       @api_key = api_key
@@ -27,6 +27,7 @@ module Langchain::LLM
         system: :system_instruction,
         tool_choice: :tool_config
       )
+      @model = @defaults[:chat_completion_model_name]
     end
 
     # Generate a chat completion for a given prompt
@@ -43,34 +44,18 @@ module Langchain::LLM
 
       raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
 
-      parameters = chat_parameters.to_params(params)
-      parameters[:generation_config] ||= {}
-      parameters[:generation_config][:temperature] ||= parameters[:temperature] if parameters[:temperature]
-      parameters.delete(:temperature)
-      parameters[:generation_config][:top_p] ||= parameters[:top_p] if parameters[:top_p]
-      parameters.delete(:top_p)
-      parameters[:generation_config][:top_k] ||= parameters[:top_k] if parameters[:top_k]
-      parameters.delete(:top_k)
-      parameters[:generation_config][:max_output_tokens] ||= parameters[:max_tokens] if parameters[:max_tokens]
-      parameters.delete(:max_tokens)
-      parameters[:generation_config][:response_mime_type] ||= parameters[:response_format] if parameters[:response_format]
-      parameters.delete(:response_format)
-      parameters[:generation_config][:stop_sequences] ||= parameters[:stop] if parameters[:stop]
-      parameters.delete(:stop)
-
-      uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{parameters[:model]}:generateContent?key=#{api_key}")
+      uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{model}:generateContent?key=#{api_key}")
 
       request = Net::HTTP::Post.new(uri)
       request.content_type = "application/json"
-      request.body = Langchain::Utils::HashTransformer.deep_transform_keys(parameters) { |key| Langchain::Utils::HashTransformer.camelize_lower(key.to_s).to_sym }.to_json
+      request.body = build_gemini_api_http_parameters(params).to_json
 
       response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
         http.request(request)
       end
 
       parsed_response = JSON.parse(response.body)
-
-      wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
+      wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: model)
 
       if wrapped_response.chat_completion || Array(wrapped_response.tool_calls).any?
         wrapped_response
@@ -107,6 +92,35 @@ module Langchain::LLM
       parsed_response = JSON.parse(response.body)
 
       Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: model)
+    end
+
+    private
+
+    def build_gemini_api_http_parameters(params)
+      parameters = chat_parameters.to_params(params)
+      parameters[:generation_config] ||= {}
+      parameters[:generation_config][:temperature] ||= parameters[:temperature] if parameters[:temperature]
+      parameters.delete(:temperature)
+      parameters[:generation_config][:top_p] ||= parameters[:top_p] if parameters[:top_p]
+      parameters.delete(:top_p)
+      parameters[:generation_config][:top_k] ||= parameters[:top_k] if parameters[:top_k]
+      parameters.delete(:top_k)
+      parameters[:generation_config][:max_output_tokens] ||= parameters[:max_tokens] if parameters[:max_tokens]
+      parameters.delete(:max_tokens)
+      parameters[:generation_config][:response_mime_type] ||= parameters[:response_format] if parameters[:response_format]
+      parameters.delete(:response_format)
+      parameters[:generation_config][:stop_sequences] ||= parameters[:stop] if parameters[:stop]
+      parameters.delete(:stop)
+
+      cached_tools = parameters.dig(:tools, :function_declarations) || []
+
+      formatted_gemini_params = Langchain::Utils::HashTransformer.deep_transform_keys(parameters) { |key| Langchain::Utils::HashTransformer.camelize_lower(key.to_s).to_sym }
+
+      if formatted_gemini_params[:tools]
+        formatted_gemini_params[:tools][:functionDeclarations] = cached_tools
+      end
+
+      formatted_gemini_params
     end
   end
 end

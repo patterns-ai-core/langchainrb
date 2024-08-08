@@ -39,7 +39,21 @@ RSpec.describe Langchain::LLM::GoogleGemini do
   describe "#chat" do
     let(:messages) { [{role: "user", parts: [{text: "How high is the sky?"}]}] }
     let(:raw_chat_completions_response) { double(body: File.read("spec/fixtures/llm/google_gemini/chat.json")) }
-    let(:params) { {messages: messages, model: "gemini-1.5-pro-latest", system: "system instruction", tool_choice: "AUTO", tools: [{name: "tool1"}], temperature: 1.1, response_format: "application/json", stop: ["A", "B"], generation_config: {temperature: 1.7, top_p: 1.3, response_schema: {"type" => "object", "description" => "sample schema"}}, safety_settings: [{category: "HARM_CATEGORY_UNSPECIFIED", threshold: "BLOCK_ONLY_HIGH"}]} }
+    let(:params) {
+      {
+        messages: messages,
+        model: "gemini-1.5-pro-latest",
+        system: "system instruction",
+        tool_choice: "AUTO",
+        tools: [{name: "news_retriever",
+                 parameters: {type: "object", properties: {sort_by: {type: "string"}}}}],
+        temperature: 1.1,
+        response_format: "application/json",
+        stop: ["A", "B"],
+        generation_config: {temperature: 1.7, top_p: 1.3, response_schema: {"type" => "object", "description" => "sample schema"}},
+        safety_settings: [{category: "HARM_CATEGORY_UNSPECIFIED", threshold: "BLOCK_ONLY_HIGH"}]
+      }
+    }
 
     before do
       allow(Net::HTTP).to receive(:start).and_return(raw_chat_completions_response)
@@ -61,7 +75,7 @@ RSpec.describe Langchain::LLM::GoogleGemini do
         expect(parsed_body["contents"]).to eq([{"parts" => [{"text" => "How high is the sky?"}], "role" => "user"}])
         expect(parsed_body["systemInstruction"]).to eq({"parts" => [{"text" => "system instruction"}]})
         expect(parsed_body["toolConfig"]).to eq({"functionCallingConfig" => {"mode" => "AUTO"}})
-        expect(parsed_body["tools"]).to eq({"functionDeclarations" => [{"name" => "tool1"}]})
+        expect(parsed_body["tools"]).to eq({"functionDeclarations" => [{"name" => "news_retriever", "parameters" => {"type" => "object", "properties" => {"sort_by" => {"type" => "string"}}}}]})
         expect(parsed_body["temperature"]).to eq(nil)
         expect(parsed_body["generationConfig"]["temperature"]).to eq(1.7)
         expect(parsed_body["topP"]).to eq(nil)
