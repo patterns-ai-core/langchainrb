@@ -59,17 +59,19 @@ RSpec.describe Langchain::Prompt::Base do
   end
 
   describe "#extract_variables_from_template" do
-    let(:basic_template) { "Tell me a {adjective} joke." }
-    let(:escaped_template) { "Tell me a {adjective} joke. Return in JSON in the format {{joke: 'The joke'}}" }
-
     it "extracts variables" do
-      input_variables = described_class.extract_variables_from_template(basic_template)
+      input_variables = described_class.extract_variables_from_template("Tell me a {adjective} joke.")
       expect(input_variables).to eq(%w[adjective])
     end
 
     it "excludes double curly brace variables" do
-      input_variables = described_class.extract_variables_from_template(escaped_template)
+      input_variables = described_class.extract_variables_from_template("Tell me a {adjective} joke. Return in JSON in the format {{joke: 'The joke'}}")
       expect(input_variables).to eq(%w[adjective])
+    end
+
+    it "ignores json objects" do
+      input_variables = described_class.extract_variables_from_template("This is a json object: {\"phone\":{\"number\":100}}")
+      expect(input_variables).to eq([])
     end
   end
 end

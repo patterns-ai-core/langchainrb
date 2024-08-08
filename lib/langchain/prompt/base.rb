@@ -83,11 +83,13 @@ module Langchain::Prompt
     #
     def self.extract_variables_from_template(template)
       input_variables = []
-      scanner = StringScanner.new(template)
 
-      while scanner.scan_until(/\{([^}]*)\}/)
+      template_without_consecutive_braces = template.gsub(/\{\{([^{}]*)\}\}/, "")
+      scanner = StringScanner.new(template_without_consecutive_braces)
+
+      while scanner.scan_until(/\{([a-z_][a-zA-Z0-9_]*)\}/)
         variable = scanner[1].strip
-        input_variables << variable unless variable.empty? || variable[0] == "{"
+        input_variables << variable
       end
 
       input_variables
