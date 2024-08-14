@@ -105,7 +105,7 @@ module Langchain::ToolDefinition
     # @return [String] JSON string of schemas in Anthropic format
     def to_anthropic_format
       @schemas.values.map do |schema|
-        schema[:function].transform_keys("parameters" => "input_schema")
+        schema[:function].transform_keys(parameters: :input_schema)
       end
     end
 
