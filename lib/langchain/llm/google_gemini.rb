@@ -62,7 +62,7 @@ module Langchain::LLM
 
       request = Net::HTTP::Post.new(uri)
       request.content_type = "application/json"
-      request.body = Langchain::Utils::HashTransformer.deep_transform_keys(parameters) { |key| Langchain::Utils::HashTransformer.camelize_lower(key.to_s).to_sym }.to_json
+      request.body = parameters.to_json
 
       response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
         http.request(request)
