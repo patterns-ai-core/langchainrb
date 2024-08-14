@@ -1,4 +1,6 @@
 ## [Unreleased]
+- Fix GoogleGemini#chat method
+- Langchain::LLM::Weaviate initializer does not require api_key anymore
 - [BREAKING] Langchain::LLM::OpenAI#chat() uses `gpt-4o-mini` by default instead of `gpt-3.5-turbo` previously.
 - [BREAKING] Assistant works with a number of open-source models via Ollama.
 - [BREAKING] Introduce new `Langchain::ToolDefinition` module to define tools. This replaces the previous reliance on subclassing from `Langchain::Tool::Base`.
