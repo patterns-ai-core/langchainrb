@@ -170,4 +170,101 @@ RSpec.describe Langchain::ToolDefinition do
       end
     end
   end
+
+  describe Langchain::ToolDefinition::FunctionSchemas do
+    let(:tool_name) { "test_tool" }
+    subject(:function_schemas) { described_class.new(tool_name) }
+
+    describe "#initialize" do
+      it "creates an instance with an empty schemas hash" do
+        expect(function_schemas.instance_variable_get(:@schemas)).to eq({})
+      end
+
+      it "sets the tool name" do
+        expect(function_schemas.instance_variable_get(:@tool_name)).to eq("test_tool")
+      end
+    end
+
+    describe "#add_function" do
+      context "when adding a function without parameters" do
+        it "adds a function to the schemas" do
+          function_schemas.add_function(method_name: :test_method, description: "Test description")
+          expect(function_schemas.instance_variable_get(:@schemas)).to have_key(:test_method)
+        end
+
+        it "creates a correct schema structure" do
+          function_schemas.add_function(method_name: :test_method, description: "Test description")
+          schema = function_schemas.instance_variable_get(:@schemas)[:test_method]
+          expect(schema[:type]).to eq("function")
+          expect(schema[:function][:name]).to eq("test_tool__test_method")
+          expect(schema[:function][:description]).to eq("Test description")
+          expect(schema[:function][:parameters]).to be_nil
+        end
+      end
+
+      context "when adding a function with parameters" do
+        it "adds a function with parameters to the schemas" do
+          function_schemas.add_function(method_name: :test_method, description: "Test description") do
+            property :test_prop, type: "string", description: "Test property"
+          end
+          schema = function_schemas.instance_variable_get(:@schemas)[:test_method]
+          expect(schema[:function][:parameters]).to be_a(Hash)
+          expect(schema[:function][:parameters][:properties]).to have_key(:test_prop)
+        end
+
+        it "raises an error when no properties are defined in the block" do
+          expect {
+            function_schemas.add_function(method_name: :test_method, description: "Test description") do
+              # Empty block
+            end
+          }.to raise_error(ArgumentError, /Function parameters must have at least one property defined/)
+        end
+      end
+    end
+
+    describe "#to_openai_format" do
+      before do
+        function_schemas.add_function(method_name: :test_method, description: "Test description") do
+          property :test_prop, type: "string", description: "Test property"
+        end
+      end
+
+      it "returns an array of function schemas" do
+        result = function_schemas.to_openai_format
+        expect(result).to be_an(Array)
+        expect(result.first[:type]).to eq("function")
+        expect(result.first[:function]).to be_a(Hash)
+      end
+    end
+
+    describe "#to_anthropic_format" do
+      before do
+        function_schemas.add_function(method_name: :test_method, description: "Test description") do
+          property :test_prop, type: "string", description: "Test property"
+        end
+      end
+
+      it "returns an array of function schemas with input_schema instead of parameters" do
+        result = function_schemas.to_anthropic_format
+        expect(result).to be_an(Array)
+        expect(result.first).to have_key(:input_schema)
+        expect(result.first).not_to have_key(:parameters)
+      end
+    end
+
+    describe "#to_google_gemini_format" do
+      before do
+        function_schemas.add_function(method_name: :test_method, description: "Test description") do
+          property :test_prop, type: "string", description: "Test property"
+        end
+      end
+
+      it "returns an array of function schemas without the type key" do
+        result = function_schemas.to_google_gemini_format
+        expect(result).to be_an(Array)
+        expect(result.first).not_to have_key(:type)
+        expect(result.first[:name]).to eq("test_tool__test_method")
+      end
+    end
+  end
 end
