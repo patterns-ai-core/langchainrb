@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.14.0)
+    langchainrb (0.15.0)
       baran (~> 0.1.9)
       colorize (~> 1.1.0)
       json-schema (~> 4)
