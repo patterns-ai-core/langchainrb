@@ -1,4 +1,7 @@
 ## [Unreleased]
+
+## [0.15.0] - 2024-08-14
+- Fix Langchain::Assistant when llm is Anthropic
 - Fix GoogleGemini#chat method
 - Langchain::LLM::Weaviate initializer does not require api_key anymore
 - [BREAKING] Langchain::LLM::OpenAI#chat() uses `gpt-4o-mini` by default instead of `gpt-3.5-turbo` previously.
