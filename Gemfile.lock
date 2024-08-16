@@ -3,10 +3,10 @@ PATH
   specs:
     langchainrb (0.15.0)
       baran (~> 0.1.9)
-      colorize (~> 1.1.0)
       json-schema (~> 4)
       matrix
       pragmatic_segmenter (~> 0.3.0)
+      rainbow (~> 3.1.0)
       to_bool (~> 2.0.0)
       zeitwerk (~> 2.5)
 
@@ -73,7 +73,6 @@ GEM
     coderay (1.1.3)
     cohere-ruby (0.9.10)
       faraday (>= 2.0.1, < 3.0)
-    colorize (1.1.0)
     concurrent-ruby (1.3.1)
     connection_pool (2.4.1)
     crack (1.0.0)

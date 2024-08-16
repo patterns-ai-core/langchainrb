@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   # dependencies
   # Not sure if we should require this as it only applies to OpenAI usecase.
   spec.add_dependency "baran", "~> 0.1.9"
-  spec.add_dependency "colorize", "~> 1.1.0"
+  spec.add_dependency "rainbow", "~> 3.1.0"
   spec.add_dependency "json-schema", "~> 4"
   spec.add_dependency "zeitwerk", "~> 2.5"
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
