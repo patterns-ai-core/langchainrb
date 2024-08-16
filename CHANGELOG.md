@@ -1,5 +1,6 @@
 ## [Unreleased]
 - Drop `colorize` which is GPL-licensed in favour of `rainbow`
+- Improve Langchain::Tool::Weather tool
 
 ## [0.15.0] - 2024-08-14
 - Fix Langchain::Assistant when llm is Anthropic
