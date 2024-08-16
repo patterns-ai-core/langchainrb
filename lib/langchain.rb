@@ -2,7 +2,7 @@
 
 require "logger"
 require "pathname"
-require "colorize"
+require "rainbow"
 require "to_bool"
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
