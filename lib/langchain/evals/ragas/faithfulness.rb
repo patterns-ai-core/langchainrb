@@ -47,7 +47,7 @@ module Langchain
           verdicts = match.captures.first
           verdicts
             .split(".")
-            .count { |value| value.strip.to_boolean }
+            .count { |value| to_boolean(value.strip) }
         end
 
         def statements_verification(statements:, context:)
@@ -78,6 +78,10 @@ module Langchain
           @template_one ||= Langchain::Prompt.load_from_path(
             file_path: Langchain.root.join("langchain/evals/ragas/prompts/faithfulness_statements_extraction.yml")
           )
+        end
+
+        def to_boolean(value)
+          Langchain::Utils::ToBoolean.new.to_bool(value)
         end
       end
     end
