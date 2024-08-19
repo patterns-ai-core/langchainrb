@@ -32,7 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "json-schema", "~> 4"
   spec.add_dependency "zeitwerk", "~> 2.5"
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
-  spec.add_dependency "to_bool", "~> 2.0.0"
   spec.add_dependency "matrix"
 
   # development dependencies

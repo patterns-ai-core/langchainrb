@@ -7,7 +7,6 @@ PATH
       matrix
       pragmatic_segmenter (~> 0.3.0)
       rainbow (~> 3.1.0)
-      to_bool (~> 2.0.0)
       zeitwerk (~> 2.5)
 
 GEM
@@ -406,7 +405,6 @@ GEM
     strscan (3.1.0)
     thor (1.3.1)
     timeout (0.4.1)
-    to_bool (2.0.0)
     treetop (1.6.12)
       polyglot (~> 0.3)
     ttfunk (1.8.0)
