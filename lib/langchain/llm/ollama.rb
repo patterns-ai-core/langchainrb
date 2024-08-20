@@ -200,6 +200,7 @@ module Langchain::LLM
     def embed(
       text:,
       model: defaults[:embeddings_model_name],
+      input: [],
       mirostat: nil,
       mirostat_eta: nil,
       mirostat_tau: nil,
@@ -219,7 +220,8 @@ module Langchain::LLM
     )
       parameters = {
         prompt: text,
-        model: model
+        model: model,
+        input: input
       }.compact
 
       llm_parameters = {
