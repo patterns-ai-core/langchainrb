@@ -198,7 +198,7 @@ module Langchain::LLM
     # @return [Langchain::LLM::OllamaResponse] Response object
     #
     def embed(
-      text:,
+      text: nil,
       model: defaults[:embeddings_model_name],
       input: [],
       mirostat: nil,
