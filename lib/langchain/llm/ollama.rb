@@ -245,7 +245,7 @@ module Langchain::LLM
 
       parameters[:options] = llm_parameters.compact
 
-      response = client.post("api/embeddings") do |req|
+      response = client.post("api/embed") do |req|
         req.body = parameters
       end
 
