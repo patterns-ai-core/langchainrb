@@ -296,8 +296,8 @@ RSpec.describe Langchain::Assistant do
       it "maintains the order of messages" do
         subject.add_messages(messages: messages)
 
-        expect(subject.messages[-3..-1].map(&:role)).to eq(["user", "assistant", "user"])
-        expect(subject.messages[-3..-1].map(&:content)).to eq(["Hello", "Hi there!", "How are you?"])
+        expect(subject.messages[-3..].map(&:role)).to eq(["user", "assistant", "user"])
+        expect(subject.messages[-3..].map(&:content)).to eq(["Hello", "Hi there!", "How are you?"])
       end
 
       context "when messages array is empty" do
