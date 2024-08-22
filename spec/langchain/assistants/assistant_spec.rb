@@ -608,14 +608,19 @@ RSpec.describe Langchain::Assistant do
 
   xdescribe "#instructions="
 
-  xdescribe "when llm is Ollama" do
-    xdescribe "#set_state_for" do
-      xcontext "when response contains completion" do
-        let(:response) { double(tool_calls: [], completion: "The weather in SF is sunny") }
+  describe "when llm is Ollama" do
+    let(:llm) { Langchain::LLM::Ollama.new }
 
-        xit "it returns :completed" do
-          expect(subject.send(:set_state_for, response: response)).to eq(:completed)
-        end
+    describe "#extract_tool_call_args" do
+      let(:tool_call_openai) { {"id" => "call_9TewGANaaIjzY31UCpAAGLeV", "type" => "function", "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}} }
+      let(:regular_tool_call) { {"function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}} }
+
+      it "returns correct data with open ai tool call" do
+        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call_openai)).to eq(["call_9TewGANaaIjzY31UCpAAGLeV", "langchain_tool_calculator", "execute", {input: "2+2"}])
+      end
+
+      it "returns correct data with regular ollama tool call" do
+        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: regular_tool_call)).to eq(["langchain_tool_calculator__execute", "langchain_tool_calculator", "execute", {input: "2+2"}])
       end
     end
   end

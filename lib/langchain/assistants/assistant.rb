@@ -366,6 +366,8 @@ module Langchain
             tool_call_id = tool_call.dig("id")
 
             function_name = tool_call.dig("function", "name")
+            tool_call_id ||= function_name
+
             tool_name, method_name = function_name.split("__")
 
             tool_arguments = tool_call.dig("function", "arguments")
