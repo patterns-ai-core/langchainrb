@@ -323,7 +323,7 @@ GEM
       faraday-multipart
       faraday-retry
     require-hooks (0.2.2)
-    rexml (3.3.3)
+    rexml (3.3.6)
       strscan
     roo (2.10.1)
       nokogiri (~> 1)
