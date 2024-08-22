@@ -72,6 +72,7 @@ module Langchain
     # Set multiple messages to the thread
     #
     # @param messages [Array<Hash>] The messages to set
+    # @return [Array<Langchain::Message>] The messages in the thread
     def messages=(messages)
       clear_thread!
       add_messages(messages: messages)
