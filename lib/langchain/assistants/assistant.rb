@@ -13,7 +13,7 @@ module Langchain
   #     )
   class Assistant
     extend Forwardable
-    def_delegators :thread, :messages, :messages=
+    def_delegators :thread, :messages
 
     attr_reader :llm, :thread, :instructions, :state
     attr_reader :total_prompt_tokens, :total_completion_tokens, :total_tokens
@@ -67,6 +67,25 @@ module Langchain
       @state = :ready
 
       messages
+    end
+
+    # Set multiple messages to the thread
+    #
+    # @param messages [Array<Hash>] The messages to set
+    # @return [Array<Langchain::Message>] The messages in the thread
+    def messages=(messages)
+      clear_thread!
+      add_messages(messages: messages)
+    end
+
+    # Add multiple messages to the thread
+    #
+    # @param messages [Array<Hash>] The messages to add
+    # @return [Array<Langchain::Message>] The messages in the thread
+    def add_messages(messages:)
+      messages.each do |message_hash|
+        add_message(**message_hash.slice(:content, :role, :tool_calls, :tool_call_id))
+      end
     end
 
     # Run the assistant

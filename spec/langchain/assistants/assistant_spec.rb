@@ -229,6 +229,97 @@ RSpec.describe Langchain::Assistant do
         end
       end
     end
+
+    describe "#add_messages" do
+      let(:messages) do
+        [
+          {role: "user", content: "Hello"},
+          {role: "assistant", content: "Hi there!"},
+          {role: "user", content: "How are you?"}
+        ]
+      end
+
+      it "adds multiple messages to the thread" do
+        expect { subject.add_messages(messages: messages) }
+          .to change { subject.messages.count }.by(3)
+      end
+
+      it "adds messages with correct roles and content" do
+        subject.add_messages(messages: messages)
+
+        expect(subject.messages[-3].role).to eq("user")
+        expect(subject.messages[-3].content).to eq("Hello")
+
+        expect(subject.messages[-2].role).to eq("assistant")
+        expect(subject.messages[-2].content).to eq("Hi there!")
+
+        expect(subject.messages[-1].role).to eq("user")
+        expect(subject.messages[-1].content).to eq("How are you?")
+      end
+
+      it "handles messages with tool_calls" do
+        messages_with_tool_calls = [
+          {
+            role: "assistant",
+            tool_calls: [
+              {
+                "id" => "call_123",
+                "type" => "function",
+                "function" => {
+                  "name" => "get_weather",
+                  "arguments" => "{\"location\":\"New York\"}"
+                }
+              }
+            ]
+          }
+        ]
+
+        subject.add_messages(messages: messages_with_tool_calls)
+
+        expect(subject.messages.last.role).to eq("assistant")
+        expect(subject.messages.last.content).to be_empty
+        expect(subject.messages.last.tool_calls).to eq(messages_with_tool_calls.first[:tool_calls])
+      end
+
+      it "handles messages with tool_call_id" do
+        messages_with_tool_call_id = [
+          {role: "tool", content: "Sunny, 25°C", tool_call_id: "call_123"}
+        ]
+
+        subject.add_messages(messages: messages_with_tool_call_id)
+
+        expect(subject.messages.last.role).to eq("tool")
+        expect(subject.messages.last.content).to eq("Sunny, 25°C")
+        expect(subject.messages.last.tool_call_id).to eq("call_123")
+      end
+
+      it "maintains the order of messages" do
+        subject.add_messages(messages: messages)
+
+        expect(subject.messages[-3..].map(&:role)).to eq(["user", "assistant", "user"])
+        expect(subject.messages[-3..].map(&:content)).to eq(["Hello", "Hi there!", "How are you?"])
+      end
+
+      context "when messages array is empty" do
+        it "doesn't change the thread" do
+          expect { subject.add_messages(messages: []) }
+            .not_to change { subject.messages.count }
+        end
+      end
+
+      context "when a message has an invalid role" do
+        let(:invalid_messages) do
+          [
+            {role: "invalid_role", content: "This shouldn't work"}
+          ]
+        end
+
+        it "raises an ArgumentError" do
+          expect { subject.add_messages(messages: invalid_messages) }
+            .to raise_error(ArgumentError, /Role must be one of system, assistant, user, tool/)
+        end
+      end
+    end
   end
 
   context "when llm is GoogleGemini" do
