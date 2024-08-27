@@ -142,7 +142,8 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         let(:expected_parameters) do
-          base_parameters.merge!({dimensions: dimensions}) unless model == "text-embedding-ada-002"
+          base_parameters[:dimensions] = dimensions unless model == "text-embedding-ada-002"
+          base_parameters
         end
 
         let(:response) do
