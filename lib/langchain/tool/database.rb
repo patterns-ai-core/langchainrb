@@ -42,6 +42,7 @@ module Langchain::Tool
       raise StandardError, "connection_string parameter cannot be blank" if connection_string.empty?
 
       @db = Sequel.connect(connection_string)
+      # TODO: This is a bug, these 2 parameters are completely ignored.
       @requested_tables = tables
       @excluded_tables = exclude_tables
     end
