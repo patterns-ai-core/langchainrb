@@ -78,7 +78,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with text and parameters" do
       let(:parameters) do
-        {parameters: {input: "Hello World", model: "text-embedding-ada-002", user: "id", dimensions: Langchain::LLM::OpenAI::EMBEDDING_SIZES["text-embedding-ada-002"]}}
+        {parameters: {input: "Hello World", model: "text-embedding-ada-002", user: "id"}}
       end
 
       it "returns an embedding" do
@@ -142,7 +142,8 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         let(:expected_parameters) do
-          base_parameters.merge({dimensions: dimensions})
+          base_parameters[:dimensions] = dimensions unless model == "text-embedding-ada-002"
+          base_parameters
         end
 
         let(:response) do

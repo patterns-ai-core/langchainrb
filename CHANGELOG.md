@@ -1,4 +1,5 @@
 ## [Unreleased]
+- Fix OpenAI#embed when text-embedding-ada-002 is used
 
 ## [0.15.2] - 2024-08-23
 - Add Assistant#add_messages() method and fix Assistant#messages= method
