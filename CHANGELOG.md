@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.15.3] - 2024-08-27
 - Fix OpenAI#embed when text-embedding-ada-002 is used
 
 ## [0.15.2] - 2024-08-23
