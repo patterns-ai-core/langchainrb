@@ -37,6 +37,16 @@ RSpec.describe Langchain::LLM::Ollama do
       expect(subject.embed(text: "Hello, world!").embedding.count).to eq(3)
     end
 
+    it "sends an input array to the client" do
+      subject.embed(text: "Hello, world!")
+
+      expect(client).to have_received(:post) do |path, &block|
+        req = double("request").as_null_object
+        block.call(req)
+        expect(req).to have_received(:body=).with(hash_including(input: ["Hello, world!"]))
+      end
+    end
+
     context "when the JSON response contains no embeddings" do
       let(:response_body) {
         {"embeddings" => []}

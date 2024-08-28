@@ -198,9 +198,8 @@ module Langchain::LLM
     # @return [Langchain::LLM::OllamaResponse] Response object
     #
     def embed(
-      text: nil,
+      text:,
       model: defaults[:embeddings_model_name],
-      input: [],
       mirostat: nil,
       mirostat_eta: nil,
       mirostat_tau: nil,
@@ -221,7 +220,7 @@ module Langchain::LLM
       parameters = {
         prompt: text,
         model: model,
-        input: input
+        input: Array(text)
       }.compact
 
       llm_parameters = {
