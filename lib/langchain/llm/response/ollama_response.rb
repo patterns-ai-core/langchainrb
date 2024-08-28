@@ -28,7 +28,7 @@ module Langchain::LLM
     end
 
     def embeddings
-      [raw_response&.dig("embedding")]
+      raw_response&.dig("embeddings") || []
     end
 
     def role

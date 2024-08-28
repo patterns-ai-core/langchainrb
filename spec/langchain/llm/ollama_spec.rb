@@ -25,7 +25,7 @@ RSpec.describe Langchain::LLM::Ollama do
 
   describe "#embed" do
     let(:response_body) {
-      {"embedding" => [0.1, 0.2, 0.3]}
+      {"embeddings" => [[0.1, 0.2, 0.3]]}
     }
 
     before do
@@ -35,6 +35,26 @@ RSpec.describe Langchain::LLM::Ollama do
     it "returns an embedding" do
       expect(subject.embed(text: "Hello, world!")).to be_a(Langchain::LLM::OllamaResponse)
       expect(subject.embed(text: "Hello, world!").embedding.count).to eq(3)
+    end
+
+    it "sends an input array to the client" do
+      subject.embed(text: "Hello, world!")
+
+      expect(client).to have_received(:post) do |path, &block|
+        req = double("request").as_null_object
+        block.call(req)
+        expect(req).to have_received(:body=).with(hash_including(input: ["Hello, world!"]))
+      end
+    end
+
+    context "when the JSON response contains no embeddings" do
+      let(:response_body) {
+        {"embeddings" => []}
+      }
+
+      it "#embedding returns nil" do
+        expect(subject.embed(text: "Hello, world!").embedding).to be nil
+      end
     end
   end
 

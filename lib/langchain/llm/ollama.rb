@@ -218,8 +218,8 @@ module Langchain::LLM
       top_p: nil
     )
       parameters = {
-        prompt: text,
-        model: model
+        model: model,
+        input: Array(text)
       }.compact
 
       llm_parameters = {
@@ -243,7 +243,7 @@ module Langchain::LLM
 
       parameters[:options] = llm_parameters.compact
 
-      response = client.post("api/embeddings") do |req|
+      response = client.post("api/embed") do |req|
         req.body = parameters
       end
 
