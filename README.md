@@ -402,75 +402,107 @@ client.ask(question: "...")
 ```
 
 ## Assistants
-Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries. Assistants can be configured with an LLM of your choice (currently only OpenAI), any vector search database and easily extended with additional tools.
+`Langchain::Assistant` is a powerful and flexible class that combines Large Language Models (LLMs), tools, and conversation management to create intelligent, interactive assistants. It's designed to handle complex conversations, execute tools, and provide coherent responses based on the context of the interaction.
 
-### Available Tools 🛠️
+### Features
+* Supports multiple LLM providers (OpenAI, Google Gemini, Anthropic, Ollama)
+* Integrates with various tools to extend functionality
+* Manages conversation threads
+* Handles automatic and manual tool execution
+* Supports different message formats for various LLM providers
 
-| Name         | Description                                        | ENV Requirements                                              | Gem Requirements                          |
-| ------------ | :------------------------------------------------: | :-----------------------------------------------------------: | :---------------------------------------: |
-| "calculator" | Useful for getting the result of a math expression |                                                               | `gem "eqn", "~> 1.6.5"`                   |
-| "database"   | Useful for querying a SQL database |                                                               | `gem "sequel", "~> 5.68.0"`                   |
-| "file_system"   | Interacts with the file system |                                                               |       |
-| "ruby_code_interpreter" | Interprets Ruby expressions             |                                                               | `gem "safe_ruby", "~> 1.0.4"`             |
-| "google_search"     | A wrapper around Google Search                     | `ENV["SERPAPI_API_KEY"]` (https://serpapi.com/manage-api-key) | `gem "google_search_results", "~> 2.0.0"` |
-| "news_retriever"     | A wrapper around NewsApi.org                     | `ENV["NEWS_API_KEY"]` (https://newsapi.org/) |  |
-| "tavily"     | A wrapper around Tavily AI                     | `ENV["TAVILY_API_KEY"]` (https://tavily.com/) |  |
-| "weather"  | Calls Open Weather API to retrieve the current weather        |      `ENV["OPEN_WEATHER_API_KEY"]` (https://home.openweathermap.org/api_keys)               |    |
-| "wikipedia"  | Calls Wikipedia API to retrieve the summary        |                                                               | `gem "wikipedia-client", "~> 1.17.0"`     |
+### Usage
+```ruby
+llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+assistant = Langchain::Assistant.new(
+  llm: llm,
+  instructions: "You're a helpful AI assistant",
+  tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
+)
+
+# Add a user message and run the assistant
+assistant.add_message_and_run(content: "What's the latest news about AI?")
+
+# Access the conversation thread
+messages = assistant.messages
+
+# Run the assistant with automatic tool execution
+assistant.run(auto_tool_execution: true)
+```
+
+### Configuration
+* `llm`: The LLM instance to use (required)
+* `tools`: An array of tool instances (optional)
+* `instructions`: System instructions for the assistant (optional)
+* `tool_choice`: Specifies how tools should be selected. Default: "auto". A specific tool function name can be passed. This will force the Assistant to **always** use this function.
+
+### Key Methods
+* `add_message`: Adds a user message to the messages array
+* `run`: Processes the conversation and generates responses
+* `add_message_and_run`: Combines adding a message and running the assistant
+* `submit_tool_output`: Manually submit output to a tool call
+* `messages`: Returns a list of ongoing messages
+
+### Built-in Tools 🛠️
+* `Langchain::Tool::Calculator`: Useful for evaluating math expressions. Requires `gem "eqn"`.
+* `Langchain::Tool::Database`: Connect your SQL database. Requires `gem "sequel"`.
+* `Langchain::Tool::FileSystem`: Interact with the file system (read & write).
+* `Langchain::Tool::RubyCodeInterpreter`: Useful for evaluating generated Ruby code. Requires `gem "safe_ruby"` (In need of a better solution).
+* `Langchain::Tool::NewsRetriever`: A wrapper around [NewsApi.org](https://newsapi.org) to fetch news articles.
+* `Langchain::Tool::Tavily`: A wrapper around [Tavily AI](https://tavily.com).
+* `Langchain::Tool::Weather`: Calls [Open Weather API](https://home.openweathermap.org) to retrieve the current weather.
+* `Langchain::Tool::Wikipedia`: Calls Wikipedia API.
+
+### Creating custom Tools
+The Langchain::Assistant can be easily extended with custom tools by creating classes that `extend Langchain::ToolDefinition` module and implement required methods.
+```ruby
+class MovieInfoTool
+  include Langchain::ToolDefinition
+
+  define_function :search_movie, description: "MovieInfoTool: Search for a movie by title" do
+    property :query, type: "string", description: "The movie title to search for", required: true
+  end
+
+  define_function :get_movie_details, description: "MovieInfoTool: Get detailed information about a specific movie" do
+    property :movie_id, type: "integer", description: "The TMDb ID of the movie", required: true
+  end
+
+  def initialize(api_key:)
+    @api_key = api_key
+  end
+
+  def search_movie(query:)
+    ...
+  end
+
+  def get_movie_details(movie_id:)
+    ...
+  end
+end
+```
+
+#### Example usage:
+```ruby
+movie_tool = MovieInfoTool.new(api_key: "...")
+
+assistant = Langchain::Assistant.new(
+  llm: llm,
+  instructions: "You're a helpful AI assistant that can provide movie information",
+  tools: [movie_tool]
+)
+
+assistant.add_message_and_run(content: "Can you tell me about the movie 'Inception'?")
+# Check the response in the last message in the conversation
+assistant.messages.last
+```
+
+### Error Handling
+The assistant includes error handling for invalid inputs, unsupported LLM types, and tool execution failures. It uses a state machine to manage the conversation flow and handle different scenarios gracefully.
 
 ### Demos
 1. [Building an AI Assistant that operates a simulated E-commerce Store](https://www.loom.com/share/83aa4fd8dccb492aad4ca95da40ed0b2)
 2. [New Langchain.rb Assistants interface](https://www.loom.com/share/e883a4a49b8746c1b0acf9d58cf6da36)
 3. [Langchain.rb Assistant demo with NewsRetriever and function calling on Gemini](https://youtu.be/-ieyahrpDpM&t=1477s) - [code](https://github.com/palladius/gemini-news-crawler)
-
-### Creating an Assistant
-1. Instantiate an LLM of your choice
-```ruby
-llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-```
-2. Instantiate an Assistant
-```ruby
-assistant = Langchain::Assistant.new(
-  llm: llm,
-  instructions: "You are a Meteorologist Assistant that is able to pull the weather for any location",
-  tools: [
-    Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
-  ]
-)
-```
-### Using an Assistant
-You can now add your message to an Assistant.
-```ruby
-assistant.add_message content: "What's the weather in New York, New York?"
-```
-
-Run the Assistant to generate a response. 
-```ruby
-assistant.run
-```
-
-If a Tool is invoked you can manually submit an output.
-```ruby
-assistant.submit_tool_output tool_call_id: "...", output: "It's 70 degrees and sunny in New York City"
-```
-
-Or run the assistant with `auto_tool_execution: tool` to call Tools automatically.
-```ruby
-assistant.add_message content: "How about San Diego, CA?"
-assistant.run(auto_tool_execution: true)
-```
-You can also combine the two by calling:
-```ruby
-assistant.add_message_and_run content: "What about Sacramento, CA?", auto_tool_execution: true
-```
-
-### Accessing Thread messages
-You can access the messages in a Thread by calling `assistant.thread.messages`.
-```ruby
-assistant.messages
-```
-
-The Assistant checks the context window limits before every request to the LLM and remove oldest thread messages one by one if the context window is exceeded.
 
 ## Evaluations (Evals)
 The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
