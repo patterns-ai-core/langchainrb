@@ -1,4 +1,5 @@
 ## [Unreleased]
+- Improve the Langchain::Tool::Database tool
 
 ## [0.15.3] - 2024-08-27
 - Fix OpenAI#embed when text-embedding-ada-002 is used
