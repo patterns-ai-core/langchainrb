@@ -8,6 +8,8 @@
 ## [0.15.2] - 2024-08-23
 - Add Assistant#add_messages() method and fix Assistant#messages= method
 
+- Add support for bulk embedding in Ollama
+
 ## [0.15.1] - 2024-08-19
 - Drop `to_bool` gem in favour of custom util class
 - Drop `colorize` which is GPL-licensed in favour of `rainbow`
