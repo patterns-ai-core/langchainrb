@@ -1,4 +1,12 @@
 ## [Unreleased]
+- Improve the Langchain::Tool::Database tool
+- Allow explictly setting tool_choice on the Assistant instance
+
+## [0.15.3] - 2024-08-27
+- Fix OpenAI#embed when text-embedding-ada-002 is used
+
+## [0.15.2] - 2024-08-23
+- Add Assistant#add_messages() method and fix Assistant#messages= method
 
 ## [0.15.1] - 2024-08-19
 - Drop `to_bool` gem in favour of custom util class

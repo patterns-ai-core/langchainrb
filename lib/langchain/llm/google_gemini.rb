@@ -39,7 +39,6 @@ module Langchain::LLM
     def chat(params = {})
       params[:system] = {parts: [{text: params[:system]}]} if params[:system]
       params[:tools] = {function_declarations: params[:tools]} if params[:tools]
-      params[:tool_choice] = {function_calling_config: {mode: params[:tool_choice].upcase}} if params[:tool_choice]
 
       raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
 

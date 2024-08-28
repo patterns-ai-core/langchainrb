@@ -80,6 +80,9 @@ module Langchain::LLM
         parameters[:dimensions] = EMBEDDING_SIZES[model]
       end
 
+      # dimensions parameter not supported by text-embedding-ada-002 model
+      parameters.delete(:dimensions) if model == "text-embedding-ada-002"
+
       response = with_api_error_handling do
         client.embeddings(parameters: parameters)
       end

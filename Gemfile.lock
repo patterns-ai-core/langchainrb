@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.15.1)
+    langchainrb (0.15.3)
       baran (~> 0.1.9)
       json-schema (~> 4)
       matrix

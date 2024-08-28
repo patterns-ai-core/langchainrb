@@ -15,7 +15,7 @@ module Langchain
     extend Forwardable
     def_delegators :thread, :messages
 
-    attr_reader :llm, :thread, :instructions, :state
+    attr_reader :llm, :thread, :instructions, :state, :llm_adapter, :tool_choice
     attr_reader :total_prompt_tokens, :total_completion_tokens, :total_tokens
     attr_accessor :tools
 
@@ -29,7 +29,8 @@ module Langchain
       llm:,
       thread: nil,
       tools: [],
-      instructions: nil
+      instructions: nil,
+      tool_choice: "auto"
     )
       unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
         raise ArgumentError, "Tools must be an array of objects extending Langchain::ToolDefinition"
@@ -39,6 +40,7 @@ module Langchain
       @llm_adapter = LLM::Adapter.build(llm)
       @thread = thread || Langchain::Thread.new
       @tools = tools
+      self.tool_choice = tool_choice
       @instructions = instructions
       @state = :ready
 
@@ -150,7 +152,20 @@ module Langchain
       thread.messages.unshift(message)
     end
 
+    def tool_choice=(new_tool_choice)
+      validate_tool_choice!(new_tool_choice)
+      @tool_choice = new_tool_choice
+    end
+
     private
+
+    # TODO: If tool_choice = "tool_function_name" and then tool is removed from the assistant, should we set tool_choice back to "auto"?
+    def validate_tool_choice!(tool_choice)
+      allowed_tool_choices = llm_adapter.allowed_tool_choices.concat(available_tool_names)
+      unless allowed_tool_choices.include?(tool_choice)
+        raise ArgumentError, "Tool choice must be one of: #{allowed_tool_choices.join(", ")}"
+      end
+    end
 
     # Check if the run is finished
     #
@@ -281,9 +296,10 @@ module Langchain
       Langchain.logger.info("Sending a call to #{llm.class}", for: self.class)
 
       params = @llm_adapter.build_chat_params(
-        tools: @tools,
         instructions: @instructions,
-        messages: thread.array_of_message_hashes
+        messages: thread.array_of_message_hashes,
+        tools: @tools,
+        tool_choice: tool_choice
       )
       @llm.chat(**params)
     end
@@ -298,7 +314,7 @@ module Langchain
 
         tool_instance = tools.find do |t|
           t.class.tool_name == tool_name
-        end or raise ArgumentError, "Tool not found in assistant.tools"
+        end or raise ArgumentError, "Tool: #{tool_name} not found in assistant.tools"
 
         output = tool_instance.send(method_name, **tool_arguments)
 
@@ -329,6 +345,10 @@ module Langchain
       @total_tokens += total_tokens_from_operation if total_tokens_from_operation
     end
 
+    def available_tool_names
+      llm_adapter.available_tool_names(tools)
+    end
+
     # TODO: Fix the message truncation when context window is exceeded
 
     module LLM
@@ -351,7 +371,7 @@ module Langchain
 
       module Adapters
         class Base
-          def build_chat_params(tools:, instructions:, messages:)
+          def build_chat_params(tools:, instructions:, messages:, tool_choice:)
             raise NotImplementedError, "Subclasses must implement build_chat_params"
           end
 
@@ -365,10 +385,10 @@ module Langchain
         end
 
         class Ollama < Base
-          def build_chat_params(tools:, instructions:, messages:)
+          def build_chat_params(tools:, instructions:, messages:, tool_choice:)
             params = {messages: messages}
             if tools.any?
-              params[:tools] = tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten
+              params[:tools] = build_tools(tools)
             end
             params
           end
@@ -396,14 +416,28 @@ module Langchain
 
             [tool_call_id, tool_name, method_name, tool_arguments]
           end
+
+          def available_tool_names(tools)
+            build_tools(tools).map { |tool| tool.dig(:function, :name) }
+          end
+
+          def allowed_tool_choices
+            ["auto", "none"]
+          end
+
+          private
+
+          def build_tools(tools)
+            tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten
+          end
         end
 
         class OpenAI < Base
-          def build_chat_params(tools:, instructions:, messages:)
+          def build_chat_params(tools:, instructions:, messages:, tool_choice:)
             params = {messages: messages}
             if tools.any?
-              params[:tools] = tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten
-              params[:tool_choice] = "auto"
+              params[:tools] = build_tools(tools)
+              params[:tool_choice] = build_tool_choice(tool_choice)
             end
             params
           end
@@ -431,15 +465,38 @@ module Langchain
 
             [tool_call_id, tool_name, method_name, tool_arguments]
           end
+
+          def build_tools(tools)
+            tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten
+          end
+
+          def allowed_tool_choices
+            ["auto", "none"]
+          end
+
+          def available_tool_names(tools)
+            build_tools(tools).map { |tool| tool.dig(:function, :name) }
+          end
+
+          private
+
+          def build_tool_choice(choice)
+            case choice
+            when "auto"
+              choice
+            else
+              {"type" => "function", "function" => {"name" => choice}}
+            end
+          end
         end
 
         class GoogleGemini < Base
-          def build_chat_params(tools:, instructions:, messages:)
+          def build_chat_params(tools:, instructions:, messages:, tool_choice:)
             params = {messages: messages}
             if tools.any?
-              params[:tools] = tools.map { |tool| tool.class.function_schemas.to_google_gemini_format }.flatten
+              params[:tools] = build_tools(tools)
               params[:system] = instructions if instructions
-              params[:tool_choice] = "auto"
+              params[:tool_choice] = build_tool_config(tool_choice)
             end
             params
           end
@@ -459,14 +516,39 @@ module Langchain
             tool_arguments = tool_call.dig("functionCall", "args").transform_keys(&:to_sym)
             [tool_call_id, tool_name, method_name, tool_arguments]
           end
+
+          def build_tools(tools)
+            tools.map { |tool| tool.class.function_schemas.to_google_gemini_format }.flatten
+          end
+
+          def allowed_tool_choices
+            ["auto", "none"]
+          end
+
+          def available_tool_names(tools)
+            build_tools(tools).map { |tool| tool.dig(:name) }
+          end
+
+          private
+
+          def build_tool_config(choice)
+            case choice
+            when "auto"
+              {function_calling_config: {mode: "auto"}}
+            when "none"
+              {function_calling_config: {mode: "none"}}
+            else
+              {function_calling_config: {mode: "any", allowed_function_names: [choice]}}
+            end
+          end
         end
 
         class Anthropic < Base
-          def build_chat_params(tools:, instructions:, messages:)
+          def build_chat_params(tools:, instructions:, messages:, tool_choice:)
             params = {messages: messages}
             if tools.any?
-              params[:tools] = tools.map { |tool| tool.class.function_schemas.to_anthropic_format }.flatten
-              params[:tool_choice] = {type: "auto"}
+              params[:tools] = build_tools(tools)
+              params[:tool_choice] = build_tool_choice(tool_choice)
             end
             params[:system] = instructions if instructions
             params
@@ -486,6 +568,31 @@ module Langchain
             tool_name, method_name = function_name.split("__")
             tool_arguments = tool_call.dig("input").transform_keys(&:to_sym)
             [tool_call_id, tool_name, method_name, tool_arguments]
+          end
+
+          def build_tools(tools)
+            tools.map { |tool| tool.class.function_schemas.to_anthropic_format }.flatten
+          end
+
+          def allowed_tool_choices
+            ["auto", "any"]
+          end
+
+          def available_tool_names(tools)
+            build_tools(tools).map { |tool| tool.dig(:name) }
+          end
+
+          private
+
+          def build_tool_choice(choice)
+            case choice
+            when "auto"
+              {type: "auto"}
+            when "any"
+              {type: "any"}
+            else
+              {type: "tool", name: choice}
+            end
           end
         end
       end

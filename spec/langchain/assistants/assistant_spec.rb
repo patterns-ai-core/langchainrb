@@ -320,6 +320,27 @@ RSpec.describe Langchain::Assistant do
         end
       end
     end
+
+    context "tool_choice" do
+      it "initiliazes to 'auto' by default" do
+        expect(subject.tool_choice).to eq("auto")
+      end
+
+      it "can be changed to 'none'" do
+        subject.tool_choice = "none"
+        expect(subject.tool_choice).to eq("none")
+      end
+
+      it "can be set to a specific tool function name" do
+        expect {
+          subject.tool_choice = "langchain_tool_calculator__execute"
+        }.to change { subject.tool_choice }.from("auto").to("langchain_tool_calculator__execute")
+      end
+
+      it "raises an error if tool_choice is not valid" do
+        expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
+      end
+    end
   end
 
   context "when llm is GoogleGemini" do
@@ -396,7 +417,7 @@ RSpec.describe Langchain::Assistant do
             .with(
               messages: [{role: "user", parts: [{text: "Please calculate 2+2"}]}],
               tools: calculator.class.function_schemas.to_google_gemini_format,
-              tool_choice: "auto",
+              tool_choice: {function_calling_config: {mode: "auto"}},
               system: instructions
             )
             .and_return(Langchain::LLM::GoogleGeminiResponse.new(raw_google_gemini_response))
@@ -437,7 +458,7 @@ RSpec.describe Langchain::Assistant do
                 {role: "function", parts: [{functionResponse: {name: "langchain_tool_calculator__execute", response: {name: "langchain_tool_calculator__execute", content: "4.0"}}}]}
               ],
               tools: calculator.class.function_schemas.to_google_gemini_format,
-              tool_choice: "auto",
+              tool_choice: {function_calling_config: {mode: "auto"}},
               system: instructions
             )
             .and_return(Langchain::LLM::GoogleGeminiResponse.new(raw_google_gemini_response2))
@@ -481,6 +502,27 @@ RSpec.describe Langchain::Assistant do
 
       it "returns correct data" do
         expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["langchain_tool_calculator__execute", "langchain_tool_calculator", "execute", {input: "2+2"}])
+      end
+    end
+
+    context "tool_choice" do
+      it "initiliazes to 'auto' by default" do
+        expect(subject.tool_choice).to eq("auto")
+      end
+
+      it "can be changed to 'none'" do
+        subject.tool_choice = "none"
+        expect(subject.tool_choice).to eq("none")
+      end
+
+      it "can be set to a specific tool function name" do
+        expect {
+          subject.tool_choice = "langchain_tool_calculator__execute"
+        }.to change { subject.tool_choice }.from("auto").to("langchain_tool_calculator__execute")
+      end
+
+      it "raises an error if tool_choice is not valid" do
+        expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
       end
     end
   end
@@ -691,6 +733,27 @@ RSpec.describe Langchain::Assistant do
 
       it "returns correct data" do
         expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["toolu_01TjusbFApEbwKPRWTRwzadR", "langchain_tool_news_retriever", "get_top_headlines", {country: "us", page_size: 10}])
+      end
+    end
+
+    context "tool_choice" do
+      it "initiliazes to 'auto' by default" do
+        expect(subject.tool_choice).to eq("auto")
+      end
+
+      it "can be changed to 'any'" do
+        subject.tool_choice = "any"
+        expect(subject.tool_choice).to eq("any")
+      end
+
+      it "can be set to a specific tool function name" do
+        expect {
+          subject.tool_choice = "langchain_tool_calculator__execute"
+        }.to change { subject.tool_choice }.from("auto").to("langchain_tool_calculator__execute")
+      end
+
+      it "raises an error if tool_choice is not valid" do
+        expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
       end
     end
   end
