@@ -218,7 +218,6 @@ module Langchain::LLM
       top_p: nil
     )
       parameters = {
-        prompt: text,
         model: model,
         input: Array(text)
       }.compact
