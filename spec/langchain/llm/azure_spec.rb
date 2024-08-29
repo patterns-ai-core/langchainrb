@@ -39,5 +39,25 @@ RSpec.describe Langchain::LLM::Azure do
         expect(result.chat_client.api_type).to eq(:azure)
       end
     end
+
+    context "with custom default_options" do
+      let(:subject) do
+        described_class.new(
+          api_key: "123",
+          llm_options: {api_type: :azure},
+          default_options: {
+            completion_model_name: "gpt-4o-mini",
+            n: 2,
+            temperature: 0.5
+          }
+        )
+      end
+
+      it "updates chat_parameters with correct arguments", focus: true do
+        expect(subject.chat_parameters[:model]).to eq("gpt-4o-mini")
+        expect(subject.chat_parameters[:n]).to eq(2)
+        expect(subject.chat_parameters[:temperature]).to eq(0.5)
+      end
+    end
   end
 end
