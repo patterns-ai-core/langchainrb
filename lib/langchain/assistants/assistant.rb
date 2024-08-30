@@ -286,7 +286,7 @@ module Langchain
     end
 
     def initialize_instructions
-      if llm.is_a?(Langchain::LLM::OpenAI)
+      if llm.is_a?(Langchain::LLM::OpenAI) || llm.is_a?(Langchain::LLM::MistralAI)
         add_message(role: "system", content: instructions) if instructions
       end
     end
