@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.15.4] - 2024-08-30
 - Improve the Langchain::Tool::Database tool
 - Allow explictly setting tool_choice on the Assistant instance
 - Add support for bulk embedding in Ollama
