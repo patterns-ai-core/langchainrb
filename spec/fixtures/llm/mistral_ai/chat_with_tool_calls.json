@@ -1,0 +1,31 @@
+{
+  "id": "ae0ad9edcace489790a8670013844fee",
+  "object": "chat.completion",
+  "created": 1725020422,
+  "model": "mistral-large-latest",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "id": "b7ndVdw4R",
+            "function": {
+              "name": "langchain_tool_calculator__execute",
+              "arguments": "{\"input\": \"1+1\"}"
+            }
+          }
+        ]
+      },
+      "finish_reason": "tool_calls",
+      "logprobs": null
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 119,
+    "total_tokens": 149,
+    "completion_tokens": 30
+  }
+}

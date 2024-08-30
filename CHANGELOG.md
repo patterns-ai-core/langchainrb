@@ -2,6 +2,8 @@
 - Improve the Langchain::Tool::Database tool
 - Allow explictly setting tool_choice on the Assistant instance
 - Add support for bulk embedding in Ollama
+- `Langchain::Assistant` works with `Langchain::LLM::MistralAI` llm
+- Fix Langchain::LLM::Azure not applying full default_options
 
 ## [0.15.3] - 2024-08-27
 - Fix OpenAI#embed when text-embedding-ada-002 is used

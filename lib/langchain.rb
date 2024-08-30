@@ -18,6 +18,7 @@ loader.inflector.inflect(
   "llm" => "LLM",
   "mistral_ai" => "MistralAI",
   "mistral_ai_response" => "MistralAIResponse",
+  "mistral_ai_message" => "MistralAIMessage",
   "openai" => "OpenAI",
   "openai_validator" => "OpenAIValidator",
   "openai_response" => "OpenAIResponse",

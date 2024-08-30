@@ -7,7 +7,7 @@
     "index": 0,
     "message": {
       "role": "assistant",
-      "content": "Hello! I'm just a computer program, so I don't have feelings, but I'm here to help you with any questions or problems you have to the best of my ability. How can I assist you today?"
+      "content": "Hello!"
     },
     "finish_reason": "stop",
     "logprobs": null

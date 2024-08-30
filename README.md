@@ -405,7 +405,7 @@ client.ask(question: "...")
 `Langchain::Assistant` is a powerful and flexible class that combines Large Language Models (LLMs), tools, and conversation management to create intelligent, interactive assistants. It's designed to handle complex conversations, execute tools, and provide coherent responses based on the context of the interaction.
 
 ### Features
-* Supports multiple LLM providers (OpenAI, Google Gemini, Anthropic, Ollama)
+* Supports multiple LLM providers (OpenAI, Google Gemini, Anthropic, Mistral AI and open-source models via Ollama)
 * Integrates with various tools to extend functionality
 * Manages conversation threads
 * Handles automatic and manual tool execution

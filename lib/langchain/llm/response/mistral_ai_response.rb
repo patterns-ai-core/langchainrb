@@ -7,7 +7,15 @@ module Langchain::LLM
     end
 
     def chat_completion
-      raw_response.dig("choices", 0, "message", "content")
+      chat_completions.dig(0, "message", "content")
+    end
+
+    def chat_completions
+      raw_response.dig("choices")
+    end
+
+    def tool_calls
+      chat_completions.dig(0, "message", "tool_calls") || []
     end
 
     def role
