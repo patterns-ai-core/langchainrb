@@ -8,7 +8,7 @@ module Langchain::LLM
   #    llm = Langchain::LLM::MistralAI.new(api_key: ENV["MISTRAL_AI_API_KEY"])
   class MistralAI < Base
     DEFAULTS = {
-      chat_completion_model_name: "mistral-medium",
+      chat_completion_model_name: "mistral-large-latest",
       embeddings_model_name: "mistral-embed"
     }.freeze
 
