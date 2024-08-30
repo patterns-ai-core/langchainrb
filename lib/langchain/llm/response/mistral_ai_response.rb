@@ -16,11 +16,7 @@ module Langchain::LLM
 
     def tool_calls
       binding.pry
-      if chat_completions.dig(0, "message", "tool_calls")
-        chat_completions.dig(0, "message", "tool_calls")
-      else
-        []
-      end
+      chat_completions.dig(0, "message", "tool_calls") || []
     end
 
     def role
