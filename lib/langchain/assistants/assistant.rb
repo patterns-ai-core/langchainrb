@@ -505,7 +505,7 @@ module Langchain
           end
 
           def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
-            Langchain::Messages::OpenAIMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+            Langchain::Messages::MistralAIMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
           # Extract the tool call information from the OpenAI tool call hash
