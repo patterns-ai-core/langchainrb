@@ -2,7 +2,6 @@
 
 RSpec.describe Langchain::Assistant do
   context "when llm is OpenAI" do
-    let(:thread) { Langchain::Thread.new }
     let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
     let(:calculator) { Langchain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
@@ -10,7 +9,6 @@ RSpec.describe Langchain::Assistant do
     subject {
       described_class.new(
         llm: llm,
-        thread: thread,
         tools: [calculator],
         instructions: instructions
       )
@@ -31,9 +29,9 @@ RSpec.describe Langchain::Assistant do
 
     describe "#initialize" do
       it "adds a system message to the thread" do
-        described_class.new(llm: llm, thread: thread, instructions: instructions)
-        expect(thread.messages.first.role).to eq("system")
-        expect(thread.messages.first.content).to eq("You are an expert assistant")
+        assistant = described_class.new(llm: llm, instructions: instructions)
+        expect(assistant.messages.first.role).to eq("system")
+        expect(assistant.messages.first.content).to eq("You are an expert assistant")
       end
 
       it "sets new thread if thread is not provided" do
@@ -45,16 +43,16 @@ RSpec.describe Langchain::Assistant do
     describe "#add_message" do
       it "adds a message to the thread" do
         subject.add_message(content: "foo")
-        expect(thread.messages.last.role).to eq("user")
-        expect(thread.messages.last.content).to eq("foo")
+        expect(subject.messages.last.role).to eq("user")
+        expect(subject.messages.last.content).to eq("foo")
       end
     end
 
     describe "#submit_tool_output" do
       it "adds a message to the thread" do
         subject.submit_tool_output(tool_call_id: "123", output: "bar")
-        expect(thread.messages.last.role).to eq("tool")
-        expect(thread.messages.last.content).to eq("bar")
+        expect(subject.messages.last.role).to eq("tool")
+        expect(subject.messages.last.content).to eq("bar")
       end
     end
 
@@ -107,8 +105,8 @@ RSpec.describe Langchain::Assistant do
         it "runs the assistant" do
           subject.run(auto_tool_execution: false)
 
-          expect(subject.thread.messages.last.role).to eq("assistant")
-          expect(subject.thread.messages.last.tool_calls).to eq([raw_openai_response["choices"][0]["message"]["tool_calls"]][0])
+          expect(subject.messages.last.role).to eq("assistant")
+          expect(subject.messages.last.tool_calls).to eq([raw_openai_response["choices"][0]["message"]["tool_calls"]][0])
         end
 
         it "records the used tokens totals" do
@@ -164,11 +162,11 @@ RSpec.describe Langchain::Assistant do
         it "runs the assistant and automatically executes tool calls" do
           subject.run(auto_tool_execution: true)
 
-          expect(subject.thread.messages[-2].role).to eq("tool")
-          expect(subject.thread.messages[-2].content).to eq("4.0")
+          expect(subject.messages[-2].role).to eq("tool")
+          expect(subject.messages[-2].content).to eq("4.0")
 
-          expect(subject.thread.messages[-1].role).to eq("assistant")
-          expect(subject.thread.messages[-1].content).to eq("The result of 2 + 2 is 4.")
+          expect(subject.messages[-1].role).to eq("assistant")
+          expect(subject.messages[-1].content).to eq("The result of 2 + 2 is 4.")
         end
 
         it "records the used tokens totals" do
@@ -188,7 +186,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "logs a warning" do
-          expect(subject.thread.messages).to be_empty
+          expect(subject.messages).to be_empty
           subject.run
           expect(Langchain.logger).to have_received(:warn).with("No messages in the thread")
         end
@@ -344,7 +342,6 @@ RSpec.describe Langchain::Assistant do
   end
 
   context "when llm is MistralAI" do
-    let(:thread) { Langchain::Thread.new }
     let(:llm) { Langchain::LLM::MistralAI.new(api_key: "123") }
     let(:calculator) { Langchain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
@@ -352,7 +349,6 @@ RSpec.describe Langchain::Assistant do
     subject {
       described_class.new(
         llm: llm,
-        thread: thread,
         tools: [calculator],
         instructions: instructions
       )
@@ -373,9 +369,9 @@ RSpec.describe Langchain::Assistant do
 
     describe "#initialize" do
       it "adds a system message to the thread" do
-        described_class.new(llm: llm, thread: thread, instructions: instructions)
-        expect(thread.messages.first.role).to eq("system")
-        expect(thread.messages.first.content).to eq("You are an expert assistant")
+        described_class.new(llm: llm, instructions: instructions)
+        expect(subject.messages.first.role).to eq("system")
+        expect(subject.messages.first.content).to eq("You are an expert assistant")
       end
 
       it "sets new thread if thread is not provided" do
@@ -387,16 +383,16 @@ RSpec.describe Langchain::Assistant do
     describe "#add_message" do
       it "adds a message to the thread" do
         subject.add_message(content: "foo")
-        expect(thread.messages.last.role).to eq("user")
-        expect(thread.messages.last.content).to eq("foo")
+        expect(subject.messages.last.role).to eq("user")
+        expect(subject.messages.last.content).to eq("foo")
       end
     end
 
     describe "#submit_tool_output" do
       it "adds a message to the thread" do
         subject.submit_tool_output(tool_call_id: "123", output: "bar")
-        expect(thread.messages.last.role).to eq("tool")
-        expect(thread.messages.last.content).to eq("bar")
+        expect(subject.messages.last.role).to eq("tool")
+        expect(subject.messages.last.content).to eq("bar")
       end
     end
 
@@ -449,8 +445,8 @@ RSpec.describe Langchain::Assistant do
         it "runs the assistant" do
           subject.run(auto_tool_execution: false)
 
-          expect(subject.thread.messages.last.role).to eq("assistant")
-          expect(subject.thread.messages.last.tool_calls).to eq([raw_mistralai_response["choices"][0]["message"]["tool_calls"]][0])
+          expect(subject.messages.last.role).to eq("assistant")
+          expect(subject.messages.last.tool_calls).to eq([raw_mistralai_response["choices"][0]["message"]["tool_calls"]][0])
         end
 
         it "records the used tokens totals" do
@@ -506,11 +502,11 @@ RSpec.describe Langchain::Assistant do
         it "runs the assistant and automatically executes tool calls" do
           subject.run(auto_tool_execution: true)
 
-          expect(subject.thread.messages[-2].role).to eq("tool")
-          expect(subject.thread.messages[-2].content).to eq("4.0")
+          expect(subject.messages[-2].role).to eq("tool")
+          expect(subject.messages[-2].content).to eq("4.0")
 
-          expect(subject.thread.messages[-1].role).to eq("assistant")
-          expect(subject.thread.messages[-1].content).to eq("The result of 2 + 2 is 4.")
+          expect(subject.messages[-1].role).to eq("assistant")
+          expect(subject.messages[-1].content).to eq("The result of 2 + 2 is 4.")
         end
 
         it "records the used tokens totals" do
@@ -530,7 +526,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "logs a warning" do
-          expect(subject.thread.messages).to be_empty
+          expect(subject.messages).to be_empty
           subject.run
           expect(Langchain.logger).to have_received(:warn).with("No messages in the thread")
         end
@@ -686,7 +682,6 @@ RSpec.describe Langchain::Assistant do
   end  
 
   context "when llm is GoogleGemini" do
-    let(:thread) { Langchain::Thread.new }
     let(:llm) { Langchain::LLM::GoogleGemini.new(api_key: "123") }
     let(:calculator) { Langchain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
@@ -694,7 +689,6 @@ RSpec.describe Langchain::Assistant do
     subject {
       described_class.new(
         llm: llm,
-        thread: thread,
         tools: [calculator],
         instructions: instructions
       )
@@ -716,16 +710,16 @@ RSpec.describe Langchain::Assistant do
     describe "#add_message" do
       it "adds a message to the thread" do
         subject.add_message(content: "foo")
-        expect(thread.messages.last.role).to eq("user")
-        expect(thread.messages.last.content).to eq("foo")
+        expect(subject.messages.last.role).to eq("user")
+        expect(subject.messages.last.content).to eq("foo")
       end
     end
 
     describe "submit_tool_output" do
       it "adds a message to the thread" do
         subject.submit_tool_output(tool_call_id: "123", output: "bar")
-        expect(thread.messages.last.role).to eq("function")
-        expect(thread.messages.last.content).to eq("bar")
+        expect(subject.messages.last.role).to eq("function")
+        expect(subject.messages.last.content).to eq("bar")
       end
     end
 
@@ -769,8 +763,8 @@ RSpec.describe Langchain::Assistant do
           subject.add_message(role: "user", content: "Please calculate 2+2")
           subject.run(auto_tool_execution: false)
 
-          expect(subject.thread.messages.last.role).to eq("model")
-          expect(subject.thread.messages.last.tool_calls).to eq([raw_google_gemini_response["candidates"][0]["content"]["parts"]][0])
+          expect(subject.messages.last.role).to eq("model")
+          expect(subject.messages.last.tool_calls).to eq([raw_google_gemini_response["candidates"][0]["content"]["parts"]][0])
         end
       end
 
@@ -816,11 +810,11 @@ RSpec.describe Langchain::Assistant do
 
           subject.run(auto_tool_execution: true)
 
-          expect(subject.thread.messages[-2].role).to eq("function")
-          expect(subject.thread.messages[-2].content).to eq("4.0")
+          expect(subject.messages[-2].role).to eq("function")
+          expect(subject.messages[-2].content).to eq("4.0")
 
-          expect(subject.thread.messages[-1].role).to eq("model")
-          expect(subject.thread.messages[-1].content).to eq("The answer is 4.0")
+          expect(subject.messages[-1].role).to eq("model")
+          expect(subject.messages[-1].content).to eq("The answer is 4.0")
         end
       end
 
@@ -832,7 +826,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "logs a warning" do
-          expect(subject.thread.messages).to be_empty
+          expect(subject.messages).to be_empty
           subject.run
           expect(Langchain.logger).to have_received(:warn).with("No messages in the thread")
         end
@@ -870,7 +864,6 @@ RSpec.describe Langchain::Assistant do
   end
 
   context "when llm is Anthropic" do
-    let(:thread) { Langchain::Thread.new }
     let(:llm) { Langchain::LLM::Anthropic.new(api_key: "123") }
     let(:calculator) { Langchain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
@@ -878,7 +871,6 @@ RSpec.describe Langchain::Assistant do
     subject {
       described_class.new(
         llm: llm,
-        thread: thread,
         tools: [calculator],
         instructions: instructions
       )
@@ -900,16 +892,16 @@ RSpec.describe Langchain::Assistant do
     describe "#add_message" do
       it "adds a message to the thread" do
         subject.add_message(content: "foo")
-        expect(thread.messages.last.role).to eq("user")
-        expect(thread.messages.last.content).to eq("foo")
+        expect(subject.messages.last.role).to eq("user")
+        expect(subject.messages.last.content).to eq("foo")
       end
     end
 
     describe "submit_tool_output" do
       it "adds a message to the thread" do
         subject.submit_tool_output(tool_call_id: "123", output: "bar")
-        expect(thread.messages.last.role).to eq("tool_result")
-        expect(thread.messages.last.content).to eq("bar")
+        expect(subject.messages.last.role).to eq("tool_result")
+        expect(subject.messages.last.content).to eq("bar")
       end
     end
 
@@ -943,7 +935,6 @@ RSpec.describe Langchain::Assistant do
         subject {
           described_class.new(
             llm: llm,
-            thread: thread,
             instructions: instructions
           )
         }
@@ -976,8 +967,8 @@ RSpec.describe Langchain::Assistant do
           subject.add_message(role: "user", content: "Please calculate 2+2")
           subject.run(auto_tool_execution: false)
 
-          expect(subject.thread.messages.last.role).to eq("assistant")
-          expect(subject.thread.messages.last.tool_calls).to eq([raw_anthropic_response["content"].first])
+          expect(subject.messages.last.role).to eq("assistant")
+          expect(subject.messages.last.tool_calls).to eq([raw_anthropic_response["content"].first])
         end
 
         it "adds a system param to chat when instructions are given" do
@@ -1037,11 +1028,11 @@ RSpec.describe Langchain::Assistant do
 
           subject.run(auto_tool_execution: true)
 
-          expect(subject.thread.messages[-2].role).to eq("tool_result")
-          expect(subject.thread.messages[-2].content).to eq("4.0")
+          expect(subject.messages[-2].role).to eq("tool_result")
+          expect(subject.messages[-2].content).to eq("4.0")
 
-          expect(subject.thread.messages[-1].role).to eq("assistant")
-          expect(subject.thread.messages[-1].content).to eq("So 2 + 2 = 4.")
+          expect(subject.messages[-1].role).to eq("assistant")
+          expect(subject.messages[-1].content).to eq("So 2 + 2 = 4.")
         end
       end
 
@@ -1053,7 +1044,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "logs a warning" do
-          expect(subject.thread.messages).to be_empty
+          expect(subject.messages).to be_empty
           subject.run
           expect(Langchain.logger).to have_received(:warn).with("No messages in the thread")
         end
