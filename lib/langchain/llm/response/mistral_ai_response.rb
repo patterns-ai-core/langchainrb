@@ -15,7 +15,6 @@ module Langchain::LLM
     end
 
     def tool_calls
-      binding.pry
       chat_completions.dig(0, "message", "tool_calls") || []
     end
 
