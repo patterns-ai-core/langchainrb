@@ -679,7 +679,7 @@ RSpec.describe Langchain::Assistant do
         expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
       end
     end
-  end  
+  end
 
   context "when llm is GoogleGemini" do
     let(:llm) { Langchain::LLM::GoogleGemini.new(api_key: "123") }

@@ -26,7 +26,7 @@ RSpec.describe Langchain::LLM::MistralAIResponse do
               "arguments" => "{\"input\": \"1+1\"}",
               "name" => "langchain_tool_calculator__execute"
             },
-            "id"=>"b7ndVdw4R"
+            "id" => "b7ndVdw4R"
           }
         ]
       )
