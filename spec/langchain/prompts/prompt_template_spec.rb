@@ -63,6 +63,22 @@ RSpec.describe Langchain::Prompt::PromptTemplate do
       )
 
       expect(prompt.format(adjective: "funny", content: "chickens")).to eq("Tell me a funny joke about chickens.")
+
+      prompt = described_class.new(
+        template: "Tell me a joke about f-strings and escaping {{json: data}}.",
+        input_variables: []
+      )
+
+      expect(prompt.format).to eq("Tell me a joke about f-strings and escaping {json: data}.")
+
+      schema = '{"type": "object", "properties": {"setup": {"type": "string"}, "punchline": {"type": "string"}}}'
+
+      prompt = described_class.new(
+        template: 'Tell me a joke that follows this schema: {schema}',
+        input_variables: ['schema']
+      )
+
+      expect(prompt.format(schema: schema)).to eq("Tell me a joke that follows this schema: #{schema}")
     end
   end
 
