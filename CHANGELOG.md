@@ -1,4 +1,6 @@
 ## [Unreleased]
+- Fix for Langchain::Prompt::PromptTemplate supporting nested JSON data
+- Require common libs at top-level #754
 
 ## [0.15.4] - 2024-08-30
 - Improve the Langchain::Tool::Database tool
