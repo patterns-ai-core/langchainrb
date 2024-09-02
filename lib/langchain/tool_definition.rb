@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "json"
-
 #
 # Extends a class to be used as a tool in the assistant.
 # A tool is a collection of functions (methods) used to perform specific tasks.

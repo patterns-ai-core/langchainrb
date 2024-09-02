@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 require "securerandom"
-require "json"
 require "timeout"
-require "uri"
 
 module Langchain::Vectorsearch
   class Epsilla < Base

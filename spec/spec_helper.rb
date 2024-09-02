@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "pathname"
-require "json"
 require "yaml"
 require "langchain"
 require "pry-byebug"
