@@ -2,7 +2,6 @@
 
 require "strscan"
 require "pathname"
-require "json"
 require "yaml"
 
 module Langchain::Prompt

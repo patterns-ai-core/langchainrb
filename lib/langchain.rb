@@ -4,6 +4,9 @@ require "logger"
 require "pathname"
 require "rainbow"
 require "zeitwerk"
+require "uri"
+require "json"
+
 loader = Zeitwerk::Loader.for_gem
 loader.ignore("#{__dir__}/langchainrb.rb")
 loader.inflector.inflect(
@@ -30,6 +33,7 @@ loader.collapse("#{__dir__}/langchain/assistants")
 
 loader.collapse("#{__dir__}/langchain/tool/calculator")
 loader.collapse("#{__dir__}/langchain/tool/database")
+loader.collapse("#{__dir__}/langchain/tool/docs_tool")
 loader.collapse("#{__dir__}/langchain/tool/file_system")
 loader.collapse("#{__dir__}/langchain/tool/google_search")
 loader.collapse("#{__dir__}/langchain/tool/ruby_code_interpreter")

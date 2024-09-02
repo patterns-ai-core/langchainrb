@@ -1,4 +1,4 @@
-require "uri"
+# frozen_string_literal: true
 
 module Langchain
   module Processors

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "strscan"
-require "json"
 require "yaml"
 
 module Langchain::Prompt
