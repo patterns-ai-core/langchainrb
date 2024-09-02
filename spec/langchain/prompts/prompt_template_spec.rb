@@ -74,8 +74,8 @@ RSpec.describe Langchain::Prompt::PromptTemplate do
       schema = '{"type": "object", "properties": {"setup": {"type": "string"}, "punchline": {"type": "string"}}}'
 
       prompt = described_class.new(
-        template: 'Tell me a joke that follows this schema: {schema}',
-        input_variables: ['schema']
+        template: "Tell me a joke that follows this schema: {schema}",
+        input_variables: ["schema"]
       )
 
       expect(prompt.format(schema: schema)).to eq("Tell me a joke that follows this schema: #{schema}")
