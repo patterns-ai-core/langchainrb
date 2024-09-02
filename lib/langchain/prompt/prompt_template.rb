@@ -58,8 +58,9 @@ module Langchain::Prompt
     #
     def format(**kwargs)
       result = @template
+      result = result.gsub(/{{/, "{").gsub(/}}/, "}")
       kwargs.each { |key, value| result = result.gsub(/\{#{key}\}/, value.to_s) }
-      result.gsub(/{{/, "{").gsub(/}}/, "}")
+      result
     end
 
     #
