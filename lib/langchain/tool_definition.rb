@@ -77,7 +77,7 @@ module Langchain::ToolDefinition
     def add_function(method_name:, description:, &block)
       name = "#{@tool_name}__#{method_name}"
 
-      if block_given?
+      if block
         parameters = ParameterBuilder.new(parent_type: "object").build(&block)
 
         if parameters[:properties].empty?
@@ -147,7 +147,7 @@ module Langchain::ToolDefinition
 
       prop = {type:, description:, enum:}.compact
 
-      if block_given?
+      if block
         nested_schema = ParameterBuilder.new(parent_type: type).build(&block)
 
         case type
