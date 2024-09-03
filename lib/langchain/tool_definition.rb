@@ -40,8 +40,8 @@ module Langchain::ToolDefinition
   # @param method_name [Symbol] Name of the method to define
   # @param description [String] Description of the function
   # @yield Block that defines the parameters for the function
-  def define_function(method_name, description:, &)
-    function_schemas.add_function(method_name:, description:, &)
+  def define_function(method_name, description:, &block)
+    function_schemas.add_function(method_name:, description:, &block)
   end
 
   # Returns the FunctionSchemas instance for this tool
