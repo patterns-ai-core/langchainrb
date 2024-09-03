@@ -74,11 +74,11 @@ module Langchain::ToolDefinition
     # @param description [String] Description of the function
     # @yield Block that defines the parameters for the function
     # @raise [ArgumentError] If a block is defined and no parameters are specified for the function
-    def add_function(method_name:, description:, &)
+    def add_function(method_name:, description:, &block)
       name = "#{@tool_name}__#{method_name}"
 
       if block_given?
-        parameters = ParameterBuilder.new(parent_type: "object").build(&)
+        parameters = ParameterBuilder.new(parent_type: "object").build(&block)
 
         if parameters[:properties].empty?
           raise ArgumentError, "Function parameters must have at least one property defined within it, if a block is provided"
@@ -142,13 +142,13 @@ module Langchain::ToolDefinition
     # @param required [Boolean] Whether the property is required
     # @yield [Block] Block for nested properties (only for object and array types)
     # @raise [ArgumentError] If any parameter is invalid
-    def property(name = nil, type:, description: nil, enum: nil, required: false, &)
+    def property(name = nil, type:, description: nil, enum: nil, required: false, &block)
       validate_parameters(name:, type:, enum:, required:)
 
       prop = {type:, description:, enum:}.compact
 
       if block_given?
-        nested_schema = ParameterBuilder.new(parent_type: type).build(&)
+        nested_schema = ParameterBuilder.new(parent_type: type).build(&block)
 
         case type
         when "object"
