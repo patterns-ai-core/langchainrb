@@ -77,7 +77,7 @@ module Langchain::ToolDefinition
     def add_function(method_name:, description:, &block)
       name = "#{@tool_name}__#{method_name}"
 
-      if block_given?
+      if block_given? # rubocop:disable Performance/BlockGivenWithExplicitBlock
         parameters = ParameterBuilder.new(parent_type: "object").build(&block)
 
         if parameters[:properties].empty?
@@ -128,8 +128,8 @@ module Langchain::ToolDefinition
     #
     # @yield Block that defines the properties of the schema
     # @return [Hash] The built schema
-    def build(&)
-      instance_eval(&)
+    def build(&block)
+      instance_eval(&block)
       @schema
     end
 
@@ -147,7 +147,7 @@ module Langchain::ToolDefinition
 
       prop = {type:, description:, enum:}.compact
 
-      if block_given?
+      if block_given? # rubocop:disable Performance/BlockGivenWithExplicitBlock
         nested_schema = ParameterBuilder.new(parent_type: type).build(&block)
 
         case type
