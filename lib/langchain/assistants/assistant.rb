@@ -51,9 +51,8 @@ module Langchain
       raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless @thread.is_a?(Langchain::Thread)
 
       # The first message in the thread should be the system instructions
-      # TODO: What if the user added old messages and the system instructions are already in there? Should this overwrite the existing instructions?
-      initialize_instructions
       # For Google Gemini, and Anthropic system instructions are added to the `system:` param in the `chat` method
+      initialize_instructions
     end
 
     # Add a user message to the thread
@@ -287,7 +286,7 @@ module Langchain
 
     def initialize_instructions
       if llm.is_a?(Langchain::LLM::OpenAI) || llm.is_a?(Langchain::LLM::MistralAI)
-        add_message(role: "system", content: instructions) if instructions
+        self.instructions = @instructions if @instructions
       end
     end
 
