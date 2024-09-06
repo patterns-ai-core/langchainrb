@@ -48,7 +48,6 @@ module Langchain::LLM
 
     attr_reader :client, :defaults
 
-    SUPPORTED_COMPLETION_PROVIDERS = %i[anthropic cohere ai21].freeze
     SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[anthropic].freeze
     SUPPORTED_EMBEDDING_PROVIDERS = %i[amazon].freeze
 
@@ -103,8 +102,6 @@ module Langchain::LLM
     # @return [Langchain::LLM::AnthropicResponse], [Langchain::LLM::CohereResponse] or [Langchain::LLM::AI21Response] Response object
     #
     def complete(prompt:, **params)
-      raise "Completion provider #{completion_provider} is not supported." unless SUPPORTED_COMPLETION_PROVIDERS.include?(completion_provider)
-
       raise "Model #{@defaults[:completion_model_name]} only supports #chat." if @defaults[:completion_model_name].include?("claude-3")
 
       parameters = compose_parameters params
