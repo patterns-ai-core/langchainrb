@@ -38,6 +38,18 @@ RSpec.describe Langchain::Assistant do
         subject = described_class.new(llm: llm, instructions: instructions)
         expect(subject.thread).to be_a(Langchain::Thread)
       end
+
+      it "the system message always comes first" do
+        thread = Langchain::Thread.new
+        system_message = Langchain::Messages::OpenAIMessage.new(role: "system", content: "System message")
+        user_message = Langchain::Messages::OpenAIMessage.new(role: "user", content: "foo")
+        thread.add_message(system_message)
+        thread.add_message(user_message)
+        assistant = described_class.new(llm: llm, thread: thread, instructions: instructions)
+        expect(assistant.messages.first.role).to eq("system")
+        # Replaces the previous system message
+        expect(assistant.messages.first.content).to eq("You are an expert assistant")
+      end
     end
 
     describe "#add_message" do
@@ -377,6 +389,18 @@ RSpec.describe Langchain::Assistant do
       it "sets new thread if thread is not provided" do
         subject = described_class.new(llm: llm, instructions: instructions)
         expect(subject.thread).to be_a(Langchain::Thread)
+      end
+
+      it "the system message always comes first" do
+        thread = Langchain::Thread.new
+        system_message = Langchain::Messages::OpenAIMessage.new(role: "system", content: "System message")
+        user_message = Langchain::Messages::OpenAIMessage.new(role: "user", content: "foo")
+        thread.add_message(system_message)
+        thread.add_message(user_message)
+        assistant = described_class.new(llm: llm, thread: thread, instructions: instructions)
+        expect(assistant.messages.first.role).to eq("system")
+        # Replaces the previous system message
+        expect(assistant.messages.first.content).to eq("You are an expert assistant")
       end
     end
 
