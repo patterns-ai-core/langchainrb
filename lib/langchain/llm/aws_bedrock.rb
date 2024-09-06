@@ -222,7 +222,7 @@ module Langchain::LLM
       elsif completion_provider == :ai21
         Langchain::LLM::AI21Response.new(JSON.parse(response.body.string, symbolize_names: true))
       elsif completion_provider == :meta
-        Langchain::LLM::MetaResponse.new(JSON.parse(response.body.string))
+        Langchain::LLM::AwsBedrockMetaResponse.new(JSON.parse(response.body.string))
       end
     end
 
