@@ -427,7 +427,19 @@ assistant.add_message_and_run(content: "What's the latest news about AI?")
 messages = assistant.messages
 
 # Run the assistant with automatic tool execution
-assistant.run!
+assistant.run(auto_tool_execution: true)
+
+# If you want to stream the response, you can add a response handler
+assistant = Langchain::Assistant.new(
+  llm: llm,
+  instructions: "You're a helpful AI assistant",
+  tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
+) do |response_chunk|
+  # ...handle the response stream
+  # print(response_chunk.inspect)
+end
+assistant.add_message(content: "Hello")
+assistant.run(auto_tool_execution: true)
 ```
 
 ### Configuration
