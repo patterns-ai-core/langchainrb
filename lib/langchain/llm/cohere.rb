@@ -27,7 +27,8 @@ module Langchain::LLM
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
         model: {default: @defaults[:chat_completion_model_name]},
-        temperature: {default: @defaults[:temperature]}
+        temperature: {default: @defaults[:temperature]},
+        response_format: {default: @defaults[:response_format]}
       )
       chat_parameters.remap(
         system: :preamble,
