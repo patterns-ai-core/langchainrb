@@ -9,7 +9,7 @@ RSpec.describe Langchain::LLM::AwsBedrockMetaResponse do
 
   describe "#complete" do
     it "returns completion" do
-      expect(subject.generation).to eq("The sky has no definitive")
+      expect(subject.completion).to eq("The sky has no definitive")
     end
   end
 end
