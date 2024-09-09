@@ -427,7 +427,7 @@ assistant.add_message_and_run(content: "What's the latest news about AI?")
 messages = assistant.messages
 
 # Run the assistant with automatic tool execution
-assistant.run(auto_tool_execution: true)
+assistant.run!
 ```
 
 ### Configuration
@@ -439,8 +439,8 @@ assistant.run(auto_tool_execution: true)
 
 ### Key Methods
 * `add_message`: Adds a user message to the messages array
-* `run`: Processes the conversation and generates responses
-* `add_message_and_run`: Combines adding a message and running the assistant
+* `run!`: Processes the conversation and generates responses
+* `add_message_and_run!`: Combines adding a message and running the assistant
 * `submit_tool_output`: Manually submit output to a tool call
 * `messages`: Returns a list of ongoing messages
 
