@@ -40,7 +40,8 @@ module Langchain
       @llm = llm
       @llm_adapter = LLM::Adapter.build(llm)
 
-      @thread = thread || Langchain::Thread.new(add_message_callback: add_message_callback)
+      @thread = thread || Langchain::Thread.new
+      @thread.add_message_callback = add_message_callback
 
       @tools = tools
       self.tool_choice = tool_choice
