@@ -32,10 +32,17 @@ module Langchain::LLM
     #
     # @param api_key [String] The API key to use
     # @param client_options [Hash] Options to pass to the OpenAI::Client constructor
-    def initialize(api_key:, llm_options: {}, default_options: {})
-      depends_on "ruby-openai", req: "openai"
+    # @param client [OpenAI::Client] An existing OpenAI::Client instance to use
+    def initialize(api_key: nil, llm_options: {}, default_options: {}, client: nil)
+      if client
+        @client = client
+      elsif api_key
+        depends_on "ruby-openai", req: "openai"
 
-      @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
+        @client = ::OpenAI::Client.new(access_token: api_key, **llm_options)
+      else
+        raise ArgumentError, "Either an :api_key or :client argument is required"
+      end
 
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
