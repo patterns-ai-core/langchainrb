@@ -30,7 +30,8 @@ module Langchain
       thread: nil,
       tools: [],
       instructions: nil,
-      tool_choice: "auto"
+      tool_choice: "auto",
+      add_message_callback: nil
     )
       unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
         raise ArgumentError, "Tools must be an array of objects extending Langchain::ToolDefinition"
@@ -38,7 +39,9 @@ module Langchain
 
       @llm = llm
       @llm_adapter = LLM::Adapter.build(llm)
-      @thread = thread || Langchain::Thread.new
+
+      @thread = thread || Langchain::Thread.new(add_message_callback: add_message_callback)
+
       @tools = tools
       self.tool_choice = tool_choice
       @instructions = instructions

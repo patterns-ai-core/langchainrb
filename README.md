@@ -435,6 +435,7 @@ assistant.run(auto_tool_execution: true)
 * `tools`: An array of tool instances (optional)
 * `instructions`: System instructions for the assistant (optional)
 * `tool_choice`: Specifies how tools should be selected. Default: "auto". A specific tool function name can be passed. This will force the Assistant to **always** use this function.
+* `add_message_callback`: A callback function (proc, lambda) that is called when any message is added to the conversation (optional)
 
 ### Key Methods
 * `add_message`: Adds a user message to the messages array
