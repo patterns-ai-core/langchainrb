@@ -110,6 +110,13 @@ module Langchain
       thread.messages
     end
 
+    # Run the assistant with automatic tool execution
+    #
+    # @return [Array<Langchain::Message>] The messages in the thread
+    def run!
+      run(auto_tool_execution: true)
+    end
+
     # Add a user message to the thread and run the assistant
     #
     # @param content [String] The content of the message
@@ -118,6 +125,14 @@ module Langchain
     def add_message_and_run(content:, auto_tool_execution: false)
       add_message(content: content, role: "user")
       run(auto_tool_execution: auto_tool_execution)
+    end
+
+    # Add a user message to the thread and run the assistant with automatic tool execution
+    #
+    # @param content [String] The content of the message
+    # @return [Array<Langchain::Message>] The messages in the thread
+    def add_message_and_run!(content:)
+      add_message_and_run(content: content, auto_tool_execution: true)
     end
 
     # Submit tool output to the thread
