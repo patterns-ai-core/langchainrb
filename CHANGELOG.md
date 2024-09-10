@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.15.4] - 2024-09-10 🇧🇦
 - Fix for Langchain::Prompt::PromptTemplate supporting nested JSON data
 - Require common libs at top-level
 - Add `add_message_callback` to `Langchain::Assistant` constructor to invoke an optional function when any message is added to the conversation
