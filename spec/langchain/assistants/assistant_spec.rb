@@ -58,6 +58,15 @@ RSpec.describe Langchain::Assistant do
         expect(subject.messages.last.role).to eq("user")
         expect(subject.messages.last.content).to eq("foo")
       end
+
+      it "calls the add_message_callback with the message" do
+        callback = double("callback")
+        thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
+
+        expect(callback).to receive(:call).with(instance_of(Langchain::Messages::OpenAIMessage))
+
+        thread.add_message(role: "user", content: "foo")
+      end
     end
 
     describe "#submit_tool_output" do
@@ -410,6 +419,15 @@ RSpec.describe Langchain::Assistant do
         expect(subject.messages.last.role).to eq("user")
         expect(subject.messages.last.content).to eq("foo")
       end
+
+      it "calls the add_message_callback with the message" do
+        callback = double("callback")
+        thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
+
+        expect(callback).to receive(:call).with(instance_of(Langchain::Messages::MistralAIMessage))
+
+        thread.add_message(role: "user", content: "foo")
+      end
     end
 
     describe "#submit_tool_output" do
@@ -737,6 +755,15 @@ RSpec.describe Langchain::Assistant do
         expect(subject.messages.last.role).to eq("user")
         expect(subject.messages.last.content).to eq("foo")
       end
+
+      it "calls the add_message_callback with the message" do
+        callback = double("callback")
+        thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
+
+        expect(callback).to receive(:call).with(instance_of(Langchain::Messages::GoogleGeminiMessage))
+
+        thread.add_message(role: "user", content: "foo")
+      end
     end
 
     describe "submit_tool_output" do
@@ -918,6 +945,15 @@ RSpec.describe Langchain::Assistant do
         subject.add_message(content: "foo")
         expect(subject.messages.last.role).to eq("user")
         expect(subject.messages.last.content).to eq("foo")
+      end
+
+      it "calls the add_message_callback with the message" do
+        callback = double("callback")
+        thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
+
+        expect(callback).to receive(:call).with(instance_of(Langchain::Messages::AnthropicMessage))
+
+        thread.add_message(role: "user", content: "foo")
       end
     end
 

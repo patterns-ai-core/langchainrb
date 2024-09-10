@@ -40,5 +40,14 @@ RSpec.describe Langchain::Thread do
 
       expect { thread.add_message("foo") }.to raise_error(ArgumentError)
     end
+
+    it "calls the add_message_callback with the message" do
+      callback = double("callback")
+      thread = described_class.new(messages: [], add_message_callback: callback)
+
+      expect(callback).to receive(:call).with(message)
+
+      thread.add_message(message)
+    end
   end
 end
