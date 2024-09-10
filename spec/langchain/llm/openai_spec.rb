@@ -542,29 +542,34 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     context "with streaming" do
-      let(:streamed_content) { [] }
       let(:streamed_response_chunk) do
         {
           "id" => "chatcmpl-7Hcl1sXOtsaUBKJGGhNujEIwhauaD",
           "choices" => [{"index" => 0, "delta" => {"content" => answer}, "finish_reason" => nil}]
         }
       end
+      let(:token_usage) do
+        {
+          "usage" => {"prompt_tokens" => 10, "completion_tokens" => 11, "total_tokens" => 12}
+        }
+      end
 
       it "handles streaming responses correctly" do
         allow(subject.client).to receive(:chat) do |parameters|
           parameters[:parameters][:stream].call(streamed_response_chunk)
-          streamed_response_chunk
+          parameters[:parameters][:stream].call(token_usage)
         end
         response = subject.chat(messages: [content: prompt, role: "user"]) do |chunk|
           chunk
         end
         expect(response).to be_a(Langchain::LLM::OpenAIResponse)
-        expect(response.chat_completion).to eq(answer)
+        expect(response.prompt_tokens).to eq(10)
+        expect(response.completion_tokens).to eq(11)
+        expect(response.total_tokens).to eq(12)
       end
     end
 
     context "with streaming and multiple choices n=2" do
-      let(:streamed_content) { [] }
       let(:answer) { "Hello how are you?" }
       let(:answer_2) { "Alternative answer" }
       let(:streamed_response_chunk) do
@@ -579,12 +584,17 @@ RSpec.describe Langchain::LLM::OpenAI do
           "choices" => [{"index" => 1, "delta" => {"content" => answer_2}, "finish_reason" => "stop"}]
         }
       end
+      let(:token_usage) do
+        {
+          "usage" => {"prompt_tokens" => 10, "completion_tokens" => 11, "total_tokens" => 12}
+        }
+      end
 
       it "handles streaming responses correctly" do
         allow(subject.client).to receive(:chat) do |parameters|
           parameters[:parameters][:stream].call(streamed_response_chunk)
           parameters[:parameters][:stream].call(streamed_response_chunk_2)
-          streamed_response_chunk
+          parameters[:parameters][:stream].call(token_usage)
         end
         response = subject.chat(messages: [content: prompt, role: "user"], n: 2) do |chunk|
           chunk
@@ -596,6 +606,9 @@ RSpec.describe Langchain::LLM::OpenAI do
             {"index" => 1, "message" => {"role" => "assistant", "content" => answer_2}, "finish_reason" => "stop"}
           ]
         )
+        expect(response.prompt_tokens).to eq(10)
+        expect(response.completion_tokens).to eq(11)
+        expect(response.total_tokens).to eq(12)
       end
     end
 
