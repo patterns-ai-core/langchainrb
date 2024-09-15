@@ -74,7 +74,8 @@ module Langchain::LLM
       if wrapped_response.chat_completion || Array(wrapped_response.tool_calls).any?
         wrapped_response
       else
-        raise StandardError.new(response)
+        # `response.body` gives meaningful insights on failure. Eg, API KEY expired, or API not available in this country.
+        raise StandardError.new(response.body)
       end
     end
 
