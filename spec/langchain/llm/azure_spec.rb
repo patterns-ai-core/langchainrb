@@ -53,7 +53,7 @@ RSpec.describe Langchain::LLM::Azure do
         )
       end
 
-      it "updates chat_parameters with correct arguments", focus: true do
+      it "updates chat_parameters with correct arguments" do
         expect(subject.chat_parameters[:model]).to eq("gpt-4o-mini")
         expect(subject.chat_parameters[:n]).to eq(2)
         expect(subject.chat_parameters[:temperature]).to eq(0.5)
