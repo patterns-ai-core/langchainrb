@@ -756,6 +756,28 @@ RSpec.describe Langchain::Assistant do
     end
   end
 
+  context "when llm is GoogleVertexAI" do
+    let(:llm) { Langchain::LLM::GoogleVertexAI.new(project_id: "123", region: "us-central1") }
+    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:instructions) { "You are an expert assistant" }
+
+    subject {
+      described_class.new(
+        llm: llm,
+        tools: [calculator],
+        instructions: instructions
+      )
+    }
+
+    describe "#instructions=" do
+      it "resets instructions" do
+        subject.instructions = "New instructions"
+        expect(subject).not_to receive(:replace_system_message!)
+        expect(subject.instructions).to eq("New instructions")
+      end
+    end
+  end
+
   context "when llm is GoogleGemini" do
     let(:llm) { Langchain::LLM::GoogleGemini.new(api_key: "123") }
     let(:calculator) { Langchain::Tool::Calculator.new }
