@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "googleauth"
+
 RSpec.describe Langchain::Assistant do
   context "initialization" do
     let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
@@ -751,6 +753,32 @@ RSpec.describe Langchain::Assistant do
       it "resets instructions" do
         subject.instructions = "New instructions"
         expect(subject.messages.first.content).to eq("New instructions")
+        expect(subject.instructions).to eq("New instructions")
+      end
+    end
+  end
+
+  context "when llm is GoogleVertexAI" do
+    let(:llm) { Langchain::LLM::GoogleVertexAI.new(project_id: "123", region: "us-central1") }
+    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:instructions) { "You are an expert assistant" }
+
+    before do
+      allow(::Google::Auth).to receive(:get_application_default).and_return({})
+    end
+
+    subject {
+      described_class.new(
+        llm: llm,
+        tools: [calculator],
+        instructions: instructions
+      )
+    }
+
+    describe "#instructions=" do
+      it "resets instructions" do
+        subject.instructions = "New instructions"
+        expect(subject).not_to receive(:replace_system_message!)
         expect(subject.instructions).to eq("New instructions")
       end
     end
