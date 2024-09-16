@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "googleauth"
+
 RSpec.describe Langchain::Assistant do
   context "initialization" do
     let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
@@ -760,6 +762,10 @@ RSpec.describe Langchain::Assistant do
     let(:llm) { Langchain::LLM::GoogleVertexAI.new(project_id: "123", region: "us-central1") }
     let(:calculator) { Langchain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
+
+    before do
+      allow(::Google::Auth).to receive(:get_application_default).and_return({})
+    end
 
     subject {
       described_class.new(
