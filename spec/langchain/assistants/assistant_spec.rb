@@ -1,6 +1,59 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Assistant do
+  context "initialization" do
+    let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+
+    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
+      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
+    end
+
+    describe "#add_message_callback" do
+      it "raises an error if the callback is not a Proc" do
+        expect { described_class.new(llm: llm, add_message_callback: "foo") }.to raise_error(ArgumentError)
+      end
+
+      it "does not raise an error if the callback is a Proc" do
+        expect { described_class.new(llm: llm, add_message_callback: -> {}) }.not_to raise_error
+      end
+    end
+
+    it "raises an error if thread is not an instance of Langchain::Thread" do
+      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
+    end
+
+    it "raises an error if LLM class does not implement `chat()` method" do
+      llm = Langchain::LLM::Replicate.new(api_key: "123")
+      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
+    end
+
+    it "sets new thread if thread is not provided" do
+      subject = described_class.new(llm: llm)
+      expect(subject.thread).to be_a(Langchain::Thread)
+    end
+  end
+
+  context "methods" do
+    let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+
+    describe "#clear_thread!" do
+      it "clears the thread" do
+        assistant = described_class.new(llm: llm)
+        assistant.add_message(content: "foo")
+        expect { assistant.clear_thread! }.to change { assistant.messages.count }.from(1).to(0)
+      end
+    end
+
+    describe "#replace_system_message!" do
+      it "replaces the system message" do
+        assistant = described_class.new(llm: llm)
+        assistant.add_message(content: "foo")
+        assistant.send(:replace_system_message!, content: "bar")
+        expect(assistant.messages.first.content).to eq("bar")
+      end
+    end
+  end
+
   context "when llm is OpenAI" do
     let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
     let(:calculator) { Langchain::Tool::Calculator.new }
@@ -14,29 +67,11 @@ RSpec.describe Langchain::Assistant do
       )
     }
 
-    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
-      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if LLM class does not implement `chat()` method" do
-      llm = Langchain::LLM::Replicate.new(api_key: "123")
-      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if thread is not an instance of Langchain::Thread" do
-      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
-    end
-
     describe "#initialize" do
       it "adds a system message to the thread" do
         assistant = described_class.new(llm: llm, instructions: instructions)
         expect(assistant.messages.first.role).to eq("system")
         expect(assistant.messages.first.content).to eq("You are an expert assistant")
-      end
-
-      it "sets new thread if thread is not provided" do
-        subject = described_class.new(llm: llm, instructions: instructions)
-        expect(subject.thread).to be_a(Langchain::Thread)
       end
 
       it "the system message always comes first" do
@@ -60,7 +95,7 @@ RSpec.describe Langchain::Assistant do
       end
 
       it "calls the add_message_callback with the message" do
-        callback = double("callback")
+        callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
         expect(callback).to receive(:call).with(instance_of(Langchain::Messages::OpenAIMessage))
@@ -340,7 +375,7 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    context "tool_choice" do
+    describe "tool_choice" do
       it "initiliazes to 'auto' by default" do
         expect(subject.tool_choice).to eq("auto")
       end
@@ -360,6 +395,14 @@ RSpec.describe Langchain::Assistant do
         expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
       end
     end
+
+    describe "#instructions=" do
+      it "resets instructions" do
+        subject.instructions = "New instructions"
+        expect(subject.messages.first.content).to eq("New instructions")
+        expect(subject.instructions).to eq("New instructions")
+      end
+    end
   end
 
   context "when llm is MistralAI" do
@@ -375,29 +418,11 @@ RSpec.describe Langchain::Assistant do
       )
     }
 
-    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
-      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if LLM class does not implement `chat()` method" do
-      llm = Langchain::LLM::Replicate.new(api_key: "123")
-      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if thread is not an instance of Langchain::Thread" do
-      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
-    end
-
     describe "#initialize" do
       it "adds a system message to the thread" do
         described_class.new(llm: llm, instructions: instructions)
         expect(subject.messages.first.role).to eq("system")
         expect(subject.messages.first.content).to eq("You are an expert assistant")
-      end
-
-      it "sets new thread if thread is not provided" do
-        subject = described_class.new(llm: llm, instructions: instructions)
-        expect(subject.thread).to be_a(Langchain::Thread)
       end
 
       it "the system message always comes first" do
@@ -421,7 +446,7 @@ RSpec.describe Langchain::Assistant do
       end
 
       it "calls the add_message_callback with the message" do
-        callback = double("callback")
+        callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
         expect(callback).to receive(:call).with(instance_of(Langchain::Messages::MistralAIMessage))
@@ -701,7 +726,7 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    context "tool_choice" do
+    describe "tool_choice" do
       it "initiliazes to 'auto' by default" do
         expect(subject.tool_choice).to eq("auto")
       end
@@ -721,6 +746,14 @@ RSpec.describe Langchain::Assistant do
         expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
       end
     end
+
+    describe "#instructions=" do
+      it "resets instructions" do
+        subject.instructions = "New instructions"
+        expect(subject.messages.first.content).to eq("New instructions")
+        expect(subject.instructions).to eq("New instructions")
+      end
+    end
   end
 
   context "when llm is GoogleGemini" do
@@ -736,19 +769,6 @@ RSpec.describe Langchain::Assistant do
       )
     }
 
-    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
-      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if LLM class does not implement `chat()` method" do
-      llm = Langchain::LLM::Replicate.new(api_key: "123")
-      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if thread is not an instance of Langchain::Thread" do
-      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
-    end
-
     describe "#add_message" do
       it "adds a message to the thread" do
         subject.add_message(content: "foo")
@@ -757,7 +777,7 @@ RSpec.describe Langchain::Assistant do
       end
 
       it "calls the add_message_callback with the message" do
-        callback = double("callback")
+        callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
         expect(callback).to receive(:call).with(instance_of(Langchain::Messages::GoogleGeminiMessage))
@@ -892,7 +912,7 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    context "tool_choice" do
+    describe "tool_choice" do
       it "initiliazes to 'auto' by default" do
         expect(subject.tool_choice).to eq("auto")
       end
@@ -912,6 +932,14 @@ RSpec.describe Langchain::Assistant do
         expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
       end
     end
+
+    describe "#instructions=" do
+      it "resets instructions" do
+        subject.instructions = "New instructions"
+        expect(subject).not_to receive(:replace_system_message!)
+        expect(subject.instructions).to eq("New instructions")
+      end
+    end
   end
 
   context "when llm is Anthropic" do
@@ -927,19 +955,6 @@ RSpec.describe Langchain::Assistant do
       )
     }
 
-    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
-      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if LLM class does not implement `chat()` method" do
-      llm = Langchain::LLM::Replicate.new(api_key: "123")
-      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if thread is not an instance of Langchain::Thread" do
-      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
-    end
-
     describe "#add_message" do
       it "adds a message to the thread" do
         subject.add_message(content: "foo")
@@ -948,7 +963,7 @@ RSpec.describe Langchain::Assistant do
       end
 
       it "calls the add_message_callback with the message" do
-        callback = double("callback")
+        callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
         expect(callback).to receive(:call).with(instance_of(Langchain::Messages::AnthropicMessage))
@@ -1150,10 +1165,6 @@ RSpec.describe Langchain::Assistant do
       end
     end
   end
-
-  xdescribe "#clear_thread!"
-
-  xdescribe "#instructions="
 
   xdescribe "when llm is Ollama" do
     xdescribe "#set_state_for" do

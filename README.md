@@ -421,7 +421,7 @@ assistant = Langchain::Assistant.new(
 )
 
 # Add a user message and run the assistant
-assistant.add_message_and_run(content: "What's the latest news about AI?")
+assistant.add_message_and_run!(content: "What's the latest news about AI?")
 
 # Access the conversation thread
 messages = assistant.messages
