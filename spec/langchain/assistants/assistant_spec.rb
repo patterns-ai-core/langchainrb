@@ -33,6 +33,27 @@ RSpec.describe Langchain::Assistant do
     end
   end
 
+  context "methods" do
+    let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+
+    describe "#clear_thread!" do
+      it "clears the thread" do
+        assistant = described_class.new(llm: llm)
+        assistant.add_message(content: "foo")
+        expect { assistant.clear_thread! }.to change { assistant.messages.count }.from(1).to(0)
+      end
+    end
+
+    describe "#replace_system_message!" do
+      it "replaces the system message" do
+        assistant = described_class.new(llm: llm)
+        assistant.add_message(content: "foo")
+        assistant.send(:replace_system_message!, content: "bar")
+        expect(assistant.messages.first.content).to eq("bar")
+      end
+    end
+  end
+
   context "when llm is OpenAI" do
     let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
     let(:calculator) { Langchain::Tool::Calculator.new }
@@ -354,7 +375,7 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    context "tool_choice" do
+    describe "tool_choice" do
       it "initiliazes to 'auto' by default" do
         expect(subject.tool_choice).to eq("auto")
       end
@@ -372,6 +393,14 @@ RSpec.describe Langchain::Assistant do
 
       it "raises an error if tool_choice is not valid" do
         expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
+      end
+    end
+
+    describe "#instructions=" do
+      it "resets instructions" do
+        subject.instructions = "New instructions"
+        expect(subject.messages.first.content).to eq("New instructions")
+        expect(subject.instructions).to eq("New instructions")
       end
     end
   end
@@ -697,7 +726,7 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    context "tool_choice" do
+    describe "tool_choice" do
       it "initiliazes to 'auto' by default" do
         expect(subject.tool_choice).to eq("auto")
       end
@@ -715,6 +744,14 @@ RSpec.describe Langchain::Assistant do
 
       it "raises an error if tool_choice is not valid" do
         expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
+      end
+    end
+
+    describe "#instructions=" do
+      it "resets instructions" do
+        subject.instructions = "New instructions"
+        expect(subject.messages.first.content).to eq("New instructions")
+        expect(subject.instructions).to eq("New instructions")
       end
     end
   end
@@ -875,7 +912,7 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    context "tool_choice" do
+    describe "tool_choice" do
       it "initiliazes to 'auto' by default" do
         expect(subject.tool_choice).to eq("auto")
       end
@@ -893,6 +930,14 @@ RSpec.describe Langchain::Assistant do
 
       it "raises an error if tool_choice is not valid" do
         expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
+      end
+    end
+
+    describe "#instructions=" do
+      it "resets instructions" do
+        subject.instructions = "New instructions"
+        expect(subject).not_to receive(:replace_system_message!)
+        expect(subject.instructions).to eq("New instructions")
       end
     end
   end
@@ -1120,10 +1165,6 @@ RSpec.describe Langchain::Assistant do
       end
     end
   end
-
-  xdescribe "#clear_thread!"
-
-  xdescribe "#instructions="
 
   xdescribe "when llm is Ollama" do
     xdescribe "#set_state_for" do
