@@ -45,7 +45,9 @@ module Langchain
       @thread = thread || Langchain::Thread.new
 
       # TODO: Validate that it is, indeed, a Proc or lambda
-      raise ArgumentError, "add_message_callback must be a callable object, like Proc or lambda" unless add_message_callback.respond_to?(:call)
+      if !add_message_callback.nil? && !add_message_callback.respond_to?(:call)
+        raise ArgumentError, "add_message_callback must be a callable object, like Proc or lambda"
+      end
       @thread.add_message_callback = add_message_callback
 
       @tools = tools

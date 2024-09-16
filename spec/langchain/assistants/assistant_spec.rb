@@ -1,6 +1,38 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Assistant do
+  context "initialization" do
+    let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+
+    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
+      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
+    end
+
+    describe "#add_message_callback" do
+      it "raises an error if the callback is not a Proc" do
+        expect { described_class.new(llm: llm, add_message_callback: "foo") }.to raise_error(ArgumentError)
+      end
+
+      it "does not raise an error if the callback is a Proc" do
+        expect { described_class.new(llm: llm, add_message_callback: -> {}) }.not_to raise_error
+      end
+    end
+
+    it "raises an error if thread is not an instance of Langchain::Thread" do
+      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
+    end
+
+    it "raises an error if LLM class does not implement `chat()` method" do
+      llm = Langchain::LLM::Replicate.new(api_key: "123")
+      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
+    end
+
+    it "sets new thread if thread is not provided" do
+      subject = described_class.new(llm: llm)
+      expect(subject.thread).to be_a(Langchain::Thread)
+    end
+  end
+
   context "when llm is OpenAI" do
     let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
     let(:calculator) { Langchain::Tool::Calculator.new }
@@ -14,29 +46,11 @@ RSpec.describe Langchain::Assistant do
       )
     }
 
-    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
-      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if LLM class does not implement `chat()` method" do
-      llm = Langchain::LLM::Replicate.new(api_key: "123")
-      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if thread is not an instance of Langchain::Thread" do
-      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
-    end
-
     describe "#initialize" do
       it "adds a system message to the thread" do
         assistant = described_class.new(llm: llm, instructions: instructions)
         expect(assistant.messages.first.role).to eq("system")
         expect(assistant.messages.first.content).to eq("You are an expert assistant")
-      end
-
-      it "sets new thread if thread is not provided" do
-        subject = described_class.new(llm: llm, instructions: instructions)
-        expect(subject.thread).to be_a(Langchain::Thread)
       end
 
       it "the system message always comes first" do
@@ -60,7 +74,7 @@ RSpec.describe Langchain::Assistant do
       end
 
       it "calls the add_message_callback with the message" do
-        callback = double("callback")
+        callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
         expect(callback).to receive(:call).with(instance_of(Langchain::Messages::OpenAIMessage))
@@ -375,29 +389,11 @@ RSpec.describe Langchain::Assistant do
       )
     }
 
-    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
-      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if LLM class does not implement `chat()` method" do
-      llm = Langchain::LLM::Replicate.new(api_key: "123")
-      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if thread is not an instance of Langchain::Thread" do
-      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
-    end
-
     describe "#initialize" do
       it "adds a system message to the thread" do
         described_class.new(llm: llm, instructions: instructions)
         expect(subject.messages.first.role).to eq("system")
         expect(subject.messages.first.content).to eq("You are an expert assistant")
-      end
-
-      it "sets new thread if thread is not provided" do
-        subject = described_class.new(llm: llm, instructions: instructions)
-        expect(subject.thread).to be_a(Langchain::Thread)
       end
 
       it "the system message always comes first" do
@@ -421,7 +417,7 @@ RSpec.describe Langchain::Assistant do
       end
 
       it "calls the add_message_callback with the message" do
-        callback = double("callback")
+        callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
         expect(callback).to receive(:call).with(instance_of(Langchain::Messages::MistralAIMessage))
@@ -736,19 +732,6 @@ RSpec.describe Langchain::Assistant do
       )
     }
 
-    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
-      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if LLM class does not implement `chat()` method" do
-      llm = Langchain::LLM::Replicate.new(api_key: "123")
-      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if thread is not an instance of Langchain::Thread" do
-      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
-    end
-
     describe "#add_message" do
       it "adds a message to the thread" do
         subject.add_message(content: "foo")
@@ -757,7 +740,7 @@ RSpec.describe Langchain::Assistant do
       end
 
       it "calls the add_message_callback with the message" do
-        callback = double("callback")
+        callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
         expect(callback).to receive(:call).with(instance_of(Langchain::Messages::GoogleGeminiMessage))
@@ -927,19 +910,6 @@ RSpec.describe Langchain::Assistant do
       )
     }
 
-    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
-      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if LLM class does not implement `chat()` method" do
-      llm = Langchain::LLM::Replicate.new(api_key: "123")
-      expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error if thread is not an instance of Langchain::Thread" do
-      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
-    end
-
     describe "#add_message" do
       it "adds a message to the thread" do
         subject.add_message(content: "foo")
@@ -948,7 +918,7 @@ RSpec.describe Langchain::Assistant do
       end
 
       it "calls the add_message_callback with the message" do
-        callback = double("callback")
+        callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
         expect(callback).to receive(:call).with(instance_of(Langchain::Messages::AnthropicMessage))
