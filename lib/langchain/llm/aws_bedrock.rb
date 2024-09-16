@@ -48,7 +48,7 @@ module Langchain::LLM
 
     attr_reader :client, :defaults
 
-    SUPPORTED_COMPLETION_PROVIDERS = %i[anthropic cohere ai21].freeze
+    SUPPORTED_COMPLETION_PROVIDERS = %i[anthropic ai21 cohere meta].freeze
     SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[anthropic].freeze
     SUPPORTED_EMBEDDING_PROVIDERS = %i[amazon].freeze
 
@@ -209,6 +209,8 @@ module Langchain::LLM
         compose_parameters_cohere params
       elsif completion_provider == :ai21
         compose_parameters_ai21 params
+      elsif completion_provider == :meta
+        compose_parameters_meta params
       end
     end
 
@@ -219,6 +221,8 @@ module Langchain::LLM
         Langchain::LLM::CohereResponse.new(JSON.parse(response.body.string))
       elsif completion_provider == :ai21
         Langchain::LLM::AI21Response.new(JSON.parse(response.body.string, symbolize_names: true))
+      elsif completion_provider == :meta
+        Langchain::LLM::AwsBedrockMetaResponse.new(JSON.parse(response.body.string))
       end
     end
 
@@ -279,6 +283,16 @@ module Langchain::LLM
           applyToStopwords: default_params[:frequency_penalty][:apply_to_stopwords],
           applyToEmojis: default_params[:frequency_penalty][:apply_to_emojis]
         }
+      }
+    end
+
+    def compose_parameters_meta(params)
+      default_params = @defaults.merge(params)
+
+      {
+        temperature: default_params[:temperature],
+        top_p: default_params[:top_p],
+        max_gen_len: default_params[:max_tokens_to_sample]
       }
     end
 
