@@ -279,13 +279,13 @@ RSpec.describe Langchain::Assistant do
         let(:instructions) { nil }
 
         before do
-          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages in the thread")
+          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages to process")
         end
 
         it "logs a warning" do
           expect(subject.messages).to be_empty
           subject.run
-          expect(Langchain.logger).to have_received(:warn).with("No messages in the thread")
+          expect(Langchain.logger).to have_received(:warn).with("No messages to process")
         end
       end
     end
@@ -627,13 +627,13 @@ RSpec.describe Langchain::Assistant do
         let(:instructions) { nil }
 
         before do
-          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages in the thread")
+          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages to process")
         end
 
         it "logs a warning" do
           expect(subject.messages).to be_empty
           subject.run
-          expect(Langchain.logger).to have_received(:warn).with("No messages in the thread")
+          expect(Langchain.logger).to have_received(:warn).with("No messages to process")
         end
       end
     end
@@ -957,13 +957,13 @@ RSpec.describe Langchain::Assistant do
         let(:instructions) { nil }
 
         before do
-          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages in the thread")
+          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages to process")
         end
 
         it "logs a warning" do
           expect(subject.messages).to be_empty
           subject.run
-          expect(Langchain.logger).to have_received(:warn).with("No messages in the thread")
+          expect(Langchain.logger).to have_received(:warn).with("No messages to process")
         end
       end
     end
@@ -1179,13 +1179,13 @@ RSpec.describe Langchain::Assistant do
         let(:instructions) { nil }
 
         before do
-          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages in the thread")
+          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages to process")
         end
 
         it "logs a warning" do
           expect(subject.messages).to be_empty
           subject.run
-          expect(Langchain.logger).to have_received(:warn).with("No messages in the thread")
+          expect(Langchain.logger).to have_received(:warn).with("No messages to process")
         end
       end
     end
