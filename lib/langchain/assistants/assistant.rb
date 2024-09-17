@@ -20,7 +20,7 @@ module Langchain
     #
     # @param llm [Langchain::LLM::Base] LLM instance that the assistant will use
     # @param tools [Array<Langchain::Tool::Base>] Tools that the assistant has access to
-    # @param instructions [String] The system instructions to include in the thread
+    # @param instructions [String] The system instructions
     # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
     # @params add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
     def initialize(
@@ -54,25 +54,25 @@ module Langchain
       @total_completion_tokens = 0
       @total_tokens = 0
 
-      # The first message in the thread should be the system instructions
+      # The first message in the messages array should be the system instructions
       # For Google Gemini, and Anthropic system instructions are added to the `system:` param in the `chat` method
       initialize_instructions
     end
 
-    # Add a user message to the thread
+    # Add a user message to the messages array
     #
     # @param content [String] The content of the message
     # @param role [String] The role attribute of the message. Default: "user"
     # @param tool_calls [Array<Hash>] The tool calls to include in the message
     # @param tool_call_id [String] The ID of the tool call to include in the message
-    # @return [Array<Langchain::Message>] The messages in the thread
+    # @return [Array<Langchain::Message>] The messages
     def add_message(content: nil, role: "user", tool_calls: [], tool_call_id: nil)
       message = build_message(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
 
       # Call the callback with the message
       add_message_callback.call(message) if add_message_callback # rubocop:disable Style/SafeNavigation
 
-      # Prepend the message to the thread
+      # Prepend the message to the messages array
       messages << message
 
       @state = :ready
@@ -80,9 +80,9 @@ module Langchain
       messages
     end
 
-    # Convert the thread to an LLM APIs-compatible array of hashes
+    # Convert messages to an LLM APIs-compatible array of hashes
     #
-    # @return [Array<Hash>] The thread as an OpenAI API-compatible array of hashes
+    # @return [Array<Hash>] Messages as an OpenAI API-compatible array of hashes
     def array_of_message_hashes
       messages
         .map(&:to_hash)
@@ -94,20 +94,20 @@ module Langchain
       messages.map(&:to_s).join
     end
 
-    # Set multiple messages to the thread
+    # Set multiple messages
     #
-    # @param messages [Array<Hash>] The messages to set
-    # @return [Array<Langchain::Message>] The messages in the thread
+    # @param messages [Array<Langchain::Message>] The messages to set
+    # @return [Array<Langchain::Message>] The messages
     def messages=(messages)
       raise ArgumentError, "messages array must only contain Langchain::Message instance(s)" unless messages.is_a?(Array) && messages.all? { |m| m.is_a?(Langchain::Messages::Base) }
 
       @messages = messages
     end
 
-    # Add multiple messages to the thread
+    # Add multiple messages
     #
     # @param messages [Array<Hash>] The messages to add
-    # @return [Array<Langchain::Message>] The messages in the thread
+    # @return [Array<Langchain::Message>] The messages
     def add_messages(messages:)
       messages.each do |message_hash|
         add_message(**message_hash.slice(:content, :role, :tool_calls, :tool_call_id))
@@ -117,10 +117,10 @@ module Langchain
     # Run the assistant
     #
     # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
-    # @return [Array<Langchain::Message>] The messages in the thread
+    # @return [Array<Langchain::Message>] The messages
     def run(auto_tool_execution: false)
       if messages.empty?
-        Langchain.logger.warn("No messages in the thread")
+        Langchain.logger.warn("No messages to process.")
         @state = :completed
         return
       end
@@ -133,34 +133,34 @@ module Langchain
 
     # Run the assistant with automatic tool execution
     #
-    # @return [Array<Langchain::Message>] The messages in the thread
+    # @return [Array<Langchain::Message>] The messages
     def run!
       run(auto_tool_execution: true)
     end
 
-    # Add a user message to the thread and run the assistant
+    # Add a user message and run the assistant
     #
     # @param content [String] The content of the message
     # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
-    # @return [Array<Langchain::Message>] The messages in the thread
+    # @return [Array<Langchain::Message>] The messages
     def add_message_and_run(content:, auto_tool_execution: false)
       add_message(content: content, role: "user")
       run(auto_tool_execution: auto_tool_execution)
     end
 
-    # Add a user message to the thread and run the assistant with automatic tool execution
+    # Add a user message and run the assistant with automatic tool execution
     #
     # @param content [String] The content of the message
-    # @return [Array<Langchain::Message>] The messages in the thread
+    # @return [Array<Langchain::Message>] The messages
     def add_message_and_run!(content:)
       add_message_and_run(content: content, auto_tool_execution: true)
     end
 
-    # Submit tool output to the thread
+    # Submit tool output
     #
     # @param tool_call_id [String] The ID of the tool call to submit output for
     # @param output [String] The output of the tool
-    # @return [Array<Langchain::Message>] The messages in the thread
+    # @return [Array<Langchain::Message>] The messages
     def submit_tool_output(tool_call_id:, output:)
       tool_role = determine_tool_role
 
@@ -168,10 +168,10 @@ module Langchain
       add_message(role: tool_role, content: output, tool_call_id: tool_call_id)
     end
 
-    # Delete all messages in the thread
+    # Delete all messages
     #
     # @return [Array] Empty messages array
-    def clear_thread!
+    def clear_messages!
       # TODO: If this a bug? Should we keep the "system" message?
       @messages = []
     end
@@ -179,7 +179,7 @@ module Langchain
     # Set new instructions
     #
     # @param new_instructions [String] New instructions that will be set as a system message
-    # @return [Array<Langchain::Message>] The messages in the thread
+    # @return [Array<Langchain::Message>] The messages
     def instructions=(new_instructions)
       @instructions = new_instructions
 
@@ -206,7 +206,7 @@ module Langchain
     # Replace old system message with new one
     #
     # @param content [String] New system message content
-    # @return [Array<Langchain::Message>] The messages in the thread
+    # @return [Array<Langchain::Message>] The messages
     def replace_system_message!(content:)
       messages.delete_if(&:system?)
 
@@ -245,7 +245,7 @@ module Langchain
       end
     end
 
-    # Process the latest message in the thread
+    # Process the latest message
     #
     # @return [Symbol] The next state
     def process_latest_message
