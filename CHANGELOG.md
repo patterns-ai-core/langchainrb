@@ -1,4 +1,5 @@
 ## [Unreleased]
+- Remove `Langchain::Thread` class as it was not needed.
 
 ## [0.15.6] - 2024-09-16
 - Throw an error when `Langchain::Assistant#add_message_callback` is not a callable proc.
