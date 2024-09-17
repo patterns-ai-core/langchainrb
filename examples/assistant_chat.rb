@@ -7,10 +7,8 @@ require "reline"
 # or add `gem "reline"` to your Gemfile
 
 openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-thread = Langchain::Thread.new
 assistant = Langchain::Assistant.new(
   llm: openai,
-  thread: thread,
   instructions: "You are a Meteorologist Assistant that is able to pull the weather for any location",
   tools: [
     Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
@@ -54,7 +52,7 @@ begin
     end
 
     assistant.add_message_and_run content: user_message, auto_tool_execution: true
-    puts assistant.thread.messages.last.content
+    puts assistant.messages.last.content
   end
 rescue Interrupt
   exit 0
