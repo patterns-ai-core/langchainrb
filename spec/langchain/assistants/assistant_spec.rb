@@ -33,11 +33,11 @@ RSpec.describe Langchain::Assistant do
   context "methods" do
     let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
 
-    describe "#clear_thread!" do
+    describe "#clear_messages!" do
       it "clears the thread" do
         assistant = described_class.new(llm: llm)
         assistant.add_message(content: "foo")
-        expect { assistant.clear_thread! }.to change { assistant.messages.count }.from(1).to(0)
+        expect { assistant.clear_messages! }.to change { assistant.messages.count }.from(1).to(0)
       end
     end
 

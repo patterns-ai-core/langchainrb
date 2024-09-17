@@ -120,7 +120,7 @@ module Langchain
     # @return [Array<Langchain::Message>] The messages
     def run(auto_tool_execution: false)
       if messages.empty?
-        Langchain.logger.warn("No messages to process.")
+        Langchain.logger.warn("No messages to process")
         @state = :completed
         return
       end
@@ -175,6 +175,9 @@ module Langchain
       # TODO: If this a bug? Should we keep the "system" message?
       @messages = []
     end
+
+    # TODO: Remove in the next major release
+    alias_method :clear_thread!, :clear_messages!
 
     # Set new instructions
     #
