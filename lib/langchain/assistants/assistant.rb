@@ -17,7 +17,7 @@ module Langchain
 
     attr_reader :llm, :thread, :instructions, :state, :llm_adapter, :tool_choice
     attr_reader :total_prompt_tokens, :total_completion_tokens, :total_tokens
-    attr_accessor :tools
+    attr_accessor :tools, :add_message_callback
 
     # Create a new assistant
     #
@@ -25,6 +25,8 @@ module Langchain
     # @param thread [Langchain::Thread] The thread that'll keep track of the conversation
     # @param tools [Array<Langchain::Tool::Base>] Tools that the assistant has access to
     # @param instructions [String] The system instructions to include in the thread
+    # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
+    # @params add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
     def initialize(
       llm:,
       thread: nil,
@@ -41,6 +43,11 @@ module Langchain
       @llm_adapter = LLM::Adapter.build(llm)
 
       @thread = thread || Langchain::Thread.new
+
+      # TODO: Validate that it is, indeed, a Proc or lambda
+      if !add_message_callback.nil? && !add_message_callback.respond_to?(:call)
+        raise ArgumentError, "add_message_callback must be a callable object, like Proc or lambda"
+      end
       @thread.add_message_callback = add_message_callback
 
       @tools = tools
@@ -157,25 +164,41 @@ module Langchain
 
     # Set new instructions
     #
-    # @param [String] New instructions that will be set as a system message
+    # @param new_instructions [String] New instructions that will be set as a system message
     # @return [Array<Langchain::Message>] The messages in the thread
     def instructions=(new_instructions)
       @instructions = new_instructions
 
-      # Find message with role: "system" in thread.messages and delete it from the thread.messages array
-      thread.messages.delete_if(&:system?)
-
-      # Set new instructions by adding new system message
-      message = build_message(role: "system", content: new_instructions)
-      thread.messages.unshift(message)
+      # This only needs to be done that support Message#@role="system"
+      if !llm.is_a?(Langchain::LLM::GoogleGemini) &&
+          !llm.is_a?(Langchain::LLM::GoogleVertexAI) &&
+          !llm.is_a?(Langchain::LLM::Anthropic)
+        # Find message with role: "system" in thread.messages and delete it from the thread.messages array
+        replace_system_message!(content: new_instructions)
+      end
     end
 
+    # Set tool_choice, how tools should be selected
+    #
+    # @param new_tool_choice [String] Tool choice
+    # @return [String] Selected tool choice
     def tool_choice=(new_tool_choice)
       validate_tool_choice!(new_tool_choice)
       @tool_choice = new_tool_choice
     end
 
     private
+
+    # Replace old system message with new one
+    #
+    # @param content [String] New system message content
+    # @return [Array<Langchain::Message>] The messages in the thread
+    def replace_system_message!(content:)
+      thread.messages.delete_if(&:system?)
+
+      message = build_message(role: "system", content: content)
+      thread.messages.unshift(message)
+    end
 
     # TODO: If tool_choice = "tool_function_name" and then tool is removed from the assistant, should we set tool_choice back to "auto"?
     def validate_tool_choice!(tool_choice)
