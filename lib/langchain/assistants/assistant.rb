@@ -12,27 +12,23 @@ module Langchain
   #       tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
   #     )
   class Assistant
-    extend Forwardable
-    def_delegators :thread, :messages
-
-    attr_reader :llm, :thread, :instructions, :state, :llm_adapter, :tool_choice
-    attr_reader :total_prompt_tokens, :total_completion_tokens, :total_tokens
+    attr_reader :llm, :instructions, :state, :llm_adapter, :tool_choice
+    attr_reader :total_prompt_tokens, :total_completion_tokens, :total_tokens, :messages
     attr_accessor :tools, :add_message_callback
 
     # Create a new assistant
     #
     # @param llm [Langchain::LLM::Base] LLM instance that the assistant will use
-    # @param thread [Langchain::Thread] The thread that'll keep track of the conversation
     # @param tools [Array<Langchain::Tool::Base>] Tools that the assistant has access to
     # @param instructions [String] The system instructions to include in the thread
     # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
     # @params add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
     def initialize(
       llm:,
-      thread: nil,
       tools: [],
       instructions: nil,
       tool_choice: "auto",
+      messages: [],
       add_message_callback: nil
     )
       unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
@@ -42,14 +38,13 @@ module Langchain
       @llm = llm
       @llm_adapter = LLM::Adapter.build(llm)
 
-      @thread = thread || Langchain::Thread.new
-
       # TODO: Validate that it is, indeed, a Proc or lambda
       if !add_message_callback.nil? && !add_message_callback.respond_to?(:call)
         raise ArgumentError, "add_message_callback must be a callable object, like Proc or lambda"
       end
-      @thread.add_message_callback = add_message_callback
+      @add_message_callback = add_message_callback
 
+      self.messages = messages
       @tools = tools
       self.tool_choice = tool_choice
       @instructions = instructions
@@ -58,8 +53,6 @@ module Langchain
       @total_prompt_tokens = 0
       @total_completion_tokens = 0
       @total_tokens = 0
-
-      raise ArgumentError, "Thread must be an instance of Langchain::Thread" unless @thread.is_a?(Langchain::Thread)
 
       # The first message in the thread should be the system instructions
       # For Google Gemini, and Anthropic system instructions are added to the `system:` param in the `chat` method
@@ -75,10 +68,30 @@ module Langchain
     # @return [Array<Langchain::Message>] The messages in the thread
     def add_message(content: nil, role: "user", tool_calls: [], tool_call_id: nil)
       message = build_message(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
-      messages = thread.add_message(message)
+
+      # Call the callback with the message
+      add_message_callback.call(message) if add_message_callback # rubocop:disable Style/SafeNavigation
+
+      # Prepend the message to the thread
+      messages << message
+
       @state = :ready
 
       messages
+    end
+
+    # Convert the thread to an LLM APIs-compatible array of hashes
+    #
+    # @return [Array<Hash>] The thread as an OpenAI API-compatible array of hashes
+    def array_of_message_hashes
+      messages
+        .map(&:to_hash)
+        .compact
+    end
+
+    # Only used by the Assistant when it calls the LLM#complete() method
+    def prompt_of_concatenated_messages
+      messages.map(&:to_s).join
     end
 
     # Set multiple messages to the thread
@@ -86,8 +99,9 @@ module Langchain
     # @param messages [Array<Hash>] The messages to set
     # @return [Array<Langchain::Message>] The messages in the thread
     def messages=(messages)
-      clear_thread!
-      add_messages(messages: messages)
+      raise ArgumentError, "messages array must only contain Langchain::Message instance(s)" unless messages.is_a?(Array) && messages.all? { |m| m.is_a?(Langchain::Messages::Base) }
+
+      @messages = messages
     end
 
     # Add multiple messages to the thread
@@ -105,7 +119,7 @@ module Langchain
     # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
     # @return [Array<Langchain::Message>] The messages in the thread
     def run(auto_tool_execution: false)
-      if thread.messages.empty?
+      if messages.empty?
         Langchain.logger.warn("No messages in the thread")
         @state = :completed
         return
@@ -114,7 +128,7 @@ module Langchain
       @state = :in_progress
       @state = handle_state until run_finished?(auto_tool_execution)
 
-      thread.messages
+      messages
     end
 
     # Run the assistant with automatic tool execution
@@ -159,7 +173,7 @@ module Langchain
     # @return [Array] Empty messages array
     def clear_thread!
       # TODO: If this a bug? Should we keep the "system" message?
-      thread.messages = []
+      @messages = []
     end
 
     # Set new instructions
@@ -173,7 +187,7 @@ module Langchain
       if !llm.is_a?(Langchain::LLM::GoogleGemini) &&
           !llm.is_a?(Langchain::LLM::GoogleVertexAI) &&
           !llm.is_a?(Langchain::LLM::Anthropic)
-        # Find message with role: "system" in thread.messages and delete it from the thread.messages array
+        # Find message with role: "system" in messages and delete it from the messages array
         replace_system_message!(content: new_instructions)
       end
     end
@@ -194,10 +208,10 @@ module Langchain
     # @param content [String] New system message content
     # @return [Array<Langchain::Message>] The messages in the thread
     def replace_system_message!(content:)
-      thread.messages.delete_if(&:system?)
+      messages.delete_if(&:system?)
 
       message = build_message(role: "system", content: content)
-      thread.messages.unshift(message)
+      messages.unshift(message)
     end
 
     # TODO: If tool_choice = "tool_function_name" and then tool is removed from the assistant, should we set tool_choice back to "auto"?
@@ -235,7 +249,7 @@ module Langchain
     #
     # @return [Symbol] The next state
     def process_latest_message
-      last_message = thread.messages.last
+      last_message = messages.last
 
       case last_message.standard_role
       when :system
@@ -261,14 +275,14 @@ module Langchain
     #
     # @return [Symbol] The next state
     def handle_llm_message
-      thread.messages.last.tool_calls.any? ? :requires_action : :completed
+      messages.last.tool_calls.any? ? :requires_action : :completed
     end
 
     # Handle unexpected message scenario
     #
     # @return [Symbol] The failed state
     def handle_unexpected_message
-      Langchain.logger.error("Unexpected message role encountered: #{thread.messages.last.standard_role}")
+      Langchain.logger.error("Unexpected message role encountered: #{messages.last.standard_role}")
       :failed
     end
 
@@ -301,7 +315,7 @@ module Langchain
     #
     # @return [Symbol] The next state
     def execute_tools
-      run_tools(thread.messages.last.tool_calls)
+      run_tools(messages.last.tool_calls)
       :in_progress
     rescue => e
       Langchain.logger.error("Error running tools: #{e.message}; #{e.backtrace.join('\n')}")
@@ -340,7 +354,7 @@ module Langchain
 
       params = @llm_adapter.build_chat_params(
         instructions: @instructions,
-        messages: thread.array_of_message_hashes,
+        messages: array_of_message_hashes,
         tools: @tools,
         tool_choice: tool_choice
       )

@@ -20,18 +20,13 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    it "raises an error if thread is not an instance of Langchain::Thread" do
-      expect { described_class.new(thread: "foo") }.to raise_error(ArgumentError)
-    end
-
     it "raises an error if LLM class does not implement `chat()` method" do
       llm = Langchain::LLM::Replicate.new(api_key: "123")
       expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
     end
 
-    it "sets new thread if thread is not provided" do
-      subject = described_class.new(llm: llm)
-      expect(subject.thread).to be_a(Langchain::Thread)
+    it "raises an error if messages array contains non-Langchain::Message instance(s)" do
+      expect { described_class.new(llm: llm, messages: [Langchain::Messages::OpenAIMessage.new, "foo"]) }.to raise_error(ArgumentError)
     end
   end
 
@@ -52,6 +47,53 @@ RSpec.describe Langchain::Assistant do
         assistant.add_message(content: "foo")
         assistant.send(:replace_system_message!, content: "bar")
         expect(assistant.messages.first.content).to eq("bar")
+      end
+    end
+
+    describe "#array_of_message_hashes" do
+      let(:messages) {
+        [
+          Langchain::Messages::OpenAIMessage.new(role: "user", content: "hello"),
+          Langchain::Messages::OpenAIMessage.new(role: "assistant", content: "hi")
+        ]
+      }
+
+      it "returns an array of messages in OpenAI format" do
+        thread = described_class.new(llm: llm, messages: messages)
+
+        openai_messages = thread.array_of_message_hashes
+
+        expect(openai_messages).to be_an(Array)
+        expect(openai_messages.length).to eq(messages.length)
+        openai_messages.each do |message|
+          expect(message).to be_a(Hash)
+          expect(message).to have_key(:role)
+          expect(message).to have_key(:content)
+        end
+      end
+    end
+
+    describe "#add_message" do
+      let(:message) { {role: "user", content: "hello"} }
+
+      it "adds a Langchain::Message instance to the messages array" do
+        subject = described_class.new(llm: llm, messages: [])
+
+        expect {
+          subject.add_message(**message)
+        }.to change { subject.messages.count }.from(0).to(1)
+        expect(subject.messages.first).to be_a(Langchain::Messages::OpenAIMessage)
+        expect(subject.messages.first.role).to eq("user")
+        expect(subject.messages.first.content).to eq("hello")
+      end
+
+      it "calls the add_message_callback with the message" do
+        callback = double("callback", call: true)
+        subject = described_class.new(llm: llm, messages: [], add_message_callback: callback)
+
+        expect(callback).to receive(:call).with(instance_of(Langchain::Messages::OpenAIMessage))
+
+        subject.add_message(**message)
       end
     end
   end
@@ -77,12 +119,9 @@ RSpec.describe Langchain::Assistant do
       end
 
       it "the system message always comes first" do
-        thread = Langchain::Thread.new
-        system_message = Langchain::Messages::OpenAIMessage.new(role: "system", content: "System message")
-        user_message = Langchain::Messages::OpenAIMessage.new(role: "user", content: "foo")
-        thread.add_message(system_message)
-        thread.add_message(user_message)
-        assistant = described_class.new(llm: llm, thread: thread, instructions: instructions)
+        assistant = described_class.new(llm: llm, instructions: instructions)
+        assistant.add_message(role: "system", content: "System message")
+        assistant.add_message(role: "user", content: "foo")
         expect(assistant.messages.first.role).to eq("system")
         # Replaces the previous system message
         expect(assistant.messages.first.content).to eq("You are an expert assistant")
@@ -428,12 +467,9 @@ RSpec.describe Langchain::Assistant do
       end
 
       it "the system message always comes first" do
-        thread = Langchain::Thread.new
-        system_message = Langchain::Messages::OpenAIMessage.new(role: "system", content: "System message")
-        user_message = Langchain::Messages::OpenAIMessage.new(role: "user", content: "foo")
-        thread.add_message(system_message)
-        thread.add_message(user_message)
-        assistant = described_class.new(llm: llm, thread: thread, instructions: instructions)
+        assistant = described_class.new(llm: llm, instructions: instructions)
+        assistant.add_message(role: "system", content: "System message")
+        assistant.add_message(role: "user", content: "foo")
         expect(assistant.messages.first.role).to eq("system")
         # Replaces the previous system message
         expect(assistant.messages.first.content).to eq("You are an expert assistant")
