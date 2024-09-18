@@ -270,7 +270,7 @@ module Langchain::LLM
         conn.request :json
         conn.response :json
         conn.response :raise_error
-        conn.response :logger, nil, {headers: true, bodies: true, errors: true}
+        conn.response :logger, Langchain.logger, {headers: true, bodies: true, errors: true}
       end
     end
 
