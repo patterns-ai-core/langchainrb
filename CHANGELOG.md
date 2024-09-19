@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.16.0] - 2024-09-19
 - Remove `Langchain::Thread` class as it was not needed.
 - Support `cohere` provider for `Langchain::LLM::AwsBedrock#embed`
 
