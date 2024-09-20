@@ -112,7 +112,7 @@ module Langchain::LLM
       if wrapped_response.chat_completion || Array(wrapped_response.tool_calls).any?
         wrapped_response
       else
-        raise StandardError.new(response)
+        raise StandardError.new(parsed_response)
       end
     end
   end
