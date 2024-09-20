@@ -29,7 +29,8 @@ module Langchain
       instructions: nil,
       tool_choice: "auto",
       messages: [],
-      add_message_callback: nil
+      add_message_callback: nil,
+      &block
     )
       unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
         raise ArgumentError, "Tools must be an array of objects extending Langchain::ToolDefinition"
@@ -48,6 +49,7 @@ module Langchain
       @tools = tools
       self.tool_choice = tool_choice
       @instructions = instructions
+      @block = block
       @state = :ready
 
       @total_prompt_tokens = 0
@@ -361,7 +363,7 @@ module Langchain
         tools: @tools,
         tool_choice: tool_choice
       )
-      @llm.chat(**params)
+      @llm.chat(**params, &@block)
     end
 
     # Run the tools automatically
