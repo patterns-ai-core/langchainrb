@@ -126,6 +126,29 @@ RSpec.describe Langchain::Assistant do
         # Replaces the previous system message
         expect(assistant.messages.first.content).to eq("You are an expert assistant")
       end
+
+      context "when a block is provided" do
+        it "passes the block to the chat call" do
+          response = double(
+            "Response",
+            tool_calls: [],
+            role: "assistant",
+            chat_completion: :completed,
+            prompt_tokens: 0,
+            completion_tokens: 0,
+            total_tokens: 0,
+            completion: nil
+          )
+          callback = double("Callback")
+          assistant = described_class.new(llm: llm) { callback }
+          assistant.add_message(content: "foo")
+
+          expect(llm).to receive(:chat).with(any_args) do |&block|
+            expect(block.call).to eq(callback)
+          end.and_return(response)
+          assistant.run
+        end
+      end
     end
 
     describe "#add_message" do
