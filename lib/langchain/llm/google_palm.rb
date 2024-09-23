@@ -11,6 +11,8 @@ module Langchain::LLM
   #     google_palm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"])
   #
   class GooglePalm < Base
+    extend Gem::Deprecate
+
     DEFAULTS = {
       temperature: 0.0,
       dimensions: 768, # This is what the `embedding-gecko-001` model generates
@@ -25,12 +27,16 @@ module Langchain::LLM
 
     attr_reader :defaults
 
+    # @deprecated Please use Langchain::LLM::GoogleGemini instead
+    #
+    # @param api_key [String] The API key for the Google PaLM API
     def initialize(api_key:, default_options: {})
       depends_on "google_palm_api"
 
       @client = ::GooglePalmApi::Client.new(api_key: api_key)
       @defaults = DEFAULTS.merge(default_options)
     end
+    deprecate :initialize, "Langchain::LLM::GoogleGemini.new(api_key:)", 2024, 10
 
     #
     # Generate an embedding for a given text
