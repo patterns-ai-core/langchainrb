@@ -24,7 +24,7 @@ module Langchain::LLM
     include Langchain::DependencyHelper
 
     # A client for communicating with the LLM
-    attr_reader :client
+    attr_accessor :client
 
     # Ensuring backward compatibility after https://github.com/patterns-ai-core/langchainrb/pull/586
     # TODO: Delete this method later
