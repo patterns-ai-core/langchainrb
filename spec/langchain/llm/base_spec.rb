@@ -18,6 +18,18 @@ RSpec.describe Langchain::LLM::Base do
     end
   end
 
+  describe "client object" do
+    let(:llm) { TestLLM.new }
+
+    it "can be accessed" do
+      expect(llm).to respond_to(:client)
+    end
+
+    it "can be set" do
+      expect(llm).to respond_to(:client=)
+    end
+  end
+
   describe "#complete" do
     it "raises an error" do
       expect { subject.complete }.to raise_error(NotImplementedError)
