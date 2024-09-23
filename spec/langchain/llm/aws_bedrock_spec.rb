@@ -491,6 +491,36 @@ RSpec.describe Langchain::LLM::AwsBedrock do
       end
     end
 
+    context "with cohere provider" do
+      let(:subject) { described_class.new(embedding_model: "cohere.embed-multilingual-v3") }
+
+      let(:response) do
+        StringIO.new("{\"embeddings\":[[0.1,0.2,0.3,0.4,0.5]]}")
+      end
+
+      let(:expected_body) do
+        {
+          texts: ["Hello World"],
+          input_type: "search_document",
+          embedding_types: ["float"]
+        }
+      end
+
+      before do
+        response_object = double("response_object")
+        allow(response_object).to receive(:body).and_return(response)
+        allow(subject.client).to receive(:invoke_model)
+          .with({model_id: "cohere.embed-multilingual-v3", body: expected_body.to_json, content_type: "application/json", accept: "application/json"})
+          .and_return(response_object)
+      end
+
+      it "returns a embedding" do
+        expect(
+          subject.embed(text: "Hello World", input_type: "search_document", embedding_types: ["float"]).embedding
+        ).to eq([0.1, 0.2, 0.3, 0.4, 0.5])
+      end
+    end
+
     context "with unsupported provider" do
       let(:subject) { described_class.new(embedding_model: "unsupported.provider") }
 

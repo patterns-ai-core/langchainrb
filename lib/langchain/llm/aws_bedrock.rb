@@ -48,9 +48,9 @@ module Langchain::LLM
 
     attr_reader :client, :defaults
 
-    SUPPORTED_COMPLETION_PROVIDERS = %i[anthropic cohere ai21].freeze
+    SUPPORTED_COMPLETION_PROVIDERS = %i[anthropic ai21 cohere meta].freeze
     SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[anthropic].freeze
-    SUPPORTED_EMBEDDING_PROVIDERS = %i[amazon].freeze
+    SUPPORTED_EMBEDDING_PROVIDERS = %i[amazon cohere].freeze
 
     def initialize(completion_model: DEFAULTS[:completion_model_name], embedding_model: DEFAULTS[:embedding_model_name], aws_client_options: {}, default_options: {})
       depends_on "aws-sdk-bedrockruntime", req: "aws-sdk-bedrockruntime"
@@ -82,8 +82,7 @@ module Langchain::LLM
     def embed(text:, **params)
       raise "Completion provider #{embedding_provider} is not supported." unless SUPPORTED_EMBEDDING_PROVIDERS.include?(embedding_provider)
 
-      parameters = {inputText: text}
-      parameters = parameters.merge(params)
+      parameters = compose_embedding_parameters params.merge(text:)
 
       response = client.invoke_model({
         model_id: @defaults[:embedding_model_name],
@@ -92,7 +91,7 @@ module Langchain::LLM
         accept: "application/json"
       })
 
-      Langchain::LLM::AwsTitanResponse.new(JSON.parse(response.body.string))
+      parse_embedding_response response
     end
 
     #
@@ -209,6 +208,16 @@ module Langchain::LLM
         compose_parameters_cohere params
       elsif completion_provider == :ai21
         compose_parameters_ai21 params
+      elsif completion_provider == :meta
+        compose_parameters_meta params
+      end
+    end
+
+    def compose_embedding_parameters(params)
+      if embedding_provider == :amazon
+        compose_embedding_parameters_amazon params
+      elsif embedding_provider == :cohere
+        compose_embedding_parameters_cohere params
       end
     end
 
@@ -219,7 +228,40 @@ module Langchain::LLM
         Langchain::LLM::CohereResponse.new(JSON.parse(response.body.string))
       elsif completion_provider == :ai21
         Langchain::LLM::AI21Response.new(JSON.parse(response.body.string, symbolize_names: true))
+      elsif completion_provider == :meta
+        Langchain::LLM::AwsBedrockMetaResponse.new(JSON.parse(response.body.string))
       end
+    end
+
+    def parse_embedding_response(response)
+      json_response = JSON.parse(response.body.string)
+
+      if embedding_provider == :amazon
+        Langchain::LLM::AwsTitanResponse.new(json_response)
+      elsif embedding_provider == :cohere
+        Langchain::LLM::CohereResponse.new(json_response)
+      end
+    end
+
+    def compose_embedding_parameters_amazon(params)
+      default_params = @defaults.merge(params)
+
+      {
+        inputText: default_params[:text],
+        dimensions: default_params[:dimensions],
+        normalize: default_params[:normalize]
+      }.compact
+    end
+
+    def compose_embedding_parameters_cohere(params)
+      default_params = @defaults.merge(params)
+
+      {
+        texts: [default_params[:text]],
+        truncate: default_params[:truncate],
+        input_type: default_params[:input_type],
+        embedding_types: default_params[:embedding_types]
+      }.compact
     end
 
     def compose_parameters_cohere(params)
@@ -279,6 +321,16 @@ module Langchain::LLM
           applyToStopwords: default_params[:frequency_penalty][:apply_to_stopwords],
           applyToEmojis: default_params[:frequency_penalty][:apply_to_emojis]
         }
+      }
+    end
+
+    def compose_parameters_meta(params)
+      default_params = @defaults.merge(params)
+
+      {
+        temperature: default_params[:temperature],
+        top_p: default_params[:top_p],
+        max_gen_len: default_params[:max_tokens_to_sample]
       }
     end
 

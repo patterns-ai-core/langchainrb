@@ -1,4 +1,16 @@
 ## [Unreleased]
+- Deprecate Langchain::LLM::GooglePalm
+
+## [0.16.0] - 2024-09-19
+- Remove `Langchain::Thread` class as it was not needed.
+- Support `cohere` provider for `Langchain::LLM::AwsBedrock#embed`
+
+## [0.15.6] - 2024-09-16
+- Throw an error when `Langchain::Assistant#add_message_callback` is not a callable proc.
+- Resetting instructions on Langchain::Assistant with Google Gemini no longer throws an error.
+- Add Meta models support for AWS Bedrock LLM
+
+## [0.15.5] - 2024-09-10 🇧🇦
 - Fix for Langchain::Prompt::PromptTemplate supporting nested JSON data
 - Require common libs at top-level
 - Add `add_message_callback` to `Langchain::Assistant` constructor to invoke an optional function when any message is added to the conversation

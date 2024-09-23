@@ -49,6 +49,8 @@ module Langchain
         "[#{for_class_name}]:"
       end
       log_line_parts << colorize(args.first, MESSAGE_COLOR_OPTIONS[method])
+      log_line_parts << kwargs if !!kwargs && kwargs.any?
+      log_line_parts << block.call if block
       log_line = log_line_parts.compact.join(" ")
 
       @logger.send(

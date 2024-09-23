@@ -129,11 +129,11 @@ module Langchain::LLM
         raise ArgumentError.new("'tool_choice' is only allowed when 'tools' are specified.")
       end
 
-      # TODO: Clean this part up
       if block
         @response_chunks = []
+        parameters[:stream_options] = {include_usage: true}
         parameters[:stream] = proc do |chunk, _bytesize|
-          chunk_content = chunk.dig("choices", 0)
+          chunk_content = chunk.dig("choices", 0) || {}
           @response_chunks << chunk
           yield chunk_content
         end
@@ -184,7 +184,9 @@ module Langchain::LLM
     end
 
     def response_from_chunks
-      grouped_chunks = @response_chunks.group_by { |chunk| chunk.dig("choices", 0, "index") }
+      grouped_chunks = @response_chunks
+        .group_by { |chunk| chunk.dig("choices", 0, "index") }
+        .except(nil) # the last chunk (that contains the token usage) has no index
       final_choices = grouped_chunks.map do |index, chunks|
         {
           "index" => index,
@@ -196,7 +198,7 @@ module Langchain::LLM
           "finish_reason" => chunks.last.dig("choices", 0, "finish_reason")
         }
       end
-      @response_chunks.first&.slice("id", "object", "created", "model")&.merge({"choices" => final_choices})
+      @response_chunks.first&.slice("id", "object", "created", "model")&.merge({"choices" => final_choices, "usage" => @response_chunks.last["usage"]})
     end
 
     def tool_calls_from_choice_chunks(choice_chunks)
