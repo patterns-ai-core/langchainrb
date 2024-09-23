@@ -1,4 +1,5 @@
 ## [Unreleased]
+- Deprecate Langchain::LLM::GooglePalm
 
 ## [0.16.0] - 2024-09-19
 - Remove `Langchain::Thread` class as it was not needed.
