@@ -88,8 +88,6 @@ module Langchain::LLM
     def chat(params = {})
       params[:system] = {parts: [{text: params[:system]}]} if params[:system]
       params[:tools] = {function_declarations: params[:tools]} if params[:tools]
-      # This throws an error when tool_choice is passed
-      params[:tool_choice] = {function_calling_config: {mode: params[:tool_choice].upcase}} if params[:tool_choice]
 
       raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
 
@@ -114,7 +112,7 @@ module Langchain::LLM
       if wrapped_response.chat_completion || Array(wrapped_response.tool_calls).any?
         wrapped_response
       else
-        raise StandardError.new(response)
+        raise StandardError.new(parsed_response)
       end
     end
   end
