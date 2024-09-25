@@ -45,7 +45,8 @@ module Langchain::LLM
         model: {default: @defaults[:chat_completion_model_name]},
         temperature: {default: @defaults[:temperature]},
         template: {},
-        stream: {default: false}
+        stream: {default: false},
+        response_format: {default: @defaults[:response_format]}
       )
       chat_parameters.remap(response_format: :format)
     end
@@ -149,7 +150,7 @@ module Langchain::LLM
         end
       end
 
-      generate_final_completion_response(responses_stream, parameters)
+      generate_final_completion_response(responses_stream, parameters[:model])
     end
 
     # Generate a chat completion
@@ -186,7 +187,7 @@ module Langchain::LLM
         end
       end
 
-      generate_final_chat_completion_response(responses_stream, parameters)
+      generate_final_chat_completion_response(responses_stream, parameters[:model])
     end
 
     #
@@ -289,20 +290,20 @@ module Langchain::LLM
       end
     end
 
-    def generate_final_completion_response(responses_stream, parameters)
+    def generate_final_completion_response(responses_stream, model)
       final_response = responses_stream.last.merge(
         "response" => responses_stream.map { |resp| resp["response"] }.join
       )
 
-      OllamaResponse.new(final_response, model: parameters[:model])
+      OllamaResponse.new(final_response, model: model)
     end
 
     # BUG: If streamed, this method does not currently return the tool_calls response.
-    def generate_final_chat_completion_response(responses_stream, parameters)
+    def generate_final_chat_completion_response(responses_stream, model)
       final_response = responses_stream.last
       final_response["message"]["content"] = responses_stream.map { |resp| resp.dig("message", "content") }.join
 
-      OllamaResponse.new(final_response, model: parameters[:model])
+      OllamaResponse.new(final_response, model: model)
     end
   end
 end

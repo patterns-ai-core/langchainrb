@@ -21,6 +21,23 @@ RSpec.describe Langchain::LLM::Ollama do
 
       expect(subject.send(:client).headers).to include("Authorization" => "Bearer abc123")
     end
+
+    context "when default_options are passed" do
+      let(:default_options) { {response_format: "json"} }
+
+      let(:response) { File.read("spec/fixtures/llm/ollama/chat.json") }
+
+      subject { described_class.new(url: "http://localhost:11434", default_options: default_options) }
+
+      it "sets the defaults options" do
+        expect(subject.defaults[:response_format]).to eq("json")
+      end
+
+      it "get passed to consecutive chat() call" do
+        expect(client).to receive(:post).with("api/chat", hash_including(format: "json")).and_call_original
+        subject.chat(messages: [{role: "user", content: "Hello json!"}])
+      end
+    end
   end
 
   describe "#embed" do
