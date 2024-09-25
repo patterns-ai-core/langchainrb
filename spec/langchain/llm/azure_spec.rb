@@ -59,5 +59,28 @@ RSpec.describe Langchain::LLM::Azure do
         expect(subject.chat_parameters[:temperature]).to eq(0.5)
       end
     end
+
+    xcontext "when default_options are passed" do
+      let(:default_options) { {response_format: {type: "json_object"}} }
+
+      subject {
+        described_class.new(
+          api_key: "123",
+          embedding_deployment_url: "http://localhost:1234/deployments/embedding",
+          chat_deployment_url: "http://localhost:1234/deployments/chat",
+          default_options: default_options
+        )
+      }
+
+      it "sets the defaults options" do
+        expect(subject.defaults[:response_format]).to eq(type: "json_object")
+      end
+
+      it "get passed to consecutive chat() call" do
+        subject
+        expect(subject.client).to receive(:chat).with(parameters: hash_including({response_format: {type: "json_object"}})).and_return({})
+        subject.chat(messages: [{role: "user", content: "Hello json!"}])
+      end
+    end
   end
 end

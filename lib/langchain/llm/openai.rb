@@ -26,8 +26,6 @@ module Langchain::LLM
       "text-embedding-3-small" => 1536
     }.freeze
 
-    attr_reader :defaults
-
     # Initialize an OpenAI LLM instance
     #
     # @param api_key [String] The API key to use
@@ -45,7 +43,7 @@ module Langchain::LLM
         n: {default: @defaults[:n]},
         temperature: {default: @defaults[:temperature]},
         user: {},
-        response_format: {}
+        response_format: {default: @defaults[:response_format]}
       )
       chat_parameters.ignore(:top_k)
     end

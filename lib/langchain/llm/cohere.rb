@@ -98,6 +98,10 @@ module Langchain::LLM
 
       parameters = chat_parameters.to_params(params)
 
+      # Cohere API requires `message:` parameter to be sent separately from `chat_history:`.
+      # We extract the last message from the messages param.
+      parameters[:message] = parameters[:chat_history].pop&.dig(:message)
+
       response = client.chat(**parameters)
 
       Langchain::LLM::CohereResponse.new(response)

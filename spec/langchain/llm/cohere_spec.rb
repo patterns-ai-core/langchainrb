@@ -5,6 +5,24 @@ require "cohere"
 RSpec.describe Langchain::LLM::Cohere do
   let(:subject) { described_class.new(api_key: "123") }
 
+  describe "#initialize" do
+    context "when default_options are passed" do
+      let(:default_options) { {response_format: {type: "json_object"}} }
+
+      subject { described_class.new(api_key: "123", default_options: default_options) }
+
+      it "sets the defaults options" do
+        expect(subject.defaults[:response_format]).to eq(type: "json_object")
+      end
+
+      it "get passed to consecutive chat() call" do
+        subject
+        expect(subject.client).to receive(:chat).with(hash_including({response_format: {type: "json_object"}})).and_return({})
+        subject.chat(messages: [{role: "user", message: "Hello json!"}])
+      end
+    end
+  end
+
   describe "#embed" do
     before do
       allow(subject.client).to receive(:embed).and_return(
@@ -97,7 +115,8 @@ RSpec.describe Langchain::LLM::Cohere do
           model: "command-r-plus",
           temperature: 0.0,
           preamble: "You are a cheerful happy chatbot!",
-          chat_history: [{role: "user", message: "How are you?"}]
+          chat_history: [],
+          message: "How are you?"
         )
         .and_return(response)
     end
