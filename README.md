@@ -21,7 +21,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Large Language Models (LLMs)](#large-language-models-llms)
+- [Unified Interface for LLMs](#unified-interface-for-llms)
 - [Prompt Management](#prompt-management)
 - [Output Parsers](#output-parsers)
 - [Building RAG](#building-retrieval-augment-generation-rag-system)
