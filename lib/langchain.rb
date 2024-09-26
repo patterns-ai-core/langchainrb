@@ -2,7 +2,6 @@
 
 require "logger"
 require "pathname"
-require "rainbow"
 require "zeitwerk"
 require "uri"
 require "json"
@@ -92,24 +91,50 @@ loader.setup
 # Langchain.logger.level = :info
 module Langchain
   class << self
-    # @return [ContextualLogger]
-    attr_reader :logger
-
-    # @param logger [Logger]
-    # @return [ContextualLogger]
-    def logger=(logger)
-      @logger = ContextualLogger.new(logger)
-    end
-
+    # @return [Logger]
+    attr_accessor :logger
     # @return [Pathname]
     attr_reader :root
   end
 
-  self.logger ||= ::Logger.new($stdout, level: :debug)
-
-  @root = Pathname.new(__dir__)
-
   module Errors
     class BaseError < StandardError; end
   end
+
+  module Colorizer
+    class << self
+      def red(str)
+        "\e[31m#{str}\e[0m"
+      end
+
+      def green(str)
+        "\e[32m#{str}\e[0m"
+      end
+
+      def yellow(str)
+        "\e[33m#{str}\e[0m"
+      end
+
+      def blue(str)
+        "\e[34m#{str}\e[0m"
+      end
+
+      def colorize_logger_msg(msg, severity)
+        return red(msg) if severity.to_sym == :ERROR
+        return yellow(msg) if severity.to_sym == :WARN
+        msg
+      end
+    end
+  end
+
+  self.logger ||= ::Logger.new($stdout, level: :debug)
+  self.logger.progname = "Langchain.rb"
+  self.logger.formatter = proc do |severity, datetime, progname, msg|
+    timestamp = datetime.strftime("%FT%T.%6N")
+    colorized_msg = Colorizer.colorize_logger_msg(msg, severity)
+
+    "#{severity[0].upcase}, [#{timestamp} ##{Process.pid}] #{severity} -- [#{progname}] : #{colorized_msg}\n"
+  end
+
+  @root = Pathname.new(__dir__)
 end

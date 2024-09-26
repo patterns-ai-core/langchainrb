@@ -301,14 +301,10 @@ RSpec.describe Langchain::Assistant do
       context "when messages are empty" do
         let(:instructions) { nil }
 
-        before do
-          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages to process")
-        end
-
         it "logs a warning" do
           expect(subject.messages).to be_empty
+          expect(Langchain.logger).to receive(:warn).with("#{described_class} - No messages to process")
           subject.run
-          expect(Langchain.logger).to have_received(:warn).with("No messages to process")
         end
       end
     end
@@ -649,14 +645,10 @@ RSpec.describe Langchain::Assistant do
       context "when messages are empty" do
         let(:instructions) { nil }
 
-        before do
-          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages to process")
-        end
-
         it "logs a warning" do
           expect(subject.messages).to be_empty
+          expect(Langchain.logger).to receive(:warn).with("#{described_class} - No messages to process")
           subject.run
-          expect(Langchain.logger).to have_received(:warn).with("No messages to process")
         end
       end
     end
@@ -979,14 +971,10 @@ RSpec.describe Langchain::Assistant do
       context "when messages are empty" do
         let(:instructions) { nil }
 
-        before do
-          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages to process")
-        end
-
         it "logs a warning" do
           expect(subject.messages).to be_empty
+          expect(Langchain.logger).to receive(:warn).with("#{described_class} - No messages to process")
           subject.run
-          expect(Langchain.logger).to have_received(:warn).with("No messages to process")
         end
       end
     end
@@ -1201,14 +1189,10 @@ RSpec.describe Langchain::Assistant do
       context "when messages are empty" do
         let(:instructions) { nil }
 
-        before do
-          allow_any_instance_of(Langchain::ContextualLogger).to receive(:warn).with("No messages to process")
-        end
-
         it "logs a warning" do
           expect(subject.messages).to be_empty
+          expect(Langchain.logger).to receive(:warn).with("#{described_class} - No messages to process")
           subject.run
-          expect(Langchain.logger).to have_received(:warn).with("No messages to process")
         end
       end
     end

@@ -29,7 +29,7 @@ module Langchain::Tool
     # @param input [String] search query
     # @return [String] Answer
     def execute(input:)
-      Langchain.logger.info("Executing \"#{input}\"", for: self.class)
+      Langchain.logger.info("#{self.class} - Executing \"#{input}\"")
 
       page = ::Wikipedia.find(input)
       # It would be nice to figure out a way to provide page.content but the LLM token limit is an issue

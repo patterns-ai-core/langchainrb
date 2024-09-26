@@ -194,11 +194,5 @@ module Langchain::Vectorsearch
 
       add_texts(texts: texts)
     end
-
-    def self.logger_options
-      {
-        color: :blue
-      }
-    end
   end
 end

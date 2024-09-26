@@ -44,7 +44,7 @@ module Langchain::Tool
     def get_current_weather(city:, state_code:, country_code: nil, units: "imperial")
       validate_input(city: city, state_code: state_code, country_code: country_code, units: units)
 
-      Langchain.logger.info("get_current_weather", for: self.class, city:, state_code:, country_code:, units:)
+      Langchain.logger.info("#{self.class} - get_current_weather #{{city:, state_code:, country_code:, units:}}")
 
       fetch_current_weather(city: city, state_code: state_code, country_code: country_code, units: units)
     end
@@ -74,9 +74,9 @@ module Langchain::Tool
       request = Net::HTTP::Get.new(uri.request_uri)
       request["Content-Type"] = "application/json"
 
-      Langchain.logger.info("Sending request to OpenWeatherMap API", path: path, params: params.except(:appid))
+      Langchain.logger.info("#{self.class} - Sending request to OpenWeatherMap API #{{path: path, params: params.except(:appid)}}")
       response = http.request(request)
-      Langchain.logger.info("Received response from OpenWeatherMap API", status: response.code)
+      Langchain.logger.info("#{self.class} - Received response from OpenWeatherMap API #{{status: response.code}}")
 
       if response.code == "200"
         JSON.parse(response.body)

@@ -114,12 +114,12 @@ module Langchain::Vectorsearch
       if File.exist?(path_to_index)
         client.load_index(path_to_index)
 
-        Langchain.logger.info("Successfully loaded the index at \"#{path_to_index}\"", for: self.class)
+        Langchain.logger.info("#{self.class} - Successfully loaded the index at \"#{path_to_index}\"")
       else
         # Default max_elements: 100, but we constantly resize the index as new data is written to it
         client.init_index(max_elements: 100)
 
-        Langchain.logger.info("Creating a new index at \"#{path_to_index}\"", for: self.class)
+        Langchain.logger.info("#{self.class} - Creating a new index at \"#{path_to_index}\"")
       end
     end
   end
