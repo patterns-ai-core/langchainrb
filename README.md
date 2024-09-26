@@ -154,8 +154,6 @@ chat_completion = response.chat_completion
 - `tools`: (Optional) A list of tools the model may call.
 - `tool_choice`: (Optional) Controls how the model calls functions.
 
-Note: The availability and behavior of these parameters may vary slightly between different LLM providers. Always refer to the specific provider's documentation for the most accurate and up-to-date information.
-
 ## Switching LLM Providers
 
 Thanks to the unified interface, you can easily switch between different LLM providers by changing the class you instantiate:
@@ -183,9 +181,8 @@ Each LLM method returns a response object that provides a consistent interface f
 - `completion_tokens`: Returns the number of tokens in the completion
 - `total_tokens`: Returns the total number of tokens used
 
-## Note on Provider-Specific Features
-
-While the core interface is consistent across providers, some LLMs may offer additional features or parameters. Consult the documentation for each LLM class to learn about provider-specific capabilities and options.
+> [!NOTE]
+> While the core interface is consistent across providers, some LLMs may offer additional features or parameters. Consult the documentation for each LLM class to learn about provider-specific capabilities and options.
 
 ### Prompt Management
 
