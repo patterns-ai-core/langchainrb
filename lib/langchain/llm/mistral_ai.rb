@@ -26,7 +26,9 @@ module Langchain::LLM
       chat_parameters.update(
         model: {default: @defaults[:chat_completion_model_name]},
         n: {default: @defaults[:n]},
-        safe_prompt: {}
+        safe_prompt: {},
+        temperature: {default: @defaults[:temperature]},
+        response_format: {default: @defaults[:response_format]}
       )
       chat_parameters.remap(seed: :random_seed)
       chat_parameters.ignore(:n, :top_k)

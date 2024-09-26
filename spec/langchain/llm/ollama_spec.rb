@@ -21,6 +21,24 @@ RSpec.describe Langchain::LLM::Ollama do
 
       expect(subject.send(:client).headers).to include("Authorization" => "Bearer abc123")
     end
+
+    context "when default_options are passed" do
+      let(:default_options) { {response_format: "json"} }
+      let(:messages) { [{role: "user", content: "Return data from the following sentence: John is a 30 year old software engineering living in SF."}] }
+      let(:response) { subject.chat(messages: messages) { |resp| streamed_responses << resp } }
+      let(:streamed_responses) { [] }
+
+      subject { described_class.new(default_options: default_options) }
+
+      it "sets the defaults options" do
+        expect(subject.defaults[:response_format]).to eq("json")
+      end
+
+      it "get passed to consecutive chat() call", vcr: {cassette_name: "Langchain_LLM_Ollama_chat_returns_a_chat_completion_format_json"} do
+        expect(client).to receive(:post).with("api/chat", hash_including(format: "json")).and_call_original
+        expect(JSON.parse(response.chat_completion)).to eq({"Name" => "John", "Age" => 30, "Profession" => "Software Engineering", "Location" => "SF"})
+      end
+    end
   end
 
   describe "#embed" do

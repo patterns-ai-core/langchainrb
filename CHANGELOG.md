@@ -1,5 +1,6 @@
 ## [Unreleased]
 - Deprecate Langchain::LLM::GooglePalm
+- Allow setting response_object: {} parameter when initializing supported Langchain::LLM::* classes
 
 ## [0.16.0] - 2024-09-19
 - Remove `Langchain::Thread` class as it was not needed.

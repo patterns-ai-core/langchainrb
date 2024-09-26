@@ -27,7 +27,8 @@ module Langchain::LLM
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
         model: {default: @defaults[:chat_completion_model_name]},
-        temperature: {default: @defaults[:temperature]}
+        temperature: {default: @defaults[:temperature]},
+        response_format: {default: @defaults[:response_format]}
       )
       chat_parameters.remap(
         system: :preamble,
@@ -96,6 +97,10 @@ module Langchain::LLM
       raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
 
       parameters = chat_parameters.to_params(params)
+
+      # Cohere API requires `message:` parameter to be sent separately from `chat_history:`.
+      # We extract the last message from the messages param.
+      parameters[:message] = parameters[:chat_history].pop&.dig(:message)
 
       response = client.chat(**parameters)
 
