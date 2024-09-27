@@ -6,7 +6,6 @@ PATH
       json-schema (~> 4)
       matrix
       pragmatic_segmenter (~> 0.3.0)
-      rainbow (~> 3.1.0)
       zeitwerk (~> 2.5)
 
 GEM

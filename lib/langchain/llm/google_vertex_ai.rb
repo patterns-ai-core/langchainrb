@@ -63,16 +63,7 @@ module Langchain::LLM
 
       uri = URI("#{url}#{model}:predict")
 
-      request = Net::HTTP::Post.new(uri)
-      request.content_type = "application/json"
-      request["Authorization"] = "Bearer #{@authorizer.fetch_access_token!["access_token"]}"
-      request.body = params.to_json
-
-      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
-        http.request(request)
-      end
-
-      parsed_response = JSON.parse(response.body)
+      parsed_response = http_post(uri, params)
 
       Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: model)
     end
@@ -96,16 +87,7 @@ module Langchain::LLM
 
       uri = URI("#{url}#{parameters[:model]}:generateContent")
 
-      request = Net::HTTP::Post.new(uri)
-      request.content_type = "application/json"
-      request["Authorization"] = "Bearer #{@authorizer.fetch_access_token!["access_token"]}"
-      request.body = parameters.to_json
-
-      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
-        http.request(request)
-      end
-
-      parsed_response = JSON.parse(response.body)
+      parsed_response = http_post(uri, parameters)
 
       wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
 
@@ -114,6 +96,23 @@ module Langchain::LLM
       else
         raise StandardError.new(parsed_response)
       end
+    end
+
+    private
+
+    def http_post(url, params)
+      http = Net::HTTP.new(url.hostname, url.port)
+      http.use_ssl = url.scheme == "https"
+      http.set_debug_output(Langchain.logger) if Langchain.logger.debug?
+
+      request = Net::HTTP::Post.new(url)
+      request.content_type = "application/json"
+      request["Authorization"] = "Bearer #{@authorizer.fetch_access_token!["access_token"]}"
+      request.body = params.to_json
+
+      response = http.request(request)
+
+      JSON.parse(response.body)
     end
   end
 end

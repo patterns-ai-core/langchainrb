@@ -14,7 +14,7 @@ RSpec.describe Langchain::LLM::GoogleVertexAI do
         double("Google::Auth::UserRefreshCredentials", fetch_access_token!: {access_token: 123})
       )
 
-      allow(Net::HTTP).to receive(:start).and_return(raw_embedding_response)
+      allow_any_instance_of(Net::HTTP).to receive(:request).and_return(raw_embedding_response)
     end
 
     it "returns valid llm response object" do
@@ -35,7 +35,7 @@ RSpec.describe Langchain::LLM::GoogleVertexAI do
         double("Google::Auth::UserRefreshCredentials", fetch_access_token!: {access_token: 123})
       )
 
-      allow(Net::HTTP).to receive(:start).and_return(raw_chat_completions_response)
+      allow_any_instance_of(Net::HTTP).to receive(:request).and_return(raw_chat_completions_response)
     end
 
     it "returns valid llm response object" do

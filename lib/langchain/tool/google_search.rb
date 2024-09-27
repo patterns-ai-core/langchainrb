@@ -38,7 +38,7 @@ module Langchain::Tool
     # @param input [String] search query
     # @return [String] Answer
     def execute(input:)
-      Langchain.logger.info("Executing \"#{input}\"", for: self.class)
+      Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       results = execute_search(input: input)
 

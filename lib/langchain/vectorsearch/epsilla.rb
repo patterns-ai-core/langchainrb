@@ -39,7 +39,7 @@ module Langchain::Vectorsearch
             # This behavior is changed in https://github.com/epsilla-cloud/vectordb/pull/95
             # Old behavior (HTTP 500) is preserved for backwards compatibility.
             # It does not prevent us from using the db.
-            Langchain.logger.info("Database already loaded")
+            Langchain.logger.debug("#{self.class} - Database already loaded")
           else
             raise "Failed to load database: #{response}"
           end

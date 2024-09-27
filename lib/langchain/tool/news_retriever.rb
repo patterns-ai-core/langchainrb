@@ -71,7 +71,7 @@ module Langchain::Tool
       page_size: 5, # The API default is 20 but that's too many.
       page: nil
     )
-      Langchain.logger.info("Retrieving all news", for: self.class)
+      Langchain.logger.debug("#{self.class} - Retrieving all news")
 
       params = {apiKey: @api_key}
       params[:q] = q if q
@@ -107,7 +107,7 @@ module Langchain::Tool
       page_size: 5,
       page: nil
     )
-      Langchain.logger.info("Retrieving top news headlines", for: self.class)
+      Langchain.logger.debug("#{self.class} - Retrieving top news headlines")
 
       params = {apiKey: @api_key}
       params[:country] = country if country
@@ -132,7 +132,7 @@ module Langchain::Tool
       language: nil,
       country: nil
     )
-      Langchain.logger.info("Retrieving news sources", for: self.class)
+      Langchain.logger.debug("#{self.class} - Retrieving news sources")
 
       params = {apiKey: @api_key}
       params[:country] = country if country

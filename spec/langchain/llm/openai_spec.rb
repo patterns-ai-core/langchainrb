@@ -1,17 +1,73 @@
 # frozen_string_literal: true
 
+require "openai"
+
 RSpec.describe Langchain::LLM::OpenAI do
-  let(:subject) { described_class.new(api_key: "123") }
+  let(:subject) { described_class.new(api_key: "123", **options) }
+
+  let(:options) { {} }
 
   describe "#initialize" do
-    context "when only required options are passed" do
-      it "initializes the client without any errors" do
-        expect { subject }.not_to raise_error
+    it "initializes the client without any errors" do
+      expect { subject }.not_to raise_error
+    end
+
+    it "forwards the Langchain logger to the client" do
+      f_mock = double("f_mock", response: nil)
+
+      allow(OpenAI::Client).to receive(:new) { |**, &block| block&.call(f_mock) }
+
+      subject
+
+      expect(f_mock).to have_received(:response).with(:logger, Langchain.logger, anything)
+    end
+
+    context "when log level is DEBUG" do
+      before do
+        Langchain.logger.level = Logger::DEBUG
+      end
+
+      it "configures the client to log the errors" do
+        allow(OpenAI::Client).to receive(:new).and_call_original
+        subject
+        expect(OpenAI::Client).to have_received(:new).with(hash_including(log_errors: true))
+      end
+
+      context "when overriding the 'log_errors' param" do
+        let(:options) { {llm_options: {log_errors: false}} }
+
+        it "configures the client to NOT log the errors" do
+          allow(OpenAI::Client).to receive(:new).and_call_original
+          subject
+          expect(OpenAI::Client).to have_received(:new).with(hash_including(log_errors: false))
+        end
+      end
+    end
+
+    context "when log level is not DEBUG" do
+      before do
+        Langchain.logger.level = Logger::INFO
+      end
+
+      it "configures the client to NOT log the errors" do
+        allow(OpenAI::Client).to receive(:new).and_call_original
+        subject
+        expect(OpenAI::Client).to have_received(:new).with(hash_including(log_errors: false))
+      end
+
+      context "when overriding the 'log_errors' param" do
+        let(:options) { {llm_options: {log_errors: true}} }
+
+        it "configures the client to log the errors" do
+          allow(OpenAI::Client).to receive(:new).and_call_original
+          subject
+          expect(OpenAI::Client).to have_received(:new).with(hash_including(log_errors: true))
+        end
       end
     end
 
     context "when llm_options are passed" do
-      let(:subject) { described_class.new(api_key: "123", llm_options: {uri_base: "http://localhost:1234"}) }
+      let(:options) { {llm_options: {uri_base: "http://localhost:1234"}} }
 
       it "initializes the client without any errors" do
         expect { subject }.not_to raise_error

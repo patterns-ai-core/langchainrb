@@ -122,7 +122,7 @@ module Langchain
     # @return [Array<Langchain::Message>] The messages
     def run(auto_tool_execution: false)
       if messages.empty?
-        Langchain.logger.warn("No messages to process")
+        Langchain.logger.warn("#{self.class} - No messages to process")
         @state = :completed
         return
       end
@@ -272,7 +272,7 @@ module Langchain
     #
     # @return [Symbol] The completed state
     def handle_system_message
-      Langchain.logger.warn("At least one user message is required after a system message")
+      Langchain.logger.warn("#{self.class} - At least one user message is required after a system message")
       :completed
     end
 
@@ -287,7 +287,7 @@ module Langchain
     #
     # @return [Symbol] The failed state
     def handle_unexpected_message
-      Langchain.logger.error("Unexpected message role encountered: #{messages.last.standard_role}")
+      Langchain.logger.error("#{self.class} - Unexpected message role encountered: #{messages.last.standard_role}")
       :failed
     end
 
@@ -311,7 +311,7 @@ module Langchain
       elsif response.completion # Currently only used by Ollama
         :completed
       else
-        Langchain.logger.error("LLM response does not contain tool calls, chat or completion response")
+        Langchain.logger.error("#{self.class} - LLM response does not contain tool calls, chat or completion response")
         :failed
       end
     end
@@ -323,7 +323,7 @@ module Langchain
       run_tools(messages.last.tool_calls)
       :in_progress
     rescue => e
-      Langchain.logger.error("Error running tools: #{e.message}; #{e.backtrace.join('\n')}")
+      Langchain.logger.error("#{self.class} - Error running tools: #{e.message}; #{e.backtrace.join('\n')}")
       :failed
     end
 
@@ -355,7 +355,7 @@ module Langchain
     #
     # @return [Langchain::LLM::BaseResponse] The LLM response object
     def chat_with_llm
-      Langchain.logger.info("Sending a call to #{llm.class}", for: self.class)
+      Langchain.logger.debug("#{self.class} - Sending a call to #{llm.class}")
 
       params = @llm_adapter.build_chat_params(
         instructions: @instructions,
