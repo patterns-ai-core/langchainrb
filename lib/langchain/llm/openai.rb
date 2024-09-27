@@ -33,7 +33,11 @@ module Langchain::LLM
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai", req: "openai"
 
-      @client = ::OpenAI::Client.new(access_token: api_key, **llm_options, log_errors: true)
+      llm_options[:log_errors] = Langchain.logger.debug? unless llm_options.key?(:log_errors)
+
+      @client = ::OpenAI::Client.new(access_token: api_key, **llm_options) do |f|
+        f.response :logger, Langchain.logger, {headers: true, bodies: true, errors: true}
+      end
 
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
