@@ -127,14 +127,18 @@ module Langchain
     end
   end
 
-  self.logger ||= ::Logger.new($stdout, level: :debug)
-  self.logger.progname = "Langchain.rb"
-  self.logger.formatter = proc do |severity, datetime, progname, msg|
-    timestamp = datetime.strftime("%FT%T.%6N")
-    colorized_msg = Colorizer.colorize_logger_msg(msg, severity)
+  LOGGER_OPTIONS = {
+    progname: "Langchain.rb",
 
-    "#{severity[0].upcase}, [#{timestamp} ##{Process.pid}] #{severity} -- [#{progname}] : #{colorized_msg}\n"
-  end
+    formatter: ->(severity, datetime, progname, msg) do
+      timestamp = datetime.strftime("%FT%T.%6N")
+      colorized_msg = Colorizer.colorize_logger_msg(msg, severity)
+
+      "#{severity[0].upcase}, [#{timestamp} ##{Process.pid}] #{severity} -- [#{progname}] : #{colorized_msg}\n"
+    end
+  }.freeze
+
+  self.logger ||= ::Logger.new($stdout, **LOGGER_OPTIONS)
 
   @root = Pathname.new(__dir__)
 end
