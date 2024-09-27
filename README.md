@@ -21,7 +21,7 @@ Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.i
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Large Language Models (LLMs)](#large-language-models-llms)
+- [Unified Interface for LLMs](#unified-interface-for-llms)
 - [Prompt Management](#prompt-management)
 - [Output Parsers](#output-parsers)
 - [Building RAG](#building-retrieval-augment-generation-rag-system)
@@ -51,60 +51,138 @@ Additional gems may be required. They're not included by default so you can incl
 require "langchain"
 ```
 
-## Large Language Models (LLMs)
-Langchain.rb wraps supported LLMs in a unified interface allowing you to easily swap out and test out different models.
+# Unified Interface for LLMs
 
-#### Supported LLMs and features:
-| LLM providers                                                                                   | `embed()`          | `complete()`       | `chat()`            | `summarize()`      | Notes              |
-| --------                                                                                        |:------------------:| :-------:          | :-----------------: | :-------:          | :----------------- |
-| [OpenAI](https://openai.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ✅                 | Including Azure OpenAI |
-| [AI21](https://ai21.com/?utm_source=langchainrb&utm_medium=github)                              | ❌                 | ✅                 | ❌                  | ✅                 |                    |
-| [Anthropic](https://anthropic.com/?utm_source=langchainrb&utm_medium=github)                    | ❌                 | ✅                 | ✅                  | ❌                 |                    |
-| [AwsBedrock](https://aws.amazon.com/bedrock?utm_source=langchainrb&utm_medium=github)          | ✅                 | ✅                 | ✅                  | ❌                 | Provides AWS, Cohere, AI21, Antropic and Stability AI models |
-| [Cohere](https://cohere.com/?utm_source=langchainrb&utm_medium=github)                          | ✅                 | ✅                 | ✅                  | ✅                 |                    |
-| [GooglePalm](https://ai.google/discover/palm2?utm_source=langchainrb&utm_medium=github)         | ✅                 | ✅                 | ✅                  | ✅                 | DEPRECATED         |
-| [GoogleVertexAI](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ❌                 | ✅                  | ❌                 | Requires Google Cloud service auth                   |
-| [GoogleGemini](https://cloud.google.com/vertex-ai?utm_source=langchainrb&utm_medium=github) | ✅                 | ❌                 | ✅                  | ❌                 | Requires Gemini API Key ([get key](https://ai.google.dev/gemini-api/docs/api-key)) |
-| [HuggingFace](https://huggingface.co/?utm_source=langchainrb&utm_medium=github)                 | ✅                 | ❌                 | ❌                  | ❌                 |                    |
-| [MistralAI](https://mistral.ai/?utm_source=langchainrb&utm_medium=github)                      | ✅                 | ❌                 | ✅                  | ❌                 |                    |
-| [Ollama](https://ollama.ai/?utm_source=langchainrb&utm_medium=github)                           | ✅                 | ✅                 | ✅                  | ✅                 |                    |
-| [Replicate](https://replicate.com/?utm_source=langchainrb&utm_medium=github)                    | ✅                 | ✅                 | ✅                  | ✅                 |                    |
+The `Langchain::LLM` module provides a unified interface for interacting with various Large Language Model (LLM) providers. This abstraction allows you to easily switch between different LLM backends without changing your application code.
 
+## Supported LLM Providers
 
+- AI21
+- Anthropic
+- AWS Bedrock
+- Azure OpenAI
+- Cohere
+- Google Gemini
+- Google PaLM (deprecated)
+- Google Vertex AI
+- HuggingFace
+- LlamaCpp
+- Mistral AI
+- Ollama
+- OpenAI
+- Replicate
 
-#### Using standalone LLMs:
+## Usage
 
-#### OpenAI
+All LLM classes inherit from `Langchain::LLM::Base` and provide a consistent interface for common operations:
 
-Add `gem "ruby-openai", "~> 6.3.0"` to your Gemfile.
+1. Generating embeddings
+2. Generating prompt completions
+3. Generating chat completions
+
+### Initialization
+
+Most LLM classes can be initialized with an API key and optional default options:
 
 ```ruby
-llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-```
-You can pass additional parameters to the constructor, it will be passed to the OpenAI client:
-```ruby
-llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"], llm_options: { ... })
-```
-
-Generate vector embeddings:
-```ruby
-llm.embed(text: "foo bar").embedding
+llm = Langchain::LLM::OpenAI.new(
+  api_key: ENV["OPENAI_API_KEY"],
+  default_options: { temperature: 0.7, chat_completion_model_name: "gpt-4o" }
+)
 ```
 
-Generate a chat completion:
+### Generating Embeddings
+
+Use the `embed` method to generate embeddings for given text:
+
 ```ruby
-llm.chat(messages: [{role: "user", content: "What is the meaning of life?"}]).completion
+response = llm.embed(text: "Hello, world!")
+embedding = response.embedding
 ```
 
-Summarize the text:
+#### Accepted parameters for `embed()`
+
+- `text`: (Required) The input text to embed.
+- `model`: (Optional) The model name to use or default embedding model will be used.
+
+### Prompt completions
+
+Use the `complete` method to generate completions for a given prompt:
+
 ```ruby
-llm.summarize(text: "...").completion
+response = llm.complete(prompt: "Once upon a time")
+completion = response.completion
 ```
 
-You can use any other LLM by invoking the same interface:
+#### Accepted parameters for `complete()`
+
+- `prompt`: (Required) The input prompt for completion.
+- `max_tokens`: (Optional) The maximum number of tokens to generate.
+- `temperature`: (Optional) Controls randomness in generation. Higher values (e.g., 0.8) make output more random, while lower values (e.g., 0.2) make it more deterministic.
+- `top_p`: (Optional) An alternative to temperature, controls diversity of generated tokens.
+- `n`: (Optional) Number of completions to generate for each prompt.
+- `stop`: (Optional) Sequences where the API will stop generating further tokens.
+- `presence_penalty`: (Optional) Penalizes new tokens based on their presence in the text so far.
+- `frequency_penalty`: (Optional) Penalizes new tokens based on their frequency in the text so far.
+
+### Generating Chat Completions
+
+Use the `chat` method to generate chat completions:
+
 ```ruby
-llm = Langchain::LLM::GooglePalm.new(api_key: ENV["GOOGLE_PALM_API_KEY"], default_options: { ... })
+messages = [
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "What's the weather like today?" }
+]
+response = llm.chat(messages: messages)
+chat_completion = response.chat_completion
 ```
+
+#### Accepted parameters for `chat()`
+
+- `messages`: (Required) An array of message objects representing the conversation history.
+- `model`: (Optional) The specific chat model to use.
+- `temperature`: (Optional) Controls randomness in generation.
+- `top_p`: (Optional) An alternative to temperature, controls diversity of generated tokens.
+- `n`: (Optional) Number of chat completion choices to generate.
+- `max_tokens`: (Optional) The maximum number of tokens to generate in the chat completion.
+- `stop`: (Optional) Sequences where the API will stop generating further tokens.
+- `presence_penalty`: (Optional) Penalizes new tokens based on their presence in the text so far.
+- `frequency_penalty`: (Optional) Penalizes new tokens based on their frequency in the text so far.
+- `logit_bias`: (Optional) Modifies the likelihood of specified tokens appearing in the completion.
+- `user`: (Optional) A unique identifier representing your end-user.
+- `tools`: (Optional) A list of tools the model may call.
+- `tool_choice`: (Optional) Controls how the model calls functions.
+
+## Switching LLM Providers
+
+Thanks to the unified interface, you can easily switch between different LLM providers by changing the class you instantiate:
+
+```ruby
+# Using Anthropic
+anthropic_llm = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
+
+# Using Google Gemini
+gemini_llm = Langchain::LLM::GoogleGemini.new(api_key: ENV["GOOGLE_GEMINI_API_KEY"])
+
+# Using OpenAI
+openai_llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+```
+
+## Response Objects
+
+Each LLM method returns a response object that provides a consistent interface for accessing the results:
+
+- `embedding`: Returns the embedding vector
+- `completion`: Returns the generated text completion
+- `chat_completion`: Returns the generated chat completion
+- `tool_calls`: Returns tool calls made by the LLM
+- `prompt_tokens`: Returns the number of tokens in the prompt
+- `completion_tokens`: Returns the number of tokens in the completion
+- `total_tokens`: Returns the total number of tokens used
+
+> [!NOTE]
+> While the core interface is consistent across providers, some LLMs may offer additional features or parameters. Consult the documentation for each LLM class to learn about provider-specific capabilities and options.
 
 ### Prompt Management
 
