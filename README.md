@@ -87,7 +87,7 @@ Most LLM classes can be initialized with an API key and optional default options
 ```ruby
 llm = Langchain::LLM::OpenAI.new(
   api_key: ENV["OPENAI_API_KEY"],
-  default_options: { temperature: 0.7 }
+  default_options: { temperature: 0.7, chat_completion_model_name: "gpt-4o" }
 )
 ```
 
