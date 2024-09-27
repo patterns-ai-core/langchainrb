@@ -1,6 +1,8 @@
 ## [Unreleased]
 - Deprecate Langchain::LLM::GooglePalm
 - Allow setting response_object: {} parameter when initializing supported Langchain::LLM::* classes
+- Simplify and consolidate logging for some of the LLM providers (namely OpenAI and Google). Now most of the HTTP requests are being logged when on DEBUG level
+- Improve doc on how to set up a custom logger with a custom destination
 
 ## [0.16.0] - 2024-09-19
 - Remove `Langchain::Thread` class as it was not needed.
