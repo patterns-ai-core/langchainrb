@@ -120,6 +120,8 @@ module Langchain
       end
 
       def colorize_logger_msg(msg, severity)
+        return msg unless msg.is_a?(String)
+
         return red(msg) if severity.to_sym == :ERROR
         return yellow(msg) if severity.to_sym == :WARN
         msg
@@ -130,11 +132,13 @@ module Langchain
   LOGGER_OPTIONS = {
     progname: "Langchain.rb",
 
-    formatter: ->(severity, datetime, progname, msg) do
-      timestamp = datetime.strftime("%FT%T.%6N")
-      colorized_msg = Colorizer.colorize_logger_msg(msg, severity)
-
-      "#{severity[0].upcase}, [#{timestamp} ##{Process.pid}] #{severity} -- [#{progname}] : #{colorized_msg}\n"
+    formatter: ->(severity, time, progname, msg) do
+      Logger::Formatter.new.call(
+        severity,
+        time,
+        "[#{progname}]",
+        Colorizer.colorize_logger_msg(msg, severity)
+      )
     end
   }.freeze
 
