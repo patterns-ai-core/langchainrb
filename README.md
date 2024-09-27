@@ -93,7 +93,7 @@ llm = Langchain::LLM::OpenAI.new(
 
 ### Generating Embeddings
 
-Use the `embed` method to generate embeddings for a given text:
+Use the `embed` method to generate embeddings for given text:
 
 ```ruby
 response = llm.embed(text: "Hello, world!")
