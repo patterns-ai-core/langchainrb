@@ -29,7 +29,7 @@ module Langchain::Tool
     # @param input [String] ruby code expression
     # @return [String] Answer
     def execute(input:)
-      Langchain.logger.info("#{self.class} - Executing \"#{input}\"")
+      Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       safe_eval(input)
     end

@@ -548,7 +548,7 @@ Additional examples available: [/examples](https://github.com/andreibondarev/lan
 
 ## Logging
 
-Langchain.rb uses the standard Ruby [Logger](https://ruby-doc.org/stdlib-2.4.0/libdoc/logger/rdoc/Logger.html) mechanism and defaults to same `level` value (currently `Logger::DEBUG`). Most messages are at info level, but we will add debug or warn statements as needed.
+Langchain.rb uses the standard Ruby [Logger](https://ruby-doc.org/stdlib-2.4.0/libdoc/logger/rdoc/Logger.html) mechanism and defaults to same `level` value (currently `Logger::DEBUG`).
 
 To show all log messages:
 

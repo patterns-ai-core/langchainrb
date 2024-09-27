@@ -355,7 +355,7 @@ module Langchain
     #
     # @return [Langchain::LLM::BaseResponse] The LLM response object
     def chat_with_llm
-      Langchain.logger.info("#{self.class} - Sending a call to #{llm.class}")
+      Langchain.logger.debug("#{self.class} - Sending a call to #{llm.class}")
 
       params = @llm_adapter.build_chat_params(
         instructions: @instructions,

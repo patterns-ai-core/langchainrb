@@ -61,7 +61,7 @@ module Langchain::Tool
     def describe_tables(tables: [])
       return "No tables specified" if tables.empty?
 
-      Langchain.logger.info("#{self.class} - Describing tables: #{tables}")
+      Langchain.logger.debug("#{self.class} - Describing tables: #{tables}")
 
       tables
         .map do |table|
@@ -74,7 +74,7 @@ module Langchain::Tool
     #
     # @return [String] Database schema
     def dump_schema
-      Langchain.logger.info("#{self.class} - Dumping schema tables and keys")
+      Langchain.logger.debug("#{self.class} - Dumping schema tables and keys")
 
       schemas = db.tables.map do |table|
         describe_table(table)
@@ -87,7 +87,7 @@ module Langchain::Tool
     # @param input [String] SQL query to be executed
     # @return [Array] Results from the SQL query
     def execute(input:)
-      Langchain.logger.info("#{self.class} - Executing \"#{input}\"")
+      Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       db[input].to_a
     rescue Sequel::DatabaseError => e
