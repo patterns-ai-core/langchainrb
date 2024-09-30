@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.16.1] - 2024-09-30
 - Deprecate Langchain::LLM::GooglePalm
 - Allow setting response_object: {} parameter when initializing supported Langchain::LLM::* classes
 - Simplify and consolidate logging for some of the LLM providers (namely OpenAI and Google). Now most of the HTTP requests are being logged when on DEBUG level
