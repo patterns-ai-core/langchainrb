@@ -10,7 +10,7 @@ RSpec.describe Langchain::Messages::OpenAIMessage do
       let(:message) { described_class.new(role: "user", content: "Hello, world!", tool_calls: [], tool_call_id: nil) }
 
       it "returns a hash with the role and content key" do
-        expect(message.to_hash).to eq({role: "user", content: "Hello, world!"})
+        expect(message.to_hash).to eq({role: "user", content: [{type:"text", text: "Hello, world!"}]})
       end
     end
 
@@ -18,7 +18,7 @@ RSpec.describe Langchain::Messages::OpenAIMessage do
       let(:message) { described_class.new(role: "tool", content: "Hello, world!", tool_calls: [], tool_call_id: "123") }
 
       it "returns a hash with the tool_call_id key" do
-        expect(message.to_hash).to eq({role: "tool", content: "Hello, world!", tool_call_id: "123"})
+        expect(message.to_hash).to eq({role: "tool", content: [{type:"text", text: "Hello, world!"}], tool_call_id: "123"})
       end
     end
 
@@ -29,10 +29,24 @@ RSpec.describe Langchain::Messages::OpenAIMessage do
          "function" => {"name" => "weather__execute", "arguments" => "{\"input\":\"Saint Petersburg\"}"}}
       }
 
-      let(:message) { described_class.new(role: "assistant", content: "", tool_calls: [tool_call], tool_call_id: nil) }
+      let(:message) { described_class.new(role: "assistant", tool_calls: [tool_call], tool_call_id: nil) }
 
       it "returns a hash with the tool_calls key" do
-        expect(message.to_hash).to eq({role: "assistant", content: "", tool_calls: [tool_call]})
+        expect(message.to_hash).to eq({role: "assistant", tool_calls: [tool_call]})
+      end
+    end
+
+    context "when image_url is present" do
+      let(:message) { described_class.new(role: "user", content: "Please describe this image", image_url: "https://example.com/image.jpg") }
+
+      it "returns a hash with the image_url key" do
+        expect(message.to_hash).to eq({
+          role: "user",
+          content: [
+            {type:"text", text: "Please describe this image"},
+            {type:"image_url", image_url: {url: "https://example.com/image.jpg"}}
+          ]
+        })
       end
     end
   end
