@@ -3,7 +3,11 @@
 module Langchain
   module Messages
     class Base
-      attr_reader :role, :content, :tool_calls, :tool_call_id
+      attr_reader :role,
+        :content,
+        :image_url,
+        :tool_calls,
+        :tool_call_id
 
       # Check if the message came from a user
       #

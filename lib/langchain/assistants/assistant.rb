@@ -63,13 +63,14 @@ module Langchain
 
     # Add a user message to the messages array
     #
-    # @param content [String] The content of the message
     # @param role [String] The role attribute of the message. Default: "user"
+    # @param content [String] The content of the message
+    # @param image_url [String] The URL of the image to include in the message
     # @param tool_calls [Array<Hash>] The tool calls to include in the message
     # @param tool_call_id [String] The ID of the tool call to include in the message
     # @return [Array<Langchain::Message>] The messages
-    def add_message(content: nil, role: "user", tool_calls: [], tool_call_id: nil)
-      message = build_message(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+    def add_message(role: "user", content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+      message = build_message(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
 
       # Call the callback with the message
       add_message_callback.call(message) if add_message_callback # rubocop:disable Style/SafeNavigation
@@ -145,8 +146,8 @@ module Langchain
     # @param content [String] The content of the message
     # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
     # @return [Array<Langchain::Message>] The messages
-    def add_message_and_run(content:, auto_tool_execution: false)
-      add_message(content: content, role: "user")
+    def add_message_and_run(content: nil, image_url: nil, auto_tool_execution: false)
+      add_message(content: content, image_url: image_url, role: "user")
       run(auto_tool_execution: auto_tool_execution)
     end
 
@@ -154,8 +155,8 @@ module Langchain
     #
     # @param content [String] The content of the message
     # @return [Array<Langchain::Message>] The messages
-    def add_message_and_run!(content:)
-      add_message_and_run(content: content, auto_tool_execution: true)
+    def add_message_and_run!(content: nil, image_url: nil)
+      add_message_and_run(content: content, image_url: image_url, auto_tool_execution: true)
     end
 
     # Submit tool output
@@ -388,11 +389,12 @@ module Langchain
     #
     # @param role [String] The role of the message
     # @param content [String] The content of the message
+    # @param image_url [String] The URL of the image to include in the message
     # @param tool_calls [Array<Hash>] The tool calls to include in the message
     # @param tool_call_id [String] The ID of the tool call to include in the message
     # @return [Langchain::Message] The Message object
-    def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
-      @llm_adapter.build_message(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+    def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+      @llm_adapter.build_message(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
     end
 
     # Increment the tokens count based on the last interaction with the LLM
@@ -443,7 +445,7 @@ module Langchain
             raise NotImplementedError, "Subclasses must implement extract_tool_call_args"
           end
 
-          def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
+          def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
             raise NotImplementedError, "Subclasses must implement build_message"
           end
         end
@@ -457,7 +459,9 @@ module Langchain
             params
           end
 
-          def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
+          def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+            warn "Image URL is not supported by Ollama currently" if image_url
+
             Langchain::Messages::OllamaMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
@@ -506,8 +510,8 @@ module Langchain
             params
           end
 
-          def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
-            Langchain::Messages::OpenAIMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+          def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+            Langchain::Messages::OpenAIMessage.new(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
           # Extract the tool call information from the OpenAI tool call hash
@@ -564,7 +568,9 @@ module Langchain
             params
           end
 
-          def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
+          def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+            warn "Image URL is not supported by MistralAI currently" if image_url
+
             Langchain::Messages::MistralAIMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
@@ -623,7 +629,9 @@ module Langchain
             params
           end
 
-          def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
+          def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+            warn "Image URL is not supported by Google Gemini" if image_url
+
             Langchain::Messages::GoogleGeminiMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
@@ -676,7 +684,9 @@ module Langchain
             params
           end
 
-          def build_message(role:, content: nil, tool_calls: [], tool_call_id: nil)
+          def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+            warn "Image URL is not supported by Anthropic currently" if image_url
+
             Langchain::Messages::AnthropicMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
