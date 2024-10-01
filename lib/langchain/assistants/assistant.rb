@@ -569,9 +569,7 @@ module Langchain
           end
 
           def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
-            warn "Image URL is not supported by MistralAI currently" if image_url
-
-            Langchain::Messages::MistralAIMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+            Langchain::Messages::MistralAIMessage.new(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
           # Extract the tool call information from the OpenAI tool call hash
