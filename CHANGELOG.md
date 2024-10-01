@@ -1,5 +1,5 @@
 ## [Unreleased]
-- Assistant can now process image_urls in the messages (currently only for OpenAI)
+- Assistant can now process image_urls in the messages (currently only for OpenAI and Mistral AI)
 
 ## [0.16.1] - 2024-09-30
 - Deprecate Langchain::LLM::GooglePalm
