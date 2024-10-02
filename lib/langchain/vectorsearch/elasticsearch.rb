@@ -37,7 +37,7 @@ module Langchain::Vectorsearch
       @options = {
         url: url,
         request_timeout: 20,
-        log: false
+        logger: Langchain.logger
       }.merge(es_options)
 
       @es_client = ::Elasticsearch::Client.new(**options)
