@@ -22,7 +22,8 @@ module Langchain::Vectorsearch
 
       @client = ::Weaviate::Client.new(
         url: url,
-        api_key: api_key
+        api_key: api_key,
+        logger: Langchain.logger
       )
 
       # Weaviate requires the class name to be Capitalized: https://weaviate.io/developers/weaviate/configuration/schema-configuration#create-a-class

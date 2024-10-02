@@ -22,7 +22,8 @@ module Langchain::Vectorsearch
 
       @client = ::Qdrant::Client.new(
         url: url,
-        api_key: api_key
+        api_key: api_key,
+        logger: Langchain.logger
       )
       @index_name = index_name
 
