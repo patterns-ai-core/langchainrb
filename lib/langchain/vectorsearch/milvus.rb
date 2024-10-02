@@ -144,7 +144,7 @@ module Langchain::Vectorsearch
     def ask(question:, k: 4, &block)
       search_results = similarity_search(query: question, k: k)
 
-      content_data = search_results.dig("data").map {|result| result.dig("content")}
+      content_data = search_results.dig("data").map { |result| result.dig("content") }
 
       context = content_data.join("\n---\n")
 

@@ -56,9 +56,8 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   let(:results) {
     {
       "code" => 0,
-      "cost"=>0,
-      "data"=>
-      [{
+      "cost" => 0,
+      "data" => [{
         "content" => "Hello World",
         "distance" => 1.3126459,
         "id" => 452950198960271761,
