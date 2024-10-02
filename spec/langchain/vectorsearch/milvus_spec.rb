@@ -14,20 +14,22 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   }
 
   describe "#create_default_schema" do
+    let(:fixture) { {"code" => 0, "data" => {}} }
+
     before do
-      allow(subject.client).to receive_message_chain(:collections, :create).and_return(true)
+      allow(subject.client).to receive_message_chain(:collections, :create).and_return(fixture)
     end
 
     it "returns true" do
-      expect(subject.create_default_schema).to eq(true)
+      expect(subject.create_default_schema).to eq(fixture)
     end
   end
 
   describe "#destroy_default_schema" do
-    let(:fixture) { {"result" => true, "status" => "ok", "time" => 0.001313625} }
+    let(:fixture) { {"code" => 0, "data" => {}} }
 
     before do
-      allow(subject.client).to receive_message_chain(:collections, :delete).and_return(fixture)
+      allow(subject.client).to receive_message_chain(:collections, :drop).and_return(fixture)
     end
 
     it "returns true" do
@@ -39,7 +41,7 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
     let(:fixture) { JSON.parse(File.read("spec/fixtures/vectorsearch/milvus/get_default_schema.json")) }
 
     before do
-      allow(subject.client).to receive_message_chain(:collections, :get).and_return(fixture)
+      allow(subject.client).to receive_message_chain(:collections, :describe).and_return(fixture)
     end
 
     it "returns true" do
@@ -53,28 +55,19 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   let(:query) { "Greetings Earth" }
   let(:results) {
     {
-      "collection_name" => "earthlings",
-      "num_rows" => 1,
-      "results" => {
-        "fields_data" => [
-          {
-            "field_name" => "content",
-            "Field" => {
-              "Scalars" => {
-                "Data" => {
-                  "StringData" => {
-                    "data" => ["Hello World"]
-                  }
-                }
-              }
-            }
-          }, {
-            "field_name" => "vectors",
-            "type" => "FloatVector",
-            "field" => [0, 1, 2]
-          }
+      "code" => 0,
+      "cost"=>0,
+      "data"=>
+      [{
+        "content" => "Hello World",
+        "distance" => 1.3126459,
+        "id" => 452950198960271761,
+        "vector" => [
+          0.017206078,
+          -0.0047077234,
+          0.036424987
         ]
-      }
+      }]
     }
   }
 
@@ -104,7 +97,7 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   describe "#similarity_search_by_vector" do
     before do
       allow(subject.client.collections).to receive(:load).and_return(true)
-      allow(subject.client).to receive(:search).and_return(true)
+      allow(subject.client).to receive_message_chain(:entities, :search).and_return(true)
     end
 
     it "searches for similar texts" do

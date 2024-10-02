@@ -1,51 +1,65 @@
 {
-  "status": {},
-  "schema": {
-    "name": "Products",
-    "description": "Default schema created by Vectorsearch",
+  "code": 0,
+  "data": {
+    "aliases": [],
+    "autoId": true,
+    "collectionID": 452950198960691487,
+    "collectionName": "recipes",
+    "consistencyLevel": "Bounded",
+    "description": "",
+    "enableDynamicField": false,
     "fields": [
       {
-        "fieldID": 100,
+        "autoId": true,
+        "description": "",
+        "id": 100,
         "name": "id",
-        "is_primary_key": true,
-        "data_type": 5,
-        "autoID": true
+        "partitionKey": false,
+        "primaryKey": true,
+        "type": "Int64"
       },
       {
-        "fieldID": 101,
+        "autoId": false,
+        "description": "",
+        "id": 101,
         "name": "content",
-        "data_type": 21,
-        "type_params": [
+        "params": [
           {
             "key": "max_length",
             "value": "32768"
           }
-        ]
+        ],
+        "partitionKey": false,
+        "primaryKey": false,
+        "type": "VarChar"
       },
       {
-        "fieldID": 102,
-        "name": "vectors",
-        "data_type": 101,
-        "type_params": [
+        "autoId": false,
+        "description": "",
+        "id": 102,
+        "name": "vector",
+        "params": [
           {
             "key": "dim",
             "value": "1536"
           }
-        ]
+        ],
+        "partitionKey": false,
+        "primaryKey": false,
+        "type": "FloatVector"
       }
-    ]
+    ],
+    "indexes": [
+      {
+        "fieldName": "vector",
+        "indexName": "vector_idx",
+        "metricType": "L2"
+      }
+    ],
+    "load": "LoadStateNotLoad",
+    "partitionsNum": 1,
+    "properties": [],
+    "shardsNum": 1
   },
-  "collectionID": 442541889915979330,
-  "virtual_channel_names": [
-    "by-dev-rootcoord-dml_2_442541889915979330v0",
-    "by-dev-rootcoord-dml_3_442541889915979330v1"
-  ],
-  "physical_channel_names": [
-    "by-dev-rootcoord-dml_2",
-    "by-dev-rootcoord-dml_3"
-  ],
-  "created_timestamp": 442541971004981252,
-  "created_utc_timestamp": 1688163646717,
-  "shards_num": 2,
-  "collection_name": "Recipes"
+  "message": ""
 }

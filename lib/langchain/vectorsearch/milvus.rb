@@ -32,17 +32,7 @@ module Langchain::Vectorsearch
       )
     end
 
-    def update_texts(texts:, ids:)
-      raise ArgumentError, "texts and ids must be arrays" unless texts.is_a?(Array) && ids.is_a?(Array)
-      raise ArgumentError, "texts and ids must be the same length" unless texts.length == ids.length
-
-      client.entities.upsert(
-        collection_name: index_name,
-        data: texts.zip(ids).map do |text, id|
-          {id: id, content: text, vector: llm.embed(text: text).embedding}
-        end
-      )
-    end
+    # TODO: Add update_texts method
 
     # Deletes a list of texts in the index
     #
@@ -50,12 +40,10 @@ module Langchain::Vectorsearch
     # @return [Boolean] The response from the server
     def remove_texts(ids:)
       raise ArgumentError, "ids must be an array" unless ids.is_a?(Array)
-      # Convert ids to integers if strings are passed
-      ids = ids.map(&:to_i)
 
       client.entities.delete(
         collection_name: index_name,
-        ids: ids
+        filter: "id in #{ids}"
       )
     end
 
@@ -65,13 +53,12 @@ module Langchain::Vectorsearch
     # @return [Hash] The response from the server
     def create_default_schema
       client.collections.create(
-        auto_id: false,
+        auto_id: true,
         collection_name: index_name,
         fields: [
           {
             fieldName: "id",
             isPrimary: true,
-            auto_id: true,
             dataType: "Int64"
           }, {
             fieldName: "content",
@@ -113,7 +100,7 @@ module Langchain::Vectorsearch
     # Get the default schema
     # @return [Hash] The response from the server
     def get_default_schema
-      client.collections.get(collection_name: index_name)
+      client.collections.describe(collection_name: index_name)
     end
 
     # Delete default schema
