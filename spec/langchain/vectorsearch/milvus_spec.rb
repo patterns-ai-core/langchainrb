@@ -70,7 +70,7 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
             }
           }, {
             "field_name" => "vectors",
-            "type" => ::Milvus::DATA_TYPES["float_vector"],
+            "type" => "FloatVector",
             "field" => [0, 1, 2]
           }
         ]
