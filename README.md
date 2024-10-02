@@ -63,7 +63,6 @@ The `Langchain::LLM` module provides a unified interface for interacting with va
 - Azure OpenAI
 - Cohere
 - Google Gemini
-- Google PaLM (deprecated)
 - Google Vertex AI
 - HuggingFace
 - LlamaCpp
