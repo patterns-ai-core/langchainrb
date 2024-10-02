@@ -11,9 +11,8 @@ module Langchain::LLM
   # - {Langchain::LLM::Anthropic}
   # - {Langchain::LLM::Azure}
   # - {Langchain::LLM::Cohere}
-  # - {Langchain::LLM::GooglePalm}
-  # - {Langchain::LLM::GoogleVertexAI}
   # - {Langchain::LLM::GoogleGemini}
+  # - {Langchain::LLM::GoogleVertexAI}
   # - {Langchain::LLM::HuggingFace}
   # - {Langchain::LLM::LlamaCpp}
   # - {Langchain::LLM::OpenAI}

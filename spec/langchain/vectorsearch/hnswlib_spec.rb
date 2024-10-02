@@ -8,10 +8,10 @@ RSpec.describe Langchain::Vectorsearch::Hnswlib do
   end
 
   before do
-    allow_any_instance_of(Langchain::LLM::GooglePalm).to receive(:default_dimensions).and_return(3)
+    allow_any_instance_of(Langchain::LLM::GoogleGemini).to receive(:default_dimensions).and_return(3)
   end
 
-  let(:llm) { Langchain::LLM::GooglePalm.new(api_key: "123") }
+  let(:llm) { Langchain::LLM::GoogleGemini.new(api_key: "123") }
   subject { described_class.new(llm: llm, path_to_index: "./test.ann") }
 
   describe "#initialize" do
