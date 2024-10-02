@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.17.0] - 2024-10-02
 - [BREAKING] Langchain::Vectorsearch::Milvus was rewritten to work with newer milvus 0.10.0 gem
 - [BREAKING] Removing Langchain::LLM::GooglePalm
 - Assistant can now process image_urls in the messages (currently only for OpenAI and Mistral AI)
