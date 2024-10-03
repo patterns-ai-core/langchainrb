@@ -100,7 +100,7 @@ module Langchain::LLM
     # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
     # @option params [Float] :top_p Use nucleus sampling.
     # @return [Langchain::LLM::AnthropicResponse] The chat completion
-    def chat(params = {})
+    def chat(params = {}, &block)
       set_extra_headers! if params[:tools]
 
       parameters = chat_parameters.to_params(params)
@@ -109,7 +109,18 @@ module Langchain::LLM
       raise ArgumentError.new("model argument is required") if parameters[:model].empty?
       raise ArgumentError.new("max_tokens argument is required") if parameters[:max_tokens].nil?
 
+      if block
+        @response_chunks = []
+        parameters[:stream] = proc do |chunk|
+          @response_chunks << chunk
+          yield chunk if chunk["type"] == "content_block_delta"
+        end
+      end
+
       response = client.messages(parameters: parameters)
+
+      response = response_from_chunks if block
+      reset_response_chunks
 
       Langchain::LLM::AnthropicResponse.new(response)
     end
@@ -123,7 +134,52 @@ module Langchain::LLM
       response
     end
 
+    def response_from_chunks
+      grouped_chunks = @response_chunks.group_by { |chunk| chunk["index"] }.except(nil)
+
+      usage = @response_chunks.find { |chunk| chunk["type"] == "message_delta" }&.dig("usage")
+      stop_reason = @response_chunks.find { |chunk| chunk["type"] == "message_delta" }&.dig("delta", "stop_reason")
+
+      content = grouped_chunks.map do |_index, chunks|
+        text = chunks.map { |chunk| chunk.dig("delta", "text") }.join
+        if !text.nil? && !text.empty?
+          {"type" => "text", "text" => text}
+        else
+          tool_calls_from_choice_chunks(chunks)
+        end
+      end.flatten
+
+      @response_chunks.first&.slice("id", "object", "created", "model")
+        &.merge!(
+          {
+            "content" => content,
+            "usage" => usage,
+            "role" => "assistant",
+            "stop_reason" => stop_reason
+          }
+        )
+    end
+
+    def tool_calls_from_choice_chunks(chunks)
+      return unless (first_block = chunks.find { |chunk| chunk.dig("content_block", "type") == "tool_use" })
+
+      chunks.group_by { |chunk| chunk["index"] }.map do |index, chunks|
+        input = chunks.select { |chunk| chunk.dig("delta", "partial_json") }
+          .map! { |chunk| chunk.dig("delta", "partial_json") }.join
+        {
+          "id" => first_block.dig("content_block", "id"),
+          "type" => "tool_use",
+          "name" => first_block.dig("content_block", "name"),
+          "input" => input
+        }
+      end.compact
+    end
+
     private
+
+    def reset_response_chunks
+      @response_chunks = []
+    end
 
     def set_extra_headers!
       ::Anthropic.configuration.extra_headers = {"anthropic-beta": "tools-2024-05-16"}
