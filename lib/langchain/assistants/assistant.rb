@@ -62,6 +62,12 @@ module Langchain
       initialize_instructions
     end
 
+    def initialize_instructions
+      if llm.is_a?(Langchain::LLM::OpenAI) || llm.is_a?(Langchain::LLM::MistralAI)
+        self.instructions = @instructions if @instructions
+      end
+    end
+
     # Add a user message to the messages array
     #
     # @param role [String] The role attribute of the message. Default: "user"
@@ -344,12 +350,8 @@ module Langchain
         Langchain::Messages::OllamaMessage::TOOL_ROLE
       when Langchain::LLM::OpenAI
         Langchain::Messages::OpenAIMessage::TOOL_ROLE
-      end
-    end
-
-    def initialize_instructions
-      if llm.is_a?(Langchain::LLM::OpenAI) || llm.is_a?(Langchain::LLM::MistralAI)
-        self.instructions = @instructions if @instructions
+      when Langchain::LLM::AwsBedrock
+        Langchain::Messages::AwsBedrockMessage::TOOL_ROLE
       end
     end
 

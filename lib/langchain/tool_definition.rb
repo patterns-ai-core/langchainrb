@@ -113,6 +113,17 @@ module Langchain::ToolDefinition
     def to_google_gemini_format
       @schemas.values.map { |schema| schema[:function] }
     end
+
+    # Converts schemas to AWS Bedrock-compatible format
+    #
+    # @return [String] JSON string of schemas in AWS Bedrock format
+    def to_aws_bedrock_format
+      @schemas.values.map do |schema|
+        new_schema = schema.transform_keys(function: :tool_spec)
+        new_schema[:tool_spec] = new_schema[:tool_spec].transform_keys(parameters: :input_schema)
+        new_schema
+      end
+    end
   end
 
   # Builds parameter schemas for functions
