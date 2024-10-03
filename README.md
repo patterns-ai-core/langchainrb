@@ -525,6 +525,8 @@ assistant.add_message(content: "Hello")
 assistant.run(auto_tool_execution: true)
 ```
 
+Note that streaming is not currently supported for all LLMs.
+
 ### Configuration
 * `llm`: The LLM instance to use (required)
 * `tools`: An array of tool instances (optional)
