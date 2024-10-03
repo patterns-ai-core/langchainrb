@@ -61,7 +61,7 @@ module Langchain::LLM
         .merge(embedding_model_name: embedding_model)
 
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:completion_model_name]},
         temperature: {},
         max_tokens: {default: @defaults[:max_tokens_to_sample]},
         metadata: {},
