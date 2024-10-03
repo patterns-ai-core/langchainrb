@@ -125,7 +125,7 @@ RSpec.describe Langchain::LLM::Anthropic do
         expect(rsp.chat_completion).to eq("Okay, let's check the weather for San Francisco, CA:")
 
         expect(rsp.tool_calls.first["name"]).to eq("get_weather")
-        expect(rsp.tool_calls.first["input"]).to eq('{"location": "San Francisco, CA", "unit": "fahrenheit"}')
+        expect(rsp.tool_calls.first["input"]).to eq({location: "San Francisco, CA", unit: "fahrenheit"})
       end
     end
   end

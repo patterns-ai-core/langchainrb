@@ -170,7 +170,7 @@ module Langchain::LLM
           "id" => first_block.dig("content_block", "id"),
           "type" => "tool_use",
           "name" => first_block.dig("content_block", "name"),
-          "input" => input
+          "input" => JSON.parse(input).transform_keys(&:to_sym)
         }
       end.compact
     end
