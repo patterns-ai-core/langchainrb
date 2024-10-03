@@ -113,7 +113,7 @@ module Langchain::LLM
         @response_chunks = []
         parameters[:stream] = proc do |chunk|
           @response_chunks << chunk
-          yield chunk if chunk["type"] == "content_block_delta"
+          yield chunk
         end
       end
 
