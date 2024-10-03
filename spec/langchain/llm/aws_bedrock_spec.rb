@@ -24,12 +24,14 @@ RSpec.describe Langchain::LLM::AwsBedrock do
         }.to_json
       end
 
+      let(:model_id) { "anthropic.claude-3-sonnet-20240229-v1:0" }
+
       before do
         response_object = double("response_object")
         allow(response_object).to receive(:body).and_return(StringIO.new(response))
         allow(subject.client).to receive(:invoke_model)
           .with(matching(
-            model_id: "anthropic.claude-3-sonnet-20240229-v1:0",
+            model_id:,
             body: {
               messages: [{role: "user", content: "What is the capital of France?"}],
               stop_sequences: ["stop"],
@@ -46,10 +48,23 @@ RSpec.describe Langchain::LLM::AwsBedrock do
         expect(
           subject.chat(
             messages: [{role: "user", content: "What is the capital of France?"}],
-            model: "anthropic.claude-3-sonnet-20240229-v1:0",
+            model: model_id,
             stop_sequences: ["stop"]
           ).chat_completion
         ).to eq("The capital of France is Paris.")
+      end
+
+      context "without default model" do
+        let(:model_id) { "anthropic.claude-v2" }
+
+        it "returns a completion" do
+          expect(
+            subject.chat(
+              messages: [{role: "user", content: "What is the capital of France?"}],
+              stop_sequences: ["stop"]
+            ).chat_completion
+          ).to eq("The capital of France is Paris.")
+        end
       end
 
       context "with streaming" do

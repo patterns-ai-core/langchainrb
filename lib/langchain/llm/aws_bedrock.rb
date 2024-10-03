@@ -11,6 +11,7 @@ module Langchain::LLM
   #
   class AwsBedrock < Base
     DEFAULTS = {
+      chat_completion_model_name: "anthropic.claude-v2",
       completion_model_name: "anthropic.claude-v2",
       embedding_model_name: "amazon.titan-embed-text-v1",
       max_tokens_to_sample: 300,
@@ -52,16 +53,17 @@ module Langchain::LLM
     SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[anthropic].freeze
     SUPPORTED_EMBEDDING_PROVIDERS = %i[amazon cohere].freeze
 
-    def initialize(completion_model: DEFAULTS[:completion_model_name], embedding_model: DEFAULTS[:embedding_model_name], aws_client_options: {}, default_options: {})
+    def initialize(chat_model: DEFAULTS[:chat_completion_model_name], completion_model: DEFAULTS[:completion_model_name], embedding_model: DEFAULTS[:embedding_model_name], aws_client_options: {}, default_options: {})
       depends_on "aws-sdk-bedrockruntime", req: "aws-sdk-bedrockruntime"
 
       @client = ::Aws::BedrockRuntime::Client.new(**aws_client_options)
       @defaults = DEFAULTS.merge(default_options)
+        .merge(chat_completion_model_name: chat_model)
         .merge(completion_model_name: completion_model)
         .merge(embedding_model_name: embedding_model)
 
       chat_parameters.update(
-        model: {default: @defaults[:completion_model_name]},
+        model: {default: @defaults[:chat_completion_model_name]},
         temperature: {},
         max_tokens: {default: @defaults[:max_tokens_to_sample]},
         metadata: {},
