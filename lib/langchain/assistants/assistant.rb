@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "llm/adapter"
+
 module Langchain
   # Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries.
   # Assistants can be configured with an LLM of your choice, any vector search database and easily extended with additional tools.
