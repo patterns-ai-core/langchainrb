@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.17.1] - 2024-10-07
 - Move Langchain::Assistant::LLM::Adapter-related classes to separate files
 - Fix Langchain::Tool::Database#describe_table method
 
