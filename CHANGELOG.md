@@ -1,5 +1,6 @@
 ## [Unreleased]
 - Move Langchain::Assistant::LLM::Adapter-related classes to separate files
+- Fix Langchain::Tool::Database#describe_table method
 
 ## [0.17.0] - 2024-10-02
 - [BREAKING] Langchain::Vectorsearch::Milvus was rewritten to work with newer milvus 0.10.0 gem
