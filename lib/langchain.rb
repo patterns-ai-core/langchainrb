@@ -8,6 +8,8 @@ require "json"
 
 loader = Zeitwerk::Loader.for_gem
 loader.ignore("#{__dir__}/langchainrb.rb")
+loader.ignore("#{__dir__}/langchain/assistants/llm")
+
 loader.inflector.inflect(
   "ai21" => "AI21",
   "ai21_response" => "AI21Response",
