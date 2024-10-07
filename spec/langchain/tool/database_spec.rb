@@ -41,5 +41,11 @@ RSpec.describe Langchain::Tool::Database do
     it "returns the schema" do
       expect(subject.dump_schema).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs(job));\n")
     end
+
+    it "does not fail when key is not present" do
+      allow(subject.db).to receive(:foreign_key_list).with(:users).and_return([{columns: [:job], table: :jobs, key: nil}])
+
+      expect(subject.dump_schema).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs());\n")
+    end
   end
 end
