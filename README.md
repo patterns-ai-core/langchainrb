@@ -153,6 +153,21 @@ chat_completion = response.chat_completion
 - `tools`: (Optional) A list of tools the model may call.
 - `tool_choice`: (Optional) Controls how the model calls functions.
 
+#### Gemini version of `chat()`
+
+Gemini has a different structure:
+
+```ruby
+messages =  [
+    {role: "user", parts: [
+                            {text: "why is the sky blue?"}
+                          ]
+    }
+]
+response = llm.chat(messages: messages)
+chat_completion = response.chat_completion
+```
+
 ## Switching LLM Providers
 
 Thanks to the unified interface, you can easily switch between different LLM providers by changing the class you instantiate:
