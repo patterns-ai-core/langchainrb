@@ -42,7 +42,7 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     afm (0.2.2)
     ai21 (0.2.1)
-    anthropic (0.3.0)
+    anthropic (0.3.2)
       event_stream_parser (>= 0.3.0, < 2.0.0)
       faraday (>= 1)
       faraday-multipart (>= 1)
