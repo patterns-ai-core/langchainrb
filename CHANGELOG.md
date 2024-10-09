@@ -1,4 +1,6 @@
 ## [Unreleased]
+- Bump anthropic gem
+- Default Langchain::LLM::Anthropic chat model is "claude-3-5-sonnet-20240620" now
 
 ## [0.17.1] - 2024-10-07
 - Move Langchain::Assistant::LLM::Adapter-related classes to separate files
