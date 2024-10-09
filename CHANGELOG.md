@@ -1,6 +1,11 @@
 ## [Unreleased]
 - Added support for streaming with Anthropic
+- Bump anthropic gem
+- Default Langchain::LLM::Anthropic chat model is "claude-3-5-sonnet-20240620" now
+
+## [0.17.1] - 2024-10-07
 - Move Langchain::Assistant::LLM::Adapter-related classes to separate files
+- Fix Langchain::Tool::Database#describe_table method
 
 ## [0.17.0] - 2024-10-02
 - [BREAKING] Langchain::Vectorsearch::Milvus was rewritten to work with newer milvus 0.10.0 gem

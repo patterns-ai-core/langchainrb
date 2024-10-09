@@ -5,7 +5,7 @@ module Langchain::LLM
   # Wrapper around Anthropic APIs.
   #
   # Gem requirements:
-  #   gem "anthropic", "~> 0.3.0"
+  #   gem "anthropic", "~> 0.3.2"
   #
   # Usage:
   #     anthropic = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
@@ -14,7 +14,7 @@ module Langchain::LLM
     DEFAULTS = {
       temperature: 0.0,
       completion_model_name: "claude-2.1",
-      chat_completion_model_name: "claude-3-sonnet-20240229",
+      chat_completion_model_name: "claude-3-5-sonnet-20240620",
       max_tokens_to_sample: 256
     }.freeze
 

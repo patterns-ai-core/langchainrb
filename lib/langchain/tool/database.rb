@@ -122,7 +122,7 @@ module Langchain::Tool
       end
       db.foreign_key_list(table).each do |fk|
         schema << ",\n" if fk == db.foreign_key_list(table).first
-        schema << "FOREIGN KEY (#{fk[:columns][0]}) REFERENCES #{fk[:table]}(#{fk[:key][0]})"
+        schema << "FOREIGN KEY (#{fk[:columns]&.first}) REFERENCES #{fk[:table]}(#{fk[:key]&.first})"
         schema << ",\n" unless fk == db.foreign_key_list(table).last
       end
       schema << ");\n"
