@@ -136,6 +136,11 @@ RSpec.describe Langchain::Assistant do
         expect(assistant.messages.first.content).to eq("You are an expert assistant")
       end
 
+      it "skips a system message creation for empty instructions" do
+        assistant = described_class.new(llm: llm, instructions: nil)
+        expect(assistant.messages).to be_empty
+      end
+
       it "the system message always comes first" do
         assistant = described_class.new(llm: llm, instructions: instructions)
         assistant.add_message(role: "system", content: "System message")
@@ -512,6 +517,11 @@ RSpec.describe Langchain::Assistant do
         described_class.new(llm: llm, instructions: instructions)
         expect(subject.messages.first.role).to eq("system")
         expect(subject.messages.first.content).to eq("You are an expert assistant")
+      end
+
+      it "skips a system message creation for empty instructions" do
+        assistant = described_class.new(llm: llm, instructions: nil)
+        expect(assistant.messages).to be_empty
       end
 
       it "the system message always comes first" do
@@ -1348,6 +1358,11 @@ RSpec.describe Langchain::Assistant do
         assistant = described_class.new(llm: llm, instructions: instructions)
         expect(assistant.messages.first.role).to eq("system")
         expect(assistant.messages.first.content).to eq("You are an expert assistant")
+      end
+
+      it "skips a system message creation for empty instructions" do
+        assistant = described_class.new(llm: llm, instructions: nil)
+        expect(assistant.messages).to be_empty
       end
 
       it "the system message always comes first" do
