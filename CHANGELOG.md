@@ -1,4 +1,5 @@
 ## [Unreleased]
+- Added support for streaming with Anthropic
 - Bump anthropic gem
 - Default Langchain::LLM::Anthropic chat model is "claude-3-5-sonnet-20240620" now
 

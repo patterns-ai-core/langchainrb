@@ -81,5 +81,52 @@ RSpec.describe Langchain::LLM::Anthropic do
         ).to eq("claude-3-sonnet-20240229")
       end
     end
+
+    context "with streaming" do
+      let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream.json") }
+      let(:response) { JSON.parse(fixture) }
+      let(:stream_handler) { proc { _1 } }
+
+      before do
+        allow(subject.client).to receive(:messages) do |parameters|
+          response.each do |chunk|
+            parameters[:parameters][:stream].call(chunk)
+          end
+        end.and_return("This response will be overritten.")
+      end
+
+      it "handles streaming responses correctly" do
+        rsp = subject.chat(messages: messages, &stream_handler)
+        expect(rsp).to be_a(Langchain::LLM::AnthropicResponse)
+        expect(rsp.completion_tokens).to eq(10)
+        expect(rsp.total_tokens).to eq(10)
+        expect(rsp.chat_completion).to eq("Life is pretty good")
+      end
+    end
+
+    context "with streaming tools" do
+      let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream_with_tool_calls.json") }
+      let(:response) { JSON.parse(fixture) }
+      let(:stream_handler) { proc { _1 } }
+
+      before do
+        allow(subject.client).to receive(:messages) do |parameters|
+          response.each do |chunk|
+            parameters[:parameters][:stream].call(chunk)
+          end
+        end.and_return("This response will be overritten.")
+      end
+
+      it "handles streaming responses correctly" do
+        rsp = subject.chat(messages: messages, &stream_handler)
+        expect(rsp).to be_a(Langchain::LLM::AnthropicResponse)
+        expect(rsp.completion_tokens).to eq(89)
+        expect(rsp.total_tokens).to eq(89)
+        expect(rsp.chat_completion).to eq("Okay, let's check the weather for San Francisco, CA:")
+
+        expect(rsp.tool_calls.first["name"]).to eq("get_weather")
+        expect(rsp.tool_calls.first["input"]).to eq({location: "San Francisco, CA", unit: "fahrenheit"})
+      end
+    end
   end
 end
