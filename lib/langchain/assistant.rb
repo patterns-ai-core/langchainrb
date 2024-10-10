@@ -185,9 +185,7 @@ module Langchain
       @instructions = new_instructions
 
       # This only needs to be done that support Message#@role="system"
-      if !llm.is_a?(Langchain::LLM::GoogleGemini) &&
-          !llm.is_a?(Langchain::LLM::GoogleVertexAI) &&
-          !llm.is_a?(Langchain::LLM::Anthropic)
+      if @llm_adapter.support_system_message?
         # Find message with role: "system" in messages and delete it from the messages array
         replace_system_message!(content: new_instructions)
       end

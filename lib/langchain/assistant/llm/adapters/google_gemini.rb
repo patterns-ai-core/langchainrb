@@ -70,6 +70,10 @@ module Langchain
             Messages::GoogleGeminiMessage::TOOL_ROLE
           end
 
+          def support_system_message?
+            false
+          end
+
           private
 
           def build_tool_config(choice)

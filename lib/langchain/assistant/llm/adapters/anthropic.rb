@@ -70,6 +70,10 @@ module Langchain
             Messages::AnthropicMessage::TOOL_ROLE
           end
 
+          def support_system_message?
+            false
+          end
+
           private
 
           def build_tool_choice(choice)
