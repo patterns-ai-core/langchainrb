@@ -870,6 +870,13 @@ RSpec.describe Langchain::Assistant do
       )
     }
 
+    describe "#initialize" do
+      it "doesn't propagate instructions to messages" do
+        described_class.new(llm: llm, instructions: instructions)
+        expect(subject.messages).to be_empty
+      end
+    end
+
     describe "#instructions=" do
       it "resets instructions" do
         subject.instructions = "New instructions"
@@ -891,6 +898,13 @@ RSpec.describe Langchain::Assistant do
         instructions: instructions
       )
     }
+
+    describe "#initialize" do
+      it "doesn't propagate instructions to messages" do
+        described_class.new(llm: llm, instructions: instructions)
+        expect(subject.messages).to be_empty
+      end
+    end
 
     describe "#add_message" do
       it "adds a message to the thread" do
@@ -1077,6 +1091,13 @@ RSpec.describe Langchain::Assistant do
         instructions: instructions
       )
     }
+
+    describe "#initialize" do
+      it "doesn't propagate instructions to messages" do
+        described_class.new(llm: llm, instructions: instructions)
+        expect(subject.messages).to be_empty
+      end
+    end
 
     describe "#add_message" do
       it "adds a message to the thread" do
@@ -1321,6 +1342,23 @@ RSpec.describe Langchain::Assistant do
         instructions: instructions
       )
     }
+
+    describe "#initialize" do
+      it "adds a system message to the thread" do
+        assistant = described_class.new(llm: llm, instructions: instructions)
+        expect(assistant.messages.first.role).to eq("system")
+        expect(assistant.messages.first.content).to eq("You are an expert assistant")
+      end
+
+      it "the system message always comes first" do
+        assistant = described_class.new(llm: llm, instructions: instructions)
+        assistant.add_message(role: "system", content: "System message")
+        assistant.add_message(role: "user", content: "foo")
+        expect(assistant.messages.first.role).to eq("system")
+        # Replaces the previous system message
+        expect(assistant.messages.first.content).to eq("You are an expert assistant")
+      end
+    end
 
     xdescribe "#set_state_for" do
       xcontext "when response contains completion" do
