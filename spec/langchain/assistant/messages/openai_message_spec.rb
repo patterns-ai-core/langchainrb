@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Messages::MistralAIMessage do
+RSpec.describe Langchain::Assistant::Messages::OpenAIMessage do
   it "raises an error if role is not one of allowed" do
     expect { described_class.new(role: "foo") }.to raise_error(ArgumentError)
   end
@@ -44,7 +44,7 @@ RSpec.describe Langchain::Messages::MistralAIMessage do
           role: "user",
           content: [
             {type: "text", text: "Please describe this image"},
-            {type: "image_url", image_url: "https://example.com/image.jpg"}
+            {type: "image_url", image_url: {url: "https://example.com/image.jpg"}}
           ]
         })
       end

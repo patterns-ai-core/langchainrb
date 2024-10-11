@@ -22,25 +22,12 @@ loader.inflector.inflect(
   "mistral_ai_response" => "MistralAIResponse",
   "mistral_ai_message" => "MistralAIMessage",
   "openai" => "OpenAI",
-  "openai_validator" => "OpenAIValidator",
   "openai_response" => "OpenAIResponse",
   "openai_message" => "OpenAIMessage",
   "pdf" => "PDF"
 )
-loader.collapse("#{__dir__}/langchain/llm/response")
-loader.collapse("#{__dir__}/langchain/assistants")
 
-loader.collapse("#{__dir__}/langchain/tool/calculator")
-loader.collapse("#{__dir__}/langchain/tool/database")
-loader.collapse("#{__dir__}/langchain/tool/docs_tool")
-loader.collapse("#{__dir__}/langchain/tool/file_system")
-loader.collapse("#{__dir__}/langchain/tool/google_search")
-loader.collapse("#{__dir__}/langchain/tool/ruby_code_interpreter")
-loader.collapse("#{__dir__}/langchain/tool/news_retriever")
-loader.collapse("#{__dir__}/langchain/tool/tavily")
-loader.collapse("#{__dir__}/langchain/tool/vectorsearch")
-loader.collapse("#{__dir__}/langchain/tool/weather")
-loader.collapse("#{__dir__}/langchain/tool/wikipedia")
+loader.collapse("#{__dir__}/langchain/llm/response")
 
 # RubyCodeInterpreter does not work with Ruby 3.3;
 # https://github.com/ukutaht/safe_ruby/issues/4
