@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Langchain::Messages::OllamaMessage do
+RSpec.describe Langchain::Assistant::Messages::OllamaMessage do
   let(:valid_roles) { ["system", "assistant", "user", "tool"] }
   let(:role) { "assistant" }
   let(:content) { "This is a message" }

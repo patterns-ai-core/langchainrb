@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Messages::OpenAIMessage do
+RSpec.describe Langchain::Assistant::Messages::OpenAIMessage do
   it "raises an error if role is not one of allowed" do
     expect { described_class.new(role: "foo") }.to raise_error(ArgumentError)
   end

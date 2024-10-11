@@ -1,4 +1,5 @@
 ## [Unreleased]
+- [BREAKING] `Langchain::Messages::*` namespace had migrated to `Langchain::Assistant::Messages::*`
 - [BREAKING] Modify `Langchain::LLM::AwsBedrock` constructor to pass model options via default_options: {...}
 - Added support for streaming with Anthropic
 - Bump anthropic gem

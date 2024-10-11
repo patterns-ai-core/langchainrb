@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "llm/adapter"
-
 module Langchain
   # Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries.
   # Assistants can be configured with an LLM of your choice, any vector search database and easily extended with additional tools.
@@ -104,7 +102,7 @@ module Langchain
     # @param messages [Array<Langchain::Message>] The messages to set
     # @return [Array<Langchain::Message>] The messages
     def messages=(messages)
-      raise ArgumentError, "messages array must only contain Langchain::Message instance(s)" unless messages.is_a?(Array) && messages.all? { |m| m.is_a?(Langchain::Messages::Base) }
+      raise ArgumentError, "messages array must only contain Langchain::Message instance(s)" unless messages.is_a?(Array) && messages.all? { |m| m.is_a?(Messages::Base) }
 
       @messages = messages
     end
@@ -336,15 +334,15 @@ module Langchain
     def determine_tool_role
       case llm
       when Langchain::LLM::Anthropic
-        Langchain::Messages::AnthropicMessage::TOOL_ROLE
+        Messages::AnthropicMessage::TOOL_ROLE
       when Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI
-        Langchain::Messages::GoogleGeminiMessage::TOOL_ROLE
+        Messages::GoogleGeminiMessage::TOOL_ROLE
       when Langchain::LLM::MistralAI
-        Langchain::Messages::MistralAIMessage::TOOL_ROLE
+        Messages::MistralAIMessage::TOOL_ROLE
       when Langchain::LLM::Ollama
-        Langchain::Messages::OllamaMessage::TOOL_ROLE
+        Messages::OllamaMessage::TOOL_ROLE
       when Langchain::LLM::OpenAI
-        Langchain::Messages::OpenAIMessage::TOOL_ROLE
+        Messages::OpenAIMessage::TOOL_ROLE
       end
     end
 

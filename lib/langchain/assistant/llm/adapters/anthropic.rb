@@ -1,8 +1,17 @@
+# frozen_string_literal: true
+
 module Langchain
   class Assistant
     module LLM
       module Adapters
         class Anthropic < Base
+          # Build the chat parameters for the Anthropic API
+          #
+          # @param tools [Array<Hash>] The tools to use
+          # @param instructions [String] The system instructions
+          # @param messages [Array<Hash>] The messages
+          # @param tool_choice [String] The tool choice
+          # @return [Hash] The chat parameters
           def build_chat_params(tools:, instructions:, messages:, tool_choice:)
             params = {messages: messages}
             if tools.any?
@@ -13,10 +22,18 @@ module Langchain
             params
           end
 
+          # Build an Anthropic message
+          #
+          # @param role [String] The role of the message
+          # @param content [String] The content of the message
+          # @param image_url [String] The image URL
+          # @param tool_calls [Array<Hash>] The tool calls
+          # @param tool_call_id [String] The tool call ID
+          # @return [Messages::AnthropicMessage] The Anthropic message
           def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
             warn "Image URL is not supported by Anthropic currently" if image_url
 
-            Langchain::Messages::AnthropicMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+            Messages::AnthropicMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
           # Extract the tool call information from the Anthropic tool call hash
@@ -31,14 +48,20 @@ module Langchain
             [tool_call_id, tool_name, method_name, tool_arguments]
           end
 
+          # Build the tools for the Anthropic API
           def build_tools(tools)
             tools.map { |tool| tool.class.function_schemas.to_anthropic_format }.flatten
           end
 
+          # Get the allowed assistant.tool_choice values for Anthropic
           def allowed_tool_choices
             ["auto", "any"]
           end
 
+          # Get the available tool function names for Anthropic
+          #
+          # @param tools [Array<Hash>] The tools
+          # @return [Array<String>] The tool function names
           def available_tool_names(tools)
             build_tools(tools).map { |tool| tool.dig(:name) }
           end

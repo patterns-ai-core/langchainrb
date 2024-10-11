@@ -1,8 +1,17 @@
+# frozen_string_literal: true
+
 module Langchain
   class Assistant
     module LLM
       module Adapters
         class GoogleGemini < Base
+          # Build the chat parameters for the Google Gemini LLM
+          #
+          # @param tools [Array] The tools to use
+          # @param instructions [String] The system instructions
+          # @param messages [Array] The messages
+          # @param tool_choice [String] The tool choice
+          # @return [Hash] The chat parameters
           def build_chat_params(tools:, instructions:, messages:, tool_choice:)
             params = {messages: messages}
             if tools.any?
@@ -13,10 +22,18 @@ module Langchain
             params
           end
 
+          # Build a Google Gemini message
+          #
+          # @param role [String] The role of the message
+          # @param content [String] The content of the message
+          # @param image_url [String] The image URL
+          # @param tool_calls [Array] The tool calls
+          # @param tool_call_id [String] The tool call ID
+          # @return [Messages::GoogleGeminiMessage] The Google Gemini message
           def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
             warn "Image URL is not supported by Google Gemini" if image_url
 
-            Langchain::Messages::GoogleGeminiMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+            Messages::GoogleGeminiMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
           # Extract the tool call information from the Google Gemini tool call hash
@@ -31,14 +48,20 @@ module Langchain
             [tool_call_id, tool_name, method_name, tool_arguments]
           end
 
+          # Build the tools for the Google Gemini LLM
+          #
+          # @param tools [Array<Langchain::Tool::Base>] The tools
+          # @return [Array] The tools in Google Gemini format
           def build_tools(tools)
             tools.map { |tool| tool.class.function_schemas.to_google_gemini_format }.flatten
           end
 
+          # Get the allowed assistant.tool_choice values for Google Gemini
           def allowed_tool_choices
             ["auto", "none"]
           end
 
+          # Get the available tool names for Google Gemini
           def available_tool_names(tools)
             build_tools(tools).map { |tool| tool.dig(:name) }
           end

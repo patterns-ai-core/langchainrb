@@ -1,4 +1,4 @@
-Dir[Pathname.new(__FILE__).dirname.join("adapters", "*.rb")].sort.each { |file| require file }
+# frozen_string_literal: true
 
 module Langchain
   class Assistant

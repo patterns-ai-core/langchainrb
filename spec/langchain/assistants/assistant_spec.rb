@@ -26,7 +26,7 @@ RSpec.describe Langchain::Assistant do
     end
 
     it "raises an error if messages array contains non-Langchain::Message instance(s)" do
-      expect { described_class.new(llm: llm, messages: [Langchain::Messages::OpenAIMessage.new, "foo"]) }.to raise_error(ArgumentError)
+      expect { described_class.new(llm: llm, messages: [Langchain::Assistant::Messages::OpenAIMessage.new, "foo"]) }.to raise_error(ArgumentError)
     end
   end
 
@@ -53,8 +53,8 @@ RSpec.describe Langchain::Assistant do
     describe "#array_of_message_hashes" do
       let(:messages) {
         [
-          Langchain::Messages::OpenAIMessage.new(role: "user", content: "hello"),
-          Langchain::Messages::OpenAIMessage.new(role: "assistant", content: "hi")
+          Langchain::Assistant::Messages::OpenAIMessage.new(role: "user", content: "hello"),
+          Langchain::Assistant::Messages::OpenAIMessage.new(role: "assistant", content: "hi")
         ]
       }
 
@@ -82,7 +82,7 @@ RSpec.describe Langchain::Assistant do
         expect {
           subject.add_message(**message)
         }.to change { subject.messages.count }.from(0).to(1)
-        expect(subject.messages.first).to be_a(Langchain::Messages::OpenAIMessage)
+        expect(subject.messages.first).to be_a(Langchain::Assistant::Messages::OpenAIMessage)
         expect(subject.messages.first.role).to eq("user")
         expect(subject.messages.first.content).to eq("hello")
       end
@@ -94,7 +94,7 @@ RSpec.describe Langchain::Assistant do
         expect {
           subject.add_message(**message_with_image)
         }.to change { subject.messages.count }.from(0).to(1)
-        expect(subject.messages.first).to be_a(Langchain::Messages::OpenAIMessage)
+        expect(subject.messages.first).to be_a(Langchain::Assistant::Messages::OpenAIMessage)
         expect(subject.messages.first.role).to eq("user")
         expect(subject.messages.first.content).to eq("hello")
         expect(subject.messages.first.image_url).to eq("https://example.com/image.jpg")
@@ -104,7 +104,7 @@ RSpec.describe Langchain::Assistant do
         callback = double("callback", call: true)
         subject = described_class.new(llm: llm, messages: [], add_message_callback: callback)
 
-        expect(callback).to receive(:call).with(instance_of(Langchain::Messages::OpenAIMessage))
+        expect(callback).to receive(:call).with(instance_of(Langchain::Assistant::Messages::OpenAIMessage))
 
         subject.add_message(**message)
       end
@@ -175,7 +175,7 @@ RSpec.describe Langchain::Assistant do
         callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
-        expect(callback).to receive(:call).with(instance_of(Langchain::Messages::OpenAIMessage))
+        expect(callback).to receive(:call).with(instance_of(Langchain::Assistant::Messages::OpenAIMessage))
 
         thread.add_message(role: "user", content: "foo")
       end
@@ -519,7 +519,7 @@ RSpec.describe Langchain::Assistant do
         callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
-        expect(callback).to receive(:call).with(instance_of(Langchain::Messages::MistralAIMessage))
+        expect(callback).to receive(:call).with(instance_of(Langchain::Assistant::Messages::MistralAIMessage))
 
         thread.add_message(role: "user", content: "foo")
       end
@@ -531,7 +531,7 @@ RSpec.describe Langchain::Assistant do
         expect {
           subject.add_message(**message_with_image)
         }.to change { subject.messages.count }.from(0).to(1)
-        expect(subject.messages.first).to be_a(Langchain::Messages::MistralAIMessage)
+        expect(subject.messages.first).to be_a(Langchain::Assistant::Messages::MistralAIMessage)
         expect(subject.messages.first.role).to eq("user")
         expect(subject.messages.first.content).to eq("hello")
         expect(subject.messages.first.image_url).to eq("https://example.com/image.jpg")
@@ -885,7 +885,7 @@ RSpec.describe Langchain::Assistant do
         callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
-        expect(callback).to receive(:call).with(instance_of(Langchain::Messages::GoogleGeminiMessage))
+        expect(callback).to receive(:call).with(instance_of(Langchain::Assistant::Messages::GoogleGeminiMessage))
 
         thread.add_message(role: "user", content: "foo")
       end
@@ -1067,7 +1067,7 @@ RSpec.describe Langchain::Assistant do
         callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
-        expect(callback).to receive(:call).with(instance_of(Langchain::Messages::AnthropicMessage))
+        expect(callback).to receive(:call).with(instance_of(Langchain::Assistant::Messages::AnthropicMessage))
 
         thread.add_message(role: "user", content: "foo")
       end
