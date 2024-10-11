@@ -177,9 +177,6 @@ module Langchain
       @messages = []
     end
 
-    # TODO: Remove in the next major release
-    alias_method :clear_thread!, :clear_messages!
-
     # Set new instructions
     #
     # @param new_instructions [String] New instructions that will be set as a system message
