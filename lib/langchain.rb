@@ -27,6 +27,8 @@ loader.inflector.inflect(
   "pdf" => "PDF"
 )
 
+loader.collapse("#{__dir__}/langchain/llm/response")
+
 # RubyCodeInterpreter does not work with Ruby 3.3;
 # https://github.com/ukutaht/safe_ruby/issues/4
 loader.ignore("#{__dir__}/langchain/tool/ruby_code_interpreter") if RUBY_VERSION >= "3.3.0"
