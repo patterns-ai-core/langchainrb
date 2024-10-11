@@ -67,7 +67,7 @@ module Langchain
           end
 
           def tool_role
-            Langchain::Messages::GoogleGeminiMessage::TOOL_ROLE
+            Messages::GoogleGeminiMessage::TOOL_ROLE
           end
 
           private

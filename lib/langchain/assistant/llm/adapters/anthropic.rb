@@ -67,7 +67,7 @@ module Langchain
           end
 
           def tool_role
-            Langchain::Messages::AnthropicMessage::TOOL_ROLE
+            Messages::AnthropicMessage::TOOL_ROLE
           end
 
           private

@@ -65,7 +65,7 @@ module Langchain
           end
 
           def tool_role
-            Langchain::Messages::OllamaMessage::TOOL_ROLE
+            Messages::OllamaMessage::TOOL_ROLE
           end
 
           private

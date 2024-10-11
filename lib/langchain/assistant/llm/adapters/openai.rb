@@ -69,7 +69,7 @@ module Langchain
           end
 
           def tool_role
-            Langchain::Messages::OpenAIMessage::TOOL_ROLE
+            Messages::OpenAIMessage::TOOL_ROLE
           end
 
           private

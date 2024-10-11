@@ -69,7 +69,7 @@ module Langchain
           end
 
           def tool_role
-            Langchain::Messages::MistralAIMessage::TOOL_ROLE
+            Messages::MistralAIMessage::TOOL_ROLE
           end
 
           private
