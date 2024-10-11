@@ -48,17 +48,13 @@ module Langchain
       self.messages = messages
       @tools = tools
       self.tool_choice = tool_choice
-      @instructions = instructions
+      self.instructions = instructions
       @block = block
       @state = :ready
 
       @total_prompt_tokens = 0
       @total_completion_tokens = 0
       @total_tokens = 0
-
-      # The first message in the messages array should be the system instructions
-      # For Google Gemini, and Anthropic system instructions are added to the `system:` param in the `chat` method
-      initialize_instructions
     end
 
     # Add a user message to the messages array
@@ -184,12 +180,9 @@ module Langchain
     def instructions=(new_instructions)
       @instructions = new_instructions
 
-      # This only needs to be done that support Message#@role="system"
-      if !llm.is_a?(Langchain::LLM::GoogleGemini) &&
-          !llm.is_a?(Langchain::LLM::GoogleVertexAI) &&
-          !llm.is_a?(Langchain::LLM::Anthropic)
+      if @llm_adapter.support_system_message?
         # Find message with role: "system" in messages and delete it from the messages array
-        replace_system_message!(content: new_instructions)
+        replace_system_message!(content: new_instructions) if @instructions
       end
     end
 
@@ -321,12 +314,6 @@ module Langchain
     rescue => e
       Langchain.logger.error("#{self.class} - Error running tools: #{e.message}; #{e.backtrace.join('\n')}")
       :failed
-    end
-
-    def initialize_instructions
-      if llm.is_a?(Langchain::LLM::OpenAI) || llm.is_a?(Langchain::LLM::MistralAI)
-        self.instructions = @instructions if @instructions
-      end
     end
 
     # Call to the LLM#chat() method

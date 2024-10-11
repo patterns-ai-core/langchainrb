@@ -472,6 +472,7 @@ RSpec.describe Langchain::Assistant do
     describe "#instructions=" do
       it "resets instructions" do
         subject.instructions = "New instructions"
+        expect(subject.messages.first.role).to eq("system")
         expect(subject.messages.first.content).to eq("New instructions")
         expect(subject.instructions).to eq("New instructions")
       end
@@ -829,6 +830,7 @@ RSpec.describe Langchain::Assistant do
     describe "#instructions=" do
       it "resets instructions" do
         subject.instructions = "New instructions"
+        expect(subject.messages.first.role).to eq("system")
         expect(subject.messages.first.content).to eq("New instructions")
         expect(subject.instructions).to eq("New instructions")
       end

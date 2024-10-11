@@ -68,6 +68,10 @@ module Langchain
             Messages::OllamaMessage::TOOL_ROLE
           end
 
+          def support_system_message?
+            Messages::OllamaMessage::ROLES.include?("system")
+          end
+
           private
 
           def build_tools(tools)

@@ -72,6 +72,10 @@ module Langchain
             Messages::MistralAIMessage::TOOL_ROLE
           end
 
+          def support_system_message?
+            Messages::MistralAIMessage::ROLES.include?("system")
+          end
+
           private
 
           def build_tool_choice(choice)

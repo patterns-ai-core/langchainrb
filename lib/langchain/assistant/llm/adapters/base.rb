@@ -36,6 +36,13 @@ module Langchain
             raise NotImplementedError, "Subclasses must implement build_message"
           end
 
+          # Does this adapter accept messages with role="system"?
+          #
+          # @return [Boolean] Whether the adapter supports system messages
+          def support_system_message?
+            raise NotImplementedError, "Subclasses must implement support_system_message?"
+          end
+
           # Role name used to return the tool output
           #
           # @return [String] The tool role
