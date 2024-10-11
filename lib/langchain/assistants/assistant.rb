@@ -63,6 +63,12 @@ module Langchain
       initialize_instructions
     end
 
+    def initialize_instructions
+      if llm.is_a?(Langchain::LLM::OpenAI) || llm.is_a?(Langchain::LLM::MistralAI)
+        self.instructions = @instructions if @instructions
+      end
+    end
+
     # Add a user message to the messages array
     #
     # @param role [String] The role attribute of the message. Default: "user"
@@ -194,7 +200,8 @@ module Langchain
       # This only needs to be done that support Message#@role="system"
       if !llm.is_a?(Langchain::LLM::GoogleGemini) &&
           !llm.is_a?(Langchain::LLM::GoogleVertexAI) &&
-          !llm.is_a?(Langchain::LLM::Anthropic)
+          !llm.is_a?(Langchain::LLM::Anthropic) &&
+          !llm.is_a?(Langchain::LLM::AwsBedrock)
         # Find message with role: "system" in messages and delete it from the messages array
         replace_system_message!(content: new_instructions)
       end
@@ -345,12 +352,8 @@ module Langchain
         Langchain::Messages::OllamaMessage::TOOL_ROLE
       when Langchain::LLM::OpenAI
         Langchain::Messages::OpenAIMessage::TOOL_ROLE
-      end
-    end
-
-    def initialize_instructions
-      if llm.is_a?(Langchain::LLM::OpenAI) || llm.is_a?(Langchain::LLM::MistralAI)
-        self.instructions = @instructions if @instructions
+      when Langchain::LLM::AwsBedrock
+        Langchain::Messages::AwsBedrockMessage::TOOL_ROLE
       end
     end
 

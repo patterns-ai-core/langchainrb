@@ -17,6 +17,8 @@ module Langchain
             LLM::Adapters::Ollama.new
           when Langchain::LLM::OpenAI
             LLM::Adapters::OpenAI.new
+          when Langchain::LLM::AwsBedrock
+            LLM::Adapters::AwsBedrock.new
           else
             raise ArgumentError, "Unsupported LLM type: #{llm.class}"
           end

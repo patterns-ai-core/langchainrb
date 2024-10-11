@@ -60,7 +60,7 @@ module Langchain::LLM
       @defaults = DEFAULTS.merge(default_options)
 
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:completion_model_name]},
         temperature: {},
         max_tokens: {default: @defaults[:max_tokens_to_sample]},
         metadata: {},
@@ -123,10 +123,10 @@ module Langchain::LLM
     # Currently only configured to work with the Anthropic provider and
     # the claude-3 model family
     #
-    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @param [Hash] params unified chat parameters from [Langchain::LLM::Parameters::Chat::SCHEMA]
     # @option params [Array<String>] :messages The messages to generate a completion for
     # @option params [String] :system The system prompt to provide instructions
-    # @option params [String] :model The model to use for completion defaults to @defaults[:chat_completion_model_name]
+    # @option params [String] :model The model to use for completion defaults to @defaults[:completion_model_name]
     # @option params [Integer] :max_tokens The maximum number of tokens to generate defaults to @defaults[:max_tokens_to_sample]
     # @option params [Array<String>] :stop The stop sequences to use for completion
     # @option params [Array<String>] :stop_sequences The stop sequences to use for completion
