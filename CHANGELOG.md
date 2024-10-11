@@ -1,4 +1,5 @@
 ## [Unreleased]
+- [BREAKING] Modify `Langchain::LLM::AwsBedrock` constructor to pass model options via default_options: {...}
 - Added support for streaming with Anthropic
 - Bump anthropic gem
 - Default Langchain::LLM::Anthropic chat model is "claude-3-5-sonnet-20240620" now

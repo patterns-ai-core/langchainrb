@@ -24,12 +24,14 @@ RSpec.describe Langchain::LLM::AwsBedrock do
         }.to_json
       end
 
+      let(:model_id) { "anthropic.claude-3-sonnet-20240229-v1:0" }
+
       before do
         response_object = double("response_object")
         allow(response_object).to receive(:body).and_return(StringIO.new(response))
         allow(subject.client).to receive(:invoke_model)
           .with(matching(
-            model_id: "anthropic.claude-3-sonnet-20240229-v1:0",
+            model_id:,
             body: {
               messages: [{role: "user", content: "What is the capital of France?"}],
               stop_sequences: ["stop"],
@@ -46,10 +48,23 @@ RSpec.describe Langchain::LLM::AwsBedrock do
         expect(
           subject.chat(
             messages: [{role: "user", content: "What is the capital of France?"}],
-            model: "anthropic.claude-3-sonnet-20240229-v1:0",
+            model: model_id,
             stop_sequences: ["stop"]
           ).chat_completion
         ).to eq("The capital of France is Paris.")
+      end
+
+      context "without default model" do
+        let(:model_id) { "anthropic.claude-v2" }
+
+        it "returns a completion" do
+          expect(
+            subject.chat(
+              messages: [{role: "user", content: "What is the capital of France?"}],
+              stop_sequences: ["stop"]
+            ).chat_completion
+          ).to eq("The capital of France is Paris.")
+        end
       end
 
       context "with streaming" do
@@ -201,7 +216,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
 
     context "with ai21 provider" do
-      let(:subject) { described_class.new(completion_model: "ai21.j2-ultra-v1") }
+      let(:subject) { described_class.new(default_options: {completion_model_name: "ai21.j2-ultra-v1"}) }
 
       let(:response) do
         StringIO.new("{\"completions\":[{\"data\":{\"text\":\"\\nWhat is the meaning of life? What is the meaning of life?\\nWhat is the meaning\"}}]}")
@@ -308,8 +323,11 @@ RSpec.describe Langchain::LLM::AwsBedrock do
       context "with custom default_options" do
         let(:subject) {
           described_class.new(
-            completion_model: "ai21.j2-ultra-v1",
-            default_options: {max_tokens_to_sample: 100, temperature: 0.7}
+            default_options: {
+              completion_model_name: "ai21.j2-ultra-v1",
+              max_tokens_to_sample: 100,
+              temperature: 0.7
+            }
           )
         }
         let(:response_object) { double("response_object") }
@@ -363,7 +381,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
 
     context "with cohere provider" do
-      let(:subject) { described_class.new(completion_model: "cohere.command-text-v14") }
+      let(:subject) { described_class.new(default_options: {completion_model_name: "cohere.command-text-v14"}) }
 
       let(:response) do
         StringIO.new("{\"generations\":[{\"text\":\"\\nWhat is the meaning of life? What is the meaning of life?\\nWhat is the meaning\"}]}")
@@ -424,8 +442,11 @@ RSpec.describe Langchain::LLM::AwsBedrock do
       context "with custom default_options" do
         let(:subject) {
           described_class.new(
-            completion_model: "cohere.command-text-v14",
-            default_options: {max_tokens_to_sample: 100, temperature: 0.7}
+            default_options: {
+              completion_model_name: "cohere.command-text-v14",
+              max_tokens_to_sample: 100,
+              temperature: 0.7
+            }
           )
         }
         let(:response_object) { double("response_object") }
@@ -456,7 +477,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
 
     context "with unsupported provider" do
-      let(:subject) { described_class.new(completion_model: "unsupported.provider") }
+      let(:subject) { described_class.new(default_options: {completion_model_name: "unsupported.provider"}) }
 
       it "raises an exception" do
         expect { subject.complete(prompt: "Hello World") }.to raise_error("Completion provider unsupported is not supported.")
@@ -492,7 +513,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
 
     context "with cohere provider" do
-      let(:subject) { described_class.new(embedding_model: "cohere.embed-multilingual-v3") }
+      let(:subject) { described_class.new(default_options: {embeddings_model_name: "cohere.embed-multilingual-v3"}) }
 
       let(:response) do
         StringIO.new("{\"embeddings\":[[0.1,0.2,0.3,0.4,0.5]]}")
@@ -522,7 +543,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
 
     context "with unsupported provider" do
-      let(:subject) { described_class.new(embedding_model: "unsupported.provider") }
+      let(:subject) { described_class.new(default_options: {embeddings_model_name: "unsupported.provider"}) }
 
       it "raises an exception" do
         expect { subject.embed(text: "Hello World") }.to raise_error("Completion provider unsupported is not supported.")
