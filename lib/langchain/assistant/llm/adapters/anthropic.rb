@@ -71,7 +71,7 @@ module Langchain
           end
 
           def support_system_message?
-            false
+            Messages::AnthropicMessage::ROLES.include?("system")
           end
 
           private

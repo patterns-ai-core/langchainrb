@@ -73,7 +73,7 @@ module Langchain
           end
 
           def support_system_message?
-            true
+            Messages::OpenAIMessage::ROLES.include?("system")
           end
 
           private

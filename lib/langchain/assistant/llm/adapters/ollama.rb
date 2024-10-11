@@ -69,7 +69,7 @@ module Langchain
           end
 
           def support_system_message?
-            true
+            Messages::OllamaMessage::ROLES.include?("system")
           end
 
           private

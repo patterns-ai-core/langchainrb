@@ -71,7 +71,7 @@ module Langchain
           end
 
           def support_system_message?
-            false
+            Messages::GoogleGeminiMessage::ROLES.include?("system")
           end
 
           private

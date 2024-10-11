@@ -73,7 +73,7 @@ module Langchain
           end
 
           def support_system_message?
-            true
+            Messages::MistralAIMessage::ROLES.include?("system")
           end
 
           private
