@@ -1,6 +1,8 @@
 ## [Unreleased]
+- [BREAKING] Remove `Langchain::Assistant#clear_thread!` method
 - [BREAKING] `Langchain::Messages::*` namespace had migrated to `Langchain::Assistant::Messages::*`
 - [BREAKING] Modify `Langchain::LLM::AwsBedrock` constructor to pass model options via default_options: {...}
+- Minor improvements to the Langchain::Assistant class
 - Added support for streaming with Anthropic
 - Bump anthropic gem
 - Default Langchain::LLM::Anthropic chat model is "claude-3-5-sonnet-20240620" now

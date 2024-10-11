@@ -68,6 +68,10 @@ module Langchain
             build_tools(tools).map { |tool| tool.dig(:function, :name) }
           end
 
+          def tool_role
+            Messages::OpenAIMessage::TOOL_ROLE
+          end
+
           private
 
           def build_tool_choice(choice)
