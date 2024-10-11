@@ -165,10 +165,8 @@ module Langchain
     # @param output [String] The output of the tool
     # @return [Array<Langchain::Message>] The messages
     def submit_tool_output(tool_call_id:, output:)
-      tool_role = determine_tool_role
-
       # TODO: Validate that `tool_call_id` is valid by scanning messages and checking if this tool call ID was invoked
-      add_message(role: tool_role, content: output, tool_call_id: tool_call_id)
+      add_message(role: @llm_adapter.tool_role, content: output, tool_call_id: tool_call_id)
     end
 
     # Delete all messages
@@ -326,24 +324,6 @@ module Langchain
     rescue => e
       Langchain.logger.error("#{self.class} - Error running tools: #{e.message}; #{e.backtrace.join('\n')}")
       :failed
-    end
-
-    # Determine the tool role based on the LLM type
-    #
-    # @return [String] The tool role
-    def determine_tool_role
-      case llm
-      when Langchain::LLM::Anthropic
-        Messages::AnthropicMessage::TOOL_ROLE
-      when Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI
-        Messages::GoogleGeminiMessage::TOOL_ROLE
-      when Langchain::LLM::MistralAI
-        Messages::MistralAIMessage::TOOL_ROLE
-      when Langchain::LLM::Ollama
-        Messages::OllamaMessage::TOOL_ROLE
-      when Langchain::LLM::OpenAI
-        Messages::OpenAIMessage::TOOL_ROLE
-      end
     end
 
     def initialize_instructions

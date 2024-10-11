@@ -66,6 +66,10 @@ module Langchain
             build_tools(tools).map { |tool| tool.dig(:name) }
           end
 
+          def tool_role
+            Langchain::Messages::AnthropicMessage::TOOL_ROLE
+          end
+
           private
 
           def build_tool_choice(choice)

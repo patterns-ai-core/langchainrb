@@ -35,6 +35,13 @@ module Langchain
           def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
             raise NotImplementedError, "Subclasses must implement build_message"
           end
+
+          # Role name used to return the tool output
+          #
+          # @return [String] The tool role
+          def tool_role
+            raise NotImplementedError, "Subclasses must implement tool_role"
+          end
         end
       end
     end

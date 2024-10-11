@@ -64,6 +64,10 @@ module Langchain
             ["auto", "none"]
           end
 
+          def tool_role
+            Langchain::Messages::OllamaMessage::TOOL_ROLE
+          end
+
           private
 
           def build_tools(tools)
