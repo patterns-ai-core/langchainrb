@@ -181,7 +181,7 @@ module Langchain
       @instructions = new_instructions
 
       if @llm_adapter.support_system_message?
-        # Find message with role: "system" in messages and delete it from the messages array
+        # TODO: Should we still set a system message even if @instructions is "" or nil?
         replace_system_message!(content: new_instructions) if @instructions
       end
     end
