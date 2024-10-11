@@ -1,5 +1,18 @@
 ## [Unreleased]
-- Assistant can now process image_urls in the messages (currently only for OpenAI)
+- Added support for streaming with Anthropic
+- Bump anthropic gem
+- Default Langchain::LLM::Anthropic chat model is "claude-3-5-sonnet-20240620" now
+
+## [0.17.1] - 2024-10-07
+- Move Langchain::Assistant::LLM::Adapter-related classes to separate files
+- Fix Langchain::Tool::Database#describe_table method
+
+## [0.17.0] - 2024-10-02
+- [BREAKING] Langchain::Vectorsearch::Milvus was rewritten to work with newer milvus 0.10.0 gem
+- [BREAKING] Removing Langchain::LLM::GooglePalm
+- Assistant can now process image_urls in the messages (currently only for OpenAI and Mistral AI)
+- Vectorsearch providers utilize the global Langchain.logger
+- Update required milvus, qdrant and weaviate versions
 
 ## [0.16.1] - 2024-09-30
 - Deprecate Langchain::LLM::GooglePalm

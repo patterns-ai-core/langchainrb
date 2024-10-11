@@ -523,6 +523,19 @@ RSpec.describe Langchain::Assistant do
 
         thread.add_message(role: "user", content: "foo")
       end
+
+      it "adds a message with image_url" do
+        message_with_image = {role: "user", content: "hello", image_url: "https://example.com/image.jpg"}
+        subject = described_class.new(llm: llm, messages: [])
+
+        expect {
+          subject.add_message(**message_with_image)
+        }.to change { subject.messages.count }.from(0).to(1)
+        expect(subject.messages.first).to be_a(Langchain::Messages::MistralAIMessage)
+        expect(subject.messages.first.role).to eq("user")
+        expect(subject.messages.first.content).to eq("hello")
+        expect(subject.messages.first.image_url).to eq("https://example.com/image.jpg")
+      end
     end
 
     describe "#submit_tool_output" do
@@ -568,8 +581,8 @@ RSpec.describe Langchain::Assistant do
           allow(subject.llm).to receive(:chat)
             .with(
               messages: [
-                {role: "system", content: instructions},
-                {role: "user", content: "Please calculate 2+2"}
+                {role: "system", content: [{type: "text", text: instructions}]},
+                {role: "user", content: [{type: "text", text: "Please calculate 2+2"}]}
               ],
               tools: calculator.class.function_schemas.to_openai_format,
               tool_choice: "auto"
@@ -612,16 +625,16 @@ RSpec.describe Langchain::Assistant do
           allow(subject.llm).to receive(:chat)
             .with(
               messages: [
-                {role: "system", content: instructions},
-                {role: "user", content: "Please calculate 2+2"},
-                {role: "assistant", content: "", tool_calls: [
+                {role: "system", content: [{type: "text", text: instructions}]},
+                {role: "user", content: [{type: "text", text: "Please calculate 2+2"}]},
+                {role: "assistant", tool_calls: [
                   {
                     "function" => {"arguments" => "{\"input\":\"2+2\"}", "name" => "langchain_tool_calculator__execute"},
                     "id" => "call_9TewGANaaIjzY31UCpAAGLeV",
                     "type" => "function"
                   }
                 ]},
-                {content: "4.0", role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
+                {content: [{type: "text", text: "4.0"}], role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
               ],
               tools: calculator.class.function_schemas.to_openai_format,
               tool_choice: "auto"

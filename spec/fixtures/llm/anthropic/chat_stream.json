@@ -1,0 +1,62 @@
+[
+  {
+    "type": "message_start",
+    "message": {
+      "id": "msg_019s6T825xb66ZLwPWmvH875",
+      "type": "message",
+      "role": "assistant",
+      "model": "claude-3-sonnet-20240229",
+      "content": [],
+      "stop_reason": null,
+      "stop_sequence": null,
+      "usage": {
+        "input_tokens": 5,
+        "output_tokens": 10
+      }
+    }
+  },
+  {
+    "type": "content_block_start",
+    "index": 0,
+    "content_block": {
+      "type": "text",
+      "text": ""
+    }
+  },
+  {
+    "type": "ping"
+  },
+  {
+    "type": "content_block_delta",
+    "index": 0,
+    "delta": {
+      "type": "text_delta",
+      "text": "Life is"
+    }
+  },
+  {
+    "type": "content_block_delta",
+    "index": 0,
+    "delta": {
+      "type": "text_delta",
+      "text": " pretty good"
+    }
+  },
+  {
+    "type": "content_block_stop",
+    "index": 0
+  },
+  {
+    "type": "message_delta",
+    "delta": {
+      "stop_reason": "max_tokens",
+      "stop_sequence": null
+    },
+    "usage": {
+      "output_tokens": 10
+    }
+  },
+  {
+    "type": "message_stop"
+  }
+]

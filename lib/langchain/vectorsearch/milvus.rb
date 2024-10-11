@@ -6,16 +6,18 @@ module Langchain::Vectorsearch
     # Wrapper around Milvus REST APIs.
     #
     # Gem requirements:
-    #     gem "milvus", "~> 0.9.3"
+    #     gem "milvus", "~> 0.10.3"
     #
     # Usage:
-    # milvus = Langchain::Vectorsearch::Milvus.new(url:, index_name:, llm:, api_key:)
+    #     milvus = Langchain::Vectorsearch::Milvus.new(url:, index_name:, llm:, api_key:)
     #
-
     def initialize(url:, index_name:, llm:, api_key: nil)
       depends_on "milvus"
 
-      @client = ::Milvus::Client.new(url: url)
+      @client = ::Milvus::Client.new(
+        url: url,
+        logger: Langchain.logger
+      )
       @index_name = index_name
 
       super(llm: llm)
@@ -24,20 +26,13 @@ module Langchain::Vectorsearch
     def add_texts(texts:)
       client.entities.insert(
         collection_name: index_name,
-        num_rows: Array(texts).size,
-        fields_data: [
-          {
-            field_name: "content",
-            type: ::Milvus::DATA_TYPES["varchar"],
-            field: Array(texts)
-          }, {
-            field_name: "vectors",
-            type: ::Milvus::DATA_TYPES["float_vector"],
-            field: Array(texts).map { |text| llm.embed(text: text).embedding }
-          }
-        ]
+        data: texts.map do |text|
+          {content: text, vector: llm.embed(text: text).embedding}
+        end
       )
     end
+
+    # TODO: Add update_texts method
 
     # Deletes a list of texts in the index
     #
@@ -45,12 +40,10 @@ module Langchain::Vectorsearch
     # @return [Boolean] The response from the server
     def remove_texts(ids:)
       raise ArgumentError, "ids must be an array" unless ids.is_a?(Array)
-      # Convert ids to integers if strings are passed
-      ids = ids.map(&:to_i)
 
       client.entities.delete(
         collection_name: index_name,
-        expression: "id in #{ids}"
+        filter: "id in #{ids}"
       )
     end
 
@@ -62,33 +55,25 @@ module Langchain::Vectorsearch
       client.collections.create(
         auto_id: true,
         collection_name: index_name,
-        description: "Default schema created by langchain.rb",
         fields: [
           {
-            name: "id",
-            is_primary_key: true,
-            autoID: true,
-            data_type: ::Milvus::DATA_TYPES["int64"]
+            fieldName: "id",
+            isPrimary: true,
+            dataType: "Int64"
           }, {
-            name: "content",
-            is_primary_key: false,
-            data_type: ::Milvus::DATA_TYPES["varchar"],
-            type_params: [
-              {
-                key: "max_length",
-                value: "32768" # Largest allowed value
-              }
-            ]
+            fieldName: "content",
+            isPrimary: false,
+            dataType: "VarChar",
+            elementTypeParams: {
+              max_length: "32768" # Largest allowed value
+            }
           }, {
-            name: "vectors",
-            data_type: ::Milvus::DATA_TYPES["float_vector"],
-            is_primary_key: false,
-            type_params: [
-              {
-                key: "dim",
-                value: llm.default_dimensions.to_s
-              }
-            ]
+            fieldName: "vector",
+            isPrimary: false,
+            dataType: "FloatVector",
+            elementTypeParams: {
+              dim: llm.default_dimensions.to_s
+            }
           }
         ]
       )
@@ -97,13 +82,17 @@ module Langchain::Vectorsearch
     # Create the default index
     # @return [Boolean] The response from the server
     def create_default_index
-      client.indices.create(
+      client.indexes.create(
         collection_name: index_name,
-        field_name: "vectors",
-        extra_params: [
-          {key: "metric_type", value: "L2"},
-          {key: "index_type", value: "IVF_FLAT"},
-          {key: "params", value: "{\"nlist\":1024}"}
+        index_params: [
+          {
+            metricType: "L2",
+            fieldName: "vector",
+            indexName: "vector_idx",
+            indexConfig: {
+              index_type: "AUTOINDEX"
+            }
+          }
         ]
       )
     end
@@ -111,13 +100,13 @@ module Langchain::Vectorsearch
     # Get the default schema
     # @return [Hash] The response from the server
     def get_default_schema
-      client.collections.get(collection_name: index_name)
+      client.collections.describe(collection_name: index_name)
     end
 
     # Delete default schema
     # @return [Hash] The response from the server
     def destroy_default_schema
-      client.collections.delete(collection_name: index_name)
+      client.collections.drop(collection_name: index_name)
     end
 
     # Load default schema into memory
@@ -138,16 +127,12 @@ module Langchain::Vectorsearch
     def similarity_search_by_vector(embedding:, k: 4)
       load_default_schema
 
-      client.search(
+      client.entities.search(
         collection_name: index_name,
-        output_fields: ["id", "content"], # Add "vectors" if need to have full vectors returned.
-        top_k: k.to_s,
-        vectors: [embedding],
-        dsl_type: 1,
-        params: "{\"nprobe\": 10}",
-        anns_field: "vectors",
-        metric_type: "L2",
-        vector_type: ::Milvus::DATA_TYPES["float_vector"]
+        anns_field: "vector",
+        data: [embedding],
+        limit: k,
+        output_fields: ["content", "id", "vector"]
       )
     end
 
@@ -159,8 +144,7 @@ module Langchain::Vectorsearch
     def ask(question:, k: 4, &block)
       search_results = similarity_search(query: question, k: k)
 
-      content_field = search_results.dig("results", "fields_data").select { |field| field.dig("field_name") == "content" }
-      content_data = content_field.first.dig("Field", "Scalars", "Data", "StringData", "data")
+      content_data = search_results.dig("data").map { |result| result.dig("content") }
 
       context = content_data.join("\n---\n")
 

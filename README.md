@@ -63,7 +63,6 @@ The `Langchain::LLM` module provides a unified interface for interacting with va
 - Azure OpenAI
 - Cohere
 - Google Gemini
-- Google PaLM (deprecated)
 - Google Vertex AI
 - HuggingFace
 - LlamaCpp
@@ -133,6 +132,8 @@ Use the `chat` method to generate chat completions:
 messages = [
   { role: "system", content: "You are a helpful assistant." },
   { role: "user", content: "What's the weather like today?" }
+  # Google Gemini and Google VertexAI expect messages in a different format:
+  # { role: "user", parts: [{ text: "why is the sky blue?" }]
 ]
 response = llm.chat(messages: messages)
 chat_completion = response.chat_completion
@@ -525,6 +526,8 @@ end
 assistant.add_message(content: "Hello")
 assistant.run(auto_tool_execution: true)
 ```
+
+Note that streaming is not currently supported for all LLMs.
 
 ### Configuration
 * `llm`: The LLM instance to use (required)
