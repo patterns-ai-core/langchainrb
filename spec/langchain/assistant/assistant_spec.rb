@@ -1395,4 +1395,72 @@ RSpec.describe Langchain::Assistant do
       end
     end
   end
+
+  context "when llm is custom" do
+    let(:llm) { Langchain::LLM::Base.new }
+    let(:llm_adapter_class) do
+      Class.new(Langchain::Assistant::LLM::Adapters::Base) do
+        def allowed_tool_choices
+          ["auto"]
+        end
+
+        def available_tool_names(tools)
+          []
+        end
+
+        def support_system_message?
+          true
+        end
+
+        def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+          message_class = Class.new(Langchain::Assistant::Messages::Base) do
+            def initialize(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+              @role = role
+              @content = content.to_s
+              @image_url = image_url
+              @tool_calls = tool_calls
+              @tool_call_id = tool_call_id
+            end
+          end
+
+          message_class.new(
+            role: role,
+            content: content,
+            image_url: image_url,
+            tool_calls: tool_calls,
+            tool_call_id: tool_call_id
+          )
+        end
+      end
+    end
+    let(:llm_adapter) { llm_adapter_class.new }
+    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:instructions) { "You are an expert assistant" }
+
+    subject {
+      described_class.new(
+        llm: llm,
+        llm_adapter: llm_adapter,
+        tools: [calculator],
+        instructions: instructions
+      )
+    }
+
+    describe ".new" do
+      it "initiates an assistant without error" do
+        expect { subject }.not_to raise_error
+      end
+    end
+
+    describe "#messages" do
+      it "returns list of messages" do
+        expect(subject.messages).to contain_exactly(
+          an_object_having_attributes(
+            role: "system",
+            content: "You are an expert assistant"
+          )
+        )
+      end
+    end
+  end
 end

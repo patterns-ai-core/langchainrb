@@ -39,6 +39,7 @@ module Langchain
     # @param tool_execution_callback [Proc] A callback function (Proc or lambda) that is called right before a tool function is executed
     def initialize(
       llm:,
+      llm_adapter: LLM::Adapter.build(llm),
       tools: [],
       instructions: nil,
       tool_choice: "auto",
@@ -54,7 +55,7 @@ module Langchain
       end
 
       @llm = llm
-      @llm_adapter = LLM::Adapter.build(llm)
+      @llm_adapter = llm_adapter
 
       @add_message_callback = add_message_callback if validate_callback!("add_message_callback", add_message_callback)
       @tool_execution_callback = tool_execution_callback if validate_callback!("tool_execution_callback", tool_execution_callback)
