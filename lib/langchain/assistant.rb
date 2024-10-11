@@ -37,6 +37,7 @@ module Langchain
     # @param add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
     def initialize(
       llm:,
+      llm_adapter: LLM::Adapter.build(llm),
       tools: [],
       instructions: nil,
       tool_choice: "auto",
@@ -50,7 +51,7 @@ module Langchain
       end
 
       @llm = llm
-      @llm_adapter = LLM::Adapter.build(llm)
+      @llm_adapter = llm_adapter
 
       # TODO: Validate that it is, indeed, a Proc or lambda
       if !add_message_callback.nil? && !add_message_callback.respond_to?(:call)
