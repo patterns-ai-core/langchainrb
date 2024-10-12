@@ -8,7 +8,7 @@ module Langchain::LLM
   #     gem "hugging-face", "~> 0.3.4"
   #
   # Usage:
-  #     hf = Langchain::LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
+  #     llm = Langchain::LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
   #
   class HuggingFace < Base
     DEFAULTS = {

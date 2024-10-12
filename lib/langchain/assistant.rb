@@ -12,9 +12,19 @@ module Langchain
   #       tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
   #     )
   class Assistant
-    attr_reader :llm, :instructions, :state, :llm_adapter, :tool_choice
-    attr_reader :total_prompt_tokens, :total_completion_tokens, :total_tokens, :messages
-    attr_accessor :tools, :add_message_callback
+    attr_reader :llm,
+      :instructions,
+      :state,
+      :llm_adapter,
+      :messages,
+      :tool_choice,
+      :total_prompt_tokens,
+      :total_completion_tokens,
+      :total_tokens
+
+    attr_accessor :tools,
+      :add_message_callback,
+      :parallel_tool_calls
 
     # Create a new assistant
     #
@@ -22,12 +32,15 @@ module Langchain
     # @param tools [Array<Langchain::Tool::Base>] Tools that the assistant has access to
     # @param instructions [String] The system instructions
     # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
-    # @params add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
+    # @param parallel_tool_calls [Boolean] Whether or not to run tools in parallel
+    # @param messages [Array<Langchain::Assistant::Messages::Base>] The messages
+    # @param add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
     def initialize(
       llm:,
       tools: [],
       instructions: nil,
       tool_choice: "auto",
+      parallel_tool_calls: true,
       messages: [],
       add_message_callback: nil,
       &block
@@ -47,6 +60,7 @@ module Langchain
 
       self.messages = messages
       @tools = tools
+      @parallel_tool_calls = parallel_tool_calls
       self.tool_choice = tool_choice
       self.instructions = instructions
       @block = block
@@ -326,7 +340,8 @@ module Langchain
         instructions: @instructions,
         messages: array_of_message_hashes,
         tools: @tools,
-        tool_choice: tool_choice
+        tool_choice: tool_choice,
+        parallel_tool_calls: parallel_tool_calls
       )
       @llm.chat(**params, &@block)
     end

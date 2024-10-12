@@ -7,12 +7,21 @@ module Langchain
         class MistralAI < Base
           # Build the chat parameters for the Mistral AI LLM
           #
-          # @param tools [Array] The tools to use
-          # @param instructions [String] The system instructions
           # @param messages [Array] The messages
+          # @param instructions [String] The system instructions
+          # @param tools [Array] The tools to use
           # @param tool_choice [String] The tool choice
+          # @param parallel_tool_calls [Boolean] Whether to make parallel tool calls
           # @return [Hash] The chat parameters
-          def build_chat_params(tools:, instructions:, messages:, tool_choice:)
+          def build_chat_params(
+            messages:,
+            instructions:,
+            tools:,
+            tool_choice:,
+            parallel_tool_calls:
+          )
+            Langchain.logger.warn "WARNING: `parallel_tool_calls:` is not supported by Mistral AI currently"
+
             params = {messages: messages}
             if tools.any?
               params[:tools] = build_tools(tools)

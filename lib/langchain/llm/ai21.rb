@@ -8,7 +8,7 @@ module Langchain::LLM
   #   gem "ai21", "~> 0.2.1"
   #
   # Usage:
-  #     ai21 = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
+  #     llm = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
   #
   class AI21 < Base
     DEFAULTS = {
