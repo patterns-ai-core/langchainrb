@@ -42,6 +42,5 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::Anthropic do
     it "returns the tool choice object with selected tool function" do
       expect(subject.send(:build_tool_choice, "langchain_tool_calculator__execute", false)).to eq({disable_parallel_tool_use: true, type: "tool", name: "langchain_tool_calculator__execute"})
     end
-
   end
 end
