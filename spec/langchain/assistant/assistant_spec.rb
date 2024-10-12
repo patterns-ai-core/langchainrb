@@ -28,6 +28,10 @@ RSpec.describe Langchain::Assistant do
     it "raises an error if messages array contains non-Langchain::Message instance(s)" do
       expect { described_class.new(llm: llm, messages: [Langchain::Assistant::Messages::OpenAIMessage.new, "foo"]) }.to raise_error(ArgumentError)
     end
+
+    it "parallel_tool_calls defaults to true" do
+      expect(described_class.new(llm: llm).parallel_tool_calls).to eq(true)
+    end
   end
 
   context "methods" do
