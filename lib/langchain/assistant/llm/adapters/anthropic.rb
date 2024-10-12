@@ -7,16 +7,23 @@ module Langchain
         class Anthropic < Base
           # Build the chat parameters for the Anthropic API
           #
-          # @param tools [Array<Hash>] The tools to use
-          # @param instructions [String] The system instructions
           # @param messages [Array<Hash>] The messages
+          # @param instructions [String] The system instructions
+          # @param tools [Array<Hash>] The tools to use
           # @param tool_choice [String] The tool choice
+          # @param parallel_tool_calls [Boolean] Whether to make parallel tool calls
           # @return [Hash] The chat parameters
-          def build_chat_params(tools:, instructions:, messages:, tool_choice:)
+          def build_chat_params(
+            messages:,
+            instructions:,
+            tools:,
+            tool_choice:,
+            parallel_tool_calls:
+          )
             params = {messages: messages}
             if tools.any?
               params[:tools] = build_tools(tools)
-              params[:tool_choice] = build_tool_choice(tool_choice)
+              params[:tool_choice] = build_tool_choice(tool_choice, parallel_tool_calls)
             end
             params[:system] = instructions if instructions
             params
@@ -31,7 +38,7 @@ module Langchain
           # @param tool_call_id [String] The tool call ID
           # @return [Messages::AnthropicMessage] The Anthropic message
           def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
-            warn "Image URL is not supported by Anthropic currently" if image_url
+            Langchain.logger.warn "WARNING: Image URL is not supported by Anthropic currently" if image_url
 
             Messages::AnthropicMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
@@ -76,15 +83,20 @@ module Langchain
 
           private
 
-          def build_tool_choice(choice)
+          def build_tool_choice(choice, parallel_tool_calls)
+            tool_choice_object = { disable_parallel_tool_use: !parallel_tool_calls }
+
             case choice
             when "auto"
-              {type: "auto"}
+              tool_choice_object[:type] = "auto"
             when "any"
-              {type: "any"}
+              tool_choice_object[:type] = "any"
             else
-              {type: "tool", name: choice}
+              tool_choice_object[:type] = "tool"
+              tool_choice_object[:name] = choice
             end
+
+            tool_choice_object
           end
         end
       end

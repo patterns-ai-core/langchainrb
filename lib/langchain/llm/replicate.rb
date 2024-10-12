@@ -7,16 +7,8 @@ module Langchain::LLM
   # Gem requirements:
   #     gem "replicate-ruby", "~> 0.2.2"
   #
-  # Use it directly:
-  #     replicate = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
-  #
-  # Or pass it to be used by a vector search DB:
-  #     chroma = Langchain::Vectorsearch::Chroma.new(
-  #       url: ENV["CHROMA_URL"],
-  #       index_name: "...",
-  #       llm: replicate
-  #     )
-  #
+  # Usage:
+  #     llm = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
   class Replicate < Base
     DEFAULTS = {
       # TODO: Figure out how to send the temperature to the API

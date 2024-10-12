@@ -7,7 +7,7 @@ module Langchain::LLM
   #    gem 'aws-sdk-bedrockruntime', '~> 1.1'
   #
   # Usage:
-  #    bedrock = Langchain::LLM::AwsBedrock.new(llm_options: {})
+  #    llm = Langchain::LLM::AwsBedrock.new(llm_options: {})
   #
   class AwsBedrock < Base
     DEFAULTS = {

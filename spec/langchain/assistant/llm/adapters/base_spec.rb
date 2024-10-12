@@ -5,7 +5,7 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::Base do
 
   describe "#build_chat_params" do
     it "raises NotImplementedError" do
-      expect { adapter.build_chat_params(tools: [], instructions: "", messages: [], tool_choice: "") }.to raise_error(NotImplementedError)
+      expect { adapter.build_chat_params(tools: [], instructions: "", messages: [], tool_choice: "", parallel_tool_calls: false) }.to raise_error(NotImplementedError)
     end
   end
 

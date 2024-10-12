@@ -7,7 +7,7 @@ module Langchain::LLM
   #    gem "ruby-openai", "~> 6.3.0"
   #
   # Usage:
-  #    openai = Langchain::LLM::OpenAI.new(
+  #    llm = Langchain::LLM::OpenAI.new(
   #      api_key: ENV["OPENAI_API_KEY"],
   #      llm_options: {}, # Available options: https://github.com/alexrudall/ruby-openai/blob/main/lib/openai/client.rb#L5-L13
   #      default_options: {}
@@ -100,7 +100,7 @@ module Langchain::LLM
     # @param params [Hash] The parameters to pass to the `chat()` method
     # @return [Langchain::LLM::OpenAIResponse] Response object
     def complete(prompt:, **params)
-      warn "DEPRECATED: `Langchain::LLM::OpenAI#complete` is deprecated, and will be removed in the next major version. Use `Langchain::LLM::OpenAI#chat` instead."
+      Langchain.logger.warn "DEPRECATED: `Langchain::LLM::OpenAI#complete` is deprecated, and will be removed in the next major version. Use `Langchain::LLM::OpenAI#chat` instead."
 
       if params[:stop_sequences]
         params[:stop] = params.delete(:stop_sequences)

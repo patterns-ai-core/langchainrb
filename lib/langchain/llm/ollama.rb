@@ -5,7 +5,6 @@ module Langchain::LLM
   # Available models: https://ollama.ai/library
   #
   # Usage:
-  #    llm = Langchain::LLM::Ollama.new
   #    llm = Langchain::LLM::Ollama.new(url: ENV["OLLAMA_URL"], default_options: {})
   #
   class Ollama < Base

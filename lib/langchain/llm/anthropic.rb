@@ -8,7 +8,7 @@ module Langchain::LLM
   #   gem "anthropic", "~> 0.3.2"
   #
   # Usage:
-  #     anthropic = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
+  #     llm = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
   #
   class Anthropic < Base
     DEFAULTS = {

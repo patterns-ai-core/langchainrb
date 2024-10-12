@@ -7,7 +7,7 @@ module Langchain::LLM
   #    gem "ruby-openai", "~> 6.3.0"
   #
   # Usage:
-  #    openai = Langchain::LLM::Azure.new(api_key:, llm_options: {}, embedding_deployment_url: chat_deployment_url:)
+  #    llm = Langchain::LLM::Azure.new(api_key:, llm_options: {}, embedding_deployment_url: chat_deployment_url:)
   #
   class Azure < OpenAI
     attr_reader :embed_client

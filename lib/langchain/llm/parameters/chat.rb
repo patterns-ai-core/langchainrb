@@ -34,6 +34,7 @@ module Langchain::LLM::Parameters
       # Function-calling
       tools: {default: []},
       tool_choice: {},
+      parallel_tool_calls: {},
 
       # Additional optional parameters
       logit_bias: {}
