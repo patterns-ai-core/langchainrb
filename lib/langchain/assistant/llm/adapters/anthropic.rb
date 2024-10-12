@@ -84,7 +84,7 @@ module Langchain
           private
 
           def build_tool_choice(choice, parallel_tool_calls)
-            tool_choice_object = { disable_parallel_tool_use: !parallel_tool_calls }
+            tool_choice_object = {disable_parallel_tool_use: !parallel_tool_calls}
 
             case choice
             when "auto"
