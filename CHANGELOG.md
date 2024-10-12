@@ -2,6 +2,7 @@
 - [BREAKING] Remove `Langchain::Assistant#clear_thread!` method
 - [BREAKING] `Langchain::Messages::*` namespace had migrated to `Langchain::Assistant::Messages::*`
 - [BREAKING] Modify `Langchain::LLM::AwsBedrock` constructor to pass model options via default_options: {...}
+- Introduce `Langchain::Assistant#parallel_tool_calls` options whether to allow the LLM to make multiple parallel tool calls. Default: true
 - Minor improvements to the Langchain::Assistant class
 - Added support for streaming with Anthropic
 - Bump anthropic gem
