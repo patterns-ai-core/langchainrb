@@ -232,7 +232,8 @@ RSpec.describe Langchain::Assistant do
                 {role: "user", content: [{type: "text", text: "Please calculate 2+2"}]}
               ],
               tools: calculator.class.function_schemas.to_openai_format,
-              tool_choice: "auto"
+              tool_choice: "auto",
+              parallel_tool_calls: true
             )
             .and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response))
 
@@ -284,7 +285,8 @@ RSpec.describe Langchain::Assistant do
                 {content: [{type: "text", text: "4.0"}], role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
               ],
               tools: calculator.class.function_schemas.to_openai_format,
-              tool_choice: "auto"
+              tool_choice: "auto",
+              parallel_tool_calls: true
             )
             .and_return(Langchain::LLM::OpenAIResponse.new(raw_openai_response2))
 
@@ -1139,7 +1141,7 @@ RSpec.describe Langchain::Assistant do
             .with(
               messages: [{role: "user", content: "Please calculate 2+2"}],
               tools: calculator.class.function_schemas.to_anthropic_format,
-              tool_choice: {type: "auto"},
+              tool_choice: {disable_parallel_tool_use: false, type: "auto"},
               system: instructions
             )
             .and_return(Langchain::LLM::AnthropicResponse.new(raw_anthropic_response))
@@ -1194,7 +1196,7 @@ RSpec.describe Langchain::Assistant do
                 {role: "user", content: [{type: "tool_result", tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H", content: "4.0"}]}
               ],
               tools: calculator.class.function_schemas.to_anthropic_format,
-              tool_choice: {type: "auto"},
+              tool_choice: {disable_parallel_tool_use: false, type: "auto"},
               system: instructions
             )
             .and_return(Langchain::LLM::AnthropicResponse.new(raw_anthropic_response2))

@@ -33,4 +33,15 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::Anthropic do
       expect(subject.tool_role).to eq("tool_result")
     end
   end
+
+  describe "#build_tool_choice" do
+    it "returns the tool choice object with 'auto'" do
+      expect(subject.send(:build_tool_choice, "auto", true)).to eq({disable_parallel_tool_use: false, type: "auto"})
+    end
+
+    it "returns the tool choice object with selected tool function" do
+      expect(subject.send(:build_tool_choice, "langchain_tool_calculator__execute", false)).to eq({disable_parallel_tool_use: true, type: "tool", name: "langchain_tool_calculator__execute"})
+    end
+
+  end
 end

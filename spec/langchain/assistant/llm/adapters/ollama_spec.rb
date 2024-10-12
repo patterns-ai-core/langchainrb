@@ -8,7 +8,8 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::Ollama do
           messages: [{role: "user", content: "Hello"}],
           instructions: "Instructions",
           tools: [Langchain::Tool::Calculator.new],
-          tool_choice: "langchain_tool_calculator__execute"
+          tool_choice: "langchain_tool_calculator__execute",
+          parallel_tool_calls: false
         )
       ).to eq({
         messages: [{role: "user", content: "Hello"}],
