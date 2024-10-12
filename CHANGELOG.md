@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.18.0] - 2024-10-12
 - [BREAKING] Remove `Langchain::Assistant#clear_thread!` method
 - [BREAKING] `Langchain::Messages::*` namespace had migrated to `Langchain::Assistant::Messages::*`
 - [BREAKING] Modify `Langchain::LLM::AwsBedrock` constructor to pass model options via default_options: {...}
