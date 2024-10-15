@@ -88,7 +88,6 @@ module Langchain::LLM
 
       uri = URI("#{url}#{parameters[:model]}:generateContent")
 
-      binding.pry
       parsed_response = http_post(uri, parameters)
 
       wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
