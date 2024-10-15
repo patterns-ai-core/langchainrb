@@ -20,6 +20,7 @@
 
 - [BREAKING] Rename `chat_complete_model_name` parameter to `chat_model` in Langchain::LLM parameters.
 - [BREAKING] Rename `complete_model_name` parameter to `complete_model` in Langchain::LLM parameters.
+- [BREAKING] Rename `embedding_embeddings_model_name` parameter to `embed_model`
 
 ## [0.18.0] - 2024-10-12
 
