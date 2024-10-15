@@ -344,7 +344,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         let(:subject) {
           described_class.new(
             api_key: "123",
-            default_options: {completion_model_name: "text-davinci-003"}
+            default_options: {completion_model: "text-davinci-003"}
           )
         }
         let(:parameters) do
@@ -383,7 +383,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         let(:subject) {
           described_class.new(
             api_key: "123",
-            default_options: {completion_model_name: "gpt-3.5-turbo-16k"}
+            default_options: {completion_model: "gpt-3.5-turbo-16k"}
           )
         }
 

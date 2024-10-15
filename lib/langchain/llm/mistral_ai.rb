@@ -8,7 +8,7 @@ module Langchain::LLM
   #    llm = Langchain::LLM::MistralAI.new(api_key: ENV["MISTRAL_AI_API_KEY"])
   class MistralAI < Base
     DEFAULTS = {
-      chat_completion_model_name: "mistral-large-latest",
+      chat_model: "mistral-large-latest",
       embeddings_model_name: "mistral-embed"
     }.freeze
 
@@ -24,7 +24,7 @@ module Langchain::LLM
 
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:chat_model]},
         n: {default: @defaults[:n]},
         safe_prompt: {},
         temperature: {default: @defaults[:temperature]},

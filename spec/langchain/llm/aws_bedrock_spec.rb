@@ -216,7 +216,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
 
     context "with ai21 provider" do
-      let(:subject) { described_class.new(default_options: {completion_model_name: "ai21.j2-ultra-v1"}) }
+      let(:subject) { described_class.new(default_options: {completion_model: "ai21.j2-ultra-v1"}) }
 
       let(:response) do
         StringIO.new("{\"completions\":[{\"data\":{\"text\":\"\\nWhat is the meaning of life? What is the meaning of life?\\nWhat is the meaning\"}}]}")
@@ -324,7 +324,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
         let(:subject) {
           described_class.new(
             default_options: {
-              completion_model_name: "ai21.j2-ultra-v1",
+              completion_model: "ai21.j2-ultra-v1",
               max_tokens_to_sample: 100,
               temperature: 0.7
             }
@@ -381,7 +381,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
 
     context "with cohere provider" do
-      let(:subject) { described_class.new(default_options: {completion_model_name: "cohere.command-text-v14"}) }
+      let(:subject) { described_class.new(default_options: {completion_model: "cohere.command-text-v14"}) }
 
       let(:response) do
         StringIO.new("{\"generations\":[{\"text\":\"\\nWhat is the meaning of life? What is the meaning of life?\\nWhat is the meaning\"}]}")
@@ -443,7 +443,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
         let(:subject) {
           described_class.new(
             default_options: {
-              completion_model_name: "cohere.command-text-v14",
+              completion_model: "cohere.command-text-v14",
               max_tokens_to_sample: 100,
               temperature: 0.7
             }
@@ -477,7 +477,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
 
     context "with unsupported provider" do
-      let(:subject) { described_class.new(default_options: {completion_model_name: "unsupported.provider"}) }
+      let(:subject) { described_class.new(default_options: {completion_model: "unsupported.provider"}) }
 
       it "raises an exception" do
         expect { subject.complete(prompt: "Hello World") }.to raise_error("Completion provider unsupported is not supported.")

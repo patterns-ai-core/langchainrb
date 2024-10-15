@@ -18,7 +18,7 @@ module Langchain::LLM
       top_k: 40,
       dimensions: 768,
       embeddings_model_name: "textembedding-gecko",
-      chat_completion_model_name: "gemini-1.0-pro"
+      chat_model: "gemini-1.0-pro"
     }.freeze
 
     # Google Cloud has a project id and a specific region of deployment.
@@ -38,7 +38,7 @@ module Langchain::LLM
       @defaults = DEFAULTS.merge(default_options)
 
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:chat_model]},
         temperature: {default: @defaults[:temperature]},
         safety_settings: {default: @defaults[:safety_settings]}
       )

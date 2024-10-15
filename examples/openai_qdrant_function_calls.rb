@@ -21,7 +21,7 @@ functions = [
 openai = Langchain::LLM::OpenAI.new(
   api_key: ENV["OPENAI_API_KEY"],
   default_options: {
-    chat_completion_model_name: "gpt-3.5-turbo-16k"
+    chat_model: "gpt-3.5-turbo-16k"
   }
 )
 

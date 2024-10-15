@@ -16,7 +16,7 @@ module Langchain::LLM
     DEFAULTS = {
       n: 1,
       temperature: 0.0,
-      chat_completion_model_name: "gpt-4o-mini",
+      chat_model: "gpt-4o-mini",
       embeddings_model_name: "text-embedding-3-small"
     }.freeze
 
@@ -41,7 +41,7 @@ module Langchain::LLM
 
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:chat_model]},
         logprobs: {},
         top_logprobs: {},
         n: {default: @defaults[:n]},
@@ -109,6 +109,7 @@ module Langchain::LLM
       messages = [{role: "user", content: prompt}]
       chat(messages: messages, **params)
     end
+
     # rubocop:enable Style/ArgumentsForwarding
 
     # Generate a chat completion for given messages.
