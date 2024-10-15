@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::LLM::GoogleGemini do
-  let(:subject) { described_class.new(api_key: "123") }
+  subject { described_class.new(api_key: "123") }
 
   describe "#initialize" do
     it "initializes with default options" do
@@ -12,10 +12,20 @@ RSpec.describe Langchain::LLM::GoogleGemini do
     end
 
     it "merges default options with provided options" do
-      custom_options = {chat_completion_model_name: "custom-model", temperature: 2.0}
-      google_gemini_with_custom_options = described_class.new(api_key: "123", default_options: custom_options)
-      expect(google_gemini_with_custom_options.defaults[:chat_completion_model_name]).to eq("custom-model")
-      expect(google_gemini_with_custom_options.defaults[:temperature]).to eq(2.0)
+      default_options = {
+        chat_completion_model_name: "custom-model",
+        temperature: 2.0,
+        safety_settings: [
+          {category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE"},
+          {category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE"},
+          {category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE"},
+          {category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE"}
+        ]
+      }
+      subject = described_class.new(api_key: "123", default_options: default_options)
+      expect(subject.defaults[:chat_completion_model_name]).to eq("custom-model")
+      expect(subject.defaults[:temperature]).to eq(2.0)
+      expect(subject.defaults[:safety_settings]).to eq(default_options[:safety_settings])
     end
   end
 
@@ -81,6 +91,20 @@ RSpec.describe Langchain::LLM::GoogleGemini do
       expect(response).to be_a(Langchain::LLM::GoogleGeminiResponse)
       expect(response.model).to eq("gemini-1.5-pro-latest")
       expect(response.chat_completion).to eq("The answer is 4.0")
+    end
+
+    it "uses default options if provided" do
+      default_options = {
+        safety_settings: [
+          {category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE"},
+          {category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE"},
+          {category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE"},
+          {category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE"}
+        ]
+      }
+      subject = described_class.new(api_key: "123", default_options: default_options)
+      allow(subject).to receive(:http_post).with(any_args, hash_including(default_options)).and_call_original
+      subject.chat(messages: messages)
     end
   end
 end

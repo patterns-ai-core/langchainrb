@@ -39,7 +39,8 @@ module Langchain::LLM
 
       chat_parameters.update(
         model: {default: @defaults[:chat_completion_model_name]},
-        temperature: {default: @defaults[:temperature]}
+        temperature: {default: @defaults[:temperature]},
+        safety_settings: {default: @defaults[:safety_settings]}
       )
       chat_parameters.remap(
         messages: :contents,
@@ -87,6 +88,7 @@ module Langchain::LLM
 
       uri = URI("#{url}#{parameters[:model]}:generateContent")
 
+      binding.pry
       parsed_response = http_post(uri, parameters)
 
       wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
