@@ -1,4 +1,16 @@
+# CHANGELOG
+
+## Key
+- [BREAKING]: A breaking change. After an upgrade, your app may need modifications to keep working correctly.
+- [FEATURE]: A non-breaking improvement to the app. Either introduces new functionality, or improves on an existing feature.
+- [BUGFIX]: Fixes a bug with a non-breaking change.
+- [COMPAT]: Compatibility improvements - changes to make Administrate more compatible with different dependency versions.
+- [OPTIM]: Optimization or performance increase.
+- [DOCS]: Documentation changes. No changes to the library's behavior.
+- [SECURITY]: A change which fixes a security vulnerability.
+
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/837] Fix bug when tool functions with no input variables are used with Langchain::LLM::Anthropic
 
 ## [0.18.0] - 2024-10-12
 - [BREAKING] Remove `Langchain::Assistant#clear_thread!` method
