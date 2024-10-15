@@ -482,6 +482,13 @@ RSpec.describe Langchain::Assistant do
         expect(subject.messages.first.content).to eq("New instructions")
         expect(subject.instructions).to eq("New instructions")
       end
+
+      it "clears instructions when instructions are nil" do
+        expect(subject.messages.find(&:system?).content).to eq(subject.instructions)
+        subject.instructions = nil
+        expect(subject.messages).to be_empty
+        expect(subject.instructions).to be_nil
+      end
     end
   end
 
