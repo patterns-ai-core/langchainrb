@@ -12,7 +12,7 @@ module Langchain::LLM
 
     DEFAULTS = {
       temperature: 0.0,
-      completion_model: "llama3.1",
+      complete_model: "llama3.1",
       embed_model: "llama3.1",
       chat_model: "llama3.1"
     }.freeze
@@ -77,7 +77,7 @@ module Langchain::LLM
     #
     def complete(
       prompt:,
-      model: defaults[:completion_model],
+      model: defaults[:complete_model],
       images: nil,
       format: nil,
       system: nil,

@@ -14,7 +14,7 @@ module Langchain::LLM
       # TODO: Figure out how to send the temperature to the API
       temperature: 0.01, # Minimum accepted value
       # TODO: Design the interface to pass and use different models
-      completion_model: "replicate/vicuna-13b",
+      complete_model: "replicate/vicuna-13b",
       embed_model: "creatorrr/all-mpnet-base-v2",
       dimensions: 384
     }.freeze
@@ -59,14 +59,14 @@ module Langchain::LLM
     # @return [Langchain::LLM::ReplicateResponse] Response object
     #
     def complete(prompt:, **params)
-      response = completion_model.predict(prompt: prompt)
+      response = complete_model.predict(prompt: prompt)
 
       until response.finished?
         response.refetch
         sleep(0.1)
       end
 
-      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:completion_model])
+      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:complete_model])
     end
 
     #
@@ -93,8 +93,8 @@ module Langchain::LLM
 
     private
 
-    def completion_model
-      @completion_model ||= client.retrieve_model(@defaults[:completion_model]).latest_version
+    def complete_model
+      @complete_model ||= client.retrieve_model(@defaults[:complete_model]).latest_version
     end
 
     def embeddings_model

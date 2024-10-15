@@ -84,12 +84,12 @@ RSpec.describe Langchain::LLM::Cohere do
       let(:subject) {
         described_class.new(
           api_key: "123",
-          default_options: {completion_model: "base-light"}
+          default_options: {complete_model: "base-light"}
         )
       }
 
       # TODO: Fix this test
-      # The model specified above ({completion_model: "base-light"}) is not being used when the call is made.
+      # The model specified above ({complete_model: "base-light"}) is not being used when the call is made.
       xit "passes correct options to the completions method" do
         expect(subject.client).to receive(:generate).with(
           {

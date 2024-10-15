@@ -5,7 +5,7 @@ require "replicate"
 RSpec.describe Langchain::LLM::Replicate do
   let(:subject) { described_class.new(api_key: "123") }
 
-  describe "#completion_model" do
+  describe "#complete_model" do
     before do
       allow(subject.client).to receive_message_chain(:retrieve_model, :latest_version).and_return(
         Replicate::Record::ModelVersion.new({}, {})
@@ -13,7 +13,7 @@ RSpec.describe Langchain::LLM::Replicate do
     end
 
     it "returns the model" do
-      expect(subject.send(:completion_model)).to be_a(Replicate::Record::ModelVersion)
+      expect(subject.send(:complete_model)).to be_a(Replicate::Record::ModelVersion)
     end
   end
 
@@ -49,7 +49,7 @@ RSpec.describe Langchain::LLM::Replicate do
       let(:subject) {
         described_class.new(
           api_key: "123",
-          default_options: {completion_model: "replicate/vicuna-foobar"}
+          default_options: {complete_model: "replicate/vicuna-foobar"}
         )
       }
 

@@ -46,7 +46,7 @@ RSpec.describe Langchain::LLM::Azure do
           api_key: "123",
           llm_options: {api_type: :azure},
           default_options: {
-            completion_model: "gpt-4o-mini",
+            complete_model: "gpt-4o-mini",
             n: 2,
             temperature: 0.5
           }
