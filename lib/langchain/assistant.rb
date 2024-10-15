@@ -197,7 +197,7 @@ module Langchain
 
       if @llm_adapter.support_system_message?
         # TODO: Should we still set a system message even if @instructions is "" or nil?
-        replace_system_message!(content: new_instructions) if @instructions
+        replace_system_message!(content: new_instructions)
       end
     end
 
@@ -218,6 +218,7 @@ module Langchain
     # @return [Array<Langchain::Message>] The messages
     def replace_system_message!(content:)
       messages.delete_if(&:system?)
+      return if content.nil?
 
       message = build_message(role: "system", content: content)
       messages.unshift(message)
