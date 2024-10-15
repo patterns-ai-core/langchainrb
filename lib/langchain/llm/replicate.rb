@@ -15,7 +15,7 @@ module Langchain::LLM
       temperature: 0.01, # Minimum accepted value
       # TODO: Design the interface to pass and use different models
       completion_model: "replicate/vicuna-13b",
-      embeddings_model_name: "creatorrr/all-mpnet-base-v2",
+      embed_model: "creatorrr/all-mpnet-base-v2",
       dimensions: 384
     }.freeze
 
@@ -49,7 +49,7 @@ module Langchain::LLM
         sleep(0.1)
       end
 
-      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:embeddings_model_name])
+      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:embed_model])
     end
 
     #
@@ -98,7 +98,7 @@ module Langchain::LLM
     end
 
     def embeddings_model
-      @embeddings_model ||= client.retrieve_model(@defaults[:embeddings_model_name]).latest_version
+      @embeddings_model ||= client.retrieve_model(@defaults[:embed_model]).latest_version
     end
   end
 end

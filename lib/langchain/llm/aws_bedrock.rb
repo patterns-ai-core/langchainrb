@@ -13,7 +13,7 @@ module Langchain::LLM
     DEFAULTS = {
       chat_model: "anthropic.claude-v2",
       completion_model: "anthropic.claude-v2",
-      embeddings_model_name: "amazon.titan-embed-text-v1",
+      embed_model: "amazon.titan-embed-text-v1",
       max_tokens_to_sample: 300,
       temperature: 1,
       top_k: 250,
@@ -84,7 +84,7 @@ module Langchain::LLM
       parameters = compose_embedding_parameters params.merge(text:)
 
       response = client.invoke_model({
-        model_id: @defaults[:embeddings_model_name],
+        model_id: @defaults[:embed_model],
         body: parameters.to_json,
         content_type: "application/json",
         accept: "application/json"
@@ -179,7 +179,7 @@ module Langchain::LLM
     end
 
     def embedding_provider
-      @defaults[:embeddings_model_name].split(".").first.to_sym
+      @defaults[:embed_model].split(".").first.to_sym
     end
 
     def wrap_prompt(prompt)

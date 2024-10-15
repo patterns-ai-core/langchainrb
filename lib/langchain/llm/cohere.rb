@@ -15,7 +15,7 @@ module Langchain::LLM
       temperature: 0.0,
       completion_model: "command",
       chat_model: "command-r-plus",
-      embeddings_model_name: "small",
+      embed_model: "small",
       dimensions: 1024,
       truncate: "START"
     }.freeze
@@ -48,10 +48,10 @@ module Langchain::LLM
     def embed(text:)
       response = client.embed(
         texts: [text],
-        model: @defaults[:embeddings_model_name]
+        model: @defaults[:embed_model]
       )
 
-      Langchain::LLM::CohereResponse.new response, model: @defaults[:embeddings_model_name]
+      Langchain::LLM::CohereResponse.new response, model: @defaults[:embed_model]
     end
 
     #

@@ -17,7 +17,7 @@ module Langchain::LLM
       n: 1,
       temperature: 0.0,
       chat_model: "gpt-4o-mini",
-      embeddings_model_name: "text-embedding-3-small"
+      embed_model: "text-embedding-3-small"
     }.freeze
 
     EMBEDDING_SIZES = {
@@ -61,7 +61,7 @@ module Langchain::LLM
     # @return [Langchain::LLM::OpenAIResponse] Response object
     def embed(
       text:,
-      model: defaults[:embeddings_model_name],
+      model: defaults[:embed_model],
       encoding_format: nil,
       user: nil,
       dimensions: @defaults[:dimensions]
@@ -160,7 +160,7 @@ module Langchain::LLM
     end
 
     def default_dimensions
-      @defaults[:dimensions] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name])
+      @defaults[:dimensions] || EMBEDDING_SIZES.fetch(defaults[:embed_model])
     end
 
     private

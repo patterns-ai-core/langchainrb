@@ -6,7 +6,7 @@ module Langchain::LLM
   class GoogleGemini < Base
     DEFAULTS = {
       chat_model: "gemini-1.5-pro-latest",
-      embeddings_model_name: "text-embedding-004",
+      embed_model: "text-embedding-004",
       temperature: 0.0
     }
 
@@ -72,7 +72,7 @@ module Langchain::LLM
 
     def embed(
       text:,
-      model: @defaults[:embeddings_model_name]
+      model: @defaults[:embed_model]
     )
       params = {
         content: {

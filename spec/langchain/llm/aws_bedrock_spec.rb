@@ -513,7 +513,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
 
     context "with cohere provider" do
-      let(:subject) { described_class.new(default_options: {embeddings_model_name: "cohere.embed-multilingual-v3"}) }
+      let(:subject) { described_class.new(default_options: {embed_model: "cohere.embed-multilingual-v3"}) }
 
       let(:response) do
         StringIO.new("{\"embeddings\":[[0.1,0.2,0.3,0.4,0.5]]}")
@@ -543,7 +543,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
 
     context "with unsupported provider" do
-      let(:subject) { described_class.new(default_options: {embeddings_model_name: "unsupported.provider"}) }
+      let(:subject) { described_class.new(default_options: {embed_model: "unsupported.provider"}) }
 
       it "raises an exception" do
         expect { subject.embed(text: "Hello World") }.to raise_error("Completion provider unsupported is not supported.")

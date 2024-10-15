@@ -9,7 +9,7 @@ module Langchain::LLM
   class MistralAI < Base
     DEFAULTS = {
       chat_model: "mistral-large-latest",
-      embeddings_model_name: "mistral-embed"
+      embed_model: "mistral-embed"
     }.freeze
 
     attr_reader :defaults
@@ -44,7 +44,7 @@ module Langchain::LLM
 
     def embed(
       text:,
-      model: defaults[:embeddings_model_name],
+      model: defaults[:embed_model],
       encoding_format: nil
     )
       params = {

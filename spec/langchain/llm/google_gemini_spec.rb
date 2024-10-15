@@ -7,7 +7,7 @@ RSpec.describe Langchain::LLM::GoogleGemini do
     it "initializes with default options" do
       expect(subject.api_key).to eq("123")
       expect(subject.defaults[:chat_model]).to eq("gemini-1.5-pro-latest")
-      expect(subject.defaults[:embeddings_model_name]).to eq("text-embedding-004")
+      expect(subject.defaults[:embed_model]).to eq("text-embedding-004")
       expect(subject.defaults[:temperature]).to eq(0.0)
     end
 
