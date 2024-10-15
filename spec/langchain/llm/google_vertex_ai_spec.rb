@@ -5,6 +5,12 @@ require "googleauth"
 RSpec.describe Langchain::LLM::GoogleVertexAI do
   subject { described_class.new(project_id: "123", region: "us-central1") }
 
+  before do
+    allow(Google::Auth).to receive(:get_application_default).and_return(
+      double("Google::Auth::UserRefreshCredentials", fetch_access_token!: {access_token: 123})
+    )
+  end
+
   describe "#initialize" do
     it "initializes with default options" do
       expect(subject.defaults[:chat_completion_model_name]).to eq("gemini-1.0-pro")
@@ -35,10 +41,6 @@ RSpec.describe Langchain::LLM::GoogleVertexAI do
     let(:raw_embedding_response) { double(body: File.read("spec/fixtures/llm/google_vertex_ai/embed.json")) }
 
     before do
-      allow(Google::Auth).to receive(:get_application_default).and_return(
-        double("Google::Auth::UserRefreshCredentials", fetch_access_token!: {access_token: 123})
-      )
-
       allow_any_instance_of(Net::HTTP).to receive(:request).and_return(raw_embedding_response)
     end
 
@@ -56,10 +58,6 @@ RSpec.describe Langchain::LLM::GoogleVertexAI do
     let(:raw_chat_completions_response) { double(body: File.read("spec/fixtures/llm/google_vertex_ai/chat.json")) }
 
     before do
-      allow(Google::Auth).to receive(:get_application_default).and_return(
-        double("Google::Auth::UserRefreshCredentials", fetch_access_token!: {access_token: 123})
-      )
-
       allow_any_instance_of(Net::HTTP).to receive(:request).and_return(raw_chat_completions_response)
     end
 
