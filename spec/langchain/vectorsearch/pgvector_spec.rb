@@ -255,5 +255,22 @@ if ENV["POSTGRES_URL"]
         end
       end
     end
+
+    describe "#initialize" do
+      context "with connection options" do
+        it "creates a new instance with connection options passed to the db" do
+          custom_pgvector = Langchain::Vectorsearch::Pgvector.new(
+            url: ENV["POSTGRES_URL"],
+            index_name: "products",
+            llm: Langchain::LLM::OpenAI.new(api_key: "123"),
+            connection_options: {
+              max_connections: 10
+            }
+          )
+
+          expect(custom_pgvector.db.opts[:max_connections]).to eq(10)
+        end
+      end
+    end
   end
 end
