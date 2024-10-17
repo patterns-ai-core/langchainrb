@@ -53,20 +53,10 @@ module Langchain
             else
               h[:tool_call_id] = tool_call_id if tool_call_id
 
-              h[:content] = []
-
-              if content && !content.empty?
-                h[:content] << {
-                  type: "text",
-                  text: content
-                }
-              end
-
               if image_url
-                h[:content] << {
-                  type: "image_url",
-                  image_url: image_url
-                }
+                h[:content] = image_url
+              else
+                h[:content] = content
               end
             end
           end
