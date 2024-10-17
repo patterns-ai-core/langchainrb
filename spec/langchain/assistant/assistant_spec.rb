@@ -45,15 +45,6 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    describe "#replace_system_message!" do
-      it "replaces the system message" do
-        assistant = described_class.new(llm: llm)
-        assistant.add_message(content: "foo")
-        assistant.send(:replace_system_message!, content: "bar")
-        expect(assistant.messages.first.content).to eq("bar")
-      end
-    end
-
     describe "#array_of_message_hashes" do
       let(:messages) {
         [
@@ -133,6 +124,11 @@ RSpec.describe Langchain::Assistant do
         assistant = described_class.new(llm: llm, instructions: instructions)
         expect(assistant.messages.first.role).to eq("system")
         expect(assistant.messages.first.content).to eq("You are an expert assistant")
+      end
+
+      it "skips a system message creation for empty instructions" do
+        assistant = described_class.new(llm: llm, instructions: nil)
+        expect(assistant.messages).to be_empty
       end
 
       it "the system message always comes first" do
@@ -478,8 +474,9 @@ RSpec.describe Langchain::Assistant do
     describe "#instructions=" do
       it "resets instructions" do
         subject.instructions = "New instructions"
-        expect(subject.messages.first.role).to eq("system")
-        expect(subject.messages.first.content).to eq("New instructions")
+        expect(subject.messages).to match_array(
+          an_object_having_attributes(role: "system", content: "New instructions")
+        )
         expect(subject.instructions).to eq("New instructions")
       end
 
@@ -510,6 +507,11 @@ RSpec.describe Langchain::Assistant do
         described_class.new(llm: llm, instructions: instructions)
         expect(subject.messages.first.role).to eq("system")
         expect(subject.messages.first.content).to eq("You are an expert assistant")
+      end
+
+      it "skips a system message creation for empty instructions" do
+        assistant = described_class.new(llm: llm, instructions: nil)
+        expect(assistant.messages).to be_empty
       end
 
       it "the system message always comes first" do
@@ -843,8 +845,9 @@ RSpec.describe Langchain::Assistant do
     describe "#instructions=" do
       it "resets instructions" do
         subject.instructions = "New instructions"
-        expect(subject.messages.first.role).to eq("system")
-        expect(subject.messages.first.content).to eq("New instructions")
+        expect(subject.messages).to match_array(
+          an_object_having_attributes(role: "system", content: "New instructions")
+        )
         expect(subject.instructions).to eq("New instructions")
       end
     end
@@ -867,11 +870,18 @@ RSpec.describe Langchain::Assistant do
       )
     }
 
+    describe "#initialize" do
+      it "doesn't propagate instructions to messages" do
+        described_class.new(llm: llm, instructions: instructions)
+        expect(subject.messages).to be_empty
+      end
+    end
+
     describe "#instructions=" do
       it "resets instructions" do
         subject.instructions = "New instructions"
-        expect(subject).not_to receive(:replace_system_message!)
         expect(subject.instructions).to eq("New instructions")
+        expect(subject.messages).to be_empty
       end
     end
   end
@@ -888,6 +898,13 @@ RSpec.describe Langchain::Assistant do
         instructions: instructions
       )
     }
+
+    describe "#initialize" do
+      it "doesn't propagate instructions to messages" do
+        described_class.new(llm: llm, instructions: instructions)
+        expect(subject.messages).to be_empty
+      end
+    end
 
     describe "#add_message" do
       it "adds a message to the thread" do
@@ -1052,8 +1069,12 @@ RSpec.describe Langchain::Assistant do
     describe "#instructions=" do
       it "resets instructions" do
         subject.instructions = "New instructions"
-        expect(subject).not_to receive(:replace_system_message!)
         expect(subject.instructions).to eq("New instructions")
+        expect(subject.messages).to be_empty
+
+        subject.instructions = "Another set of instructions"
+        expect(subject.instructions).to eq("Another set of instructions")
+        expect(subject.messages).to be_empty
       end
     end
   end
@@ -1070,6 +1091,13 @@ RSpec.describe Langchain::Assistant do
         instructions: instructions
       )
     }
+
+    describe "#initialize" do
+      it "doesn't propagate instructions to messages" do
+        described_class.new(llm: llm, instructions: instructions)
+        expect(subject.messages).to be_empty
+      end
+    end
 
     describe "#add_message" do
       it "adds a message to the thread" do
@@ -1276,9 +1304,55 @@ RSpec.describe Langchain::Assistant do
         expect { subject.tool_choice = "invalid_choice" }.to raise_error(ArgumentError)
       end
     end
+
+    describe "#instructions=" do
+      it "resets instructions" do
+        subject.instructions = "New instructions"
+        expect(subject.instructions).to eq("New instructions")
+        expect(subject.messages).to be_empty
+
+        subject.instructions = "Another set of instructions"
+        expect(subject.instructions).to eq("Another set of instructions")
+        expect(subject.messages).to be_empty
+      end
+    end
   end
 
-  xdescribe "when llm is Ollama" do
+  describe "when llm is Ollama" do
+    let(:llm) { Langchain::LLM::Ollama.new(api_key: "123") }
+    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:instructions) { "You are an expert assistant" }
+
+    subject {
+      described_class.new(
+        llm: llm,
+        tools: [calculator],
+        instructions: instructions
+      )
+    }
+
+    describe "#initialize" do
+      it "adds a system message to the thread" do
+        assistant = described_class.new(llm: llm, instructions: instructions)
+        expect(assistant.messages.first.role).to eq("system")
+        expect(assistant.messages.first.content).to eq("You are an expert assistant")
+      end
+
+      it "skips a system message creation for empty instructions" do
+        assistant = described_class.new(llm: llm, instructions: nil)
+        expect(assistant.messages).to be_empty
+      end
+
+      it "the system message always comes first" do
+        assistant = described_class.new(llm: llm, instructions: instructions)
+        assistant.add_message(role: "system", content: "System message")
+        assistant.add_message(role: "user", content: "foo")
+        expect(assistant.messages.first.role).to eq("system")
+        # Replaces the previous system message
+        expect(assistant.messages.first.content).to eq("You are an expert assistant")
+      end
+    end
+
     xdescribe "#set_state_for" do
       xcontext "when response contains completion" do
         let(:response) { double(tool_calls: [], completion: "The weather in SF is sunny") }
@@ -1286,6 +1360,84 @@ RSpec.describe Langchain::Assistant do
         xit "it returns :completed" do
           expect(subject.send(:set_state_for, response: response)).to eq(:completed)
         end
+      end
+    end
+
+    describe "#instructions=" do
+      it "resets instructions" do
+        subject.instructions = "New instructions"
+        expect(subject.messages).to match_array(
+          an_object_having_attributes(role: "system", content: "New instructions")
+        )
+        expect(subject.instructions).to eq("New instructions")
+      end
+    end
+  end
+
+  context "when llm is custom" do
+    let(:llm) { Langchain::LLM::Base.new }
+    let(:llm_adapter_class) do
+      Class.new(Langchain::Assistant::LLM::Adapters::Base) do
+        def allowed_tool_choices
+          ["auto"]
+        end
+
+        def available_tool_names(tools)
+          []
+        end
+
+        def support_system_message?
+          true
+        end
+
+        def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+          message_class = Class.new(Langchain::Assistant::Messages::Base) do
+            def initialize(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+              @role = role
+              @content = content.to_s
+              @image_url = image_url
+              @tool_calls = tool_calls
+              @tool_call_id = tool_call_id
+            end
+          end
+
+          message_class.new(
+            role: role,
+            content: content,
+            image_url: image_url,
+            tool_calls: tool_calls,
+            tool_call_id: tool_call_id
+          )
+        end
+      end
+    end
+    let(:llm_adapter) { llm_adapter_class.new }
+    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:instructions) { "You are an expert assistant" }
+
+    subject {
+      described_class.new(
+        llm: llm,
+        llm_adapter: llm_adapter,
+        tools: [calculator],
+        instructions: instructions
+      )
+    }
+
+    describe ".new" do
+      it "initiates an assistant without error" do
+        expect { subject }.not_to raise_error
+      end
+    end
+
+    describe "#messages" do
+      it "returns list of messages" do
+        expect(subject.messages).to contain_exactly(
+          an_object_having_attributes(
+            role: "system",
+            content: "You are an expert assistant"
+          )
+        )
       end
     end
   end
