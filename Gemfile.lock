@@ -129,13 +129,13 @@ GEM
       dry-initializer (~> 3.0)
       dry-schema (>= 1.12, < 2)
       zeitwerk (~> 2.6)
-    elastic-transport (8.3.2)
+    elastic-transport (8.3.5)
       faraday (< 3)
       multi_json
-    elasticsearch (8.2.2)
-      elastic-transport (~> 8.0)
-      elasticsearch-api (= 8.2.2)
-    elasticsearch-api (8.2.2)
+    elasticsearch (8.15.0)
+      elastic-transport (~> 8.3)
+      elasticsearch-api (= 8.15.0)
+    elasticsearch-api (8.15.0)
       multi_json
     epsilla-ruby (0.0.4)
       faraday (>= 1)
@@ -452,7 +452,7 @@ DEPENDENCIES
   cohere-ruby (~> 0.9.10)
   docx (~> 0.8.0)
   dotenv-rails (~> 2.7.6)
-  elasticsearch (~> 8.2.0)
+  elasticsearch (~> 8.15.0)
   epsilla-ruby (~> 0.0.4)
   eqn (~> 1.6.5)
   faraday
