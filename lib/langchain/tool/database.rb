@@ -88,6 +88,13 @@ module Langchain::Tool
     # @return [Array] Results from the SQL query
     def execute(input:)
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
+      
+      if input.include?('\\')
+        Langchain.logger.warn("⚠️ SQL input contains backslashes: #{input}")
+        # Autofix (remove backslashes)
+        input = input.gsub('\\', '')
+        Langchain.logger.info("✅ SQL sanitized: #{input}")
+      end
 
       db[input].to_a
     rescue Sequel::DatabaseError => e
