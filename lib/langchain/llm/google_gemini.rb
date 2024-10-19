@@ -20,7 +20,7 @@ module Langchain::LLM
         model: {default: @defaults[:chat_completion_model_name]},
         temperature: {default: @defaults[:temperature]},
         generation_config: {default: nil},
-        safety_settings: {default: nil}
+        safety_settings: {default: @defaults[:safety_settings]}
       )
       chat_parameters.remap(
         messages: :contents,

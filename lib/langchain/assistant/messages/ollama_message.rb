@@ -16,10 +16,10 @@ module Langchain
 
         # Initialize a new OpenAI message
         #
-        # @param [String] The role of the message
-        # @param [String] The content of the message
-        # @param [Array<Hash>] The tool calls made in the message
-        # @param [String] The ID of the tool call
+        # @param role [String] The role of the message
+        # @param content [String] The content of the message
+        # @param tool_calls [Array<Hash>] The tool calls made in the message
+        # @param tool_call_id [String] The ID of the tool call
         def initialize(role:, content: nil, tool_calls: [], tool_call_id: nil)
           raise ArgumentError, "Role must be one of #{ROLES.join(", ")}" unless ROLES.include?(role)
           raise ArgumentError, "Tool calls must be an array of hashes" unless tool_calls.is_a?(Array) && tool_calls.all? { |tool_call| tool_call.is_a?(Hash) }

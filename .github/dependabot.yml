@@ -11,3 +11,5 @@ updates:
       interval: "weekly"
     assignees:
       - "andreibondarev"
+    commit-message:
+      prefix: "[SECURITY] "
