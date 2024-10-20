@@ -46,19 +46,10 @@ module Langchain
         # @return [Hash] The message as an MistralAI API-compatible hash
         def to_hash
           {}.tap do |h|
-            h[:role] = role
-
-            if tool_calls.any?
-              h[:tool_calls] = tool_calls
-            else
-              h[:tool_call_id] = tool_call_id if tool_call_id
-
-              if image_url
-                h[:content] = image_url
-              else
-                h[:content] = content
-              end
-            end
+            to_system_hash(h)    if system?
+            to_assistant_hash(h) if assistant?
+            to_user_hash(h)      if user?
+            to_tool_hash(h)      if tool?
           end
         end
 
@@ -81,6 +72,66 @@ module Langchain
         # @return [Boolean] true/false whether this message is a tool call
         def tool?
           role == "tool"
+        end
+
+        # Convert the message to an MistralAI API-compatible hash
+        #
+        # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "user"
+        def to_user_hash(h)
+          h[:role] = "user"
+          content_hash(h)
+        end
+
+        # Convert the message to an MistralAI API-compatible hash
+        #
+        # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "system"
+        def to_system_hash(h)
+          h[:role] = "system"
+          content_hash(h)
+        end
+
+        # Convert the message to an MistralAI API-compatible hash
+        #
+        # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "assistant"
+        def to_assistant_hash(h)
+          h[:role] = "assistant"
+          h[:content] = content
+          h[:tool_calls] = tool_calls
+          h[:prefix] = false
+        end
+
+        # Convert the message to an MistralAI API-compatible hash
+        #
+        # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "tool"
+        def to_tool_hash(h)
+          h[:role] = "tool"
+          h[:content] = content
+          h[:tool_call_id] = tool_call_id
+        end
+
+        # Builds the content hash for the message
+        #
+        # @return [Hash] The content hash for the message
+        #
+        # The content hash is a list of objects with type and text/image_url keys
+        # type: "text" means the object is a text content
+        # type: "image_url" means the object is a image_url content
+        def content_hash(h)
+          h[:content] = []
+
+          if content && !content.empty?
+            h[:content] << {
+              type: "text",
+              text: content
+            }
+          end
+
+          if image_url
+            h[:content] << {
+              type: "image_url",
+              image_url: image_url
+            }
+          end
         end
       end
     end
