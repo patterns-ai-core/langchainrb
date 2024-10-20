@@ -10,7 +10,7 @@ RSpec.describe Langchain::Assistant::Messages::MistralAIMessage do
       let(:message) { described_class.new(role: "user", content: "Hello, world!", tool_calls: [], tool_call_id: nil) }
 
       it "returns a hash with the role and content key" do
-        expect(message.to_hash).to eq({role: "user", content:  [{text: "Hello, world!", type: "text"}]})
+        expect(message.to_hash).to eq({role: "user", content: [{text: "Hello, world!", type: "text"}]})
       end
     end
 

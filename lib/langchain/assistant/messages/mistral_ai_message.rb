@@ -81,10 +81,10 @@ module Langchain
         # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "assistant"
         def assistant_hash
           {
-            role: 'assistant',
+            role: "assistant",
             content: content,
             tool_calls: tool_calls,
-            prefix: false,
+            prefix: false
           }
         end
 
@@ -92,8 +92,8 @@ module Langchain
         # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "system"
         def system_hash
           {
-            role: 'system',
-            content: build_content_array,
+            role: "system",
+            content: build_content_array
           }
         end
 
@@ -101,9 +101,9 @@ module Langchain
         # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "tool"
         def tool_hash
           {
-            role: 'tool',
+            role: "tool",
             content: content,
-            tool_call_id: tool_call_id,
+            tool_call_id: tool_call_id
           }
         end
 
@@ -111,8 +111,8 @@ module Langchain
         # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "user"
         def user_hash
           {
-            role: 'user',
-            content: build_content_array,
+            role: "user",
+            content: build_content_array
           }
         end
 

@@ -641,12 +641,12 @@ RSpec.describe Langchain::Assistant do
               messages: [
                 {role: "system", content: [{type: "text", text: instructions}]},
                 {role: "user", content: [{type: "text", text: "Please calculate 2+2"}]},
-                {role: "assistant", prefix: false, content: '', tool_calls: [
-                    {
-                      "function" => {"arguments" => "{\"input\":\"2+2\"}", "name" => "langchain_tool_calculator__execute"},
-                      "id" => "call_9TewGANaaIjzY31UCpAAGLeV",
-                      "type" => "function"
-                    }
+                {role: "assistant", prefix: false, content: "", tool_calls: [
+                  {
+                    "function" => {"arguments" => "{\"input\":\"2+2\"}", "name" => "langchain_tool_calculator__execute"},
+                    "id" => "call_9TewGANaaIjzY31UCpAAGLeV",
+                    "type" => "function"
+                  }
                 ]},
                 {content: "4.0", role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
               ],
