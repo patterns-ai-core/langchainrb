@@ -45,11 +45,14 @@ module Langchain
         #
         # @return [Hash] The message as an MistralAI API-compatible hash
         def to_hash
-          {}.tap do |h|
-            to_system_hash(h)    if system?
-            to_assistant_hash(h) if assistant?
-            to_user_hash(h)      if user?
-            to_tool_hash(h)      if tool?
+          if assistant?
+            assistant_hash
+          elsif system?
+            system_hash
+          elsif tool?
+            tool_hash
+          elsif user?
+            user_hash
           end
         end
 
@@ -75,63 +78,64 @@ module Langchain
         end
 
         # Convert the message to an MistralAI API-compatible hash
-        #
-        # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "user"
-        def to_user_hash(h)
-          h[:role] = "user"
-          content_hash(h)
-        end
-
-        # Convert the message to an MistralAI API-compatible hash
-        #
-        # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "system"
-        def to_system_hash(h)
-          h[:role] = "system"
-          content_hash(h)
-        end
-
-        # Convert the message to an MistralAI API-compatible hash
-        #
         # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "assistant"
-        def to_assistant_hash(h)
-          h[:role] = "assistant"
-          h[:content] = content
-          h[:tool_calls] = tool_calls
-          h[:prefix] = false
+        def assistant_hash
+          {
+            role: 'assistant',
+            content: content,
+            tool_calls: tool_calls,
+            prefix: false,
+          }
         end
 
         # Convert the message to an MistralAI API-compatible hash
-        #
-        # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "tool"
-        def to_tool_hash(h)
-          h[:role] = "tool"
-          h[:content] = content
-          h[:tool_call_id] = tool_call_id
+        # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "system"
+        def system_hash
+          {
+            role: 'system',
+            content: build_content_array,
+          }
         end
 
-        # Builds the content hash for the message
-        #
-        # @return [Hash] The content hash for the message
-        #
-        # The content hash is a list of objects with type and text/image_url keys
-        # type: "text" means the object is a text content
-        # type: "image_url" means the object is a image_url content
-        def content_hash(h)
-          h[:content] = []
+        # Convert the message to an MistralAI API-compatible hash
+        # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "tool"
+        def tool_hash
+          {
+            role: 'tool',
+            content: content,
+            tool_call_id: tool_call_id,
+          }
+        end
+
+        # Convert the message to an MistralAI API-compatible hash
+        # @return [Hash] The message as an MistralAI API-compatible hash, with the role as "user"
+        def user_hash
+          {
+            role: 'user',
+            content: build_content_array,
+          }
+        end
+
+        # Builds the content value for the message hash
+        # @return [Array<Hash>] An array of content hashes, with keys :type and :text or :image_url.
+        def build_content_array
+          content_details = []
 
           if content && !content.empty?
-            h[:content] << {
+            content_details << {
               type: "text",
               text: content
             }
           end
 
           if image_url
-            h[:content] << {
+            content_details << {
               type: "image_url",
               image_url: image_url
             }
           end
+
+          content_details
         end
       end
     end
