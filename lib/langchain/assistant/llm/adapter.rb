@@ -6,16 +6,17 @@ module Langchain
       # TODO: Fix the message truncation when context window is exceeded
       class Adapter
         def self.build(llm)
-          case llm
-          when Langchain::LLM::Anthropic
+          if llm.is_a?(Langchain::LLM::Anthropic)
             LLM::Adapters::Anthropic.new
-          when Langchain::LLM::GoogleGemini, Langchain::LLM::GoogleVertexAI
+          elsif llm.is_a?(Langchain::LLM::AwsBedrock) && llm.defaults[:chat_completion_model_name].include?("anthropic")
+            LLM::Adapters::AwsBedrockAnthropic.new
+          elsif llm.is_a?(Langchain::LLM::GoogleGemini) || llm.is_a?(Langchain::LLM::GoogleVertexAI)
             LLM::Adapters::GoogleGemini.new
-          when Langchain::LLM::MistralAI
+          elsif llm.is_a?(Langchain::LLM::MistralAI)
             LLM::Adapters::MistralAI.new
-          when Langchain::LLM::Ollama
+          elsif llm.is_a?(Langchain::LLM::Ollama)
             LLM::Adapters::Ollama.new
-          when Langchain::LLM::OpenAI
+          elsif llm.is_a?(Langchain::LLM::OpenAI)
             LLM::Adapters::OpenAI.new
           else
             raise ArgumentError, "Unsupported LLM type: #{llm.class}"
