@@ -21,7 +21,7 @@ module Langchain
           dataset_item_scores = {}
 
           evaluators.each do |evaluator|
-            dataset_item_scores[evaluator.class.name.split("::").last] = evaluator.score(question: data[:question], answer: data[:answer], context: data[:context])
+            dataset_item_scores[evaluator.class.name.split("::").last] = evaluator.score(**data)
           end
 
           scored_dataset << {

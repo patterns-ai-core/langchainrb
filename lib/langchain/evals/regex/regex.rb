@@ -22,12 +22,16 @@ module Langchain
         # @param question [String] Question
         # @param context [String] Context
         # @return [Float] Regex score
-        def score(question: nil, answer: nil, context: nil)
-          args = {question: question, answer: answer, context: context}
+        def score(question: nil, answer: nil, context: nil, expected_answer: nil)
+          args = {question: question, answer: answer, context: context, expected_answer: expected_answer}
+
+          interpolated_regex = regex.source.gsub(/%\{(\w+)\}/) do |match|
+            args[match[2..-2].to_sym]
+          end
 
           (attributes.map do |attr|
             args[attr]
-          end.join(" ").scan(regex).size > 0) ? 1 : 0
+          end.join(" ").scan(interpolated_regex).size > 0) ? 1 : 0
         end
       end
     end

@@ -25,4 +25,15 @@ RSpec.describe Langchain::Evals::Regex::Regex do
       expect(subject.score(question: "foobar", answer: "foobar")).to eq(0)
     end
   end
+
+  describe "#score with variable interpolation in regex" do
+    subject { described_class.new(regex: /%{expected_answer}/, attributes: %i[question answer]) }
+    let(:output) { "This is a **needle** in a haystack" }
+
+    it "returns the Regex score" do
+      expect(subject.score(answer: output, expected_answer: "needle")).to eq(1)
+
+      expect(subject.score(answer: output, expected_answer: "foobar")).to eq(0)
+    end
+  end
 end
