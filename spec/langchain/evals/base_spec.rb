@@ -13,6 +13,7 @@ RSpec.describe Langchain::Evals::Base do
       allow_any_instance_of(Langchain::Evals::Ragas::ContextRelevance).to receive(:score).and_return(0.6666666666666666)
       allow_any_instance_of(Langchain::Evals::Ragas::Faithfulness).to receive(:score).and_return(0.5)
       allow_any_instance_of(Langchain::Evals::LLM::CosineSimilarity).to receive(:score).and_return(0.5)
+      allow_any_instance_of(Langchain::LLM::OpenAI).to receive(:complete).and_return(double("Langchain::LLM::OpenAIResponse", completion: "Y"))
     end
 
     let(:dataset) { [{question: question, answer: answer, context: context, expected_answer: expected_answer}] }
@@ -22,6 +23,7 @@ RSpec.describe Langchain::Evals::Base do
         Langchain::Evals::Ragas::ContextRelevance.new(llm: llm),
         Langchain::Evals::Ragas::Faithfulness.new(llm: llm),
         Langchain::Evals::Regex::Regex.new(regex: /foobar/),
+        Langchain::Evals::LLM::LLM.new(llm: llm),
         Langchain::Evals::LLM::CosineSimilarity.new(llm: llm)
 
       ]
@@ -33,6 +35,7 @@ RSpec.describe Langchain::Evals::Base do
         :answer => answer,
         :context => context,
         :expected_answer => expected_answer,
+        "LLM" => 1,
         "AnswerRelevance" => 0.9573145866787608,
         "ContextRelevance" => 0.6666666666666666,
         "Faithfulness" => 0.5,

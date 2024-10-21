@@ -16,7 +16,7 @@ module Langchain
           end
         end
 
-        def score(question:, answer:, expected_answer:)
+        def score(question:, answer:, expected_answer:, **_kwargs)
           prompt = prompt_template.format(
             question: question,
             answer: answer,
