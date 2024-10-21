@@ -2,18 +2,30 @@ module Langchain
   module Evals
     module Regex
       class Regex < Base
-        attr_reader :regex
+        attr_reader :regex, :attributes
 
-        def initialize(regex:)
+        VALID_ATTRIBUTES = %i[question answer context].freeze
+
+        def initialize(regex:, attributes: [:answer], combinator: :and)
+          unless attributes.all? { |attr| VALID_ATTRIBUTES.include?(attr) }
+            raise ArgumentError, "attributes can only include :question, :answer, and :context"
+          end
+
+          @attributes = attributes
+
           @regex = regex
         end
 
         # Returns the Regex score
         #
-        # @param output [String] Output from the LLM model
+        # @param answer [String] Output from the LLM model
         # @return [Float] Regex score
-        def score(output:)
-          output.scan(regex).count ? 1 : 0
+        def score(question: nil, answer: nil, context: nil)
+          args = {question: question, answer: answer, context: context}
+
+          attributes.map do |attr|
+            args[attr]
+          end.join(" ").scan(regex).size
         end
       end
     end

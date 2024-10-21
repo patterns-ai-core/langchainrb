@@ -14,7 +14,14 @@ RSpec.describe Langchain::Evals::Base do
     end
 
     let(:dataset) { [{question: question, answer: answer, context: context}] }
-    let(:evaluators) { [Langchain::Evals::Ragas::AnswerRelevance.new(llm: llm), Langchain::Evals::Ragas::ContextRelevance.new(llm: llm), Langchain::Evals::Ragas::Faithfulness.new(llm: llm)] }
+    let(:evaluators) {
+      [
+        Langchain::Evals::Ragas::AnswerRelevance.new(llm: llm),
+        Langchain::Evals::Ragas::ContextRelevance.new(llm: llm),
+        Langchain::Evals::Ragas::Faithfulness.new(llm: llm),
+        Langchain::Evals::Regex::Regex.new(regex: /foobar/)
+      ]
+    }
 
     it "evaluates a dataset with multiple evaluators" do
       expect(Langchain::Evals::Base.evaluate_dataset(dataset, evaluators)).to eq([{
@@ -23,7 +30,8 @@ RSpec.describe Langchain::Evals::Base do
         :context => context,
         "AnswerRelevance" => 0.9573145866787608,
         "ContextRelevance" => 0.6666666666666666,
-        "Faithfulness" => 0.5
+        "Faithfulness" => 0.5,
+        "Regex" => 0
       }])
     end
   end
