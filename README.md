@@ -505,7 +505,7 @@ assistant.add_message_and_run!(content: "What's the latest news about AI?")
 # Supply an image to the assistant
 assistant.add_message_and_run!(
   content: "Show me a picture of a cat",
-  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+  image_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
 )
 
 # Access the conversation thread
