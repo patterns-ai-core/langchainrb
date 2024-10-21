@@ -18,7 +18,9 @@ module Langchain
 
         # Returns the Regex score
         #
-        # @param answer [String] Output from the LLM model
+        # @param answer [String] Output
+        # @param question [String] Question
+        # @param context [String] Context
         # @return [Float] Regex score
         def score(question: nil, answer: nil, context: nil)
           args = {question: question, answer: answer, context: context}
