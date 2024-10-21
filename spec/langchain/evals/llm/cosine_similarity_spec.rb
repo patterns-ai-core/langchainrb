@@ -13,7 +13,7 @@ RSpec.describe Langchain::Evals::LLM::CosineSimilarity do
     end
 
     it "generates the score" do
-      expect(subject.score(question: question, answer: answer, expected_answer: expected_answer)).to eq(1.0)
+      expect(subject.score(answer: answer, expected_answer: expected_answer)).to eq(1.0)
     end
   end
 end

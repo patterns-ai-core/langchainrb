@@ -8,7 +8,7 @@ module Langchain
           @llm = llm
         end
 
-        def score(question:, answer:, expected_answer:)
+        def score(answer:, expected_answer:)
           answer_ebedding = llm.embed(text: answer).embedding
           expected_answer_embedding = llm.embed(text: expected_answer).embedding
 

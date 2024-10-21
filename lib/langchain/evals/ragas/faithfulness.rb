@@ -26,7 +26,7 @@ module Langchain
         # @param answer [String] Answer
         # @param context [String] Context
         # @return [Float] Faithfulness score
-        def score(question:, answer:, context:)
+        def score(question:, answer:, context:, **_kwargs)
           statements = statements_extraction(question: question, answer: answer)
           statements_count = statements
             .split("\n")
