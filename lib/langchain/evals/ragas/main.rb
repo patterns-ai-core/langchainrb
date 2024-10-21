@@ -2,6 +2,19 @@
 
 module Langchain
   module Evals
+    # Evaluates a dataset with multiple evaluators
+    # {
+    #   question: "question",
+    #   answer: "answer",
+    #   context: "Context"
+    #   "AnswerRelevance" => Float,
+    #   "ContextRelevance" => Float,
+    #   "Faithfulness" => Float
+    # }
+    #
+    # @param dataset [Array<Hash>] Dataset
+    # @param evaluators [Array] Evaluators
+    # @return [Array<Hash>] Scored dataset
     def self.evaluate_dataset(dataset, evaluators)
       scored_dataset = []
 
