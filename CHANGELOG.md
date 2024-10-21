@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/850/] Fix MistralAIMessage to handle "Tool" Output
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/837] Fix bug when tool functions with no input variables are used with Langchain::LLM::Anthropic
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/836] Fix bug when assistant.instructions = nil did not remove the system message
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/838] Allow setting safety_settings: [] in default_options for Langchain::LLM::GoogleGemini and Langchain::LLM::GoogleVertexAI constructors
