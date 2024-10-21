@@ -2,37 +2,6 @@
 
 module Langchain
   module Evals
-    # Evaluates a dataset with multiple evaluators
-    # {
-    #   question: "question",
-    #   answer: "answer",
-    #   context: "Context"
-    #   "AnswerRelevance" => Float,
-    #   "ContextRelevance" => Float,
-    #   "Faithfulness" => Float
-    # }
-    #
-    # @param dataset [Array<Hash>] Dataset
-    # @param evaluators [Array] Evaluators
-    # @return [Array<Hash>] Scored dataset
-    def self.evaluate_dataset(dataset, evaluators)
-      scored_dataset = []
-
-      dataset.each do |data|
-        dataset_item_scores = {}
-
-        evaluators.each do |evaluator|
-          dataset_item_scores[evaluator.class.name.split("::").last] = evaluator.score(question: data[:question], answer: data[:answer], context: data[:context])
-        end
-
-        scored_dataset << {
-          **data,
-          **dataset_item_scores
-        }
-      end
-      scored_dataset
-    end
-
     # The RAGAS (Retrieval Augmented Generative Assessment) is a framework for evaluating RAG (Retrieval Augmented Generation) pipelines.
     # Based on the following research: https://arxiv.org/pdf/2309.15217.pdf
     module Ragas
