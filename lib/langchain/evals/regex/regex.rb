@@ -25,9 +25,9 @@ module Langchain
         def score(question: nil, answer: nil, context: nil)
           args = {question: question, answer: answer, context: context}
 
-          attributes.map do |attr|
+          (attributes.map do |attr|
             args[attr]
-          end.join(" ").scan(regex).size
+          end.join(" ").scan(regex).size > 0) ? 1 : 0
         end
       end
     end
