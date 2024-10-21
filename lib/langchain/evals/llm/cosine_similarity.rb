@@ -9,10 +9,10 @@ module Langchain
         end
 
         def score(question:, answer:, expected_answer:)
-          question_embedding = llm.embed(text: question).embedding
           answer_ebedding = llm.embed(text: answer).embedding
+          expected_answer_embedding = llm.embed(text: expected_answer).embedding
 
-          Langchain::Utils::CosineSimilarity.new(question_embedding, answer_ebedding).calculate_similarity
+          Langchain::Utils::CosineSimilarity.new(expected_answer_embedding, answer_ebedding).calculate_similarity
         end
       end
     end

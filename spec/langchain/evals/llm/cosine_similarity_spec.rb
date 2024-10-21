@@ -6,7 +6,7 @@ RSpec.describe Langchain::Evals::LLM::CosineSimilarity do
 
     let(:question) { "What is 2 + 2?" }
     let(:answer) { "The answer is 4" }
-    let(:expected_answer) { "2 + 2 = 4" }
+    let(:expected_answer) { "2 + 2 = 3" }
 
     before do
       allow(subject.llm).to receive(:embed).and_return(double("Langchain::LLM::OpenAIResponse", embedding: [1, 0, 0]))
