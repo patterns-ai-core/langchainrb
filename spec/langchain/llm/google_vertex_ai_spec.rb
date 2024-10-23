@@ -14,7 +14,7 @@ RSpec.describe Langchain::LLM::GoogleVertexAI do
   describe "#initialize" do
     it "initializes with default options" do
       expect(subject.defaults[:chat_model]).to eq("gemini-1.0-pro")
-      expect(subject.defaults[:embed_model]).to eq("textembedding-gecko")
+      expect(subject.defaults[:embedding_model]).to eq("textembedding-gecko")
       expect(subject.defaults[:temperature]).to eq(0.1)
     end
 

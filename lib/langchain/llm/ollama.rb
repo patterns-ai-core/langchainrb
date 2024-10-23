@@ -12,8 +12,8 @@ module Langchain::LLM
 
     DEFAULTS = {
       temperature: 0.0,
-      complete_model: "llama3.1",
-      embed_model: "llama3.1",
+      completion_model: "llama3.1",
+      embedding_model: "llama3.1",
       chat_model: "llama3.1"
     }.freeze
 
@@ -55,7 +55,7 @@ module Langchain::LLM
     def default_dimensions
       # since Ollama can run multiple models, look it up or generate an embedding and return the size
       @default_dimensions ||=
-        EMBEDDING_SIZES.fetch(defaults[:embed_model].to_sym) do
+        EMBEDDING_SIZES.fetch(defaults[:embedding_model].to_sym) do
           embed(text: "test").embedding.size
         end
     end
@@ -77,7 +77,7 @@ module Langchain::LLM
     #
     def complete(
       prompt:,
-      model: defaults[:complete_model],
+      model: defaults[:completion_model],
       images: nil,
       format: nil,
       system: nil,
@@ -199,7 +199,7 @@ module Langchain::LLM
     #
     def embed(
       text:,
-      model: defaults[:embed_model],
+      model: defaults[:embedding_model],
       mirostat: nil,
       mirostat_eta: nil,
       mirostat_tau: nil,

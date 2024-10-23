@@ -12,7 +12,7 @@ module Langchain::LLM
   #
   class HuggingFace < Base
     DEFAULTS = {
-      embed_model: "sentence-transformers/all-MiniLM-L6-v2"
+      embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
     }.freeze
 
     EMBEDDING_SIZES = {
@@ -36,7 +36,7 @@ module Langchain::LLM
     def default_dimensions
       # since Huggin Face can run multiple models, look it up or generate an embedding and return the size
       @default_dimensions ||= @defaults[:dimensions] ||
-        EMBEDDING_SIZES.fetch(@defaults[:embed_model].to_sym) do
+        EMBEDDING_SIZES.fetch(@defaults[:embedding_model].to_sym) do
           embed(text: "test").embedding.size
         end
     end
@@ -50,9 +50,9 @@ module Langchain::LLM
     def embed(text:)
       response = client.embedding(
         input: text,
-        model: @defaults[:embed_model]
+        model: @defaults[:embedding_model]
       )
-      Langchain::LLM::HuggingFaceResponse.new(response, model: @defaults[:embed_model])
+      Langchain::LLM::HuggingFaceResponse.new(response, model: @defaults[:embedding_model])
     end
   end
 end

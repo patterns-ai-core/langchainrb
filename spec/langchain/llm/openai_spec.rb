@@ -185,7 +185,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
         let(:subject) do
           described_class.new(api_key: "123", default_options: {
-            embed_model: model,
+            embedding_model: model,
             dimensions: dimensions_size
           })
         end
@@ -344,7 +344,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         let(:subject) {
           described_class.new(
             api_key: "123",
-            default_options: {complete_model: "text-davinci-003"}
+            default_options: {completion_model: "text-davinci-003"}
           )
         }
         let(:parameters) do
@@ -383,7 +383,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         let(:subject) {
           described_class.new(
             api_key: "123",
-            default_options: {complete_model: "gpt-3.5-turbo-16k"}
+            default_options: {completion_model: "gpt-3.5-turbo-16k"}
           )
         }
 
@@ -450,7 +450,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     context "when the dimensions is passed as an argument" do
       let(:subject) do
         described_class.new(api_key: "123", default_options: {
-          embed_model: "text-embedding-3-small",
+          embedding_model: "text-embedding-3-small",
           dimensions: 512
         })
       end

@@ -12,8 +12,8 @@ module Langchain::LLM
   class AwsBedrock < Base
     DEFAULTS = {
       chat_model: "anthropic.claude-v2",
-      complete_model: "anthropic.claude-v2",
-      embed_model: "amazon.titan-embed-text-v1",
+      completion_model: "anthropic.claude-v2",
+      embedding_model: "amazon.titan-embed-text-v1",
       max_tokens_to_sample: 300,
       temperature: 1,
       top_k: 250,
@@ -84,7 +84,7 @@ module Langchain::LLM
       parameters = compose_embedding_parameters params.merge(text:)
 
       response = client.invoke_model({
-        model_id: @defaults[:embed_model],
+        model_id: @defaults[:embedding_model],
         body: parameters.to_json,
         content_type: "application/json",
         accept: "application/json"
@@ -103,14 +103,14 @@ module Langchain::LLM
     def complete(prompt:, **params)
       raise "Completion provider #{completion_provider} is not supported." unless SUPPORTED_COMPLETION_PROVIDERS.include?(completion_provider)
 
-      raise "Model #{@defaults[:complete_model]} only supports #chat." if @defaults[:complete_model].include?("claude-3")
+      raise "Model #{@defaults[:completion_model]} only supports #chat." if @defaults[:completion_model].include?("claude-3")
 
       parameters = compose_parameters params
 
       parameters[:prompt] = wrap_prompt prompt
 
       response = client.invoke_model({
-        model_id: @defaults[:complete_model],
+        model_id: @defaults[:completion_model],
         body: parameters.to_json,
         content_type: "application/json",
         accept: "application/json"
@@ -175,11 +175,11 @@ module Langchain::LLM
     private
 
     def completion_provider
-      @defaults[:complete_model].split(".").first.to_sym
+      @defaults[:completion_model].split(".").first.to_sym
     end
 
     def embedding_provider
-      @defaults[:embed_model].split(".").first.to_sym
+      @defaults[:embedding_model].split(".").first.to_sym
     end
 
     def wrap_prompt(prompt)

@@ -17,7 +17,7 @@ module Langchain::LLM
       top_p: 0.8,
       top_k: 40,
       dimensions: 768,
-      embed_model: "textembedding-gecko",
+      embedding_model: "textembedding-gecko",
       chat_model: "gemini-1.0-pro"
     }.freeze
 
@@ -58,7 +58,7 @@ module Langchain::LLM
     #
     def embed(
       text:,
-      model: @defaults[:embed_model]
+      model: @defaults[:embedding_model]
     )
       params = {instances: [{content: text}]}
 

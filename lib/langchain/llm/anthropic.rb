@@ -13,7 +13,7 @@ module Langchain::LLM
   class Anthropic < Base
     DEFAULTS = {
       temperature: 0.0,
-      complete_model: "claude-2.1",
+      completion_model: "claude-2.1",
       chat_model: "claude-3-5-sonnet-20240620",
       max_tokens_to_sample: 256
     }.freeze
@@ -22,7 +22,7 @@ module Langchain::LLM
     #
     # @param api_key [String] The API key to use
     # @param llm_options [Hash] Options to pass to the Anthropic client
-    # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, complete_model:, chat_model:, max_tokens_to_sample: }
+    # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, completion_model:, chat_model:, max_tokens_to_sample: }
     # @return [Langchain::LLM::Anthropic] Langchain::LLM::Anthropic instance
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "anthropic"
@@ -54,7 +54,7 @@ module Langchain::LLM
     # @return [Langchain::LLM::AnthropicResponse] The completion
     def complete(
       prompt:,
-      model: @defaults[:complete_model],
+      model: @defaults[:completion_model],
       max_tokens_to_sample: @defaults[:max_tokens_to_sample],
       stop_sequences: nil,
       temperature: @defaults[:temperature],
