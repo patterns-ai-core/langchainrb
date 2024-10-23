@@ -10,6 +10,8 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+
+## [0.19.0] - 2024-10-23
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `chat_completion_model_name` parameter to `chat_model` in Langchain::LLM parameters.
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `completion_model_name` parameter to `completion_model` in Langchain::LLM parameters.
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `embeddings_model_name` parameter to `embedding_model` in Langchain::LLM parameters.
