@@ -34,7 +34,7 @@ module Langchain::LLM
       default_dimensions
     end
 
-    # Returns the number of vector dimensions used by DEFAULTS[:chat_completion_model_name]
+    # Returns the number of vector dimensions used by DEFAULTS[:chat_model]
     #
     # @return [Integer] Vector dimensions
     def default_dimensions

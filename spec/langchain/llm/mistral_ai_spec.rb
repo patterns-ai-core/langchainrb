@@ -47,7 +47,7 @@ RSpec.describe Langchain::LLM::MistralAI do
 
       expect(mock_client).to have_received(:chat_completions).with(
         messages: params[:messages],
-        model: subject.defaults[:chat_completion_model_name],
+        model: subject.defaults[:chat_model],
         temperature: 1,
         max_tokens: 50,
         safe_prompt: "pow",
