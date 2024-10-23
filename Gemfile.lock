@@ -162,7 +162,7 @@ GEM
     fiber-storage (1.0.0)
     google-cloud-env (2.1.1)
       faraday (>= 1.0, < 3.a)
-    google_search_results (2.0.1)
+    google_search_results (2.2.0)
     googleauth (1.11.0)
       faraday (>= 1.0, < 3.a)
       google-cloud-env (~> 2.1)
@@ -456,7 +456,7 @@ DEPENDENCIES
   epsilla-ruby (~> 0.0.4)
   eqn (~> 1.6.5)
   faraday
-  google_search_results (~> 2.0.0)
+  google_search_results (~> 2.2.0)
   googleauth
   hnswlib (~> 0.8.1)
   hugging-face (~> 0.3.4)
