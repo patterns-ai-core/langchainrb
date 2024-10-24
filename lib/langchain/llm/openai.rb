@@ -16,8 +16,8 @@ module Langchain::LLM
     DEFAULTS = {
       n: 1,
       temperature: 0.0,
-      chat_completion_model_name: "gpt-4o-mini",
-      embeddings_model_name: "text-embedding-3-small"
+      chat_model: "gpt-4o-mini",
+      embedding_model: "text-embedding-3-small"
     }.freeze
 
     EMBEDDING_SIZES = {
@@ -41,7 +41,7 @@ module Langchain::LLM
 
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:chat_model]},
         logprobs: {},
         top_logprobs: {},
         n: {default: @defaults[:n]},
@@ -61,7 +61,7 @@ module Langchain::LLM
     # @return [Langchain::LLM::OpenAIResponse] Response object
     def embed(
       text:,
-      model: defaults[:embeddings_model_name],
+      model: defaults[:embedding_model],
       encoding_format: nil,
       user: nil,
       dimensions: @defaults[:dimensions]
@@ -109,6 +109,7 @@ module Langchain::LLM
       messages = [{role: "user", content: prompt}]
       chat(messages: messages, **params)
     end
+
     # rubocop:enable Style/ArgumentsForwarding
 
     # Generate a chat completion for given messages.
@@ -159,7 +160,7 @@ module Langchain::LLM
     end
 
     def default_dimensions
-      @defaults[:dimensions] || EMBEDDING_SIZES.fetch(defaults[:embeddings_model_name])
+      @defaults[:dimensions] || EMBEDDING_SIZES.fetch(defaults[:embedding_model])
     end
 
     private

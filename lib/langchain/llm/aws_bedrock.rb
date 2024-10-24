@@ -11,9 +11,9 @@ module Langchain::LLM
   #
   class AwsBedrock < Base
     DEFAULTS = {
-      chat_completion_model_name: "anthropic.claude-v2",
-      completion_model_name: "anthropic.claude-v2",
-      embeddings_model_name: "amazon.titan-embed-text-v1",
+      chat_model: "anthropic.claude-v2",
+      completion_model: "anthropic.claude-v2",
+      embedding_model: "amazon.titan-embed-text-v1",
       max_tokens_to_sample: 300,
       temperature: 1,
       top_k: 250,
@@ -60,7 +60,7 @@ module Langchain::LLM
       @defaults = DEFAULTS.merge(default_options)
 
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:chat_model]},
         temperature: {},
         max_tokens: {default: @defaults[:max_tokens_to_sample]},
         metadata: {},
@@ -84,7 +84,7 @@ module Langchain::LLM
       parameters = compose_embedding_parameters params.merge(text:)
 
       response = client.invoke_model({
-        model_id: @defaults[:embeddings_model_name],
+        model_id: @defaults[:embedding_model],
         body: parameters.to_json,
         content_type: "application/json",
         accept: "application/json"
@@ -103,14 +103,14 @@ module Langchain::LLM
     def complete(prompt:, **params)
       raise "Completion provider #{completion_provider} is not supported." unless SUPPORTED_COMPLETION_PROVIDERS.include?(completion_provider)
 
-      raise "Model #{@defaults[:completion_model_name]} only supports #chat." if @defaults[:completion_model_name].include?("claude-3")
+      raise "Model #{@defaults[:completion_model]} only supports #chat." if @defaults[:completion_model].include?("claude-3")
 
       parameters = compose_parameters params
 
       parameters[:prompt] = wrap_prompt prompt
 
       response = client.invoke_model({
-        model_id: @defaults[:completion_model_name],
+        model_id: @defaults[:completion_model],
         body: parameters.to_json,
         content_type: "application/json",
         accept: "application/json"
@@ -126,7 +126,7 @@ module Langchain::LLM
     # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
     # @option params [Array<String>] :messages The messages to generate a completion for
     # @option params [String] :system The system prompt to provide instructions
-    # @option params [String] :model The model to use for completion defaults to @defaults[:chat_completion_model_name]
+    # @option params [String] :model The model to use for completion defaults to @defaults[:chat_model]
     # @option params [Integer] :max_tokens The maximum number of tokens to generate defaults to @defaults[:max_tokens_to_sample]
     # @option params [Array<String>] :stop The stop sequences to use for completion
     # @option params [Array<String>] :stop_sequences The stop sequences to use for completion
@@ -175,11 +175,11 @@ module Langchain::LLM
     private
 
     def completion_provider
-      @defaults[:completion_model_name].split(".").first.to_sym
+      @defaults[:completion_model].split(".").first.to_sym
     end
 
     def embedding_provider
-      @defaults[:embeddings_model_name].split(".").first.to_sym
+      @defaults[:embedding_model].split(".").first.to_sym
     end
 
     def wrap_prompt(prompt)

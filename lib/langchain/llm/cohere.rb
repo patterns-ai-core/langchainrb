@@ -13,9 +13,9 @@ module Langchain::LLM
   class Cohere < Base
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "command",
-      chat_completion_model_name: "command-r-plus",
-      embeddings_model_name: "small",
+      completion_model: "command",
+      chat_model: "command-r-plus",
+      embedding_model: "small",
       dimensions: 1024,
       truncate: "START"
     }.freeze
@@ -26,7 +26,7 @@ module Langchain::LLM
       @client = ::Cohere::Client.new(api_key: api_key)
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:chat_model]},
         temperature: {default: @defaults[:temperature]},
         response_format: {default: @defaults[:response_format]}
       )
@@ -48,10 +48,10 @@ module Langchain::LLM
     def embed(text:)
       response = client.embed(
         texts: [text],
-        model: @defaults[:embeddings_model_name]
+        model: @defaults[:embedding_model]
       )
 
-      Langchain::LLM::CohereResponse.new response, model: @defaults[:embeddings_model_name]
+      Langchain::LLM::CohereResponse.new response, model: @defaults[:embedding_model]
     end
 
     #
@@ -65,7 +65,7 @@ module Langchain::LLM
       default_params = {
         prompt: prompt,
         temperature: @defaults[:temperature],
-        model: @defaults[:completion_model_name],
+        model: @defaults[:completion_model],
         truncate: @defaults[:truncate]
       }
 
@@ -76,7 +76,7 @@ module Langchain::LLM
       default_params.merge!(params)
 
       response = client.generate(**default_params)
-      Langchain::LLM::CohereResponse.new response, model: @defaults[:completion_model_name]
+      Langchain::LLM::CohereResponse.new response, model: @defaults[:completion_model]
     end
 
     # Generate a chat completion for given messages

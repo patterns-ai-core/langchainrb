@@ -49,7 +49,7 @@ RSpec.describe Langchain::LLM::Replicate do
       let(:subject) {
         described_class.new(
           api_key: "123",
-          default_options: {completion_model_name: "replicate/vicuna-foobar"}
+          default_options: {completion_model: "replicate/vicuna-foobar"}
         )
       }
 

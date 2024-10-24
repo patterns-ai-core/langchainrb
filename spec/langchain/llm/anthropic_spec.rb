@@ -14,7 +14,7 @@ RSpec.describe Langchain::LLM::Anthropic do
       before do
         allow(subject.client).to receive(:complete)
           .with(parameters: {
-            model: described_class::DEFAULTS[:completion_model_name],
+            model: described_class::DEFAULTS[:completion_model],
             prompt: completion,
             temperature: described_class::DEFAULTS[:temperature],
             max_tokens_to_sample: described_class::DEFAULTS[:max_tokens_to_sample]
@@ -37,7 +37,7 @@ RSpec.describe Langchain::LLM::Anthropic do
       before do
         allow(subject.client).to receive(:complete)
           .with(parameters: {
-            model: described_class::DEFAULTS[:completion_model_name],
+            model: described_class::DEFAULTS[:completion_model],
             prompt: completion,
             temperature: described_class::DEFAULTS[:temperature],
             max_tokens_to_sample: described_class::DEFAULTS[:max_tokens_to_sample]
@@ -60,7 +60,7 @@ RSpec.describe Langchain::LLM::Anthropic do
       before do
         allow(subject.client).to receive(:messages)
           .with(parameters: {
-            model: described_class::DEFAULTS[:chat_completion_model_name],
+            model: described_class::DEFAULTS[:chat_model],
             messages: messages,
             temperature: described_class::DEFAULTS[:temperature],
             max_tokens: described_class::DEFAULTS[:max_tokens_to_sample],

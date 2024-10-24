@@ -10,6 +10,12 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+
+## [0.19.0] - 2024-10-23
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `chat_completion_model_name` parameter to `chat_model` in Langchain::LLM parameters.
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `completion_model_name` parameter to `completion_model` in Langchain::LLM parameters.
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `embeddings_model_name` parameter to `embedding_model` in Langchain::LLM parameters.
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/850/] Fix MistralAIMessage to handle "Tool" Output
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/837] Fix bug when tool functions with no input variables are used with Langchain::LLM::Anthropic
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/836] Fix bug when assistant.instructions = nil did not remove the system message
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/838] Allow setting safety_settings: [] in default_options for Langchain::LLM::GoogleGemini and Langchain::LLM::GoogleVertexAI constructors
