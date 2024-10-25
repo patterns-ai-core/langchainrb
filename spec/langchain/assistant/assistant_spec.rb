@@ -237,7 +237,25 @@ RSpec.describe Langchain::Assistant do
                 {role: "system", content: [{type: "text", text: instructions}]},
                 {role: "user", content: [{type: "text", text: "Please calculate 2+2"}]}
               ],
-              tools: calculator.class.function_schemas.to_openai_format,
+              tools: [
+                {
+                  function: {
+                    description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+                    name: "langchain_tool_calculator__execute",
+                    parameters: {
+                      properties: {
+                        input: {
+                          description: "Math expression",
+                          type: "string"
+                        }
+                      },
+                      required: ["input"],
+                      type: "object"
+                    }
+                  },
+                  type: "function"
+                }
+              ],
               tool_choice: "auto",
               parallel_tool_calls: true
             )
@@ -290,7 +308,25 @@ RSpec.describe Langchain::Assistant do
                 ]},
                 {content: [{type: "text", text: "4.0"}], role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
               ],
-              tools: calculator.class.function_schemas.to_openai_format,
+              tools: [
+                {
+                  function: {
+                    description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+                    name: "langchain_tool_calculator__execute",
+                    parameters: {
+                      properties: {
+                        input: {
+                          description: "Math expression",
+                          type: "string"
+                        }
+                      },
+                      required: ["input"],
+                      type: "object"
+                    }
+                  },
+                  type: "function"
+                }
+              ],
               tool_choice: "auto",
               parallel_tool_calls: true
             )
@@ -610,7 +646,25 @@ RSpec.describe Langchain::Assistant do
                 {role: "system", content: [{type: "text", text: instructions}]},
                 {role: "user", content: [{type: "text", text: "Please calculate 2+2"}]}
               ],
-              tools: calculator.class.function_schemas.to_openai_format,
+              tools: [
+                {
+                  function: {
+                    description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+                    name: "langchain_tool_calculator__execute",
+                    parameters: {
+                      properties: {
+                        input: {
+                          description: "Math expression",
+                          type: "string"
+                        }
+                      },
+                      required: ["input"],
+                      type: "object"
+                    }
+                  },
+                  type: "function"
+                }
+              ],
               tool_choice: "auto"
             )
             .and_return(Langchain::LLM::MistralAIResponse.new(raw_mistralai_response))
@@ -662,7 +716,25 @@ RSpec.describe Langchain::Assistant do
                 ]},
                 {content: "4.0", role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
               ],
-              tools: calculator.class.function_schemas.to_openai_format,
+              tools: [
+                {
+                  function: {
+                    description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+                    name: "langchain_tool_calculator__execute",
+                    parameters: {
+                      properties: {
+                        input: {
+                          description: "Math expression",
+                          type: "string"
+                        }
+                      },
+                      required: ["input"],
+                      type: "object"
+                    }
+                  },
+                  type: "function"
+                }
+              ],
               tool_choice: "auto"
             )
             .and_return(Langchain::LLM::MistralAIResponse.new(raw_mistralai_response2))
