@@ -28,7 +28,7 @@ module Langchain
 
     # Create a new assistant
     #
-    # @param llm [Langchain::LLM::Base] LLM instance that the assistant will use
+    # @param llm [Langchain::LLM::Base, Langchain::Assistant::LLM::Adapters::Base] LLM instance that the assistant will use
     # @param tools [Array<Langchain::Tool::Base>] Tools that the assistant has access to
     # @param instructions [String] The system instructions
     # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
@@ -37,7 +37,6 @@ module Langchain
     # @param add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
     def initialize(
       llm:,
-      llm_adapter: LLM::Adapter.build(llm),
       tools: [],
       instructions: nil,
       tool_choice: "auto",
@@ -51,7 +50,14 @@ module Langchain
       end
 
       @llm = llm
-      @llm_adapter = llm_adapter
+      case llm
+      when Langchain::LLM::Base
+        @llm_adapter = LLM::Adapter.build(llm)
+      when Langchain::Assistant::LLM::Adapters::Base
+        @llm_adapter = llm
+      else
+        raise ArgumentError, "LLM has to be object extending Langchain::LLM::Base or Langchain::Assistant::LLM::Adapters::Base"
+      end
 
       # TODO: Validate that it is, indeed, a Proc or lambda
       if !add_message_callback.nil? && !add_message_callback.respond_to?(:call)
