@@ -83,7 +83,7 @@ module Langchain
           private
 
           def build_tools(tools)
-            tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten
+            tools.map { |tool| tool.class.function_schemas.functions }.flatten
           end
         end
       end

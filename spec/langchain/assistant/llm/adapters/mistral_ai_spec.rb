@@ -13,7 +13,25 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::MistralAI do
         )
       ).to eq({
         messages: [{role: "user", content: "Hello"}],
-        tools: Langchain::Tool::Calculator.function_schemas.to_openai_format,
+        tools: [
+          {
+            function: {
+              description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+              name: "langchain_tool_calculator__execute",
+              parameters: {
+                properties: {
+                  input: {
+                    description: "Math expression",
+                    type: "string"
+                  }
+                },
+                required: ["input"],
+                type: "object"
+              }
+            },
+            type: "function"
+          }
+        ],
         tool_choice: {"function" => {"name" => "langchain_tool_calculator__execute"}, "type" => "function"}
       })
     end

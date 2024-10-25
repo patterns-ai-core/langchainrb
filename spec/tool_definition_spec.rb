@@ -222,7 +222,7 @@ RSpec.describe Langchain::ToolDefinition do
       end
     end
 
-    describe "#to_openai_format" do
+    describe "#functions" do
       before do
         function_schemas.add_function(method_name: :test_method, description: "Test description") do
           property :test_prop, type: "string", description: "Test property"
@@ -230,7 +230,7 @@ RSpec.describe Langchain::ToolDefinition do
       end
 
       it "returns an array of function schemas" do
-        result = function_schemas.to_openai_format
+        result = function_schemas.functions
         expect(result).to be_an(Array)
         expect(result.first[:type]).to eq("function")
         expect(result.first[:function]).to be_a(Hash)

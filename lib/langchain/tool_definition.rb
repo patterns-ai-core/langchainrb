@@ -91,10 +91,10 @@ module Langchain::ToolDefinition
       }
     end
 
-    # Converts schemas to OpenAI-compatible format
+    # Returns list of schemas
     #
     # @return [String] JSON string of schemas in OpenAI format
-    def to_openai_format
+    def functions
       @schemas.values
     end
 
