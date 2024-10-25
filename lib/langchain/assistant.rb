@@ -227,7 +227,7 @@ module Langchain
 
     # TODO: If tool_choice = "tool_function_name" and then tool is removed from the assistant, should we set tool_choice back to "auto"?
     def validate_tool_choice!(tool_choice)
-      allowed_tool_choices = llm_adapter.allowed_tool_choices.concat(available_tool_names)
+      allowed_tool_choices = @llm_adapter.allowed_tool_choices.concat(available_tool_names)
       unless allowed_tool_choices.include?(tool_choice)
         raise ArgumentError, "Tool choice must be one of: #{allowed_tool_choices.join(", ")}"
       end
@@ -346,7 +346,7 @@ module Langchain
         tool_choice: tool_choice,
         parallel_tool_calls: parallel_tool_calls
       )
-      @llm.chat(**params, &@block)
+      @llm_adapter.chat(**params, &@block)
     end
 
     # Run the tools automatically
@@ -402,7 +402,7 @@ module Langchain
     end
 
     def available_tool_names
-      llm_adapter.available_tool_names(tools)
+      @llm_adapter.available_tool_names(tools)
     end
 
     def validate_callback!(attr_name, callback)

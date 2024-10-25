@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Assistant::LLM::Adapters::MistralAI do
+  let(:llm) { Langchain::LLM::MistralAI.new(api_key: "123") }
+  subject { described_class.new(llm: llm) }
+
   describe "#build_chat_params" do
     it "returns the chat parameters" do
       expect(

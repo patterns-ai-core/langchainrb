@@ -5,6 +5,14 @@ module Langchain
     module LLM
       module Adapters
         class Base
+          def initialize(llm:)
+            @llm = llm
+          end
+
+          def chat(...)
+            @llm.chat(...)
+          end
+
           # Build the chat parameters for the LLM
           #
           # @param messages [Array] The messages
