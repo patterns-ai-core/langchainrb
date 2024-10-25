@@ -1555,7 +1555,7 @@ RSpec.describe Langchain::Assistant do
         end
       end
     end
-    let(:llm_adapter) { llm_adapter_class.new }
+    let(:llm_adapter) { llm_adapter_class.new(llm: llm) }
     let(:calculator) { Langchain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
 

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Assistant::LLM::Adapters::Base do
+  let(:llm) { Class.new(Langchain::Assistant::LLM::Adapters::Base) }
+  subject { described_class.new(llm: llm) }
+
   describe "#build_chat_params" do
     it "raises NotImplementedError" do
       expect { subject.build_chat_params(tools: [], instructions: "", messages: [], tool_choice: "", parallel_tool_calls: false) }.to raise_error(NotImplementedError)
