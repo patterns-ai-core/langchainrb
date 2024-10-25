@@ -49,6 +49,9 @@ module Langchain
           end
         end
 
+        # Convert the message to an Anthropic API-compatible hash
+        #
+        # @return [Hash] The message as an Anthropic API-compatible hash, with the role as "assistant"
         def assistant_hash
           {
             role: "assistant",
@@ -60,6 +63,9 @@ module Langchain
           }
         end
 
+        # Convert the message to an Anthropic API-compatible hash
+        #
+        # @return [Hash] The message as an Anthropic API-compatible hash, with the role as "tool"
         def tool_hash
           {
             role: "user",
@@ -73,6 +79,9 @@ module Langchain
           }
         end
 
+        # Convert the message to an Anthropic API-compatible hash
+        #
+        # @return [Hash] The message as an Anthropic API-compatible hash, with the role as "user"
         def user_hash
           {
             role: "user",
@@ -98,7 +107,6 @@ module Langchain
               source: {
                 type: "base64",
                 data: image.base64,
-                # TODO: Pass the image media type
                 media_type: image.mime_type
               }
             }
