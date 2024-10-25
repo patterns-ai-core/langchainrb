@@ -558,7 +558,7 @@ Note that streaming is not currently supported for all LLMs.
 The Langchain::Assistant can be easily extended with custom tools by creating classes that `extend Langchain::ToolDefinition` module and implement required methods.
 ```ruby
 class MovieInfoTool
-  include Langchain::ToolDefinition
+  extend Langchain::ToolDefinition
 
   define_function :search_movie, description: "MovieInfoTool: Search for a movie by title" do
     property :query, type: "string", description: "The movie title to search for", required: true
