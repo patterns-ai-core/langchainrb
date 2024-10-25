@@ -98,22 +98,6 @@ module Langchain::ToolDefinition
       @schemas.values
     end
 
-    # Converts schemas to Anthropic-compatible format
-    #
-    # @return [String] JSON string of schemas in Anthropic format
-    def to_anthropic_format
-      @schemas.values.map do |schema|
-        # Adds a default input_schema if no parameters are present
-        schema[:function][:parameters] ||= {
-          type: "object",
-          properties: {},
-          required: []
-        }
-
-        schema[:function].transform_keys(parameters: :input_schema)
-      end
-    end
-
     # Converts schemas to Google Gemini-compatible format
     #
     # @return [String] JSON string of schemas in Google Gemini format
