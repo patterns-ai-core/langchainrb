@@ -236,20 +236,5 @@ RSpec.describe Langchain::ToolDefinition do
         expect(result.first[:function]).to be_a(Hash)
       end
     end
-
-    describe "#to_google_gemini_format" do
-      before do
-        function_schemas.add_function(method_name: :test_method, description: "Test description") do
-          property :test_prop, type: "string", description: "Test property"
-        end
-      end
-
-      it "returns an array of function schemas without the type key" do
-        result = function_schemas.to_google_gemini_format
-        expect(result).to be_an(Array)
-        expect(result.first).not_to have_key(:type)
-        expect(result.first[:name]).to eq("test_tool__test_method")
-      end
-    end
   end
 end

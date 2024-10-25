@@ -97,13 +97,6 @@ module Langchain::ToolDefinition
     def functions
       @schemas.values
     end
-
-    # Converts schemas to Google Gemini-compatible format
-    #
-    # @return [String] JSON string of schemas in Google Gemini format
-    def to_google_gemini_format
-      @schemas.values.map { |schema| schema[:function] }
-    end
   end
 
   # Builds parameter schemas for functions

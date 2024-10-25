@@ -1042,7 +1042,22 @@ RSpec.describe Langchain::Assistant do
           allow(subject.llm).to receive(:chat)
             .with(
               messages: [{role: "user", parts: [{text: "Please calculate 2+2"}]}],
-              tools: calculator.class.function_schemas.to_google_gemini_format,
+              tools: [
+                {
+                  name: "langchain_tool_calculator__execute",
+                  description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+                  parameters: {
+                    properties: {
+                      input: {
+                        description: "Math expression",
+                        type: "string"
+                      }
+                    },
+                    required: ["input"],
+                    type: "object"
+                  }
+                }
+              ],
               tool_choice: {function_calling_config: {mode: "auto"}},
               system: instructions
             )
@@ -1083,7 +1098,22 @@ RSpec.describe Langchain::Assistant do
                 {role: "model", parts: [{"functionCall" => {"name" => "langchain_tool_calculator__execute", "args" => {"input" => "2+2"}}}]},
                 {role: "function", parts: [{functionResponse: {name: "langchain_tool_calculator__execute", response: {name: "langchain_tool_calculator__execute", content: "4.0"}}}]}
               ],
-              tools: calculator.class.function_schemas.to_google_gemini_format,
+              tools: [
+                {
+                  name: "langchain_tool_calculator__execute",
+                  description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+                  parameters: {
+                    properties: {
+                      input: {
+                        description: "Math expression",
+                        type: "string"
+                      }
+                    },
+                    required: ["input"],
+                    type: "object"
+                  }
+                }
+              ],
               tool_choice: {function_calling_config: {mode: "auto"}},
               system: instructions
             )
