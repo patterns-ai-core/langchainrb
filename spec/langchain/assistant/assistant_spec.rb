@@ -1571,22 +1571,43 @@ RSpec.describe Langchain::Assistant do
 
     subject {
       described_class.new(
-        llm: llm,
-        llm_adapter: llm_adapter,
+        llm: llm_adapter,
         tools: [calculator],
         instructions: instructions
       )
     }
 
     describe ".new" do
-      it "initiates an assistant without error" do
-        expect { subject }.not_to raise_error
+      it "initiates an assistant without error using adapter as LLM" do
+        expect {
+          described_class.new(
+            llm: llm_adapter,
+            tools: [calculator],
+            instructions: instructions
+          )
+        }.not_to raise_error
+      end
+
+      it "raises an error when using unknown LLM" do
+        expect {
+          described_class.new(
+            llm: llm,
+            tools: [calculator],
+            instructions: instructions
+          )
+        }.to raise_error
       end
     end
 
     describe "#messages" do
       it "returns list of messages" do
-        expect(subject.messages).to contain_exactly(
+        expect(
+          described_class.new(
+            llm: llm_adapter,
+            tools: [calculator],
+            instructions: instructions
+          ).messages
+        ).to contain_exactly(
           an_object_having_attributes(
             role: "system",
             content: "You are an expert assistant"
