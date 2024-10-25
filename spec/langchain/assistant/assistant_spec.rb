@@ -1261,7 +1261,22 @@ RSpec.describe Langchain::Assistant do
           allow(subject.llm).to receive(:chat)
             .with(
               messages: [{role: "user", content: [{text: "Please calculate 2+2", type: "text"}]}],
-              tools: calculator.class.function_schemas.to_anthropic_format,
+              tools: [
+                {
+                  name: "langchain_tool_calculator__execute",
+                  description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+                  input_schema: {
+                    properties: {
+                      input: {
+                        description: "Math expression",
+                        type: "string"
+                      }
+                    },
+                    required: ["input"],
+                    type: "object"
+                  }
+                }
+              ],
               tool_choice: {disable_parallel_tool_use: false, type: "auto"},
               system: instructions
             )
@@ -1320,7 +1335,22 @@ RSpec.describe Langchain::Assistant do
                 ]},
                 {role: "user", content: [{type: "tool_result", tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H", content: "4.0"}]}
               ],
-              tools: calculator.class.function_schemas.to_anthropic_format,
+              tools: [
+                {
+                  name: "langchain_tool_calculator__execute",
+                  description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+                  input_schema: {
+                    properties: {
+                      input: {
+                        description: "Math expression",
+                        type: "string"
+                      }
+                    },
+                    required: ["input"],
+                    type: "object"
+                  }
+                }
+              ],
               tool_choice: {disable_parallel_tool_use: false, type: "auto"},
               system: instructions
             )

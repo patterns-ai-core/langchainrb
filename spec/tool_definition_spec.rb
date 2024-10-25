@@ -237,21 +237,6 @@ RSpec.describe Langchain::ToolDefinition do
       end
     end
 
-    describe "#to_anthropic_format" do
-      before do
-        function_schemas.add_function(method_name: :test_method, description: "Test description") do
-          property :test_prop, type: "string", description: "Test property"
-        end
-      end
-
-      it "returns an array of function schemas with input_schema instead of parameters" do
-        result = function_schemas.to_anthropic_format
-        expect(result).to be_an(Array)
-        expect(result.first).to have_key(:input_schema)
-        expect(result.first).not_to have_key(:parameters)
-      end
-    end
-
     describe "#to_google_gemini_format" do
       before do
         function_schemas.add_function(method_name: :test_method, description: "Test description") do
