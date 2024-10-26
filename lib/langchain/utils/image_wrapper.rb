@@ -26,7 +26,7 @@ module Langchain
       private
 
       def open_image
-        @open_image ||= URI.open(image_url)
+        @open_image ||= URI(image_url).open
       end
     end
   end
