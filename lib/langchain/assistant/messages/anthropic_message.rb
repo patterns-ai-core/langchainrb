@@ -69,6 +69,8 @@ module Langchain
         def tool_hash
           {
             role: "user",
+            # TODO: Tool can also return images
+            # https://docs.anthropic.com/en/docs/build-with-claude/tool-use#handling-tool-use-and-tool-result-content-blocks
             content: [
               {
                 type: "tool_result",
@@ -90,7 +92,7 @@ module Langchain
         end
 
         # Builds the content value for the message hash
-        # @return [Array<Hash>] An array of content hashes, with keys :type and :text or :image_url.
+        # @return [Array<Hash>] An array of content hashes
         def build_content_array
           content_details = []
 
