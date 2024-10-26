@@ -65,7 +65,7 @@ module Langchain
 
         # Convert the message to an Anthropic API-compatible hash
         #
-        # @return [Hash] The message as an Anthropic API-compatible hash, with the role as "tool"
+        # @return [Hash] The message as an Anthropic API-compatible hash, with the role as "user"
         def tool_hash
           {
             role: "user",
