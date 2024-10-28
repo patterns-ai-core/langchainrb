@@ -347,7 +347,7 @@ module Langchain
         tool_choice: tool_choice,
         parallel_tool_calls: parallel_tool_calls
       ).merge(@llm_options)
-      Langchain.logger.debug("#{self.class} - Sending params #{params}")
+
       @llm.chat(**params, &@block)
     end
 
