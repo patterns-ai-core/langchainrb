@@ -32,6 +32,25 @@ RSpec.describe Langchain::Assistant do
     it "parallel_tool_calls defaults to true" do
       expect(described_class.new(llm: llm).parallel_tool_calls).to eq(true)
     end
+
+    context "when llm_options are provided" do
+      it "passes them on to the LLM#chat" do
+        response = double(
+          "Response",
+          tool_calls: [],
+          role: "assistant",
+          chat_completion: :completed,
+          prompt_tokens: 0,
+          completion_tokens: 0,
+          total_tokens: 0,
+          completion: nil
+        )
+        expect(llm).to receive(:chat).with(hash_including(max_tokens: 1000)).and_return(response)
+        assistant = described_class.new(llm: llm, llm_options: {max_tokens: 1000})
+        assistant.add_message(content: "foo")
+        assistant.run
+      end
+    end
   end
 
   context "methods" do

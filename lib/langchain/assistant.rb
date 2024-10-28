@@ -43,6 +43,7 @@ module Langchain
       parallel_tool_calls: true,
       messages: [],
       add_message_callback: nil,
+      llm_options: {},
       &block
     )
       unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
@@ -51,6 +52,7 @@ module Langchain
 
       @llm = llm
       @llm_adapter = LLM::Adapter.build(llm)
+      @llm_options = llm_options
 
       # TODO: Validate that it is, indeed, a Proc or lambda
       if !add_message_callback.nil? && !add_message_callback.respond_to?(:call)
@@ -343,7 +345,7 @@ module Langchain
         tools: @tools,
         tool_choice: tool_choice,
         parallel_tool_calls: parallel_tool_calls
-      )
+      ).merge(@llm_options)
       @llm.chat(**params, &@block)
     end
 
