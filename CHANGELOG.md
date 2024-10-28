@@ -1,4 +1,5 @@
 # CHANGELOG
+- [FEATURE]: [https://github.com/patterns-ai-core/langchainrb/issues/860] Adding custom chat params
 
 ## Key
 - [BREAKING]: A breaking change. After an upgrade, your app may need modifications to keep working correctly.
