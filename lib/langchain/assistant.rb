@@ -35,6 +35,7 @@ module Langchain
     # @param parallel_tool_calls [Boolean] Whether or not to run tools in parallel
     # @param messages [Array<Langchain::Assistant::Messages::Base>] The messages
     # @param add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
+    # @param llm_options [Hash] A hash of options that get passed to the llm.chat call
     def initialize(
       llm:,
       tools: [],
@@ -346,6 +347,7 @@ module Langchain
         tool_choice: tool_choice,
         parallel_tool_calls: parallel_tool_calls
       ).merge(@llm_options)
+      Langchain.logger.debug("#{self.class} - Sending params #{params}")
       @llm.chat(**params, &@block)
     end
 
