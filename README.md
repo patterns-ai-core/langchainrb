@@ -133,7 +133,7 @@ messages = [
   { role: "system", content: "You are a helpful assistant." },
   { role: "user", content: "What's the weather like today?" }
   # Google Gemini and Google VertexAI expect messages in a different format:
-  # { role: "user", parts: [{ text: "why is the sky blue?" }]
+  # { role: "user", parts: [{ text: "why is the sky blue?" }]}
 ]
 response = llm.chat(messages: messages)
 chat_completion = response.chat_completion
