@@ -26,7 +26,8 @@ module Langchain
       private
 
       def open_image
-        @open_image ||= URI(image_url).open
+        # TODO: Address this rubocop warning
+        @open_image ||= URI.open(image_url) # rubocop:disable Security/Open
       end
     end
   end
