@@ -11,7 +11,7 @@
 
 ## [Unreleased]
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/858] Assistant, when using Anthropic, now also accepts image_url in the message.
-- [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/859] Clean up passing `max_tokens` to Anthropic constructor and chat method
+- [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/861] Clean up passing `max_tokens` to Anthropic constructor and chat method
 
 ## [0.19.0] - 2024-10-23
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `chat_completion_model_name` parameter to `chat_model` in Langchain::LLM parameters.
