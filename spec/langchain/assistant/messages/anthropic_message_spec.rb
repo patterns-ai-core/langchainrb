@@ -6,53 +6,107 @@ RSpec.describe Langchain::Assistant::Messages::AnthropicMessage do
   end
 
   describe "#to_hash" do
-    it "returns function" do
-      message = described_class.new(role: "tool_result", content: "4.0", tool_call_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H")
-      expect(message.to_hash).to eq(
-        {
-          role: "user",
-          content: [
+    context "when role is assistant" do
+      let(:role) { "assistant" }
+
+      it "returns assistant_hash" do
+        message = described_class.new(role: role, content: "Hello, how can I help you?")
+        expect(message).to receive(:assistant_hash).and_call_original
+        expect(message.to_hash).to eq(
+          role: role,
+          content: "Hello, how can I help you?"
+        )
+      end
+
+      it "returns assistant_hash with tool_calls" do
+        message = described_class.new(
+          role: role,
+          tool_calls: [
             {
-              type: "tool_result",
-              tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
-              content: "4.0"
+              "type" => "tool_use",
+              "id" => "toolu_01UEciZACvRZ6S4rqAwD1syH",
+              "name" => "news_retriever__get_everything",
+              "input" => {
+                "q" => "Google I/O 2024",
+                "sort_by" => "publishedAt",
+                "language" => "en"
+              }
             }
           ]
-        }
-      )
+        )
+        expect(message.to_hash).to eq(
+          role: role,
+          content: [
+            {
+              "type" => "tool_use",
+              "id" => "toolu_01UEciZACvRZ6S4rqAwD1syH",
+              "name" => "news_retriever__get_everything",
+              "input" => {
+                "q" => "Google I/O 2024",
+                "sort_by" => "publishedAt",
+                "language" => "en"
+              }
+            }
+          ]
+        )
+      end
     end
 
-    it "returns tool_calls" do
-      message = described_class.new(
-        role: "assistant",
-        tool_calls: [
+    context "when role is tool_result" do
+      let(:message) { described_class.new(role: "tool_result", content: "4.0", tool_call_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H") }
+
+      it "returns tool_hash" do
+        expect(message).to receive(:tool_hash).and_call_original
+        expect(message.to_hash).to eq(
           {
-            "type" => "tool_use",
-            "id" => "toolu_01UEciZACvRZ6S4rqAwD1syH",
-            "name" => "news_retriever__get_everything",
-            "input" => {
-              "q" => "Google I/O 2024",
-              "sort_by" => "publishedAt",
-              "language" => "en"
-            }
+            role: "user",
+            content: [
+              {
+                type: "tool_result",
+                tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
+                content: "4.0"
+              }
+            ]
           }
-        ]
-      )
-      expect(message.to_hash).to eq(
-        role: "assistant",
-        content: [
-          {
-            "type" => "tool_use",
-            "id" => "toolu_01UEciZACvRZ6S4rqAwD1syH",
-            "name" => "news_retriever__get_everything",
-            "input" => {
-              "q" => "Google I/O 2024",
-              "sort_by" => "publishedAt",
-              "language" => "en"
+        )
+      end
+    end
+
+    context "when role is user" do
+      let(:role) { "user" }
+
+      it "returns user_hash" do
+        message = described_class.new(role: role, content: "Hello, how can I help you?")
+        expect(message).to receive(:user_hash).and_call_original
+        expect(message.to_hash).to eq(
+          role: role,
+          content: [
+            {
+              type: "text",
+              text: "Hello, how can I help you?"
             }
-          }
-        ]
-      )
+          ]
+        )
+      end
+
+      it "returns user_hash with image_url" do
+        message = described_class.new(role: role, image_url: "https://example.com/image.jpg")
+        allow(message).to receive(:image).and_return(double(base64: "base64_data", mime_type: "image/jpeg"))
+
+        expect(message.to_hash).to eq(
+          role: role,
+          content: [
+            {
+              type: "image",
+              source: {
+                type: "base64",
+                data: "base64_data",
+                media_type: "image/jpeg"
+              }
+            }
+          ]
+        )
+      end
     end
   end
 end
