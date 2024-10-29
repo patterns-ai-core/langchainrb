@@ -5,6 +5,30 @@ require "anthropic"
 RSpec.describe Langchain::LLM::Anthropic do
   let(:subject) { described_class.new(api_key: "123") }
 
+  describe "#initialize" do
+    context "when default_options are passed" do
+      let(:default_options) { {max_tokens: 512} }
+
+      subject { described_class.new(api_key: "123", default_options: default_options) }
+
+      it "sets the defaults options" do
+        expect(subject.defaults[:max_tokens]).to eq(512)
+      end
+
+      it "get passed to consecutive chat() call" do
+        subject
+        expect(subject.client).to receive(:messages).with(parameters: hash_including(default_options)).and_return({})
+        subject.chat(messages: [{role: "user", content: "Hello json!"}])
+      end
+
+      it "can be overridden" do
+        subject
+        expect(subject.client).to receive(:messages).with(parameters: hash_including({max_tokens: 1024})).and_return({})
+        subject.chat(messages: [{role: "user", content: "Hello json!"}], max_tokens: 1024)
+      end
+    end
+  end
+
   describe "#complete" do
     let(:completion) { "How high is the sky?" }
     let(:fixture) { File.read("spec/fixtures/llm/anthropic/complete.json") }
@@ -17,7 +41,7 @@ RSpec.describe Langchain::LLM::Anthropic do
             model: described_class::DEFAULTS[:completion_model],
             prompt: completion,
             temperature: described_class::DEFAULTS[:temperature],
-            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens_to_sample]
+            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens]
           })
           .and_return(response)
       end
@@ -40,7 +64,7 @@ RSpec.describe Langchain::LLM::Anthropic do
             model: described_class::DEFAULTS[:completion_model],
             prompt: completion,
             temperature: described_class::DEFAULTS[:temperature],
-            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens_to_sample]
+            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens]
           })
           .and_return(JSON.parse(fixture))
       end
@@ -63,7 +87,7 @@ RSpec.describe Langchain::LLM::Anthropic do
             model: described_class::DEFAULTS[:chat_model],
             messages: messages,
             temperature: described_class::DEFAULTS[:temperature],
-            max_tokens: described_class::DEFAULTS[:max_tokens_to_sample],
+            max_tokens: described_class::DEFAULTS[:max_tokens],
             stop_sequences: ["beep"]
           })
           .and_return(response)
