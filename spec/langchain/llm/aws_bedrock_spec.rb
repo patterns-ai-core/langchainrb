@@ -385,7 +385,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
       let(:subject) { described_class.new(default_options: {completion_model: "unsupported.provider"}) }
 
       it "raises an exception" do
-        expect { subject.complete(prompt: "Hello World") }.to raise_error("Completion provider unsupported is not supported.")
+        expect { subject.complete(prompt: "Hello World") }.to raise_error("Completion provider unsupported.provider is not supported.")
       end
     end
   end
