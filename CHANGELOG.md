@@ -1,5 +1,4 @@
 # CHANGELOG
-- [FEATURE]: [https://github.com/patterns-ai-core/langchainrb/issues/860] Adding custom chat params
 
 ## Key
 - [BREAKING]: A breaking change. After an upgrade, your app may need modifications to keep working correctly.
@@ -12,6 +11,7 @@
 
 ## [Unreleased]
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/858] Assistant, when using Anthropic, now also accepts image_url in the message.
+- [FEATURE]: [https://github.com/patterns-ai-core/langchainrb/issues/860] Adding custom chat params
 
 ## [0.19.0] - 2024-10-23
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `chat_completion_model_name` parameter to `chat_model` in Langchain::LLM parameters.
