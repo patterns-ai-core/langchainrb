@@ -641,14 +641,14 @@ RSpec.describe Langchain::Assistant do
               messages: [
                 {role: "system", content: [{type: "text", text: instructions}]},
                 {role: "user", content: [{type: "text", text: "Please calculate 2+2"}]},
-                {role: "assistant", tool_calls: [
+                {role: "assistant", prefix: false, content: "", tool_calls: [
                   {
                     "function" => {"arguments" => "{\"input\":\"2+2\"}", "name" => "langchain_tool_calculator__execute"},
                     "id" => "call_9TewGANaaIjzY31UCpAAGLeV",
                     "type" => "function"
                   }
                 ]},
-                {content: [{type: "text", text: "4.0"}], role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
+                {content: "4.0", role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
               ],
               tools: calculator.class.function_schemas.to_openai_format,
               tool_choice: "auto"
@@ -1146,7 +1146,7 @@ RSpec.describe Langchain::Assistant do
         before do
           allow(subject.llm).to receive(:chat)
             .with(
-              messages: [{role: "user", content: "Please calculate 2+2"}],
+              messages: [{role: "user", content: [{text: "Please calculate 2+2", type: "text"}]}],
               tools: calculator.class.function_schemas.to_anthropic_format,
               tool_choice: {disable_parallel_tool_use: false, type: "auto"},
               system: instructions
@@ -1191,7 +1191,7 @@ RSpec.describe Langchain::Assistant do
           allow(subject.llm).to receive(:chat)
             .with(
               messages: [
-                {role: "user", content: "Please calculate 2+2"},
+                {role: "user", content: [{text: "Please calculate 2+2", type: "text"}]},
                 {role: "assistant", content: [
                   {
                     "type" => "tool_use",

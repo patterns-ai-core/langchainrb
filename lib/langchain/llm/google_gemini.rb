@@ -5,8 +5,8 @@ module Langchain::LLM
   #     llm = Langchain::LLM::GoogleGemini.new(api_key: ENV['GOOGLE_GEMINI_API_KEY'])
   class GoogleGemini < Base
     DEFAULTS = {
-      chat_completion_model_name: "gemini-1.5-pro-latest",
-      embeddings_model_name: "text-embedding-004",
+      chat_model: "gemini-1.5-pro-latest",
+      embedding_model: "text-embedding-004",
       temperature: 0.0
     }
 
@@ -17,7 +17,7 @@ module Langchain::LLM
       @defaults = DEFAULTS.merge(default_options)
 
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:chat_model]},
         temperature: {default: @defaults[:temperature]},
         generation_config: {default: nil},
         safety_settings: {default: @defaults[:safety_settings]}
@@ -72,9 +72,8 @@ module Langchain::LLM
 
     def embed(
       text:,
-      model: @defaults[:embeddings_model_name]
+      model: @defaults[:embedding_model]
     )
-
       params = {
         content: {
           parts: [

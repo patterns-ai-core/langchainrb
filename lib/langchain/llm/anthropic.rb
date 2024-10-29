@@ -13,16 +13,16 @@ module Langchain::LLM
   class Anthropic < Base
     DEFAULTS = {
       temperature: 0.0,
-      completion_model_name: "claude-2.1",
-      chat_completion_model_name: "claude-3-5-sonnet-20240620",
-      max_tokens_to_sample: 256
+      completion_model: "claude-2.1",
+      chat_model: "claude-3-5-sonnet-20240620",
+      max_tokens: 256
     }.freeze
 
     # Initialize an Anthropic LLM instance
     #
     # @param api_key [String] The API key to use
     # @param llm_options [Hash] Options to pass to the Anthropic client
-    # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, completion_model_name:, chat_completion_model_name:, max_tokens_to_sample: }
+    # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, completion_model:, chat_model:, max_tokens: }
     # @return [Langchain::LLM::Anthropic] Langchain::LLM::Anthropic instance
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "anthropic"
@@ -30,9 +30,9 @@ module Langchain::LLM
       @client = ::Anthropic::Client.new(access_token: api_key, **llm_options)
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:chat_model]},
         temperature: {default: @defaults[:temperature]},
-        max_tokens: {default: @defaults[:max_tokens_to_sample]},
+        max_tokens: {default: @defaults[:max_tokens]},
         metadata: {},
         system: {}
       )
@@ -54,8 +54,8 @@ module Langchain::LLM
     # @return [Langchain::LLM::AnthropicResponse] The completion
     def complete(
       prompt:,
-      model: @defaults[:completion_model_name],
-      max_tokens_to_sample: @defaults[:max_tokens_to_sample],
+      model: @defaults[:completion_model],
+      max_tokens: @defaults[:max_tokens],
       stop_sequences: nil,
       temperature: @defaults[:temperature],
       top_p: nil,
@@ -64,12 +64,12 @@ module Langchain::LLM
       stream: nil
     )
       raise ArgumentError.new("model argument is required") if model.empty?
-      raise ArgumentError.new("max_tokens_to_sample argument is required") if max_tokens_to_sample.nil?
+      raise ArgumentError.new("max_tokens argument is required") if max_tokens.nil?
 
       parameters = {
         model: model,
         prompt: prompt,
-        max_tokens_to_sample: max_tokens_to_sample,
+        max_tokens_to_sample: max_tokens,
         temperature: temperature
       }
       parameters[:stop_sequences] = stop_sequences if stop_sequences

@@ -86,7 +86,7 @@ Most LLM classes can be initialized with an API key and optional default options
 ```ruby
 llm = Langchain::LLM::OpenAI.new(
   api_key: ENV["OPENAI_API_KEY"],
-  default_options: { temperature: 0.7, chat_completion_model_name: "gpt-4o" }
+  default_options: { temperature: 0.7, chat_model: "gpt-4o" }
 )
 ```
 
@@ -133,7 +133,7 @@ messages = [
   { role: "system", content: "You are a helpful assistant." },
   { role: "user", content: "What's the weather like today?" }
   # Google Gemini and Google VertexAI expect messages in a different format:
-  # { role: "user", parts: [{ text: "why is the sky blue?" }]
+  # { role: "user", parts: [{ text: "why is the sky blue?" }]}
 ]
 response = llm.chat(messages: messages)
 chat_completion = response.chat_completion
@@ -558,7 +558,7 @@ Note that streaming is not currently supported for all LLMs.
 The Langchain::Assistant can be easily extended with custom tools by creating classes that `extend Langchain::ToolDefinition` module and implement required methods.
 ```ruby
 class MovieInfoTool
-  include Langchain::ToolDefinition
+  extend Langchain::ToolDefinition
 
   define_function :search_movie, description: "MovieInfoTool: Search for a movie by title" do
     property :query, type: "string", description: "The movie title to search for", required: true

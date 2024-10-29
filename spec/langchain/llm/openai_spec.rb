@@ -91,8 +91,14 @@ RSpec.describe Langchain::LLM::OpenAI do
 
       it "get passed to consecutive chat() call" do
         subject
-        expect(subject.client).to receive(:chat).with(parameters: hash_including({response_format: {type: "json_object"}})).and_return({})
+        expect(subject.client).to receive(:chat).with(parameters: hash_including(default_options)).and_return({})
         subject.chat(messages: [{role: "user", content: "Hello json!"}])
+      end
+
+      it "can be overridden" do
+        subject
+        expect(subject.client).to receive(:chat).with(parameters: hash_including({response_format: {type: "text"}})).and_return({})
+        subject.chat(messages: [{role: "user", content: "Hello json!"}], response_format: {type: "text"})
       end
     end
   end
@@ -185,7 +191,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
         let(:subject) do
           described_class.new(api_key: "123", default_options: {
-            embeddings_model_name: model,
+            embedding_model: model,
             dimensions: dimensions_size
           })
         end
@@ -344,7 +350,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         let(:subject) {
           described_class.new(
             api_key: "123",
-            default_options: {completion_model_name: "text-davinci-003"}
+            default_options: {completion_model: "text-davinci-003"}
           )
         }
         let(:parameters) do
@@ -383,7 +389,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         let(:subject) {
           described_class.new(
             api_key: "123",
-            default_options: {completion_model_name: "gpt-3.5-turbo-16k"}
+            default_options: {completion_model: "gpt-3.5-turbo-16k"}
           )
         }
 
@@ -450,7 +456,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     context "when the dimensions is passed as an argument" do
       let(:subject) do
         described_class.new(api_key: "123", default_options: {
-          embeddings_model_name: "text-embedding-3-small",
+          embedding_model: "text-embedding-3-small",
           dimensions: 512
         })
       end
