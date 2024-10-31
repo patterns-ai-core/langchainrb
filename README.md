@@ -660,7 +660,7 @@ gem install unicode -- --with-cflags="-Wno-incompatible-function-pointer-types"
 
 1. `git clone https://github.com/andreibondarev/langchainrb.git`
 2. `cp .env.example .env`, then fill out the environment variables in `.env`
-3. `bundle exec rake` to ensure that the tests pass and to run standardrb
+3. `bundle exec rake` to ensure that the tests pass and to run standardrb. Note that `Langchain::LLM::AwsBedrock` tests require valid AWS credentials. Refer to the [Aws::BedrockRuntime::Client API documentation](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/BedrockRuntime/Client.html#initialize-instance_method) for more details.
 4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
 5. Optionally, install lefthook git hooks for pre-commit to auto lint: `gem install lefthook && lefthook install -f`
 
