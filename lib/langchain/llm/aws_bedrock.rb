@@ -7,51 +7,40 @@ module Langchain::LLM
   #    gem 'aws-sdk-bedrockruntime', '~> 1.1'
   #
   # Usage:
-  #    llm = Langchain::LLM::AwsBedrock.new(llm_options: {})
+  #    llm = Langchain::LLM::AwsBedrock.new(default_options: {})
   #
   class AwsBedrock < Base
     DEFAULTS = {
-      chat_model: "anthropic.claude-v2",
-      completion_model: "anthropic.claude-v2",
+      chat_model: "anthropic.claude-3-5-sonnet-20240620-v1:0",
+      completion_model: "anthropic.claude-v2:1",
       embedding_model: "amazon.titan-embed-text-v1",
       max_tokens_to_sample: 300,
       temperature: 1,
       top_k: 250,
       top_p: 0.999,
       stop_sequences: ["\n\nHuman:"],
-      anthropic_version: "bedrock-2023-05-31",
-      return_likelihoods: "NONE",
-      count_penalty: {
-        scale: 0,
-        apply_to_whitespaces: false,
-        apply_to_punctuations: false,
-        apply_to_numbers: false,
-        apply_to_stopwords: false,
-        apply_to_emojis: false
-      },
-      presence_penalty: {
-        scale: 0,
-        apply_to_whitespaces: false,
-        apply_to_punctuations: false,
-        apply_to_numbers: false,
-        apply_to_stopwords: false,
-        apply_to_emojis: false
-      },
-      frequency_penalty: {
-        scale: 0,
-        apply_to_whitespaces: false,
-        apply_to_punctuations: false,
-        apply_to_numbers: false,
-        apply_to_stopwords: false,
-        apply_to_emojis: false
-      }
+      return_likelihoods: "NONE"
     }.freeze
 
     attr_reader :client, :defaults
 
-    SUPPORTED_COMPLETION_PROVIDERS = %i[anthropic ai21 cohere meta].freeze
-    SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[anthropic].freeze
-    SUPPORTED_EMBEDDING_PROVIDERS = %i[amazon cohere].freeze
+    SUPPORTED_COMPLETION_PROVIDERS = %i[
+      anthropic
+      ai21
+      cohere
+      meta
+    ].freeze
+
+    SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[
+      anthropic
+      ai21
+      mistral
+    ].freeze
+
+    SUPPORTED_EMBEDDING_PROVIDERS = %i[
+      amazon
+      cohere
+    ].freeze
 
     def initialize(aws_client_options: {}, default_options: {})
       depends_on "aws-sdk-bedrockruntime", req: "aws-sdk-bedrockruntime"
@@ -64,8 +53,7 @@ module Langchain::LLM
         temperature: {},
         max_tokens: {default: @defaults[:max_tokens_to_sample]},
         metadata: {},
-        system: {},
-        anthropic_version: {default: "bedrock-2023-05-31"}
+        system: {}
       )
       chat_parameters.ignore(:n, :user)
       chat_parameters.remap(stop: :stop_sequences)
@@ -100,23 +88,25 @@ module Langchain::LLM
     # @param params  extra parameters passed to Aws::BedrockRuntime::Client#invoke_model
     # @return [Langchain::LLM::AnthropicResponse], [Langchain::LLM::CohereResponse] or [Langchain::LLM::AI21Response] Response object
     #
-    def complete(prompt:, **params)
-      raise "Completion provider #{completion_provider} is not supported." unless SUPPORTED_COMPLETION_PROVIDERS.include?(completion_provider)
+    def complete(
+      prompt:,
+      model: @defaults[:completion_model],
+      **params
+    )
+      raise "Completion provider #{model} is not supported." unless SUPPORTED_COMPLETION_PROVIDERS.include?(provider_name(model))
 
-      raise "Model #{@defaults[:completion_model]} only supports #chat." if @defaults[:completion_model].include?("claude-3")
-
-      parameters = compose_parameters params
+      parameters = compose_parameters(params, model)
 
       parameters[:prompt] = wrap_prompt prompt
 
       response = client.invoke_model({
-        model_id: @defaults[:completion_model],
+        model_id: model,
         body: parameters.to_json,
         content_type: "application/json",
         accept: "application/json"
       })
 
-      parse_response response
+      parse_response(response, model)
     end
 
     # Generate a chat completion for a given prompt
@@ -137,10 +127,11 @@ module Langchain::LLM
     # @return [Langchain::LLM::AnthropicResponse] Response object
     def chat(params = {}, &block)
       parameters = chat_parameters.to_params(params)
+      parameters = compose_parameters(parameters, parameters[:model])
 
-      raise ArgumentError.new("messages argument is required") if Array(parameters[:messages]).empty?
-
-      raise "Model #{parameters[:model]} does not support chat completions." unless Langchain::LLM::AwsBedrock::SUPPORTED_CHAT_COMPLETION_PROVIDERS.include?(completion_provider)
+      unless SUPPORTED_CHAT_COMPLETION_PROVIDERS.include?(provider_name(parameters[:model]))
+        raise "Chat provider #{parameters[:model]} is not supported."
+      end
 
       if block
         response_chunks = []
@@ -168,11 +159,25 @@ module Langchain::LLM
           accept: "application/json"
         })
 
-        parse_response response
+        parse_response(response, parameters[:model])
       end
     end
 
     private
+
+    def parse_model_id(model_id)
+      model_id
+        .gsub("us.", "") # Meta append "us." to their model ids
+        .split(".")
+    end
+
+    def provider_name(model_id)
+      parse_model_id(model_id).first.to_sym
+    end
+
+    def model_name(model_id)
+      parse_model_id(model_id).last
+    end
 
     def completion_provider
       @defaults[:completion_model].split(".").first.to_sym
@@ -200,15 +205,17 @@ module Langchain::LLM
       end
     end
 
-    def compose_parameters(params)
-      if completion_provider == :anthropic
-        compose_parameters_anthropic params
-      elsif completion_provider == :cohere
-        compose_parameters_cohere params
-      elsif completion_provider == :ai21
-        compose_parameters_ai21 params
-      elsif completion_provider == :meta
-        compose_parameters_meta params
+    def compose_parameters(params, model_id)
+      if provider_name(model_id) == :anthropic
+        compose_parameters_anthropic(params)
+      elsif provider_name(model_id) == :cohere
+        compose_parameters_cohere(params)
+      elsif provider_name(model_id) == :ai21
+        params
+      elsif provider_name(model_id) == :meta
+        params
+      elsif provider_name(model_id) == :mistral
+        params
       end
     end
 
@@ -220,15 +227,17 @@ module Langchain::LLM
       end
     end
 
-    def parse_response(response)
-      if completion_provider == :anthropic
+    def parse_response(response, model_id)
+      if provider_name(model_id) == :anthropic
         Langchain::LLM::AnthropicResponse.new(JSON.parse(response.body.string))
-      elsif completion_provider == :cohere
+      elsif provider_name(model_id) == :cohere
         Langchain::LLM::CohereResponse.new(JSON.parse(response.body.string))
-      elsif completion_provider == :ai21
+      elsif provider_name(model_id) == :ai21
         Langchain::LLM::AI21Response.new(JSON.parse(response.body.string, symbolize_names: true))
-      elsif completion_provider == :meta
+      elsif provider_name(model_id) == :meta
         Langchain::LLM::AwsBedrockMetaResponse.new(JSON.parse(response.body.string))
+      elsif provider_name(model_id) == :mistral
+        Langchain::LLM::MistralAIResponse.new(JSON.parse(response.body.string))
       end
     end
 
@@ -276,61 +285,7 @@ module Langchain::LLM
     end
 
     def compose_parameters_anthropic(params)
-      default_params = @defaults.merge(params)
-
-      {
-        max_tokens_to_sample: default_params[:max_tokens_to_sample],
-        temperature: default_params[:temperature],
-        top_k: default_params[:top_k],
-        top_p: default_params[:top_p],
-        stop_sequences: default_params[:stop_sequences],
-        anthropic_version: default_params[:anthropic_version]
-      }
-    end
-
-    def compose_parameters_ai21(params)
-      default_params = @defaults.merge(params)
-
-      {
-        maxTokens: default_params[:max_tokens_to_sample],
-        temperature: default_params[:temperature],
-        topP: default_params[:top_p],
-        stopSequences: default_params[:stop_sequences],
-        countPenalty: {
-          scale: default_params[:count_penalty][:scale],
-          applyToWhitespaces: default_params[:count_penalty][:apply_to_whitespaces],
-          applyToPunctuations: default_params[:count_penalty][:apply_to_punctuations],
-          applyToNumbers: default_params[:count_penalty][:apply_to_numbers],
-          applyToStopwords: default_params[:count_penalty][:apply_to_stopwords],
-          applyToEmojis: default_params[:count_penalty][:apply_to_emojis]
-        },
-        presencePenalty: {
-          scale: default_params[:presence_penalty][:scale],
-          applyToWhitespaces: default_params[:presence_penalty][:apply_to_whitespaces],
-          applyToPunctuations: default_params[:presence_penalty][:apply_to_punctuations],
-          applyToNumbers: default_params[:presence_penalty][:apply_to_numbers],
-          applyToStopwords: default_params[:presence_penalty][:apply_to_stopwords],
-          applyToEmojis: default_params[:presence_penalty][:apply_to_emojis]
-        },
-        frequencyPenalty: {
-          scale: default_params[:frequency_penalty][:scale],
-          applyToWhitespaces: default_params[:frequency_penalty][:apply_to_whitespaces],
-          applyToPunctuations: default_params[:frequency_penalty][:apply_to_punctuations],
-          applyToNumbers: default_params[:frequency_penalty][:apply_to_numbers],
-          applyToStopwords: default_params[:frequency_penalty][:apply_to_stopwords],
-          applyToEmojis: default_params[:frequency_penalty][:apply_to_emojis]
-        }
-      }
-    end
-
-    def compose_parameters_meta(params)
-      default_params = @defaults.merge(params)
-
-      {
-        temperature: default_params[:temperature],
-        top_p: default_params[:top_p],
-        max_gen_len: default_params[:max_tokens_to_sample]
-      }
+      params.merge(anthropic_version: "bedrock-2023-05-31")
     end
 
     def response_from_chunks(chunks)

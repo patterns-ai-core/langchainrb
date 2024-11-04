@@ -91,8 +91,14 @@ RSpec.describe Langchain::LLM::OpenAI do
 
       it "get passed to consecutive chat() call" do
         subject
-        expect(subject.client).to receive(:chat).with(parameters: hash_including({response_format: {type: "json_object"}})).and_return({})
+        expect(subject.client).to receive(:chat).with(parameters: hash_including(default_options)).and_return({})
         subject.chat(messages: [{role: "user", content: "Hello json!"}])
+      end
+
+      it "can be overridden" do
+        subject
+        expect(subject.client).to receive(:chat).with(parameters: hash_including({response_format: {type: "text"}})).and_return({})
+        subject.chat(messages: [{role: "user", content: "Hello json!"}], response_format: {type: "text"})
       end
     end
   end
