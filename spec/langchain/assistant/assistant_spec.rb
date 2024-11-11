@@ -1110,6 +1110,10 @@ RSpec.describe Langchain::Assistant do
           },
           "content" => [
             {
+              "type" => "text",
+              "text" => "Sure, let's calculate it!"
+            },
+            {
               "type" => "tool_use",
               "id" => "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
               "name" => "langchain_tool_calculator__execute",
@@ -1159,7 +1163,7 @@ RSpec.describe Langchain::Assistant do
           subject.run(auto_tool_execution: false)
 
           expect(subject.messages.last.role).to eq("assistant")
-          expect(subject.messages.last.tool_calls).to eq([raw_anthropic_response["content"].first])
+          expect(subject.messages.last.tool_calls).to eq([raw_anthropic_response["content"].last])
         end
 
         it "adds a system param to chat when instructions are given" do
@@ -1194,6 +1198,10 @@ RSpec.describe Langchain::Assistant do
                 {role: "user", content: [{text: "Please calculate 2+2", type: "text"}]},
                 {role: "assistant", content: [
                   {
+                    type: "text",
+                    text: "Sure, let's calculate it!"
+                  },
+                  {
                     "type" => "tool_use",
                     "id" => "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
                     "name" => "langchain_tool_calculator__execute",
@@ -1215,7 +1223,11 @@ RSpec.describe Langchain::Assistant do
           ).and_return("4.0")
 
           subject.add_message(role: "user", content: "Please calculate 2+2")
-          subject.add_message(role: "assistant", tool_calls: raw_anthropic_response["content"])
+          subject.add_message(
+            role: "assistant",
+            content: raw_anthropic_response["content"].first["text"],
+            tool_calls: [raw_anthropic_response["content"].last]
+          )
 
           subject.run(auto_tool_execution: true)
 

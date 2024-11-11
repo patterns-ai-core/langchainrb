@@ -13,7 +13,9 @@
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/858] Assistant, when using Anthropic, now also accepts image_url in the message.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/861] Clean up passing `max_tokens` to Anthropic constructor and chat method
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/849] Langchain::Assistant now works with AWS Bedrock-hosted Anthropic models
+- [OPTIM] [https://github.com/patterns-ai-core/langchainrb/pull/867] Refactor `GoogleGeminiMessage#to_hash` and `OpenAIMessage#to_hash` methods.
 - [OPTIM] [https://github.com/patterns-ai-core/langchainrb/pull/849] Simplify Langchain::LLM::AwsBedrock class
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/869] AnthropicMessage now correctly handles tool calls with content.
 
 ## [0.19.0] - 2024-10-23
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `chat_completion_model_name` parameter to `chat_model` in Langchain::LLM parameters.

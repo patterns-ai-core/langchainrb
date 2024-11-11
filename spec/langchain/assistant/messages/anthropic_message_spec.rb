@@ -14,13 +14,19 @@ RSpec.describe Langchain::Assistant::Messages::AnthropicMessage do
         expect(message).to receive(:assistant_hash).and_call_original
         expect(message.to_hash).to eq(
           role: role,
-          content: "Hello, how can I help you?"
+          content: [
+            {
+              type: "text",
+              text: "Hello, how can I help you?"
+            }
+          ]
         )
       end
 
       it "returns assistant_hash with tool_calls" do
         message = described_class.new(
           role: role,
+          content: "Okay, let's fetch the news",
           tool_calls: [
             {
               "type" => "tool_use",
@@ -37,6 +43,10 @@ RSpec.describe Langchain::Assistant::Messages::AnthropicMessage do
         expect(message.to_hash).to eq(
           role: role,
           content: [
+            {
+              type: "text",
+              text: "Okay, let's fetch the news"
+            },
             {
               "type" => "tool_use",
               "id" => "toolu_01UEciZACvRZ6S4rqAwD1syH",
