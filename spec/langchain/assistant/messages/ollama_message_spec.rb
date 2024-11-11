@@ -81,6 +81,16 @@ RSpec.describe Langchain::Assistant::Messages::OllamaMessage do
         expect(message.to_hash).to eq({role: "assistant", content: "", tool_calls: [tool_call]})
       end
     end
+
+    context "with an image" do
+      let(:message) { described_class.new(role: "user", content: "Describe this image", image_url: "https://example.com/image.jpg") }
+
+      it "returns a hash with the images key" do
+        allow(message).to receive(:image).and_return(double(base64: "base64_data", mime_type: "image/jpeg"))
+
+        expect(message.to_hash).to eq({role: "user", content: "Describe this image", images: ["base64_data"]})
+      end
+    end
   end
 
   describe "#llm?" do
