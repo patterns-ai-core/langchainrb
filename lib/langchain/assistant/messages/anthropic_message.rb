@@ -55,11 +55,12 @@ module Langchain
         def assistant_hash
           {
             role: "assistant",
-            content: if tool_calls.any?
-                       tool_calls
-                     else
-                       content
-                     end
+            content: [
+              {
+                type: "text",
+                text: content
+              }
+            ].concat(tool_calls)
           }
         end
 
