@@ -12,9 +12,9 @@ module Langchain::LLM
 
     DEFAULTS = {
       temperature: 0.0,
-      completion_model: "llama3.2",
-      embedding_model: "llama3.2",
-      chat_model: "llama3.2"
+      completion_model: "llama3.1",
+      embedding_model: "llama3.1",
+      chat_model: "llama3.1"
     }.freeze
 
     EMBEDDING_SIZES = {
