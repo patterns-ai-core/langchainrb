@@ -18,6 +18,7 @@ module Langchain
         #
         # @param role [String] The role of the message
         # @param content [String] The content of the message
+        # @param image_url [String] The URL of the image to include in the message
         # @param tool_calls [Array<Hash>] The tool calls made in the message
         # @param tool_call_id [String] The ID of the tool call
         def initialize(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
