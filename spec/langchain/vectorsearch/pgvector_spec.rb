@@ -45,6 +45,23 @@ if ENV["POSTGRES_URL"]
         result = subject.add_texts(texts: ["Hello World", "Hello World"])
         expect(result.size).to eq(2)
       end
+
+      it "adds texts with metadata" do
+        metadata = [
+          {"source" => "doc1", "page" => 1},
+          {"source" => "doc2", "page" => 2}
+        ]
+        result = subject.add_texts(
+          texts: ["Hello World", "Hello World"],
+          metadata: metadata
+        )
+
+        expect(result.size).to eq(2)
+
+        stored_records = client.exec_params("SELECT metadata FROM products WHERE id IN ($1, $2)", [result[0], result[1]])
+        expect(JSON.parse(stored_records[0]["metadata"])).to match(metadata[0])
+        expect(JSON.parse(stored_records[1]["metadata"])).to match(metadata[1])
+      end
     end
 
     describe "#update_texts" do
@@ -95,6 +112,36 @@ if ENV["POSTGRES_URL"]
 
         count = client.exec_params(count_query)
         expect(count[0]["count"].to_i).to eq(2)
+      end
+
+      it "updates texts and metadata" do
+        initial_metadata = [
+          {"source" => "doc1", "page" => 1},
+          {"source" => "doc2", "page" => 2}
+        ]
+
+        values = subject.add_texts(
+          texts: ["Hello World", "Hello World"],
+          metadata: initial_metadata
+        )
+
+        updated_metadata = [
+          {"source" => "doc1", "page" => 1, "updated" => true},
+          {"source" => "doc2", "page" => 3}
+        ]
+
+        ids = values.flatten
+        result = subject.update_texts(
+          texts: ["Hello World", "Hello World".reverse],
+          ids: ids,
+          metadata: updated_metadata
+        )
+
+        expect(result.size).to eq(2)
+
+        stored_records = client.exec_params("SELECT metadata FROM products WHERE id IN ($1, $2)", [ids[0], ids[1]])
+        expect(JSON.parse(stored_records[0]["metadata"])).to match(updated_metadata[0])
+        expect(JSON.parse(stored_records[1]["metadata"])).to match(updated_metadata[1])
       end
     end
 
@@ -169,6 +216,22 @@ if ENV["POSTGRES_URL"]
         allow(subject).to receive(:namespace).and_return(namespace)
         result = subject.similarity_search(query: "earth")
         expect(result.first.content).to eq("a namespaced chunk of text")
+      end
+
+      it "searches for similar texts with metadata and namespace" do
+        namespace = "foo_namespace"
+
+        subject.documents_model.new(
+          content: "a namespaced chunk of text",
+          vectors: 1536.times.map { 0 },
+          namespace: namespace,
+          metadata: {source: "earth_doc", page: 1}.to_json
+        ).save
+
+        allow(subject).to receive(:namespace).and_return(namespace)
+        result = subject.similarity_search(query: "earth")
+        expect(result.first.content).to eq("a namespaced chunk of text")
+        expect(JSON.parse(result.first.metadata)).to match({"source" => "earth_doc", "page" => 1})
       end
     end
 
