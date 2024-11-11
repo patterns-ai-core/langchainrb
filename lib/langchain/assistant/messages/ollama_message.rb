@@ -40,6 +40,7 @@ module Langchain
           {}.tap do |h|
             h[:role] = role
             h[:content] = content if content # Content is nil for tool calls
+            h[:images] = [image.base64] if image
             h[:tool_calls] = tool_calls if tool_calls.any?
             h[:tool_call_id] = tool_call_id if tool_call_id
           end
