@@ -138,8 +138,12 @@ module Langchain
         return
       end
 
-      @state = :in_progress
-      @state = handle_state until run_finished?(execute_tools)
+      if !execute_tools
+        @state = :completed
+      else
+        @state = :in_progress
+        @state = handle_state until run_finished?(execute_tools)
+      end
 
       messages
     end
