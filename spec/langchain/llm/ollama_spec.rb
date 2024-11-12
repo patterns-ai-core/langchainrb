@@ -23,7 +23,7 @@ RSpec.describe Langchain::LLM::Ollama do
     end
 
     context "when default_options are passed" do
-      let(:default_options) { {response_format: "json"} }
+      let(:default_options) { {response_format: "json", options: {num_ctx: 8_192}} }
       let(:messages) { [{role: "user", content: "Return data from the following sentence: John is a 30 year old software engineering living in SF."}] }
       let(:response) { subject.chat(messages: messages) { |resp| streamed_responses << resp } }
       let(:streamed_responses) { [] }
@@ -32,11 +32,12 @@ RSpec.describe Langchain::LLM::Ollama do
 
       it "sets the defaults options" do
         expect(subject.defaults[:response_format]).to eq("json")
+        expect(subject.defaults[:options]).to eq(num_ctx: 8_192)
       end
 
       it "get passed to consecutive chat() call", vcr: {cassette_name: "Langchain_LLM_Ollama_chat_returns_a_chat_completion_format_json"} do
-        expect(client).to receive(:post).with("api/chat", hash_including(format: "json")).and_call_original
-        expect(JSON.parse(response.chat_completion)).to eq({"Name" => "John", "Age" => 30, "Profession" => "Software Engineering", "Location" => "SF"})
+        expect(client).to receive(:post).with("api/chat", hash_including(format: "json", options: {num_ctx: 8_192})).and_call_original
+        expect(JSON.parse(response.chat_completion)).to eq({"name" => "John", "age" => 30, "profession" => "software engineer", "location" => "SF"})
       end
     end
   end
