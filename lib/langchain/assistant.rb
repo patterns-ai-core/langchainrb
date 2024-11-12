@@ -20,7 +20,8 @@ module Langchain
       :tool_choice,
       :total_prompt_tokens,
       :total_completion_tokens,
-      :total_tokens
+      :total_tokens,
+      :execute_tools
 
     attr_accessor :tools,
       :add_message_callback,
@@ -41,6 +42,7 @@ module Langchain
       instructions: nil,
       tool_choice: "auto",
       parallel_tool_calls: true,
+      execute_tools: true,
       messages: [],
       add_message_callback: nil,
       &block
@@ -61,6 +63,7 @@ module Langchain
       self.messages = messages
       @tools = tools
       @parallel_tool_calls = parallel_tool_calls
+      @execute_tools = execute_tools
       self.tool_choice = tool_choice
       self.instructions = instructions
       @block = block
@@ -131,16 +134,19 @@ module Langchain
     #
     # @param execute_tools [Boolean] Whether or not to automatically run tools
     # @return [Array<Langchain::Message>] The messages
-    def run(execute_tools: false)
+    def run(execute_tools: true)
       if messages.empty?
         Langchain.logger.warn("#{self.class} - No messages to process")
         @state = :completed
         return
       end
 
-      @state = :in_progress
-      @state = handle_state until run_finished?(execute_tools)
-
+      if !execute_tools
+        @state = :completed
+      else
+        @state = :in_progress
+        @state = handle_state until run_finished?(execute_tools)
+      end
       messages
     end
 
@@ -156,7 +162,7 @@ module Langchain
     # @param content [String] The content of the message
     # @param execute_tools [Boolean] Whether or not to automatically run tools
     # @return [Array<Langchain::Message>] The messages
-    def add_message_and_run(content: nil, image_url: nil, execute_tools: false)
+    def add_message_and_run(content: nil, image_url: nil, execute_tools: true)
       add_message(content: content, image_url: image_url, role: "user")
       run(execute_tools: execute_tools)
     end
@@ -250,7 +256,7 @@ module Langchain
       when :in_progress
         process_latest_message
       when :requires_action
-        execute_tools
+        execute_tools_now
       end
     end
 
@@ -323,7 +329,7 @@ module Langchain
     # Execute the tools based on the tool calls in the last message
     #
     # @return [Symbol] The next state
-    def execute_tools
+    def execute_tools_now
       run_tools(messages.last.tool_calls)
       :in_progress
     rescue => e
