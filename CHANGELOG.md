@@ -16,6 +16,7 @@
 - [OPTIM] [https://github.com/patterns-ai-core/langchainrb/pull/867] Refactor `GoogleGeminiMessage#to_hash` and `OpenAIMessage#to_hash` methods.
 - [OPTIM] [https://github.com/patterns-ai-core/langchainrb/pull/849] Simplify Langchain::LLM::AwsBedrock class
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/869] AnthropicMessage now correctly handles tool calls with content.
+- [OPTIM] [https://github.com/patterns-ai-core/langchainrb/pull/870] Assistant, when using Ollama (e.g.: llava model), now also accepts image_url in the message.
 
 ## [0.19.0] - 2024-10-23
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `chat_completion_model_name` parameter to `chat_model` in Langchain::LLM parameters.
