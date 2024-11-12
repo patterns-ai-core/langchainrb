@@ -6,10 +6,10 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"messages":[{"role":"user","content":"Return data from the following
-        sentence: John is a 30 year old software engineering living in SF."}],"model":"llama3.1","stream":true,"temperature":0.0,"format":"json"}'
+        sentence: John is a 30 year old software engineering living in SF."}],"model":"llama3.1","stream":true,"temperature":0.0,"options":{"num_ctx":8192},"format":"json"}'
     headers:
       User-Agent:
-      - Faraday v2.9.0
+      - Faraday v2.12.0
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -24,38 +24,43 @@ http_interactions:
       Content-Type:
       - application/x-ndjson
       Date:
-      - Wed, 25 Sep 2024 21:25:40 GMT
+      - Tue, 12 Nov 2024 11:46:02 GMT
       Transfer-Encoding:
       - chunked
     body:
       encoding: UTF-8
       string: |
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.462781Z","message":{"role":"assistant","content":"{\""},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.484632Z","message":{"role":"assistant","content":"Name"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.505886Z","message":{"role":"assistant","content":"\":"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.526715Z","message":{"role":"assistant","content":" \""},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.547458Z","message":{"role":"assistant","content":"John"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.568443Z","message":{"role":"assistant","content":"\","},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.588609Z","message":{"role":"assistant","content":" \""},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.609082Z","message":{"role":"assistant","content":"Age"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.631109Z","message":{"role":"assistant","content":"\":"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.652356Z","message":{"role":"assistant","content":" "},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.673218Z","message":{"role":"assistant","content":"30"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.693496Z","message":{"role":"assistant","content":","},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.713553Z","message":{"role":"assistant","content":" \""},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.733703Z","message":{"role":"assistant","content":"Prof"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.754814Z","message":{"role":"assistant","content":"ession"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.776488Z","message":{"role":"assistant","content":"\":"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.800856Z","message":{"role":"assistant","content":" \""},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.825675Z","message":{"role":"assistant","content":"Software"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.848464Z","message":{"role":"assistant","content":" Engineering"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.869586Z","message":{"role":"assistant","content":"\","},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.892073Z","message":{"role":"assistant","content":" \""},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.914327Z","message":{"role":"assistant","content":"Location"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.937725Z","message":{"role":"assistant","content":"\":"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.960155Z","message":{"role":"assistant","content":" \""},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:40.981624Z","message":{"role":"assistant","content":"SF"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:41.003519Z","message":{"role":"assistant","content":"\"}"},"done":false}
-        {"model":"llama3.1","created_at":"2024-09-25T21:25:41.024513Z","message":{"role":"assistant","content":""},"done_reason":"stop","done":true,"total_duration":1637799583,"load_duration":39689291,"prompt_eval_count":31,"prompt_eval_duration":1032278000,"eval_count":27,"eval_duration":561716000}
-  recorded_at: Wed, 25 Sep 2024 21:25:41 GMT
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.599465Z","message":{"role":"assistant","content":"{\n"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.617625Z","message":{"role":"assistant","content":" "},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.635325Z","message":{"role":"assistant","content":" \""},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.653109Z","message":{"role":"assistant","content":"name"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.671273Z","message":{"role":"assistant","content":"\":"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.689293Z","message":{"role":"assistant","content":" \""},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.707063Z","message":{"role":"assistant","content":"John"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.725984Z","message":{"role":"assistant","content":"\",\n"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.744094Z","message":{"role":"assistant","content":" "},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.761896Z","message":{"role":"assistant","content":" \""},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.779657Z","message":{"role":"assistant","content":"age"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.797764Z","message":{"role":"assistant","content":"\":"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.815559Z","message":{"role":"assistant","content":" "},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.833531Z","message":{"role":"assistant","content":"30"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.851661Z","message":{"role":"assistant","content":",\n"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.87027Z","message":{"role":"assistant","content":" "},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.88853Z","message":{"role":"assistant","content":" \""},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.906784Z","message":{"role":"assistant","content":"profession"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.92541Z","message":{"role":"assistant","content":"\":"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.943551Z","message":{"role":"assistant","content":" \""},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.962083Z","message":{"role":"assistant","content":"software"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.980768Z","message":{"role":"assistant","content":" engineer"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:02.999161Z","message":{"role":"assistant","content":"\",\n"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:03.017573Z","message":{"role":"assistant","content":" "},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:03.035951Z","message":{"role":"assistant","content":" \""},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:03.053974Z","message":{"role":"assistant","content":"location"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:03.072373Z","message":{"role":"assistant","content":"\":"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:03.090173Z","message":{"role":"assistant","content":" \""},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:03.107962Z","message":{"role":"assistant","content":"SF"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:03.125932Z","message":{"role":"assistant","content":"\"\n"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:03.143914Z","message":{"role":"assistant","content":"}"},"done":false}
+        {"model":"llama3.1","created_at":"2024-11-12T11:46:03.162054Z","message":{"role":"assistant","content":""},"done_reason":"stop","done":true,"total_duration":6254225291,"load_duration":5573840958,"prompt_eval_count":30,"prompt_eval_duration":115739000,"eval_count":32,"eval_duration":562597000}
+  recorded_at: Tue, 12 Nov 2024 11:46:03 GMT
 recorded_with: VCR 6.2.0

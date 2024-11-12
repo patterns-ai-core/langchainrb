@@ -14,7 +14,8 @@ module Langchain::LLM
       temperature: 0.0,
       completion_model: "llama3.1",
       embedding_model: "llama3.1",
-      chat_model: "llama3.1"
+      chat_model: "llama3.1",
+      options: {}
     }.freeze
 
     EMBEDDING_SIZES = {
@@ -45,7 +46,8 @@ module Langchain::LLM
         temperature: {default: @defaults[:temperature]},
         template: {},
         stream: {default: false},
-        response_format: {default: @defaults[:response_format]}
+        response_format: {default: @defaults[:response_format]},
+        options: {default: @defaults[:options]}
       )
       chat_parameters.remap(response_format: :format)
     end
