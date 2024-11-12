@@ -26,6 +26,7 @@
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/837] Fix bug when tool functions with no input variables are used with Langchain::LLM::Anthropic
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/836] Fix bug when assistant.instructions = nil did not remove the system message
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/838] Allow setting safety_settings: [] in default_options for Langchain::LLM::GoogleGemini and Langchain::LLM::GoogleVertexAI constructors
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/871] Allow passing in options hash to Ollama
 
 ## [0.18.0] - 2024-10-12
 - [BREAKING] Remove `Langchain::Assistant#clear_thread!` method

@@ -37,7 +37,10 @@ module Langchain::LLM::Parameters
       parallel_tool_calls: {},
 
       # Additional optional parameters
-      logit_bias: {}
+      logit_bias: {},
+
+      # Additional llm options. Ollama only.
+      options: {}
     }
 
     def initialize(parameters: {})
