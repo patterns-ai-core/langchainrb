@@ -512,7 +512,7 @@ assistant.add_message_and_run!(
 messages = assistant.messages
 
 # Run the assistant with automatic tool execution
-assistant.run(auto_tool_execution: true)
+assistant.run(: true)
 
 # If you want to stream the response, you can add a response handler
 assistant = Langchain::Assistant.new(
@@ -524,7 +524,7 @@ assistant = Langchain::Assistant.new(
   # print(response_chunk.inspect)
 end
 assistant.add_message(content: "Hello")
-assistant.run(auto_tool_execution: true)
+assistant.run(: true)
 ```
 
 Note that streaming is not currently supported for all LLMs.

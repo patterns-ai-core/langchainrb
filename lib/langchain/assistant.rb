@@ -129,9 +129,9 @@ module Langchain
 
     # Run the assistant
     #
-    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
+    # @param execute_tools [Boolean] Whether or not to automatically run tools
     # @return [Array<Langchain::Message>] The messages
-    def run(auto_tool_execution: false)
+    def run(execute_tools: false)
       if messages.empty?
         Langchain.logger.warn("#{self.class} - No messages to process")
         @state = :completed
@@ -139,7 +139,7 @@ module Langchain
       end
 
       @state = :in_progress
-      @state = handle_state until run_finished?(auto_tool_execution)
+      @state = handle_state until run_finished?(execute_tools)
 
       messages
     end
@@ -148,17 +148,17 @@ module Langchain
     #
     # @return [Array<Langchain::Message>] The messages
     def run!
-      run(auto_tool_execution: true)
+      run(execute_tools: true)
     end
 
     # Add a user message and run the assistant
     #
     # @param content [String] The content of the message
-    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
+    # @param execute_tools [Boolean] Whether or not to automatically run tools
     # @return [Array<Langchain::Message>] The messages
-    def add_message_and_run(content: nil, image_url: nil, auto_tool_execution: false)
+    def add_message_and_run(content: nil, image_url: nil, execute_tools: false)
       add_message(content: content, image_url: image_url, role: "user")
-      run(auto_tool_execution: auto_tool_execution)
+      run(execute_tools: execute_tools)
     end
 
     # Add a user message and run the assistant with automatic tool execution
@@ -166,7 +166,7 @@ module Langchain
     # @param content [String] The content of the message
     # @return [Array<Langchain::Message>] The messages
     def add_message_and_run!(content: nil, image_url: nil)
-      add_message_and_run(content: content, image_url: image_url, auto_tool_execution: true)
+      add_message_and_run(content: content, image_url: image_url, execute_tools: true)
     end
 
     # Submit tool output
@@ -233,12 +233,12 @@ module Langchain
 
     # Check if the run is finished
     #
-    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
+    # @param execute_tools [Boolean] Whether or not to automatically run tools
     # @return [Boolean] Whether the run is finished
-    def run_finished?(auto_tool_execution)
+    def run_finished?(execute_tools)
       finished_states = [:completed, :failed]
 
-      requires_manual_action = (@state == :requires_action) && !auto_tool_execution
+      requires_manual_action = (@state == :requires_action) && !execute_tools
       finished_states.include?(@state) || requires_manual_action
     end
 
