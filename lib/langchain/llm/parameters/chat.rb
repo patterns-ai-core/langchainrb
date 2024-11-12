@@ -39,7 +39,7 @@ module Langchain::LLM::Parameters
       # Additional optional parameters
       logit_bias: {},
 
-      # Additional llm options
+      # Additional llm options. Ollama only.
       options: {}
     }
 
