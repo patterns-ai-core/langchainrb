@@ -1,7 +1,7 @@
 require_relative "../lib/langchain"
 require "faraday"
 
-llm = Langchain::LLM::Ollama.new(default_options: { chat_model: "llava"})
+llm = Langchain::LLM::Ollama.new(default_options: {chat_model: "llava"})
 
 assistant = Langchain::Assistant.new(llm: llm)
 

@@ -36,7 +36,7 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::Ollama do
         subject.build_message(
           role: "user",
           content: "Hello",
-          image_url: "https://example.com/image.jpg",
+          image_url: "https://example.com/image.jpg"
         )
       ).to be_a(Langchain::Assistant::Messages::OllamaMessage)
     end
