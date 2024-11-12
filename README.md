@@ -512,7 +512,7 @@ assistant.add_message_and_run!(
 messages = assistant.messages
 
 # Run the assistant with automatic tool execution
-assistant.run()
+assistant.run(execute_tools: true)
 # OR run the assistant without executing tools
 assistant.run(execute_tools: false)
 
@@ -526,7 +526,7 @@ assistant = Langchain::Assistant.new(
   # print(response_chunk.inspect)
 end
 assistant.add_message(content: "Hello")
-assistant.run()
+assistant.run(execute_tools: true)
 ```
 
 Note that streaming is not currently supported for all LLMs.
