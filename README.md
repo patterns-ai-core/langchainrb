@@ -568,7 +568,7 @@ class MovieInfoTool
     property :movie_id, type: "integer", description: "The TMDb ID of the movie", required: true
   end
 
-  def initialize(api_key:)
+  def initialize(api_key: ENV["TMDB_API_KEY"])
     @api_key = api_key
   end
 

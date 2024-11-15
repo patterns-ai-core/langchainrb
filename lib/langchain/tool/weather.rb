@@ -37,7 +37,7 @@ module Langchain::Tool
         required: false
     end
 
-    def initialize(api_key:)
+    def initialize(api_key: ENV["OPEN_WEATHER_API_KEY"])
       @api_key = api_key
     end
 
