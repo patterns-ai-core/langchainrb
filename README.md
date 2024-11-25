@@ -536,6 +536,13 @@ Note that streaming is not currently supported for all LLMs.
 * `tool_choice`: Specifies how tools should be selected. Default: "auto". A specific tool function name can be passed. This will force the Assistant to **always** use this function.
 * `parallel_tool_calls`: Whether to make multiple parallel tool calls. Default: true
 * `add_message_callback`: A callback function (proc, lambda) that is called when any message is added to the conversation (optional)
+```ruby
+assistant.add_message_callback = -> (message) { puts "New message: #{message}" }
+```
+* `tool_execution_callback`: A callback function (proc, lambda) that is called right before a tool is executed (optional)
+```ruby
+assistant.tool_execution_callback = -> (tool_call_id, tool_name, method_name, tool_arguments) { puts "Executing tool_call_id: #{tool_call_id}, tool_name: #{tool_name}, method_name: #{method_name}, tool_arguments: #{tool_arguments}" }
+```
 
 ### Key Methods
 * `add_message`: Adds a user message to the messages array

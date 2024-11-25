@@ -20,6 +20,16 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
+    describe "#tool_execution_callback" do
+      it "raises an error if the callback is not a Proc" do
+        expect { described_class.new(llm: llm, tool_execution_callback: "foo") }.to raise_error(ArgumentError)
+      end
+
+      it "does not raise an error if the callback is a Proc" do
+        expect { described_class.new(llm: llm, tool_execution_callback: -> {}) }.not_to raise_error
+      end
+    end
+
     it "raises an error if LLM class does not implement `chat()` method" do
       llm = Langchain::LLM::Replicate.new(api_key: "123")
       expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
