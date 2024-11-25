@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/884] Add `tool_execution_callback` to `Langchain::Assistant`, a callback function (proc, lambda) that is called right before a tool is executed
 
 ## [0.19.1] - 2024-11-21
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/858] Assistant, when using Anthropic, now also accepts image_url in the message.
