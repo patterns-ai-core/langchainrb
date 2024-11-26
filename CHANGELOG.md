@@ -11,7 +11,7 @@
 
 ## [Unreleased]
 
-## [0.19.2] - 2024-11-25
+## [0.19.2] - 2024-11-26
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/884] Add `tool_execution_callback` to `Langchain::Assistant`, a callback function (proc, lambda) that is called right before a tool is executed
 
 ## [0.19.1] - 2024-11-21
