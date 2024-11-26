@@ -354,18 +354,26 @@ module Langchain
     def run_tools(tool_calls)
       # Iterate over each function invocation and submit tool output
       tool_calls.each do |tool_call|
-        tool_call_id, tool_name, method_name, tool_arguments = @llm_adapter.extract_tool_call_args(tool_call: tool_call)
-
-        tool_instance = tools.find do |t|
-          t.class.tool_name == tool_name
-        end or raise ArgumentError, "Tool: #{tool_name} not found in assistant.tools"
-
-        # Call the callback if set
-        tool_execution_callback.call(tool_call_id, tool_name, method_name, tool_arguments) if tool_execution_callback # rubocop:disable Style/SafeNavigation
-        output = tool_instance.send(method_name, **tool_arguments)
-
-        submit_tool_output(tool_call_id: tool_call_id, output: output)
+        run_tool(tool_call)
       end
+    end
+
+    # Run the tool call
+    #
+    # @param tool_call [Hash] The tool call to run
+    # @return [Object] The result of the tool call
+    def run_tool(tool_call)
+      tool_call_id, tool_name, method_name, tool_arguments = @llm_adapter.extract_tool_call_args(tool_call: tool_call)
+
+      tool_instance = tools.find do |t|
+        t.class.tool_name == tool_name
+      end or raise ArgumentError, "Tool: #{tool_name} not found in assistant.tools"
+
+      # Call the callback if set
+      tool_execution_callback.call(tool_call_id, tool_name, method_name, tool_arguments) if tool_execution_callback # rubocop:disable Style/SafeNavigation
+      output = tool_instance.send(method_name, **tool_arguments)
+
+      submit_tool_output(tool_call_id: tool_call_id, output: output)
     end
 
     # Build a message
