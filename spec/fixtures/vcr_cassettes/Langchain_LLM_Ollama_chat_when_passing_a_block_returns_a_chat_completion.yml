@@ -1,0 +1,84 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:11434/api/chat
+    body:
+      encoding: UTF-8
+      string: '{"messages":[{"role":"user","content":"Hey! How are you?"}],"model":"llama3.2","stream":true,"temperature":0.0}'
+    headers:
+      User-Agent:
+      - Faraday v2.12.0
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/x-ndjson
+      Date:
+      - Sat, 30 Nov 2024 03:33:52 GMT
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.17055Z","message":{"role":"assistant","content":"I"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.184932Z","message":{"role":"assistant","content":"'m"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.199352Z","message":{"role":"assistant","content":" just"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.213534Z","message":{"role":"assistant","content":" a"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.227945Z","message":{"role":"assistant","content":" language"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.242426Z","message":{"role":"assistant","content":" model"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.256777Z","message":{"role":"assistant","content":","},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.27125Z","message":{"role":"assistant","content":" so"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.285721Z","message":{"role":"assistant","content":" I"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.300169Z","message":{"role":"assistant","content":" don"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.314465Z","message":{"role":"assistant","content":"'t"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.328988Z","message":{"role":"assistant","content":" have"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.343239Z","message":{"role":"assistant","content":" emotions"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.357577Z","message":{"role":"assistant","content":" or"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.371938Z","message":{"role":"assistant","content":" feelings"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.386247Z","message":{"role":"assistant","content":" like"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.400737Z","message":{"role":"assistant","content":" humans"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.414989Z","message":{"role":"assistant","content":" do"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.429373Z","message":{"role":"assistant","content":"."},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.443679Z","message":{"role":"assistant","content":" However"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.457956Z","message":{"role":"assistant","content":","},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.472256Z","message":{"role":"assistant","content":" I"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.48679Z","message":{"role":"assistant","content":"'m"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.501257Z","message":{"role":"assistant","content":" functioning"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.515596Z","message":{"role":"assistant","content":" properly"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.530082Z","message":{"role":"assistant","content":" and"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.544442Z","message":{"role":"assistant","content":" ready"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.558968Z","message":{"role":"assistant","content":" to"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.573301Z","message":{"role":"assistant","content":" help"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.58771Z","message":{"role":"assistant","content":" with"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.602027Z","message":{"role":"assistant","content":" any"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.616521Z","message":{"role":"assistant","content":" questions"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.631006Z","message":{"role":"assistant","content":" or"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.645308Z","message":{"role":"assistant","content":" tasks"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.659801Z","message":{"role":"assistant","content":" you"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.674227Z","message":{"role":"assistant","content":" may"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.688736Z","message":{"role":"assistant","content":" have"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.703259Z","message":{"role":"assistant","content":"."},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.717558Z","message":{"role":"assistant","content":" How"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.732091Z","message":{"role":"assistant","content":" about"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.746467Z","message":{"role":"assistant","content":" you"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.760939Z","message":{"role":"assistant","content":"?"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.775227Z","message":{"role":"assistant","content":" How"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.789709Z","message":{"role":"assistant","content":"'s"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.804113Z","message":{"role":"assistant","content":" your"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.818659Z","message":{"role":"assistant","content":" day"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.833047Z","message":{"role":"assistant","content":" going"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.847505Z","message":{"role":"assistant","content":" so"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.862049Z","message":{"role":"assistant","content":" far"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.876546Z","message":{"role":"assistant","content":"?"},"done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:52.890984Z","message":{"role":"assistant","content":""},"done_reason":"stop","done":true,"total_duration":746459542,"load_duration":10482042,"prompt_eval_count":31,"prompt_eval_duration":14000000,"eval_count":51,"eval_duration":721000000}
+  recorded_at: Sat, 30 Nov 2024 03:33:52 GMT
+recorded_with: VCR 6.2.0

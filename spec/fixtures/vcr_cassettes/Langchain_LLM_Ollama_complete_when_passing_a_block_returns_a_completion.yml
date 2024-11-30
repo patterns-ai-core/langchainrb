@@ -1,0 +1,37 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:11434/api/generate
+    body:
+      encoding: UTF-8
+      string: '{"prompt":"In one word, life is ","model":"llama3.2","stream":true,"options":{"temperature":0.0}}'
+    headers:
+      User-Agent:
+      - Faraday v2.12.0
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/x-ndjson
+      Date:
+      - Sat, 30 Nov 2024 03:33:56 GMT
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:56.023803Z","response":"Comp","done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:56.037834Z","response":"licated","done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:56.052315Z","response":".","done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:56.06672Z","response":"","done":true,"done_reason":"stop","context":[128006,9125,128007,271,38766,1303,33025,2696,25,6790,220,2366,18,271,128009,128006,882,128007,271,644,832,3492,11,2324,374,220,128009,128006,78191,128007,271,13864,14040,13],"total_duration":119446542,"load_duration":8969375,"prompt_eval_count":32,"prompt_eval_duration":66000000,"eval_count":4,"eval_duration":43000000}
+  recorded_at: Sat, 30 Nov 2024 03:33:56 GMT
+recorded_with: VCR 6.2.0

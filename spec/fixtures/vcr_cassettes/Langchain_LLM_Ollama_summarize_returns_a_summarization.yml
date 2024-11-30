@@ -1,0 +1,47 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:11434/api/generate
+    body:
+      encoding: UTF-8
+      string: '{"prompt":"Write a concise summary of the following TEXT. Do not include
+        the word summary, just provide the summary.\n\nTEXT: Mary had a little lamb,\nLittle
+        lamb, little lamb.\nMary had a little lamb,\nIts fleece was white as snow.\n\nAnd
+        everywhere that Mary went,\nMary went, Mary went,\nEverywhere that Mary went,\nThe
+        lamb was sure to go.\n\nIt followed her to school one day,\nSchool one day,
+        school one day.\nIt followed her to school one day,\nWhich was against the
+        rules.\n\nIt made the children laugh and play,\nLaugh and play, laugh and
+        play.\nIt made the children laugh and play\nTo see a lamb at school.\n\n\"Why
+        does the lamb love Mary so?\nMary so, Mary so?\nWhy does the lamb love Mary
+        so?\"\nThe eager children cry.\n\n\"Why, Mary loves the lamb, you know,\nLamb,
+        you know, lamb, you know,\nMary loves the lamb, you know,\"\nThe teacher did
+        reply.\n\nCONCISE SUMMARY:\n","model":"llama3.2","stream":false,"options":{"temperature":0.0}}'
+    headers:
+      User-Agent:
+      - Faraday v2.12.0
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sat, 30 Nov 2024 03:33:55 GMT
+      Content-Length:
+      - '1742'
+    body:
+      encoding: UTF-8
+      string: '{"model":"llama3.2","created_at":"2024-11-30T03:33:55.723654Z","response":"A
+        young girl named Mary has a pet lamb that follows her everywhere, including
+        to school. The lamb''s presence causes a commotion among the children and
+        teachers, but ultimately brings joy and laughter.","done":true,"done_reason":"stop","context":[128006,9125,128007,271,38766,1303,33025,2696,25,6790,220,2366,18,271,128009,128006,882,128007,271,8144,264,64694,12399,315,279,2768,16139,13,3234,539,2997,279,3492,12399,11,1120,3493,279,12399,382,12998,25,10455,1047,264,2697,39406,345,39203,39406,11,2697,39406,627,42584,1047,264,2697,39406,345,37220,93090,574,4251,439,12056,382,3112,17277,430,10455,4024,345,42584,4024,11,10455,4024,345,11769,2940,430,10455,4024,345,791,39406,574,2771,311,733,382,2181,8272,1077,311,2978,832,1938,345,33849,832,1938,11,2978,832,1938,627,2181,8272,1077,311,2978,832,1938,345,23956,574,2403,279,5718,382,2181,1903,279,2911,12835,323,1514,345,84967,323,1514,11,12835,323,1514,627,2181,1903,279,2911,12835,323,1514,198,1271,1518,264,39406,520,2978,382,77955,1587,279,39406,3021,10455,779,5380,42584,779,11,10455,779,5380,10445,1587,279,39406,3021,10455,779,48469,791,24450,2911,16106,382,77955,11,10455,16180,279,39406,11,499,1440,345,43,3042,11,499,1440,11,39406,11,499,1440,345,42584,16180,279,39406,11,499,1440,43352,791,11326,1550,10052,382,5910,34,9311,96885,512,128009,128006,78191,128007,271,32,3995,3828,7086,10455,706,264,6896,39406,430,11263,1077,17277,11,2737,311,2978,13,578,39406,596,9546,11384,264,1081,6082,4315,279,2911,323,13639,11,719,13967,12716,16267,323,43214,13],"total_duration":1585545250,"load_duration":571610166,"prompt_eval_count":225,"prompt_eval_duration":432000000,"eval_count":40,"eval_duration":580000000}'
+  recorded_at: Sat, 30 Nov 2024 03:33:55 GMT
+recorded_with: VCR 6.2.0
