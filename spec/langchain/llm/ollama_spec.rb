@@ -168,51 +168,12 @@ RSpec.describe Langchain::LLM::Ollama do
   end
 
   describe "#default_dimensions" do
-    it "returns size of llama3 embeddings" do
-      subject = described_class.new(url: default_url, default_options: {embedding_model: "llama3.1"})
-
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of llava embeddings" do
-      subject = described_class.new(url: default_url, default_options: {embedding_model: "llava"})
-
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of mistral embeddings" do
-      subject = described_class.new(url: default_url, default_options: {embedding_model: "mistral"})
-
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of mixtral embeddings" do
-      subject = described_class.new(url: default_url, default_options: {embedding_model: "mixtral"})
-
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of dolphin-mixtral embeddings" do
-      subject = described_class.new(url: default_url, default_options: {embedding_model: "dolphin-mixtral"})
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of mistral-openorca embeddings" do
-      subject = described_class.new(url: default_url, default_options: {embedding_model: "mistral-openorca"})
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of codellama embeddings" do
-      subject = described_class.new(url: default_url, default_options: {embedding_model: "codellama"})
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    # this one has not been hardcoded, but will be looked up
-    # by generating an embedding and checking its size
-    it "returns size of tinydolphin embeddings", vcr: true do
-      subject = described_class.new(url: default_url, default_options: {embedding_model: "tinydolphin"})
-
-      expect(subject.default_dimensions).to eq(2_048)
+    it "returns size of embeddings" do
+      embeddings = described_class::EMBEDDING_SIZES
+      embeddings.each_pair do |model, size|
+        subject = described_class.new(url: default_url, default_options: {embedding_model: model})
+        expect(subject.default_dimensions).to eq(size)
+      end
     end
   end
 end
