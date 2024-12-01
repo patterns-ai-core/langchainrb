@@ -5,7 +5,7 @@ module Langchain::Tool
   # Connects to a SQL database, executes SQL queries, and outputs DB schema for Agents to use
   #
   # Gem requirements:
-  #     gem "sequel", "~> 5.68.0"
+  #     gem "sequel", "~> 5.87.0"
   #
   # Usage:
   #     database = Langchain::Tool::Database.new(connection_string: "postgres://user:password@localhost:5432/db_name")
@@ -115,6 +115,7 @@ module Langchain::Tool
         else
           primary_key_columns << column[0]
         end
+        schema << " COMMENT '#{column[1][:comment]}'" if column[1][:comment]
         schema << ",\n" unless column == db.schema(table).last && primary_key_column_count == 1
       end
       if primary_key_column_count > 1
