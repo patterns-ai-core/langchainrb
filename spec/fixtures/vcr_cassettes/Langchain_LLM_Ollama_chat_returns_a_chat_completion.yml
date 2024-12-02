@@ -5,10 +5,10 @@ http_interactions:
     uri: http://localhost:11434/api/chat
     body:
       encoding: UTF-8
-      string: '{"messages":[{"role":"user","content":"Hey! How are you?"}],"model":"llama3.1","stream":false,"temperature":0.0}'
+      string: '{"messages":[{"role":"user","content":"Hey! How are you?"}],"model":"llama3.2","stream":false,"temperature":0.0}'
     headers:
       User-Agent:
-      - Faraday v2.9.0
+      - Faraday v2.12.0
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -23,12 +23,14 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Thu, 30 May 2024 15:46:49 GMT
+      - Sat, 30 Nov 2024 03:33:52 GMT
       Content-Length:
-      - '479'
+      - '491'
     body:
       encoding: UTF-8
-      string: |
-        {"model":"llama3","created_at":"2024-05-30T15:46:49.179748131Z","message":{"role":"assistant","content":"I'm just an AI, so I don't have emotions like humans do, but I'm functioning properly and ready to help with any questions or topics you'd like to discuss! What's on your mind today?"},"done_reason":"stop","done":true,"total_duration":13560344173,"load_duration":2983640834,"prompt_eval_count":16,"prompt_eval_duration":2202291000,"eval_count":44,"eval_duration":8284912000}
-  recorded_at: Thu, 30 May 2024 15:46:49 GMT
+      string: '{"model":"llama3.2","created_at":"2024-11-30T03:33:52.105113Z","message":{"role":"assistant","content":"I''m
+        just a language model, so I don''t have feelings or emotions like humans do.
+        However, I''m functioning properly and ready to help with any questions or
+        tasks you may have! How can I assist you today?"},"done_reason":"stop","done":true,"total_duration":839744125,"load_duration":29176166,"prompt_eval_count":31,"prompt_eval_duration":166000000,"eval_count":46,"eval_duration":643000000}'
+  recorded_at: Sat, 30 Nov 2024 03:33:52 GMT
 recorded_with: VCR 6.2.0

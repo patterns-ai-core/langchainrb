@@ -12,9 +12,9 @@ module Langchain::LLM
 
     DEFAULTS = {
       temperature: 0.0,
-      completion_model: "llama3.1",
-      embedding_model: "llama3.1",
-      chat_model: "llama3.1",
+      completion_model: "llama3.2",
+      embedding_model: "llama3.2",
+      chat_model: "llama3.2",
       options: {}
     }.freeze
 
@@ -24,6 +24,7 @@ module Langchain::LLM
       llama2: 4_096,
       llama3: 4_096,
       "llama3.1": 4_096,
+      "llama3.2": 4_096,
       llava: 4_096,
       mistral: 4_096,
       "mistral-openorca": 4_096,
