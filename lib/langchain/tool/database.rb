@@ -36,7 +36,7 @@ module Langchain::Tool
     # @param tables [Array<Symbol>] The tables to use. Will use all if empty.
     # @param except_tables [Array<Symbol>] The tables to exclude. Will exclude none if empty.
     # @return [Database] Database object
-    def initialize(connection_string:, tables: [], exclude_tables: [])
+    def initialize(connection_string: ENV["DATABASE_URL"], tables: [], exclude_tables: [])
       depends_on "sequel"
 
       raise StandardError, "connection_string parameter cannot be blank" if connection_string.empty?
