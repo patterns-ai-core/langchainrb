@@ -177,7 +177,21 @@ module Langchain
     # @return [Array<Langchain::Message>] The messages
     def submit_tool_output(tool_call_id:, output:)
       # TODO: Validate that `tool_call_id` is valid by scanning messages and checking if this tool call ID was invoked
-      add_message(role: @llm_adapter.tool_role, content: output, tool_call_id: tool_call_id)
+      content, image_url = parse_tool_output(output: output)
+      add_message(role: @llm_adapter.tool_role, content: content, tool_call_id: tool_call_id, image_url: image_url)
+    end
+
+    def parse_tool_output(output:)
+      image_url = nil
+      content   = nil
+      if output.is_a?(Hash)
+        image_url = output[:image_url]
+        content   = output[:content]
+      else
+        content = output
+      end
+      
+      [content, image_url]
     end
 
     # Delete all messages
