@@ -63,7 +63,7 @@ module Langchain
 
           # Build the tools for the OpenAI LLM
           def build_tools(tools)
-            tools.map { |tool| tool.class.function_schemas.to_openai_format }.flatten
+            tools.map { |tool| tool.class.function_schemas.functions }.flatten
           end
 
           # Get the allowed assistant.tool_choice values for OpenAI

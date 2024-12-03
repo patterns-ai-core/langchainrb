@@ -55,7 +55,18 @@ module Langchain
 
           # Build the tools for the Anthropic API
           def build_tools(tools)
-            tools.map { |tool| tool.class.function_schemas.to_anthropic_format }.flatten
+            tools.map { |tool|
+              tool.class.function_schemas.functions.map { |schema|
+                # Adds a default input_schema if no parameters are present
+                schema[:function][:parameters] ||= {
+                  type: "object",
+                  properties: {},
+                  required: []
+                }
+
+                schema[:function].transform_keys(parameters: :input_schema)
+              }
+            }.flatten
           end
 
           # Get the allowed assistant.tool_choice values for Anthropic
