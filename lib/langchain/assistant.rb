@@ -181,12 +181,19 @@ module Langchain
       add_message(role: @llm_adapter.tool_role, content: content, tool_call_id: tool_call_id, image_url: image_url)
     end
 
+    # Parses the output of a tool call.
+    # If the output is a hash, it extracts `:content` and `:image_url`.
+    # Otherwise, treats the output as plain content.
+    #
+    # @param output [Hash, String] The tool's output
+    # @return [Array<String, String>] Parsed content and image URL
+
     def parse_tool_output(output:)
       image_url = nil
       content   = nil
-      if output.is_a?(Hash)
-        image_url = output[:image_url]
-        content   = output[:content]
+      if output.is_a?(Hash) && output.key?(:image_url)
+        image_url = output.delete(:image_url)
+        content   = output[:content] || output
       else
         content = output
       end
