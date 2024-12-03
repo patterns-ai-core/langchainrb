@@ -201,6 +201,13 @@ RSpec.describe Langchain::Assistant do
         expect(subject.messages.last.role).to eq("tool")
         expect(subject.messages.last.content).to eq("bar")
       end
+
+      it "adds an image to the message" do
+        subject.submit_tool_output(tool_call_id: "123", output: { image_url: "https://example.com/image.jpg", content: "Hello" })
+        expect(subject.messages.last.role).to eq("tool")
+        expect(subject.messages.last.content).to eq("Hello")
+        expect(subject.messages.last.image_url).to eq("https://example.com/image.jpg")
+      end
     end
 
     describe "#run" do
@@ -568,6 +575,13 @@ RSpec.describe Langchain::Assistant do
         expect(subject.messages.last.role).to eq("tool")
         expect(subject.messages.last.content).to eq("bar")
       end
+
+      it "adds an image to the message" do
+        subject.submit_tool_output(tool_call_id: "123", output: { image_url: "https://example.com/image.jpg", content: "Hello" })
+        expect(subject.messages.last.role).to eq("tool")
+        expect(subject.messages.last.content).to eq("Hello")
+        expect(subject.messages.last.image_url).to eq("https://example.com/image.jpg")
+      end
     end
 
     describe "#run" do
@@ -916,11 +930,18 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
-    describe "submit_tool_output" do
+    describe "#submit_tool_output" do
       it "adds a message to the thread" do
         subject.submit_tool_output(tool_call_id: "123", output: "bar")
         expect(subject.messages.last.role).to eq("function")
         expect(subject.messages.last.content).to eq("bar")
+      end
+
+      it "does not add image to the message" do
+        subject.submit_tool_output(tool_call_id: "123", output: { image_url: "https://example.com/image.jpg", content: "Hello" })
+        expect(subject.messages.last.role).to eq("function")
+        expect(subject.messages.last.content).to eq("Hello")
+        expect(subject.messages.last.image_url).to be_nil
       end
     end
 
