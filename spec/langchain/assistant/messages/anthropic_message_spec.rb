@@ -108,7 +108,12 @@ RSpec.describe Langchain::Assistant::Messages::AnthropicMessage do
               {
                 type: "tool_result",
                 tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
-                content: "4.0"
+                content: [
+                  {
+                    type: "text",
+                    text: "4.0"
+                  }
+                ]
               }
             ]
           }

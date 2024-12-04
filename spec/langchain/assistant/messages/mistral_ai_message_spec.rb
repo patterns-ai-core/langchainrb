@@ -18,7 +18,7 @@ RSpec.describe Langchain::Assistant::Messages::MistralAIMessage do
       let(:message) { described_class.new(role: "tool", content: "Hello, world!", tool_calls: [], tool_call_id: "123") }
 
       it "returns a hash with the tool_call_id key" do
-        expect(message.to_hash).to eq({role: "tool", content: "Hello, world!", tool_call_id: "123"})
+        expect(message.to_hash).to eq({role: "tool", content: [{text: "Hello, world!", type: "text"}], tool_call_id: "123"})
       end
     end
 
