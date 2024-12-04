@@ -36,7 +36,7 @@ RSpec.describe Langchain::Assistant::Messages::MistralAIMessage do
       end
     end
 
-    context "when image_url is present" do
+    context "when image_url is present in user message" do
       let(:message) { described_class.new(role: "user", content: "Please describe this image", image_url: "https://example.com/image.jpg") }
 
       it "returns a hash with the image_url key" do
@@ -46,6 +46,27 @@ RSpec.describe Langchain::Assistant::Messages::MistralAIMessage do
             {text: "Please describe this image", type: "text"},
             {image_url: "https://example.com/image.jpg", type: "image_url"}
           ]
+        })
+      end
+    end
+
+    context "when image_url is present in tool message" do
+      let(:tool_call) {
+        {"id" => "call_9TewGANaaIjzY31UCpAAGLeV",
+         "type" => "function",
+         "function" => {"name" => "dummy_tool__take_photo"}}
+      }
+
+      let(:message) { described_class.new(role: "tool", content: "Hello, world!", image_url: "https://example.com/image.jpg",  tool_calls: [tool_call], tool_call_id: "123") }
+
+      it "returns a hash with the image_url key" do
+        expect(message.to_hash).to eq({
+          role: "tool",
+          content: [
+            {text: "Hello, world!", type: "text"},
+            {image_url: "https://example.com/image.jpg", type: "image_url"}
+          ],
+          tool_call_id: "123"
         })
       end
     end

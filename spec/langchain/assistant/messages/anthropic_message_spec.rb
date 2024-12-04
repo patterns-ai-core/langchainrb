@@ -119,6 +119,31 @@ RSpec.describe Langchain::Assistant::Messages::AnthropicMessage do
           }
         )
       end
+
+      it "returns tool_hash with image_url" do
+        message = described_class.new(role: "tool_result", image_url: "https://example.com/image.jpg")
+        allow(message).to receive(:image).and_return(double(base64: "base64_data", mime_type: "image/jpeg"))
+
+        expect(message.to_hash).to eq(
+          role: "user",
+          content: [
+            {
+              type: "tool_result",
+              tool_use_id: nil,
+              content: [
+                {
+                  type: "image",
+                  source: {
+                    type: "base64",
+                    data: "base64_data",
+                    media_type: "image/jpeg"
+                  }
+                }
+              ]
+            }
+          ]
+        )
+      end
     end
 
     context "when role is user" do
