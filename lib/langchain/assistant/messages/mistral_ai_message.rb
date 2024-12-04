@@ -102,7 +102,7 @@ module Langchain
         def tool_hash
           {
             role: "tool",
-            content: content,
+            content: build_content_array,
             tool_call_id: tool_call_id
           }
         end

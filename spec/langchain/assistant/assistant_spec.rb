@@ -197,13 +197,13 @@ RSpec.describe Langchain::Assistant do
 
     describe "#submit_tool_output" do
       it "adds a message to the thread" do
-        subject.submit_tool_output(tool_call_id: "123", output: "bar")
+        subject.submit_tool_output(tool_call_id: "123", content: "bar")
         expect(subject.messages.last.role).to eq("tool")
         expect(subject.messages.last.content).to eq("bar")
       end
 
       it "adds an image to the message" do
-        subject.submit_tool_output(tool_call_id: "123", output: { image_url: "https://example.com/image.jpg", content: "Hello" })
+        subject.submit_tool_output(tool_call_id: "123", image_url: "https://example.com/image.jpg", content: "Hello")
         expect(subject.messages.last.role).to eq("tool")
         expect(subject.messages.last.content).to eq("Hello")
         expect(subject.messages.last.image_url).to eq("https://example.com/image.jpg")
@@ -571,13 +571,13 @@ RSpec.describe Langchain::Assistant do
 
     describe "#submit_tool_output" do
       it "adds a message to the thread" do
-        subject.submit_tool_output(tool_call_id: "123", output: "bar")
+        subject.submit_tool_output(tool_call_id: "123", content: "bar")
         expect(subject.messages.last.role).to eq("tool")
         expect(subject.messages.last.content).to eq("bar")
       end
 
       it "adds an image to the message" do
-        subject.submit_tool_output(tool_call_id: "123", output: { image_url: "https://example.com/image.jpg", content: "Hello" })
+        subject.submit_tool_output(tool_call_id: "123", image_url: "https://example.com/image.jpg", content: "Hello")
         expect(subject.messages.last.role).to eq("tool")
         expect(subject.messages.last.content).to eq("Hello")
         expect(subject.messages.last.image_url).to eq("https://example.com/image.jpg")
@@ -672,7 +672,7 @@ RSpec.describe Langchain::Assistant do
                     "type" => "function"
                   }
                 ]},
-                {content: "4.0", role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
+                {content: [{type: "text", text: "4.0"}], role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
               ],
               tools: calculator.class.function_schemas.to_openai_format,
               tool_choice: "auto"
@@ -932,13 +932,13 @@ RSpec.describe Langchain::Assistant do
 
     describe "#submit_tool_output" do
       it "adds a message to the thread" do
-        subject.submit_tool_output(tool_call_id: "123", output: "bar")
+        subject.submit_tool_output(tool_call_id: "123", content: "bar")
         expect(subject.messages.last.role).to eq("function")
         expect(subject.messages.last.content).to eq("bar")
       end
 
       it "does not add image to the message" do
-        subject.submit_tool_output(tool_call_id: "123", output: { image_url: "https://example.com/image.jpg", content: "Hello" })
+        subject.submit_tool_output(tool_call_id: "123", content: "Hello", image_url: "https://example.com/image.jpg")
         expect(subject.messages.last.role).to eq("function")
         expect(subject.messages.last.content).to eq("Hello")
         expect(subject.messages.last.image_url).to be_nil
@@ -1121,7 +1121,7 @@ RSpec.describe Langchain::Assistant do
 
     describe "submit_tool_output" do
       it "adds a message to the thread" do
-        subject.submit_tool_output(tool_call_id: "123", output: "bar")
+        subject.submit_tool_output(tool_call_id: "123", content: "bar")
         expect(subject.messages.last.role).to eq("tool_result")
         expect(subject.messages.last.content).to eq("bar")
       end
@@ -1239,7 +1239,7 @@ RSpec.describe Langchain::Assistant do
                     "input" => {"input" => "2+2"}
                   }
                 ]},
-                {role: "user", content: [{type: "tool_result", tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H", content: "4.0"}]}
+                {role: "user", content: [{type: "tool_result", tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H", content: [{type: "text", text: "4.0"}]}]}
               ],
               tools: calculator.class.function_schemas.to_anthropic_format,
               tool_choice: {disable_parallel_tool_use: false, type: "auto"},

@@ -76,7 +76,7 @@ module Langchain
               {
                 type: "tool_result",
                 tool_use_id: tool_call_id,
-                content: content
+                content: build_content_array
               }
             ]
           }
