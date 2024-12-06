@@ -57,7 +57,7 @@ RSpec.describe Langchain::Assistant::Messages::MistralAIMessage do
          "function" => {"name" => "dummy_tool__take_photo"}}
       }
 
-      let(:message) { described_class.new(role: "tool", content: "Hello, world!", image_url: "https://example.com/image.jpg",  tool_calls: [tool_call], tool_call_id: "123") }
+      let(:message) { described_class.new(role: "tool", content: "Hello, world!", image_url: "https://example.com/image.jpg", tool_calls: [tool_call], tool_call_id: "123") }
 
       it "returns a hash with the image_url key" do
         expect(message.to_hash).to eq({
