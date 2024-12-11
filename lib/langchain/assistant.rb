@@ -173,11 +173,12 @@ module Langchain
     # Submit tool output
     #
     # @param tool_call_id [String] The ID of the tool call to submit output for
-    # @param output [String] The output of the tool
+    # @param content [String] The content of the tool call
+    # @param image_url [String] The image URL of the tool call
     # @return [Array<Langchain::Message>] The messages
-    def submit_tool_output(tool_call_id:, output:)
+    def submit_tool_output(tool_call_id:, content:, image_url: nil)
       # TODO: Validate that `tool_call_id` is valid by scanning messages and checking if this tool call ID was invoked
-      add_message(role: @llm_adapter.tool_role, content: output, tool_call_id: tool_call_id)
+      add_message(role: @llm_adapter.tool_role, content: content, tool_call_id: tool_call_id, image_url: image_url)
     end
 
     # Delete all messages
@@ -371,9 +372,9 @@ module Langchain
 
       # Call the callback if set
       tool_execution_callback.call(tool_call_id, tool_name, method_name, tool_arguments) if tool_execution_callback # rubocop:disable Style/SafeNavigation
-      output = tool_instance.send(method_name, **tool_arguments)
+      content, image_url = tool_instance.send(method_name, **tool_arguments)
 
-      submit_tool_output(tool_call_id: tool_call_id, output: output)
+      submit_tool_output(tool_call_id: tool_call_id, content: content, image_url: image_url)
     end
 
     # Build a message
