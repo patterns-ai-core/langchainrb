@@ -29,7 +29,7 @@ module Langchain
 
     # Create a new assistant
     #
-    # @param llm [Langchain::LLM::Base] LLM instance that the assistant will use
+    # @param llm [Langchain::LLM::Base, Langchain::Assistant::LLM::Adapters::Base] LLM instance that the assistant will use
     # @param tools [Array<Langchain::Tool::Base>] Tools that the assistant has access to
     # @param instructions [String] The system instructions
     # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
@@ -54,7 +54,14 @@ module Langchain
       end
 
       @llm = llm
-      @llm_adapter = LLM::Adapter.build(llm)
+      case llm
+      when Langchain::LLM::Base
+        @llm_adapter = LLM::Adapter.build(llm)
+      when Langchain::Assistant::LLM::Adapters::Base
+        @llm_adapter = llm
+      else
+        raise ArgumentError, "LLM has to be object extending Langchain::LLM::Base or Langchain::Assistant::LLM::Adapters::Base"
+      end
 
       @add_message_callback = add_message_callback if validate_callback!("add_message_callback", add_message_callback)
       @tool_execution_callback = tool_execution_callback if validate_callback!("tool_execution_callback", tool_execution_callback)
@@ -226,7 +233,7 @@ module Langchain
 
     # TODO: If tool_choice = "tool_function_name" and then tool is removed from the assistant, should we set tool_choice back to "auto"?
     def validate_tool_choice!(tool_choice)
-      allowed_tool_choices = llm_adapter.allowed_tool_choices.concat(available_tool_names)
+      allowed_tool_choices = @llm_adapter.allowed_tool_choices.concat(available_tool_names)
       unless allowed_tool_choices.include?(tool_choice)
         raise ArgumentError, "Tool choice must be one of: #{allowed_tool_choices.join(", ")}"
       end
@@ -345,7 +352,7 @@ module Langchain
         tool_choice: tool_choice,
         parallel_tool_calls: parallel_tool_calls
       )
-      @llm.chat(**params, &@block)
+      @llm_adapter.chat(**params, &@block)
     end
 
     # Run the tools automatically
@@ -401,7 +408,7 @@ module Langchain
     end
 
     def available_tool_names
-      llm_adapter.available_tool_names(tools)
+      @llm_adapter.available_tool_names(tools)
     end
 
     def validate_callback!(attr_name, callback)
