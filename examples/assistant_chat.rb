@@ -51,7 +51,7 @@ begin
       break
     end
 
-    assistant.add_message_and_run content: user_message, auto_tool_execution: true
+    assistant.add_message_and_run content: user_message, execute_tools: true
     puts assistant.messages.last.content
   end
 rescue Interrupt
