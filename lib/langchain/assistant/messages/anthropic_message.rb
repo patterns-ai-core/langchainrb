@@ -55,7 +55,7 @@ module Langchain
         def assistant_hash
           content_array = []
           if content && !content.empty?
-            content_array << { type: "text", text: content }
+            content_array << {type: "text", text: content}
           end
 
           {
