@@ -25,7 +25,7 @@ module Langchain::Tool
     # Initializes the Vectorsearch tool
     #
     # @param vectorsearch [Langchain::Vectorsearch::Base] Vectorsearch instance to use
-    def initialize(vectorsearch:)
+    def initialize(vectorsearch: ENV["VECTORSEARCH_URL"])
       @vectorsearch = vectorsearch
     end
 
