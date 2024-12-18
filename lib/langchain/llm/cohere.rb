@@ -5,7 +5,7 @@ module Langchain::LLM
   # Wrapper around the Cohere API.
   #
   # Gem requirements:
-  #     gem "cohere-ruby", "~> 0.9.6"
+  #     gem "cohere-ruby", "~> 1.0.1"
   #
   # Usage:
   #     llm = Langchain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
@@ -30,28 +30,22 @@ module Langchain::LLM
         temperature: {default: @defaults[:temperature]},
         response_format: {default: @defaults[:response_format]}
       )
-      chat_parameters.remap(
-        system: :preamble,
-        messages: :chat_history,
-        stop: :stop_sequences,
-        top_k: :k,
-        top_p: :p
-      )
     end
 
-    #
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
     # @return [Langchain::LLM::CohereResponse] Response object
-    #
-    def embed(text:)
+    def embed(
+      text:,
+      model: @defaults[:embedding_model]
+    )
       response = client.embed(
         texts: [text],
-        model: @defaults[:embedding_model]
+        model: model
       )
 
-      Langchain::LLM::CohereResponse.new response, model: @defaults[:embedding_model]
+      Langchain::LLM::CohereResponse.new response, model: model
     end
 
     #
@@ -94,13 +88,7 @@ module Langchain::LLM
     # @option params [Float] :top_p Use nucleus sampling.
     # @return [Langchain::LLM::CohereResponse] The chat completion
     def chat(params = {})
-      raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
-
       parameters = chat_parameters.to_params(params)
-
-      # Cohere API requires `message:` parameter to be sent separately from `chat_history:`.
-      # We extract the last message from the messages param.
-      parameters[:message] = parameters[:chat_history].pop&.dig(:message)
 
       response = client.chat(**parameters)
 
