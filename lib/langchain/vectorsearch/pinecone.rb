@@ -168,17 +168,18 @@ module Langchain::Vectorsearch
     # @param question [String] The question to ask
     # @param namespace [String] The namespace to search in
     # @param k [Integer] The number of results to have in context
+    # @param system_prompt [String] Content of the prompt to send as "system"
     # @param filter [String] The filter to use
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, namespace: "", filter: nil, k: 4, &block)
+    def ask(question:, namespace: "", filter: nil, k: 4, system_prompt: nil, &block)
       search_results = similarity_search(query: question, namespace: namespace, filter: filter, k: k)
 
       context = search_results.map do |result|
         result.dig("metadata").to_s
       end
 
-      generate_messages_and_chat(question: question, context: context, &block)
+      generate_messages_and_chat(question: question, context: context, system_prompt: system_prompt, &block)
     end
 
     # Pinecone index

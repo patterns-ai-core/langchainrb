@@ -144,16 +144,17 @@ module Langchain::Vectorsearch
     # Ask a question and return the answer
     # @param question [String] The question to ask
     # @param k [Integer] The number of results to have in context
+    # @param system_prompt [String] Content of the prompt to send as "system"
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
-    def ask(question:, k: 4, &block)
+    def ask(question:, k: 4, system_prompt: nil, &block)
       search_results = similarity_search(query: question, k: k)
 
       context = search_results.map do |result|
         result.content.to_s
       end
 
-      generate_messages_and_chat(question: question, context: context, &block)
+      generate_messages_and_chat(question: question, context: context, system_prompt: system_prompt, &block)
     end
   end
 end

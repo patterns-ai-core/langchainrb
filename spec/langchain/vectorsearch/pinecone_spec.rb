@@ -410,6 +410,22 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
       end
     end
 
+    describe "with system prompt" do
+      let(:system_prompt) { 'You are a helpful assistant' }
+
+      before do
+        allow(subject).to receive(:similarity_search).with(
+          query: question, namespace: "", filter: nil, k: k
+        ).and_return(matches)
+        allow(subject.llm).to receive(:chat).with(messages: [{role: 'system', content: system_prompt}, *messages]).and_return(response)
+        expect(response).to receive(:context=).with(metadata.to_s)
+      end
+
+      it "asks a question" do
+        expect(subject.ask(question: question, system_prompt: system_prompt).completion).to eq(answer)
+      end
+    end
+
     describe "with block" do
       let(:block) { proc { |chunk| puts "Received chunk: #{chunk}" } }
 
