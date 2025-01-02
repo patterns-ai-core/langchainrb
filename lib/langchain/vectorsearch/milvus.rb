@@ -144,17 +144,9 @@ module Langchain::Vectorsearch
     def ask(question:, k: 4, &block)
       search_results = similarity_search(query: question, k: k)
 
-      content_data = search_results.dig("data").map { |result| result.dig("content") }
+      context = search_results.dig("data").map { |result| result.dig("content") }
 
-      context = content_data.join("\n---\n")
-
-      prompt = generate_rag_prompt(question: question, context: context)
-
-      messages = [{role: "user", content: prompt}]
-      response = llm.chat(messages: messages, &block)
-
-      response.context = context
-      response
+      generate_messages_and_chat(question: question, context: context, &block)
     end
   end
 end

@@ -148,15 +148,9 @@ module Langchain::Vectorsearch
 
       context = search_results.map do |result|
         result[:input]
-      end.join("\n---\n")
+      end
 
-      prompt = generate_rag_prompt(question: question, context: context)
-
-      messages = [{role: "user", content: prompt}]
-      response = llm.chat(messages: messages, &block)
-
-      response.context = context
-      response
+      generate_messages_and_chat(question: question, context: context, &block)
     end
 
     # Search for similar texts
