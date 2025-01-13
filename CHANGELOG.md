@@ -10,6 +10,8 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+
+## [0.19.3] - 2025-01-13
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/900] Empty text content should not be set when content is nil when using AnthropicMessage
 
 ## [0.19.2] - 2024-11-26
