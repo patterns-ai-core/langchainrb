@@ -3,6 +3,7 @@ PATH
   specs:
     langchainrb (0.19.3)
       baran (~> 0.1.9)
+      csv
       json-schema (~> 4)
       matrix
       pragmatic_segmenter (~> 0.3.0)
@@ -81,6 +82,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
+    csv (3.3.2)
     date (3.3.4)
     diff-lcs (1.5.1)
     docx (0.8.0)
