@@ -1,11 +1,11 @@
 require "langchain"
 
-# Initialize the LLM (using OpenAI in this example)
+# Initialize the LLM (using Ollama in this example)
 llm = Langchain::LLM::Ollama.new
 
 # Initialize the SQLite-vec vectorstore
 db = Langchain::Vectorsearch::SqliteVec.new(
-  url: ":memory:", # Use a file-based DB (or ":memory:" for in-memory)
+  url: ":memory:", # Use a file-based DB by passing a path or ":memory:" for in-memory
   index_name: "documents",
   namespace: "test",
   llm: llm
@@ -44,4 +44,3 @@ puts "Answer: #{response.chat_completion}"
 
 # Clean up
 db.destroy_default_schema
-File.delete("test_vectors.sqlite3") if File.exist?("test_vectors.sqlite3")
