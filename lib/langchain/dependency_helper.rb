@@ -15,7 +15,12 @@ module Langchain
     # @raise [VersionError] If the gem is installed, but the version does not meet the requirements
     #
     def depends_on(gem_name, req: true)
-      gem(gem_name) # require the gem
+      if gem_name == "sqlite_vec"
+        require "sqlite_vec"
+        return true
+      else
+        gem(gem_name) # require the gem
+      end
 
       return(true) unless defined?(Bundler) # If we're in a non-bundler environment, we're no longer able to determine if we'll meet requirements
 
