@@ -52,6 +52,14 @@ module Langchain::LLM
       chat_parameters.ignore(:top_k)
     end
 
+    # List available OpenAI models
+    #
+    # @return [Langchain::LLM::OpenAIResponse] Response containing available models
+    def list_models
+      response = client.models.list
+      Langchain::LLM::OpenAIResponse.new(response)
+    end
+
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
