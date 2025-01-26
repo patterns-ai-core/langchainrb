@@ -20,13 +20,5 @@ module Langchain
     def to_s
       content.to_s
     end
-
-    def to_str
-      to_s
-    end
-
-    def include?(other)
-      to_s.include?(other)
-    end
   end
 end
