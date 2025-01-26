@@ -23,11 +23,15 @@ RSpec.describe Langchain::Tool::Database do
     end
 
     it "returns salary and count of users" do
-      expect(subject.execute(input: "SELECT max(salary), count(*) FROM users")).to eq([{count: 101, salary: 23500}])
+      response = subject.execute(input: "SELECT max(salary), count(*) FROM users")
+      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response.content).to eq([{salary: 23500, count: 101}])
     end
 
     it "returns jobs and counts of users" do
-      expect(subject.execute(input: "SELECT job, count(*) FROM users GROUP BY job")).to eq([{count: 5, job: "teacher"}, {count: 98, job: "cook"}])
+      response = subject.execute(input: "SELECT job, count(*) FROM users GROUP BY job")
+      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response.content).to eq([{job: "teacher", count: 5}, {job: "cook", count: 98}])
     end
   end
 
@@ -39,13 +43,17 @@ RSpec.describe Langchain::Tool::Database do
     end
 
     it "returns the schema" do
-      expect(subject.dump_schema).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs(job));\n")
+      response = subject.dump_schema
+      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response.content).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs(job));\n")
     end
 
     it "does not fail when key is not present" do
       allow(subject.db).to receive(:foreign_key_list).with(:users).and_return([{columns: [:job], table: :jobs, key: nil}])
 
-      expect(subject.dump_schema).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs());\n")
+      response = subject.dump_schema
+      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response.content).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs());\n")
     end
   end
 end

@@ -49,50 +49,53 @@ module Langchain::Tool
 
     # Database Tool: Returns a list of tables in the database
     #
-    # @return [Array<Symbol>] List of tables in the database
+    # @return [Langchain::Tool::Response] List of tables in the database
     def list_tables
-      db.tables
+      tool_response(content: db.tables)
     end
 
     # Database Tool: Returns the schema for a list of tables
     #
     # @param tables [Array<String>] The tables to describe.
-    # @return [String] The schema for the tables
+    # @return [Langchain::Tool::Response] The schema for the tables
     def describe_tables(tables: [])
       return "No tables specified" if tables.empty?
 
       Langchain.logger.debug("#{self.class} - Describing tables: #{tables}")
 
-      tables
+      result = tables
         .map do |table|
           describe_table(table)
         end
         .join("\n")
+
+      tool_response(content: result)
     end
 
     # Database Tool: Returns the database schema
     #
-    # @return [String] Database schema
+    # @return [Langchain::Tool::Response] Database schema
     def dump_schema
       Langchain.logger.debug("#{self.class} - Dumping schema tables and keys")
 
       schemas = db.tables.map do |table|
         describe_table(table)
       end
-      schemas.join("\n")
+
+      tool_response(content: schemas.join("\n"))
     end
 
     # Database Tool: Executes a SQL query and returns the results
     #
     # @param input [String] SQL query to be executed
-    # @return [Array] Results from the SQL query
+    # @return [Langchain::Tool::Response] Results from the SQL query
     def execute(input:)
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
-      db[input].to_a
+      tool_response(content: db[input].to_a)
     rescue Sequel::DatabaseError => e
       Langchain.logger.error("#{self.class} - #{e.message}")
-      e.message # Return error to LLM
+      tool_response(content: e.message)
     end
 
     private
@@ -100,7 +103,7 @@ module Langchain::Tool
     # Describes a table and its schema
     #
     # @param table [String] The table to describe
-    # @return [String] The schema for the table
+    # @return [Langchain::Tool::Response] The schema for the table
     def describe_table(table)
       # TODO: There's probably a clear way to do all of this below
 
@@ -127,6 +130,8 @@ module Langchain::Tool
         schema << ",\n" unless fk == db.foreign_key_list(table).last
       end
       schema << ");\n"
+
+      tool_response(content: schema)
     end
   end
 end
