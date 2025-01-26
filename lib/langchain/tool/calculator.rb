@@ -14,6 +14,7 @@ module Langchain::Tool
   class Calculator
     extend Langchain::ToolDefinition
     include Langchain::DependencyHelper
+    include Langchain::ToolHelpers
 
     define_function :execute, description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression" do
       property :input, type: "string", description: "Math expression", required: true

@@ -16,6 +16,7 @@ module Langchain::Tool
   #
   class Weather
     extend Langchain::ToolDefinition
+    include Langchain::ToolHelpers
 
     define_function :get_current_weather, description: "Returns current weather for a city" do
       property :city,

@@ -10,6 +10,7 @@ module Langchain::Tool
   #
   class NewsRetriever
     extend Langchain::ToolDefinition
+    include Langchain::ToolHelpers
 
     define_function :get_everything, description: "News Retriever: Search through millions of articles from over 150,000 large and small news sources and blogs" do
       property :q, type: "string", description: 'Keywords or phrases to search for in the article title and body. Surround phrases with quotes (") for exact match. Alternatively you can use the AND / OR / NOT keywords, and optionally group these with parenthesis. Must be URL-encoded'
@@ -86,7 +87,8 @@ module Langchain::Tool
       params[:pageSize] = page_size if page_size
       params[:page] = page if page
 
-      send_request(path: "everything", params: params)
+      response = send_request(path: "everything", params: params)
+      tool_response(content: response)
     end
 
     # Retrieve top headlines
@@ -117,7 +119,8 @@ module Langchain::Tool
       params[:pageSize] = page_size if page_size
       params[:page] = page if page
 
-      send_request(path: "top-headlines", params: params)
+      response = send_request(path: "top-headlines", params: params)
+      tool_response(content: response)
     end
 
     # Retrieve news sources
@@ -139,7 +142,8 @@ module Langchain::Tool
       params[:category] = category if category
       params[:language] = language if language
 
-      send_request(path: "top-headlines/sources", params: params)
+      response = send_request(path: "top-headlines/sources", params: params)
+      tool_response(content: response)
     end
 
     private

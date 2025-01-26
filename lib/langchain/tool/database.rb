@@ -13,6 +13,7 @@ module Langchain::Tool
   class Database
     extend Langchain::ToolDefinition
     include Langchain::DependencyHelper
+    include Langchain::ToolHelpers
 
     define_function :list_tables, description: "Database Tool: Returns a list of tables in the database"
 
@@ -51,7 +52,7 @@ module Langchain::Tool
     #
     # @return [Array<Symbol>] List of tables in the database
     def list_tables
-      db.tables
+      tool_response(content: db.tables)
     end
 
     # Database Tool: Returns the schema for a list of tables
@@ -63,11 +64,13 @@ module Langchain::Tool
 
       Langchain.logger.debug("#{self.class} - Describing tables: #{tables}")
 
-      tables
+      result = tables
         .map do |table|
           describe_table(table)
         end
         .join("\n")
+
+      tool_response(content: result)
     end
 
     # Database Tool: Returns the database schema
@@ -79,7 +82,8 @@ module Langchain::Tool
       schemas = db.tables.map do |table|
         describe_table(table)
       end
-      schemas.join("\n")
+
+      tool_response(content: schemas.join("\n"))
     end
 
     # Database Tool: Executes a SQL query and returns the results
@@ -89,10 +93,10 @@ module Langchain::Tool
     def execute(input:)
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
-      db[input].to_a
+      tool_response(content: db[input].to_a)
     rescue Sequel::DatabaseError => e
       Langchain.logger.error("#{self.class} - #{e.message}")
-      e.message # Return error to LLM
+      tool_response(content: e.message)
     end
 
     private
@@ -127,6 +131,8 @@ module Langchain::Tool
         schema << ",\n" unless fk == db.foreign_key_list(table).last
       end
       schema << ");\n"
+
+      tool_response(content: schema)
     end
   end
 end

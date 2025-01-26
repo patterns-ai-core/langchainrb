@@ -14,6 +14,7 @@ module Langchain::Tool
   #
   class Vectorsearch
     extend Langchain::ToolDefinition
+    include Langchain::ToolHelpers
 
     define_function :similarity_search, description: "Vectorsearch: Retrieves relevant document for the query" do
       property :query, type: "string", description: "Query to find similar documents for", required: true
@@ -34,7 +35,8 @@ module Langchain::Tool
     # @param query [String] The query to search for
     # @param k [Integer] The number of results to return
     def similarity_search(query:, k: 4)
-      vectorsearch.similarity_search(query:, k: 4)
+      result = vectorsearch.similarity_search(query:, k: 4)
+      tool_response(content: result)
     end
   end
 end

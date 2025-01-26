@@ -10,6 +10,7 @@ module Langchain::Tool
   #
   class Tavily
     extend Langchain::ToolDefinition
+    include Langchain::ToolHelpers
 
     define_function :search, description: "Tavily Tool: Robust search API" do
       property :query, type: "string", description: "The search query string", required: true
@@ -70,7 +71,7 @@ module Langchain::Tool
       response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
         http.request(request)
       end
-      response.body
+      tool_response(content: response.body)
     end
   end
 end

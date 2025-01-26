@@ -13,6 +13,7 @@ module Langchain::Tool
   class RubyCodeInterpreter
     extend Langchain::ToolDefinition
     include Langchain::DependencyHelper
+    include Langchain::ToolHelpers
 
     define_function :execute, description: "Executes Ruby code in a sandboxes environment" do
       property :input, type: "string", description: "Ruby code expression", required: true
