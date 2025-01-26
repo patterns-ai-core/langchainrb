@@ -10,7 +10,6 @@ module Langchain::Tool
   #
   class Tavily
     extend Langchain::ToolDefinition
-    include Langchain::ToolHelpers
 
     define_function :search, description: "Tavily Tool: Robust search API" do
       property :query, type: "string", description: "The search query string", required: true

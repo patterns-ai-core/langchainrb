@@ -9,7 +9,6 @@ module Langchain::Tool
   #
   class FileSystem
     extend Langchain::ToolDefinition
-    include Langchain::ToolHelpers
 
     define_function :list_directory, description: "File System Tool: Lists out the content of a specified directory" do
       property :directory_path, type: "string", description: "Directory path to list", required: true

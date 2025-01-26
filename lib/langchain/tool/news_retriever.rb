@@ -10,7 +10,6 @@ module Langchain::Tool
   #
   class NewsRetriever
     extend Langchain::ToolDefinition
-    include Langchain::ToolHelpers
 
     define_function :get_everything, description: "News Retriever: Search through millions of articles from over 150,000 large and small news sources and blogs" do
       property :q, type: "string", description: 'Keywords or phrases to search for in the article title and body. Surround phrases with quotes (") for exact match. Alternatively you can use the AND / OR / NOT keywords, and optionally group these with parenthesis. Must be URL-encoded'

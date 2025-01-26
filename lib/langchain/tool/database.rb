@@ -13,7 +13,6 @@ module Langchain::Tool
   class Database
     extend Langchain::ToolDefinition
     include Langchain::DependencyHelper
-    include Langchain::ToolHelpers
 
     define_function :list_tables, description: "Database Tool: Returns a list of tables in the database"
 

@@ -14,7 +14,6 @@ module Langchain::Tool
   #
   class Vectorsearch
     extend Langchain::ToolDefinition
-    include Langchain::ToolHelpers
 
     define_function :similarity_search, description: "Vectorsearch: Retrieves relevant document for the query" do
       property :query, type: "string", description: "Query to find similar documents for", required: true
