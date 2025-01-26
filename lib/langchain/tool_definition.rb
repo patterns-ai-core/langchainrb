@@ -61,10 +61,6 @@ module Langchain::ToolDefinition
       .downcase
   end
 
-  def tool_response(content: nil, image_url: nil)
-    Langchain::ToolResponse.new(content: content, image_url: image_url)
-  end
-
   # Manages schemas for functions
   class FunctionSchemas
     def initialize(tool_name)
