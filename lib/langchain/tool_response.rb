@@ -17,38 +17,6 @@ module Langchain
       @image_url = image_url
     end
 
-    # Wraps a raw response in a ToolResponse if it is not already one.
-    #
-    # @param response [String, ToolResponse] The raw response to wrap.
-    # @return [ToolResponse] The wrapped response.
-    def self.wrap(response)
-      return response if response.is_a?(ToolResponse)
-
-      new(content: response)
-    end
-
-    # Converts the response into a format compatible with the given LLM provider.
-    #
-    # @param provider_class [Class] The provider class handling the response.
-    # @return [Hash] The formatted response for the provider.
-    def to_api_format(provider_class)
-      provider_class.format_tool_response(self)
-    end
-
-    # Checks if the response has an image URL.
-    #
-    # @return [Boolean] True if an image URL is present.
-    def has_image?
-      !image_url.nil?
-    end
-
-    # Checks if the response has text content.
-    #
-    # @return [Boolean] True if text content is present.
-    def has_content?
-      !content.nil?
-    end
-
     def to_s
       content.to_s
     end

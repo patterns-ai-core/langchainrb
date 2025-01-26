@@ -32,7 +32,7 @@ module Langchain::Tool
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       result = Eqn::Calculator.calc(input)
-      tool_response(content: result.to_s)
+      tool_response(content: result)
     rescue Eqn::ParseError, Eqn::NoVariableValueError
       tool_response(content: "\"#{input}\" is an invalid mathematical expression")
     end
