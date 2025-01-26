@@ -117,7 +117,7 @@ module Langchain
           {
             role: "tool",
             tool_call_id: tool_call_id,
-            content: build_content_array # Using image_url with tools is not supported by OpenAI (Image URLs are only allowed for messages with role 'user', but this message with role 'tool' contains an image URL.)
+            content: build_content_array
           }
         end
 
