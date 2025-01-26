@@ -31,7 +31,7 @@ module Langchain::Tool
     def execute(input:)
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
-      safe_eval(input)
+      tool_response(content: safe_eval(input))
     end
 
     def safe_eval(code)

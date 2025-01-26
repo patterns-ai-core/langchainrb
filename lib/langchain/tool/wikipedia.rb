@@ -33,7 +33,7 @@ module Langchain::Tool
 
       page = ::Wikipedia.find(input)
       # It would be nice to figure out a way to provide page.content but the LLM token limit is an issue
-      page.summary
+      tool_response(content: page.summary)
     end
   end
 end

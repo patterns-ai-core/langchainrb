@@ -44,31 +44,31 @@ module Langchain::Tool
 
       answer_box = results[:answer_box_list] ? results[:answer_box_list].first : results[:answer_box]
       if answer_box
-        return answer_box[:result] ||
+        return tool_response(content: answer_box[:result] ||
             answer_box[:answer] ||
             answer_box[:snippet] ||
             answer_box[:snippet_highlighted_words] ||
-            answer_box.reject { |_k, v| v.is_a?(Hash) || v.is_a?(Array) || v.start_with?("http") }
+            answer_box.reject { |_k, v| v.is_a?(Hash) || v.is_a?(Array) || v.start_with?("http") })
       elsif (events_results = results[:events_results])
-        return events_results.take(10)
+        return tool_response(content: events_results.take(10))
       elsif (sports_results = results[:sports_results])
-        return sports_results
+        return tool_response(content: sports_results)
       elsif (top_stories = results[:top_stories])
-        return top_stories
+        return tool_response(content: top_stories)
       elsif (news_results = results[:news_results])
-        return news_results
+        return tool_response(content: news_results)
       elsif (jobs_results = results.dig(:jobs_results, :jobs))
-        return jobs_results
+        return tool_response(content: jobs_results)
       elsif (shopping_results = results[:shopping_results]) && shopping_results.first.key?(:title)
-        return shopping_results.take(3)
+        return tool_response(content: shopping_results.take(3))
       elsif (questions_and_answers = results[:questions_and_answers])
-        return questions_and_answers
+        return tool_response(content: questions_and_answers)
       elsif (popular_destinations = results.dig(:popular_destinations, :destinations))
-        return popular_destinations
+        return tool_response(content: popular_destinations)
       elsif (top_sights = results.dig(:top_sights, :sights))
-        return top_sights
+        return tool_response(content: top_sights)
       elsif (images_results = results[:images_results]) && images_results.first.key?(:thumbnail)
-        return images_results.map { |h| h[:thumbnail] }.take(10)
+        return tool_response(content: images_results.map { |h| h[:thumbnail] }.take(10))
       end
 
       snippets = []
@@ -110,8 +110,8 @@ module Langchain::Tool
         snippets << local_results
       end
 
-      return "No good search result found" if snippets.empty?
-      snippets
+      return tool_response(content: "No good search result found") if snippets.empty?
+      tool_response(content: snippets)
     end
 
     #
