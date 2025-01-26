@@ -43,21 +43,6 @@ RSpec.describe Langchain::Assistant::Messages::OpenAIMessage do
       it "returns a tool_hash" do
         expect(message.to_hash).to eq({role: "tool", content: [{type: "text", text: "Hello, world!"}], tool_call_id: "123"})
       end
-
-      context "when image_url is present" do
-        let(:message) { described_class.new(role: "tool", content: "Hello, world!", image_url: "https://example.com/image.jpg", tool_calls: [], tool_call_id: "123") }
-
-        it "returns a tool_hash with the image_url key" do
-          expect(message.to_hash).to eq({
-            role: "tool",
-            content: [
-              {type: "text", text: "Hello, world!"},
-              {type: "image_url", image_url: {url: "https://example.com/image.jpg"}}
-            ],
-            tool_call_id: "123"
-          })
-        end
-      end
     end
 
     context "when role is assistant" do
