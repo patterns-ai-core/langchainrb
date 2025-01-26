@@ -372,15 +372,12 @@ module Langchain
       # Call the callback if set
       tool_execution_callback.call(tool_call_id, tool_name, method_name, tool_arguments) if tool_execution_callback # rubocop:disable Style/SafeNavigation
 
-      result = tool_instance.send(method_name, **tool_arguments)
+      output = tool_instance.send(method_name, **tool_arguments)
 
       # Handle both ToolResponse and legacy return values
-      if result.is_a?(ToolResponse)
-        add_message(role: @llm_adapter.tool_role, content: result.content, image_url: result.image_url, tool_call_id: tool_call_id)
+      if output.is_a?(ToolResponse)
+        add_message(role: @llm_adapter.tool_role, content: output.content, image_url: output.image_url, tool_call_id: tool_call_id)
       else
-        # Legacy support for tools returning [content, image_url]
-        output = tool_instance.send(method_name, **tool_arguments)
-
         submit_tool_output(tool_call_id: tool_call_id, output: output)
       end
     end
