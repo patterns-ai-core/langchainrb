@@ -50,7 +50,7 @@ module Langchain::Tool
 
     # Database Tool: Returns a list of tables in the database
     #
-    # @return [Array<Symbol>] List of tables in the database
+    # @return [Langchain::Tool::Response] List of tables in the database
     def list_tables
       tool_response(content: db.tables)
     end
@@ -58,7 +58,7 @@ module Langchain::Tool
     # Database Tool: Returns the schema for a list of tables
     #
     # @param tables [Array<String>] The tables to describe.
-    # @return [String] The schema for the tables
+    # @return [Langchain::Tool::Response] The schema for the tables
     def describe_tables(tables: [])
       return "No tables specified" if tables.empty?
 
@@ -75,7 +75,7 @@ module Langchain::Tool
 
     # Database Tool: Returns the database schema
     #
-    # @return [String] Database schema
+    # @return [Langchain::Tool::Response] Database schema
     def dump_schema
       Langchain.logger.debug("#{self.class} - Dumping schema tables and keys")
 
@@ -89,7 +89,7 @@ module Langchain::Tool
     # Database Tool: Executes a SQL query and returns the results
     #
     # @param input [String] SQL query to be executed
-    # @return [Array] Results from the SQL query
+    # @return [Langchain::Tool::Response] Results from the SQL query
     def execute(input:)
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
@@ -104,7 +104,7 @@ module Langchain::Tool
     # Describes a table and its schema
     #
     # @param table [String] The table to describe
-    # @return [String] The schema for the table
+    # @return [Langchain::Tool::Response] The schema for the table
     def describe_table(table)
       # TODO: There's probably a clear way to do all of this below
 

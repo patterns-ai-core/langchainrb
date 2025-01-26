@@ -42,7 +42,7 @@ module Langchain::Tool
     # @param include_domains [Array<String>] A list of domains to specifically include in the search results. Default is None, which includes all domains.
     # @param exclude_domains [Array<String>] A list of domains to specifically exclude from the search results. Default is None, which doesn't exclude any domains.
     #
-    # @return [String] The search results in JSON format.
+    # @return [Langchain::Tool::Response] The search results in JSON format.
     def search(
       query:,
       search_depth: "basic",

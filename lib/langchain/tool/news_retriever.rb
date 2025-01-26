@@ -58,7 +58,7 @@ module Langchain::Tool
     # @param page_size [Integer] The number of results to return per page. 20 is the API's default, 100 is the maximum. Our default is 5.
     # @param page [Integer] Use this to page through the results.
     #
-    # @return [String] JSON response
+    # @return [Langchain::Tool::Response] JSON response
     def get_everything(
       q: nil,
       search_in: nil,
@@ -100,7 +100,7 @@ module Langchain::Tool
     # @param page_size [Integer] The number of results to return per page. 20 is the API's default, 100 is the maximum. Our default is 5.
     # @param page [Integer] Use this to page through the results.
     #
-    # @return [String] JSON response
+    # @return [Langchain::Tool::Response] JSON response
     def get_top_headlines(
       country: nil,
       category: nil,
@@ -129,7 +129,7 @@ module Langchain::Tool
     # @param language [String] The 2-letter ISO-639-1 code of the language you want to get headlines for. Possible options: ar, de, en, es, fr, he, it, nl, no, pt, ru, se, ud, zh.
     # @param country [String] The 2-letter ISO 3166-1 code of the country you want to get headlines for. Possible options: ae, ar, at, au, be, bg, br, ca, ch, cn, co, cu, cz, de, eg, fr, gb, gr, hk, hu, id, ie, il, in, it, jp, kr, lt, lv, ma, mx, my, ng, nl, no, nz, ph, pl, pt, ro, rs, ru, sa, se, sg, si, sk, th, tr, tw, ua, us, ve, za.
     #
-    # @return [String] JSON response
+    # @return [Langchain::Tool::Response] JSON response
     def get_sources(
       category: nil,
       language: nil,

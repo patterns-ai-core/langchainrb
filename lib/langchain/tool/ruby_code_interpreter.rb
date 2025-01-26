@@ -28,7 +28,7 @@ module Langchain::Tool
     # Executes Ruby code in a sandboxes environment.
     #
     # @param input [String] ruby code expression
-    # @return [String] Answer
+    # @return [Langchain::Tool::Response] Answer
     def execute(input:)
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 

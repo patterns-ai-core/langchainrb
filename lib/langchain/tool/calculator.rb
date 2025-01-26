@@ -27,12 +27,12 @@ module Langchain::Tool
     # Evaluates a pure math expression or if equation contains non-math characters (e.g.: "12F in Celsius") then it uses the google search calculator to evaluate the expression
     #
     # @param input [String] math expression
-    # @return [String] Answer
+    # @return [Langchain::Tool::Response] Answer
     def execute(input:)
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       result = Eqn::Calculator.calc(input)
-      tool_response(content: result)
+      tool_response(content: result.to_s)
     rescue Eqn::ParseError, Eqn::NoVariableValueError
       tool_response(content: "\"#{input}\" is an invalid mathematical expression")
     end

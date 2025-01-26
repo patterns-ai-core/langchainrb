@@ -37,7 +37,7 @@ module Langchain::Tool
     # Executes Google Search and returns the result
     #
     # @param input [String] search query
-    # @return [String] Answer
+    # @return [Langchain::Tool::Response] Answer
     def execute(input:)
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 

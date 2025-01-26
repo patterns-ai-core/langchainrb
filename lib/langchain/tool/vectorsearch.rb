@@ -34,6 +34,7 @@ module Langchain::Tool
     #
     # @param query [String] The query to search for
     # @param k [Integer] The number of results to return
+    # @return [Langchain::Tool::Response] The response from the server
     def similarity_search(query:, k: 4)
       result = vectorsearch.similarity_search(query:, k: 4)
       tool_response(content: result)
