@@ -24,7 +24,7 @@ module Langchain::LLM
       llama2: 4_096,
       llama3: 4_096,
       "llama3.1": 4_096,
-      "llama3.2": 4_096,
+      "llama3.2": 3_072,
       llava: 4_096,
       mistral: 4_096,
       "mistral-openorca": 4_096,
