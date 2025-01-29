@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Assistant::LLM::Adapters::Anthropic do
+  let(:llm) { Langchain::LLM::Anthropic.new(api_key: "123") }
+  subject { described_class.new(llm: llm) }
+
   describe "#build_chat_params" do
     it "returns the chat parameters" do
       expect(
@@ -13,7 +16,22 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::Anthropic do
         )
       ).to eq({
         messages: [{role: "user", content: "Hello"}],
-        tools: Langchain::Tool::Calculator.function_schemas.to_anthropic_format,
+        tools: [
+          {
+            name: "langchain_tool_calculator__execute",
+            description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+            input_schema: {
+              properties: {
+                input: {
+                  description: "Math expression",
+                  type: "string"
+                }
+              },
+              required: ["input"],
+              type: "object"
+            }
+          }
+        ],
         tool_choice: {disable_parallel_tool_use: true, name: "langchain_tool_calculator__execute", type: "tool"},
         system: "Instructions"
       })
