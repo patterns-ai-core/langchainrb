@@ -14,6 +14,7 @@ if ENV["POSTGRES_URL"]
 
   RSpec.describe Langchain::Vectorsearch::Pgvector do
     let(:client) { client }
+    let(:metadata) { { "source" => "test" } }
 
     subject {
       subject
@@ -44,6 +45,16 @@ if ENV["POSTGRES_URL"]
       it "adds texts" do
         result = subject.add_texts(texts: ["Hello World", "Hello World"])
         expect(result.size).to eq(2)
+      end
+
+      it "adds texts with metadata" do
+        result = subject.add_texts(texts: ["Hello World", "Hello World"], metadata: {source: "test"})
+        expect(result.size).to eq(2)
+
+        result.each do |id|
+          record = client.exec_params("SELECT * FROM products WHERE id = $1;", [id]).first
+          expect(JSON.parse(record["metadata"])).to eq(metadata)
+        end
       end
     end
 
@@ -77,11 +88,25 @@ if ENV["POSTGRES_URL"]
       end
 
       it "updates texts" do
-        values = subject.add_texts(texts: ["Hello World", "Hello World"])
-        ids = values.flatten
+        ids = subject.add_texts(texts: ["Hello World", "Hello World"])
         result = subject.update_texts(texts: ["Hello World", "Hello World".reverse], ids: ids)
 
         expect(result.size).to eq(2)
+
+        second_record = client.exec_params("SELECT * FROM products WHERE id = $1;", [ids.last]).first
+        expect(second_record["content"]).to eq("Hello World".reverse)
+      end
+
+      it "updates texts with metadata" do
+        ids = subject.add_texts(texts: ["Hello World", "Hello World"])
+        result = subject.update_texts(texts: ["Hello World", "Hello World".reverse], ids: ids, metadata: metadata)
+
+        expect(result.size).to eq(2)
+
+        ids.each do |id|
+          record = client.exec_params("SELECT * FROM products WHERE id = $1;", [id]).first
+          expect(JSON.parse(record["metadata"])).to eq(metadata)
+        end
       end
 
       it "adds texts with a namespace" do
@@ -90,7 +115,7 @@ if ENV["POSTGRES_URL"]
         expect(count[0]["count"].to_i).to eq(0)
 
         allow(subject).to receive(:namespace).and_return("test_namespace")
-        ids = subject.add_texts(texts: ["Hello World", "Hello World"])
+        ids = subject.add_texts(texts: ["Hello World", "Hello World"], metadata: {source: "test"})
         expect(ids.length).to eq(2)
 
         count = client.exec_params(count_query)
@@ -119,7 +144,7 @@ if ENV["POSTGRES_URL"]
       end
 
       it "removes texts" do
-        values = subject.add_texts(texts: ["Hello World", "Hello World"])
+        values = subject.add_texts(texts: ["Hello World", "Hello World"], metadata: {source: "test"})
         ids = values.flatten
         expect(ids.length).to eq(2)
 

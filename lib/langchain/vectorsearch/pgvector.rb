@@ -51,17 +51,18 @@ module Langchain::Vectorsearch
     # Upsert a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<Integer>] The ids of the objects to add to the index, in the same order as the texts
+    # @param metadata [Hash] The metadata to use for the texts
     # @return [PG::Result] The response from the database including the ids of
     # the added or updated texts.
-    def upsert_texts(texts:, ids:)
+    def upsert_texts(texts:, ids:, metadata: nil)
       data = texts.zip(ids).flat_map do |(text, id)|
-        {id: id, content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace}
+        {id: id, content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace, metadata: metadata}
       end
-      # @db[table_name.to_sym].multi_insert(data, return: :primary_key)
+
       @db[table_name.to_sym]
         .insert_conflict(
           target: :id,
-          update: {content: Sequel[:excluded][:content], vectors: Sequel[:excluded][:vectors]}
+          update: {content: Sequel[:excluded][:content], vectors: Sequel[:excluded][:vectors], metadata: Sequel[:excluded][:metadata]}
         )
         .multi_insert(data, return: :primary_key)
     end
@@ -69,16 +70,17 @@ module Langchain::Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
-    # @return [Array<Integer>] The the ids of the added texts.
-    def add_texts(texts:, ids: nil)
+    # @param metadata [Hash] The metadata to use for the texts
+    # @return [Array<Integer>] The ids of the added texts.
+    def add_texts(texts:, ids: nil, metadata: nil)
       if ids.nil? || ids.empty?
         data = texts.map do |text|
-          {content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace}
+          {content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace, metadata: metadata.to_json}
         end
 
         @db[table_name.to_sym].multi_insert(data, return: :primary_key)
       else
-        upsert_texts(texts: texts, ids: ids)
+        upsert_texts(texts: texts, ids: ids, metadata: metadata.to_json)
       end
     end
 
@@ -86,8 +88,8 @@ module Langchain::Vectorsearch
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
     # @return [Array<Integer>] The ids of the updated texts.
-    def update_texts(texts:, ids:)
-      upsert_texts(texts: texts, ids: ids)
+    def update_texts(texts:, ids:, metadata: nil)
+      upsert_texts(texts: texts, ids: ids, metadata: metadata.to_json)
     end
 
     # Remove a list of texts from the index
@@ -107,6 +109,7 @@ module Langchain::Vectorsearch
         text :content
         column :vectors, "vector(#{vector_dimensions})"
         text namespace_column.to_sym, default: nil
+        jsonb :metadata
       end
     end
 
