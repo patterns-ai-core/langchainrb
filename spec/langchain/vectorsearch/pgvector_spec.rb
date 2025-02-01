@@ -115,7 +115,7 @@ if ENV["POSTGRES_URL"]
         expect(count[0]["count"].to_i).to eq(0)
 
         allow(subject).to receive(:namespace).and_return("test_namespace")
-        ids = subject.add_texts(texts: ["Hello World", "Hello World"], metadata: {source: "test"})
+        ids = subject.add_texts(texts: ["Hello World", "Hello World"])
         expect(ids.length).to eq(2)
 
         count = client.exec_params(count_query)
@@ -144,7 +144,7 @@ if ENV["POSTGRES_URL"]
       end
 
       it "removes texts" do
-        values = subject.add_texts(texts: ["Hello World", "Hello World"], metadata: {source: "test"})
+        values = subject.add_texts(texts: ["Hello World", "Hello World"])
         ids = values.flatten
         expect(ids.length).to eq(2)
 
