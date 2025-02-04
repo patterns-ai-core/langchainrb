@@ -62,7 +62,11 @@ module Langchain
           # @param tools [Array<Langchain::Tool::Base>] The tools
           # @return [Array] The tools in Google Gemini format
           def build_tools(tools)
-            tools.map { |tool| tool.class.function_schemas.to_google_gemini_format }.flatten
+            tools.map { |tool|
+              tool.class.function_schemas.functions.map { |function|
+                function[:function]
+              }
+            }.flatten
           end
 
           # Get the allowed assistant.tool_choice values for Google Gemini
