@@ -18,20 +18,28 @@ module Langchain::LLM
       completions&.dig(0, "text")
     end
 
+    def tool_calls
+      raw_response.dig("message", "tool_calls")
+    end
+
     def chat_completion
-      raw_response.dig("text")
+      raw_response.dig("message", "content", 0, "text")
     end
 
     def role
-      raw_response.dig("chat_history").last["role"]
+      raw_response.dig("message", "role")
     end
 
     def prompt_tokens
-      raw_response.dig("meta", "billed_units", "input_tokens")
+      raw_response.dig("usage", "billed_units", "input_tokens")
     end
 
     def completion_tokens
-      raw_response.dig("meta", "billed_units", "output_tokens")
+      raw_response.dig("usage", "billed_units", "output_tokens")
+    end
+
+    def total_tokens
+      prompt_tokens + completion_tokens
     end
   end
 end
