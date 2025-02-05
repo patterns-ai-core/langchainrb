@@ -55,5 +55,38 @@ module Langchain::LLM
     def role
       raw_response.dig("role")
     end
+
+    # List models
+    def models
+      return [] unless raw_response.is_a?(Array)
+
+      raw_response.map do |model|
+        ModelInfo.new(
+          id: model["id"],
+          created_at: Time.parse(model["created_at"]),
+          display_name: model["display_name"],
+          provider: "anthropic",
+          metadata: {
+            type: model["type"]
+          }
+        )
+      end
+    end
+
+    def model_ids
+      models.map(&:id)
+    end
+
+    def created_dates
+      models.map(&:created_at)
+    end
+
+    def display_names
+      models.map(&:display_name)
+    end
+
+    def provider
+      "Anthropic"
+    end
   end
 end
