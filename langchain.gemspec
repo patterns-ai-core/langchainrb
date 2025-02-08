@@ -58,7 +58,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "hnswlib", "~> 0.8.1"
   spec.add_development_dependency "hugging-face", "~> 0.3.4"
   spec.add_development_dependency "milvus", "~> 0.10.3"
-  spec.add_development_dependency "llama_cpp", "~> 0.9.4"
+  #spec.add_development_dependency "llama_cpp", "~> 0.9.4"
   spec.add_development_dependency "nokogiri", "~> 1.13"
   spec.add_development_dependency "mail", "~> 2.8"
   spec.add_development_dependency "mistral-ai"
@@ -76,4 +76,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "weaviate-ruby", "~> 0.9.2"
   spec.add_development_dependency "wikipedia-client", "~> 1.17.0"
   spec.add_development_dependency "power_point_pptx", "~> 0.1.0"
+  spec.add_development_dependency "gigachat", "~> 0.1.0"
+  spec.add_development_dependency "event_stream_parser", "~> 1.0.0"
 end

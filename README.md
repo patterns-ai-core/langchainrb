@@ -62,6 +62,7 @@ The `Langchain::LLM` module provides a unified interface for interacting with va
 - AWS Bedrock
 - Azure OpenAI
 - Cohere
+- GigaChat
 - Google Gemini
 - Google Vertex AI
 - HuggingFace

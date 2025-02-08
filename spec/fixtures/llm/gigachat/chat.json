@@ -1,0 +1,30 @@
+{
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": "Здравствуйте! К сожалению, я не могу дать точный ответ на этот вопрос, так как это зависит от многих факторов. Однако обычно релиз новых функций и обновлений в GigaChat происходит постепенно и незаметно для пользователей. Рекомендую следить за новостями и обновлениями проекта в официальном сообществе GigaChat или на сайте разработчиков.",
+        "created": 1625284800,
+        "name": "text2image",
+        "functions_state_id": "77d3fb14-457a-46ba-937e-8d856156d003",
+        "function_call": {
+          "name": "string",
+          "arguments": {}
+        },
+        "data_for_context": [
+          {}
+        ]
+      },
+      "index": 0,
+      "finish_reason": "stop"
+    }
+  ],
+  "created": 1678878333,
+  "model": "GigaChat",
+  "usage": {
+    "prompt_tokens": 18,
+    "completion_tokens": 68,
+    "total_tokens": 86
+  },
+  "object": "chat.completion"
+}
