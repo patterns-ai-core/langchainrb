@@ -121,13 +121,15 @@ module Langchain::Vectorsearch
     # Search for similar texts in the index
     # @param query [String] The text to search for
     # @param k [Integer] The number of top results to return
+    # @param metadata_filter [Hash] The metadata to filter the results by
     # @return [Array<Hash>] The results of the search
-    def similarity_search(query:, k: 4)
+    def similarity_search(query:, k: 4, metadata_filter: {})
       embedding = llm.embed(text: query).embedding
 
       similarity_search_by_vector(
         embedding: embedding,
-        k: k
+        k: k,
+        metadata_filter: metadata_filter
       )
     end
 
@@ -136,11 +138,19 @@ module Langchain::Vectorsearch
     # @param embedding [Array<Float>] The vector to search for
     # @param k [Integer] The number of top results to return
     # @return [Array<Hash>] The results of the search
-    def similarity_search_by_vector(embedding:, k: 4)
-      db.transaction do # BEGIN
-        documents_model
-          .nearest_neighbors(:vectors, embedding, distance: operator).limit(k)
-          .where(namespace_column.to_sym => namespace)
+    def similarity_search_by_vector(embedding:, k: 4, metadata_filter: {})
+      results =
+        db.transaction do # BEGIN
+          documents_model
+            .nearest_neighbors(:vectors, embedding, distance: operator).limit(k)
+            .where(namespace_column.to_sym => namespace)
+        end
+
+      return results if metadata_filter.empty?
+
+      results.filter_map do |result|
+        metadata = JSON.parse(result.metadata)
+        result if metadata_filter.all? { |key, value| metadata[key.to_s] == value }
       end
     end
 

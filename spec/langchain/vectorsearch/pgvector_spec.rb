@@ -157,8 +157,7 @@ if ENV["POSTGRES_URL"]
       before do
         allow_any_instance_of(
           OpenAI::Client
-        ).to receive(:embeddings)
-          .with(
+        ).to receive(:embeddings).with(
             parameters: {
               dimensions: 1536,
               model: "text-embedding-3-small",
@@ -171,19 +170,48 @@ if ENV["POSTGRES_URL"]
               {"embedding" => 1536.times.map { 0 }}
             ]
           })
+
+        allow_any_instance_of(
+          OpenAI::Client
+        ).to receive(:embeddings).with(
+          parameters: {
+            dimensions: 1536,
+            model: "text-embedding-3-small",
+            input: "hello"
+          }
+        ).and_return({
+          "object" => "list",
+          "data" => [
+            {"embedding" => 1536.times.map { 0 }}
+          ] }
+        )
       end
 
       before {
-        subject.documents_model.new(content: "something about earth", vectors: 1536.times.map { 0 }).save
+        subject.documents_model.new(content: "something about earth",
+                                    vectors: 1536.times.map { 0 },
+                                    metadata: { topic: "earth" }.to_json
+        ).save
+
         4.times do |i|
-          subject.documents_model.new(content: "Hello World", vectors: 1536.times.map { rand }).save
+          subject.documents_model.new(content: "Hello World #{i}",
+                                      vectors: 1536.times.map { rand },
+                                      metadata: { topic: "topic_#{i}" }.to_json
+          ).save
         end
       }
 
       it "searches for similar texts" do
-        result = subject.similarity_search(query: "earth")
+        results = subject.similarity_search(query: "earth")
 
-        expect(result.first.content).to eq("something about earth")
+        expect(results.first.content).to eq("something about earth")
+      end
+
+      it "searches for similar texts filtered by metadata" do
+        results = subject.similarity_search(query: "hello", metadata_filter: { topic: "topic_1" })
+
+        expect(results.size).to eq(1)
+        expect(results.first.content).to eq("Hello World 1")
       end
 
       it "searches for similar texts using a namespace" do
