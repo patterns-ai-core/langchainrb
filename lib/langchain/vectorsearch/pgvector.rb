@@ -175,5 +175,22 @@ module Langchain::Vectorsearch
       response.context = context
       response
     end
+
+    # Add data from a list of paths
+    # @param paths [Array<String>] The paths to load data from
+    # @param options [Hash] The options to pass to the loader
+    # @param chunker [Object] The chunker to use
+    # @param metadata [Hash] The metadata to use for the texts
+    def add_data(paths:, options: {}, chunker: Langchain::Chunker::Text, metadata: nil)
+      raise ArgumentError, "Paths must be provided" if Array(paths).empty?
+
+      texts =
+        Array(paths).flatten.flat_map do |path|
+          data = Langchain::Loader.new(path, options, chunker: chunker)&.load&.chunks
+          data.map { |chunk| chunk.text }
+        end
+
+      add_texts(texts: texts, metadata: metadata)
+    end
   end
 end

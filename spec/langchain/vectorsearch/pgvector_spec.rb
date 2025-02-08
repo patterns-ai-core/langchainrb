@@ -308,5 +308,31 @@ if ENV["POSTGRES_URL"]
         end
       end
     end
+
+    describe "#add_data" do
+      let(:paths) do
+        [
+          Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
+          Langchain.root.join("../spec/fixtures/loaders/test_doc.pdf"),
+          Langchain.root.join("../spec/fixtures/loaders/example.txt")
+        ]
+      end
+
+      it "allows adding multiple paths" do
+        expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), metadata: nil)
+
+        subject.add_data(paths: paths)
+      end
+
+      it "requires paths" do
+        expect { subject.add_data(paths: []) }.to raise_error(ArgumentError, /Paths must be provided/)
+      end
+
+      it "allows adding multiple paths with metadata" do
+        expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), metadata: metadata)
+
+        subject.add_data(paths: paths, metadata: metadata)
+      end
+    end
   end
 end
