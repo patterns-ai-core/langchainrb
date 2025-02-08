@@ -48,7 +48,7 @@ if ENV["POSTGRES_URL"]
       end
 
       it "adds texts with metadata" do
-        result = subject.add_texts(texts: ["Hello World", "Hello World"], metadata: {source: "test"})
+        result = subject.add_texts(texts: ["Hello World", "Hello World"], metadata: metadata)
         expect(result.size).to eq(2)
 
         result.each do |id|
