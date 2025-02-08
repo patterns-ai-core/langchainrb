@@ -24,21 +24,22 @@ module Langchain::Tool
     end
 
     def list_directory(directory_path:)
-      Dir.entries(directory_path)
+      tool_response(content: Dir.entries(directory_path))
     rescue Errno::ENOENT
-      "No such directory: #{directory_path}"
+      tool_response(content: "No such directory: #{directory_path}")
     end
 
     def read_file(file_path:)
-      File.read(file_path)
+      tool_response(content: File.read(file_path))
     rescue Errno::ENOENT
-      "No such file: #{file_path}"
+      tool_response(content: "No such file: #{file_path}")
     end
 
     def write_to_file(file_path:, content:)
       File.write(file_path, content)
+      tool_response(content: "File written successfully")
     rescue Errno::EACCES
-      "Permission denied: #{file_path}"
+      tool_response(content: "Permission denied: #{file_path}")
     end
   end
 end

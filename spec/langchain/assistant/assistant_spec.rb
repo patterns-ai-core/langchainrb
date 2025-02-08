@@ -338,6 +338,68 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
+    describe "#handle_tool_call" do
+      let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+      let(:calculator) { Langchain::Tool::Calculator.new }
+      let(:assistant) { described_class.new(llm: llm, tools: [calculator]) }
+
+      context "when tool returns a ToolResponse" do
+        let(:tool_call) do
+          {
+            "id" => "call_123",
+            "type" => "function",
+            "function" => {
+              "name" => "langchain_tool_calculator__execute",
+              "arguments" => {input: "2+2"}.to_json
+            }
+          }
+        end
+        let(:tool_response) { Langchain::ToolResponse.new(content: "4", image_url: "http://example.com/image.jpg") }
+
+        before do
+          allow_any_instance_of(Langchain::Tool::Calculator).to receive(:execute).and_return(tool_response)
+        end
+
+        it "adds a message with the ToolResponse content and image_url" do
+          expect {
+            assistant.send(:run_tool, tool_call)
+          }.to change { assistant.messages.count }.by(1)
+
+          last_message = assistant.messages.last
+          expect(last_message.content).to eq("4")
+          expect(last_message.image_url).to eq("http://example.com/image.jpg")
+          expect(last_message.tool_call_id).to eq("call_123")
+        end
+      end
+
+      context "when tool returns a simple value" do
+        let(:tool_call) do
+          {
+            "id" => "call_123",
+            "type" => "function",
+            "function" => {
+              "name" => "langchain_tool_calculator__execute",
+              "arguments" => {input: "2+2"}.to_json
+            }
+          }
+        end
+
+        before do
+          allow_any_instance_of(Langchain::Tool::Calculator).to receive(:execute).and_return("4")
+        end
+
+        it "adds a message with the simple value as content" do
+          expect {
+            assistant.send(:run_tool, tool_call)
+          }.to change { assistant.messages.count }.by(1)
+
+          last_message = assistant.messages.last
+          expect(last_message.content).to eq("4")
+          expect(last_message.tool_call_id).to eq("call_123")
+        end
+      end
+    end
+
     describe "#extract_tool_call_args" do
       let(:tool_call) { {"id" => "call_9TewGANaaIjzY31UCpAAGLeV", "type" => "function", "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}} }
 

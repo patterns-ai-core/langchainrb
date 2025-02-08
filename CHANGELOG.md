@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/894] Tools can now output image_urls, and all tool output must be wrapped by a tool_response() method
 
 ## [0.19.3] - 2025-01-13
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/900] Empty text content should not be set when content is nil when using AnthropicMessage
