@@ -51,17 +51,18 @@ module Langchain::Vectorsearch
     # Upsert a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<Integer>] The ids of the objects to add to the index, in the same order as the texts
+    # @param metadata [Hash] The metadata to use for the texts
     # @return [PG::Result] The response from the database including the ids of
     # the added or updated texts.
-    def upsert_texts(texts:, ids:)
+    def upsert_texts(texts:, ids:, metadata: nil)
       data = texts.zip(ids).flat_map do |(text, id)|
-        {id: id, content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace}
+        {id: id, content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace, metadata: metadata}
       end
-      # @db[table_name.to_sym].multi_insert(data, return: :primary_key)
+
       @db[table_name.to_sym]
         .insert_conflict(
           target: :id,
-          update: {content: Sequel[:excluded][:content], vectors: Sequel[:excluded][:vectors]}
+          update: {content: Sequel[:excluded][:content], vectors: Sequel[:excluded][:vectors], metadata: Sequel[:excluded][:metadata]}
         )
         .multi_insert(data, return: :primary_key)
     end
@@ -69,16 +70,17 @@ module Langchain::Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
-    # @return [Array<Integer>] The the ids of the added texts.
-    def add_texts(texts:, ids: nil)
+    # @param metadata [Hash] The metadata to use for the texts
+    # @return [Array<Integer>] The ids of the added texts.
+    def add_texts(texts:, ids: nil, metadata: nil)
       if ids.nil? || ids.empty?
         data = texts.map do |text|
-          {content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace}
+          {content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace, metadata: metadata.to_json}
         end
 
         @db[table_name.to_sym].multi_insert(data, return: :primary_key)
       else
-        upsert_texts(texts: texts, ids: ids)
+        upsert_texts(texts: texts, ids: ids, metadata: metadata.to_json)
       end
     end
 
@@ -86,8 +88,8 @@ module Langchain::Vectorsearch
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
     # @return [Array<Integer>] The ids of the updated texts.
-    def update_texts(texts:, ids:)
-      upsert_texts(texts: texts, ids: ids)
+    def update_texts(texts:, ids:, metadata: nil)
+      upsert_texts(texts: texts, ids: ids, metadata: metadata.to_json)
     end
 
     # Remove a list of texts from the index
@@ -107,6 +109,7 @@ module Langchain::Vectorsearch
         text :content
         column :vectors, "vector(#{vector_dimensions})"
         text namespace_column.to_sym, default: nil
+        jsonb :metadata
       end
     end
 
@@ -118,13 +121,15 @@ module Langchain::Vectorsearch
     # Search for similar texts in the index
     # @param query [String] The text to search for
     # @param k [Integer] The number of top results to return
+    # @param metadata_filter [Hash] The metadata to filter the results by
     # @return [Array<Hash>] The results of the search
-    def similarity_search(query:, k: 4)
+    def similarity_search(query:, k: 4, metadata_filter: {})
       embedding = llm.embed(text: query).embedding
 
       similarity_search_by_vector(
         embedding: embedding,
-        k: k
+        k: k,
+        metadata_filter: metadata_filter
       )
     end
 
@@ -133,11 +138,19 @@ module Langchain::Vectorsearch
     # @param embedding [Array<Float>] The vector to search for
     # @param k [Integer] The number of top results to return
     # @return [Array<Hash>] The results of the search
-    def similarity_search_by_vector(embedding:, k: 4)
-      db.transaction do # BEGIN
-        documents_model
-          .nearest_neighbors(:vectors, embedding, distance: operator).limit(k)
-          .where(namespace_column.to_sym => namespace)
+    def similarity_search_by_vector(embedding:, k: 4, metadata_filter: {})
+      results =
+        db.transaction do # BEGIN
+          documents_model
+            .nearest_neighbors(:vectors, embedding, distance: operator).limit(k)
+            .where(namespace_column.to_sym => namespace)
+        end
+
+      return results if metadata_filter.empty?
+
+      results.filter_map do |result|
+        metadata = JSON.parse(result.metadata)
+        result if metadata_filter.all? { |key, value| metadata[key.to_s] == value }
       end
     end
 
@@ -161,6 +174,23 @@ module Langchain::Vectorsearch
 
       response.context = context
       response
+    end
+
+    # Add data from a list of paths
+    # @param paths [Array<String>] The paths to load data from
+    # @param options [Hash] The options to pass to the loader
+    # @param chunker [Object] The chunker to use
+    # @param metadata [Hash] The metadata to use for the texts
+    def add_data(paths:, options: {}, chunker: Langchain::Chunker::Text, metadata: nil)
+      raise ArgumentError, "Paths must be provided" if Array(paths).empty?
+
+      texts =
+        Array(paths).flatten.flat_map do |path|
+          data = Langchain::Loader.new(path, options, chunker: chunker)&.load&.chunks
+          data.map { |chunk| chunk.text }
+        end
+
+      add_texts(texts: texts, metadata: metadata)
     end
   end
 end
