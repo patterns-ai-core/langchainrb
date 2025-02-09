@@ -52,9 +52,10 @@ module Langchain::Vectorsearch
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<Integer>] The ids of the objects to add to the index, in the same order as the texts
     # @param metadata [Hash] The metadata to use for the texts
+    # @param embedding_metadata_keys [Array<String>] The keys to use for the metadata when generating embeddings
     # @return [PG::Result] The response from the database including the ids of
     # the added or updated texts.
-    def upsert_texts(texts:, ids:, metadata: nil)
+    def upsert_texts(texts:, ids:, metadata: nil, embed_metadata_keys: nil)
       data = texts.zip(ids).flat_map do |(text, id)|
         enriched_text = enrich_text_with_metadata(text,
                                                   metadata: metadata,
@@ -216,6 +217,7 @@ module Langchain::Vectorsearch
     # @param embedding_metadata_keys [Array<String>] The keys to use for the metadata when generating embeddings
     # @return [String] The enriched text
     def enrich_text_with_metadata(text, metadata:, embed_metadata_keys:)
+      metadata = JSON.parse(metadata) if metadata.is_a?(String)
       return text unless metadata
 
       embed_metadata_keys ||= []
