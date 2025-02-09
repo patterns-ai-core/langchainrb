@@ -68,16 +68,7 @@ module Langchain::Vectorsearch
     def add_data(paths:, namespace: "", options: {}, chunker: Langchain::Chunker::Text)
       raise ArgumentError, "Paths must be provided" if Array(paths).empty?
 
-      texts = Array(paths)
-        .flatten
-        .map do |path|
-          data = Langchain::Loader.new(path, options, chunker: chunker)&.load&.chunks
-          data.map { |chunk| chunk.text }
-        end
-
-      texts.flatten!
-
-      add_texts(texts: texts, namespace: namespace)
+      add_texts(texts: texts_from_paths(paths:, options:, chunker:), namespace: namespace)
     end
 
     # Update a list of texts in the index

@@ -56,7 +56,16 @@ module Langchain::Vectorsearch
     # the added or updated texts.
     def upsert_texts(texts:, ids:, metadata: nil)
       data = texts.zip(ids).flat_map do |(text, id)|
-        {id: id, content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace, metadata: metadata}
+        enriched_text = enrich_text_with_metadata(text,
+                                                  metadata: metadata,
+                                                  embed_metadata_keys: embed_metadata_keys)
+        {
+          id: id,
+          content: text,
+          vectors: llm.embed(text: enriched_text).embedding.to_s,
+          namespace: namespace,
+          metadata: metadata
+        }
       end
 
       @db[table_name.to_sym]
@@ -71,11 +80,21 @@ module Langchain::Vectorsearch
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
     # @param metadata [Hash] The metadata to use for the texts
+    # @param embedding_metadata_keys [Array<String>] The keys to use for the metadata when generating embeddings
     # @return [Array<Integer>] The ids of the added texts.
-    def add_texts(texts:, ids: nil, metadata: nil)
+    def add_texts(texts:, ids: nil, metadata: nil, embed_metadata_keys: nil)
       if ids.nil? || ids.empty?
         data = texts.map do |text|
-          {content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace, metadata: metadata.to_json}
+          # Concatenate relevant metadata to the text
+          enriched_text = enrich_text_with_metadata(text,
+                                                    metadata: metadata,
+                                                    embed_metadata_keys: embed_metadata_keys)
+          {
+            content: text,
+            vectors: llm.embed(text: enriched_text).embedding.to_s,
+            namespace: namespace,
+            metadata: metadata.to_json
+          }
         end
 
         @db[table_name.to_sym].multi_insert(data, return: :primary_key)
@@ -184,13 +203,33 @@ module Langchain::Vectorsearch
     def add_data(paths:, options: {}, chunker: Langchain::Chunker::Text, metadata: nil)
       raise ArgumentError, "Paths must be provided" if Array(paths).empty?
 
-      texts =
-        Array(paths).flatten.flat_map do |path|
-          data = Langchain::Loader.new(path, options, chunker: chunker)&.load&.chunks
-          data.map { |chunk| chunk.text }
-        end
+      add_texts(texts: texts_from_paths(paths:, options:, chunker:), metadata: metadata)
+    end
 
-      add_texts(texts: texts, metadata: metadata)
+    private
+
+    # Add metadata context to text. If embedding_metadata_keys are provided, only include those keys in the context
+    # otherwise include all metadata keys.
+    #
+    # @param text [String] The text to enrich
+    # @param metadata [Hash] The metadata to add to the text
+    # @param embedding_metadata_keys [Array<String>] The keys to use for the metadata when generating embeddings
+    # @return [String] The enriched text
+    def enrich_text_with_metadata(text, metadata:, embed_metadata_keys:)
+      return text unless metadata
+
+      embed_metadata_keys ||= []
+
+      # Select metadata relevant to the context
+      selected_metadata_keys = (metadata.keys & embed_metadata_keys) || metadata.keys
+
+      context = selected_metadata_keys.filter_map do |field|
+        value = metadata[field]
+        "#{field}: #{value}" if value
+      end
+
+      # Add metadata context to text
+      [context.join("\n"), text].join("\n\n").strip
     end
   end
 end
