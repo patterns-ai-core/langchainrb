@@ -55,7 +55,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "faraday"
   spec.add_development_dependency "googleauth"
   spec.add_development_dependency "google_search_results", "~> 2.0.0"
-  spec.add_development_dependency "hnswlib", "~> 0.8.1"
+  spec.add_development_dependency "hnswlib", "~> 0.9.0"
   spec.add_development_dependency "hugging-face", "~> 0.3.4"
   spec.add_development_dependency "milvus", "~> 0.10.3"
   spec.add_development_dependency "llama_cpp", "~> 0.9.4"
