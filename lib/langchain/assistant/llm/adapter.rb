@@ -10,6 +10,8 @@ module Langchain
             LLM::Adapters::Anthropic.new
           elsif llm.is_a?(Langchain::LLM::AwsBedrock) && llm.defaults[:chat_model].include?("anthropic")
             LLM::Adapters::AwsBedrockAnthropic.new
+          elsif llm.is_a?(Langchain::LLM::Cohere)
+            LLM::Adapters::Cohere.new
           elsif llm.is_a?(Langchain::LLM::GoogleGemini) || llm.is_a?(Langchain::LLM::GoogleVertexAI)
             LLM::Adapters::GoogleGemini.new
           elsif llm.is_a?(Langchain::LLM::MistralAI)
