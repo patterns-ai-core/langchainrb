@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Assistant::LLM::Adapters::OpenAI do
+  let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+  subject { described_class.new(llm: llm) }
+
   describe "#build_chat_params" do
     it "returns the chat parameters" do
       expect(
@@ -13,7 +16,25 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::OpenAI do
         )
       ).to eq({
         messages: [{role: "user", content: "Hello"}],
-        tools: Langchain::Tool::Calculator.function_schemas.to_openai_format,
+        tools: [
+          {
+            function: {
+              description: "Evaluates a pure math expression or if equation contains non-math characters (e.g.: \"12F in Celsius\") then it uses the google search calculator to evaluate the expression",
+              name: "langchain_tool_calculator__execute",
+              parameters: {
+                properties: {
+                  input: {
+                    description: "Math expression",
+                    type: "string"
+                  }
+                },
+                required: ["input"],
+                type: "object"
+              }
+            },
+            type: "function"
+          }
+        ],
         tool_choice: {"function" => {"name" => "langchain_tool_calculator__execute"}, "type" => "function"},
         parallel_tool_calls: false
       })
