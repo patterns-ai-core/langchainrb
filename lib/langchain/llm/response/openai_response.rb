@@ -59,5 +59,51 @@ module Langchain::LLM
     def total_tokens
       raw_response.dig("usage", "total_tokens")
     end
+
+    # List models
+    def format_display_name(model_id)
+      name = model_id.dup
+      name = name.gsub(/^gpt-/, "GPT ")
+        .gsub(/^o1-/, "O1 ")
+        .gsub(/^chatgpt-/, "ChatGPT ")
+        .tr("-", " ")
+        .split(" ")
+        .map(&:capitalize)
+        .join(" ")
+
+      name = "#{name} (Legacy)" if model_id.include?("0613")
+      name
+    end
+
+    def models
+      raw_response.dig("data")&.map do |model|
+        ModelInfo.new(
+          id: model["id"],
+          created_at: Time.at(model["created"]),
+          display_name: format_display_name(model["id"]),
+          provider: "openai",
+          metadata: {
+            object: model["object"],
+            owned_by: model["owned_by"]
+          }
+        )
+      end || []
+    end
+
+    def model_ids
+      models.map(&:id)
+    end
+
+    def created_dates
+      models.map(&:created_at)
+    end
+
+    def display_names
+      models.map(&:display_name)
+    end
+
+    def provider
+      "OpenAI"
+    end
   end
 end
