@@ -27,11 +27,11 @@ module Langchain::Vectorsearch
     # @param index_name [String] The name of the table to use for the index
     # @param llm [Object] The LLM client to use
     # @param namespace [String] The namespace to use for the index when inserting/querying
-    def initialize(url:, index_name:, llm:, namespace: nil)
+    def initialize(url:, index_name:, llm:, namespace: nil, connection_options: {})
       depends_on "sequel"
       depends_on "pgvector"
 
-      @db = Sequel.connect(url)
+      @db = Sequel.connect(url, connection_options)
 
       @table_name = index_name
 
@@ -57,7 +57,6 @@ module Langchain::Vectorsearch
       data = texts.zip(ids).flat_map do |(text, id)|
         {id: id, content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace}
       end
-      # @db[table_name.to_sym].multi_insert(data, return: :primary_key)
       @db[table_name.to_sym]
         .insert_conflict(
           target: :id,
