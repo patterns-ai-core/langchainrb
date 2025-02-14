@@ -24,7 +24,7 @@ module Langchain
             if tools.any?
               params[:tools] = build_tools(tools)
               params[:tool_choice] = build_tool_choice(tool_choice)
-              params[:parallel_tool_calls] = parallel_tool_calls
+              params[:parallel_tool_calls] = parallel_tool_calls unless parallel_tool_calls.nil?
             end
             params
           end
