@@ -10,6 +10,8 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+
+## [0.19.4] - 2025-02-17
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/894] Tools can now output image_urls, and all tool output must be wrapped by a tool_response() method
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/921] Fix for Assistant when OpenAI o1/o3 models are used
 
