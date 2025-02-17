@@ -25,6 +25,7 @@ module Langchain
               params[:tools] = build_tools(tools)
               params[:tool_choice] = build_tool_choice(tool_choice)
               # Temporary fix because OpenAI o1/o3/reasoning models don't support `parallel_tool_calls` parameter.
+              # Set `Assistant.new(parallel_tool_calls: nil, ...)` to avoid the error.
               params[:parallel_tool_calls] = parallel_tool_calls unless parallel_tool_calls.nil?
             end
             params
