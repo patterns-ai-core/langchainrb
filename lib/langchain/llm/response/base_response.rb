@@ -84,6 +84,18 @@ module Langchain
       def total_tokens
         raise NotImplementedError
       end
+
+      class ModelInfo
+        attr_reader :id, :created_at, :display_name, :provider, :metadata
+
+        def initialize(id:, created_at:, provider:, display_name: nil, metadata: {})
+          @id = id
+          @created_at = created_at
+          @display_name = display_name || id
+          @provider = provider
+          @metadata = metadata
+        end
+      end
     end
   end
 end

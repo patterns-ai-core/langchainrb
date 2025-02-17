@@ -90,6 +90,30 @@ llm = Langchain::LLM::OpenAI.new(
 )
 ```
 
+### Listing Available Models
+
+Model listing is only supported for OpenAI and Anthropic models at the moment.
+
+Use the `list_models` method to retrieve information about available models from the LLM provider:
+
+```ruby
+# List available models
+response = llm.list_models
+
+# Access model information
+models = response.models       # Array of ModelInfo objects with full model data
+model_ids = response.model_ids # Array of model IDs
+created_dates = response.created_dates # Array of creation dates
+
+# Example with a specific model
+model = response.models.first
+model.id           # The model identifier
+model.created_at   # Creation timestamp
+model.display_name # Human-readable name
+model.provider     # Provider name ("openai" or "anthropic")
+model.metadata     # Provider-specific metadata
+```
+
 ### Generating Embeddings
 
 Use the `embed` method to generate embeddings for given text:

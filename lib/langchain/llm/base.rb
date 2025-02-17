@@ -83,5 +83,13 @@ module Langchain::LLM
         parameters: params
       )
     end
+
+    # List available models from the LLM provider
+    #
+    # @return [Langchain::LLM::BaseResponse] Response containing available models
+    # @raise NotImplementedError if not supported by the LLM
+    def list_models
+      raise NotImplementedError, "#{self.class.name} does not support model listing"
+    end
   end
 end

@@ -40,6 +40,14 @@ module Langchain::LLM
       chat_parameters.remap(stop: :stop_sequences)
     end
 
+    # List available Anthropic models
+    #
+    # @return [Langchain::LLM::AnthropicResponse] Response containing available models
+    def list_models
+      response = client.models
+      Langchain::LLM::AnthropicResponse.new(response)
+    end
+
     # Generate a completion for a given prompt
     #
     # @param prompt [String] Prompt to generate a completion for
