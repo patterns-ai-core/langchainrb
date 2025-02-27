@@ -119,6 +119,138 @@ RSpec.describe Langchain::LLM::AwsBedrock do
         end
       end
     end
+
+    context "with amazon nova pro provider" do
+      let(:response) do
+        {
+          output: {
+            message: {
+              content: [
+                {text: "The capital of France is Paris."}
+              ]
+            }
+          },
+          usage: {inputTokens: 14, outputTokens: 10}
+        }.to_json
+      end
+
+      let(:model_id) { "amazon.nova-pro-v1:0" }
+
+      before do
+        response_object = double("response_object")
+        allow(response_object).to receive(:body).and_return(StringIO.new(response))
+        allow(subject.client).to receive(:invoke_model)
+          .with(matching(
+            model_id:,
+            body: {
+              messages: [{role: "user", content: [{text: "What is the capital of France?"}]}],
+              inferenceConfig: {
+                maxTokens: 300
+              }
+            }.to_json,
+            content_type: "application/json",
+            accept: "application/json"
+          ))
+          .and_return(response_object)
+      end
+
+      it "returns a completion" do
+        expect(
+          subject.chat(
+            messages: [{role: "user", content: [{text: "What is the capital of France?"}]}],
+            model: model_id
+          ).chat_completion
+        ).to eq("The capital of France is Paris.")
+      end
+    end
+
+    context "with amazon nova lite provider" do
+      let(:response) do
+        {
+          output: {
+            message: {
+              content: [
+                {text: "The capital of France is Paris."}
+              ]
+            }
+          },
+          usage: {inputTokens: 14, outputTokens: 10}
+        }.to_json
+      end
+
+      let(:model_id) { "amazon.nova-lite-v1:0" }
+
+      before do
+        response_object = double("response_object")
+        allow(response_object).to receive(:body).and_return(StringIO.new(response))
+        allow(subject.client).to receive(:invoke_model)
+          .with(matching(
+            model_id:,
+            body: {
+              messages: [{role: "user", content: [{text: "What is the capital of France?"}]}],
+              inferenceConfig: {
+                maxTokens: 300
+              }
+            }.to_json,
+            content_type: "application/json",
+            accept: "application/json"
+          ))
+          .and_return(response_object)
+      end
+
+      it "returns a completion" do
+        expect(
+          subject.chat(
+            messages: [{role: "user", content: [{text: "What is the capital of France?"}]}],
+            model: model_id
+          ).chat_completion
+        ).to eq("The capital of France is Paris.")
+      end
+    end
+
+    context "with amazon nova micro provider" do
+      let(:response) do
+        {
+          output: {
+            message: {
+              content: [
+                {text: "The capital of France is Paris."}
+              ]
+            }
+          },
+          usage: {inputTokens: 14, outputTokens: 10}
+        }.to_json
+      end
+
+      let(:model_id) { "amazon.nova-micro-v1:0" }
+
+      before do
+        response_object = double("response_object")
+        allow(response_object).to receive(:body).and_return(StringIO.new(response))
+        allow(subject.client).to receive(:invoke_model)
+          .with(matching(
+            model_id:,
+            body: {
+              messages: [{role: "user", content: [{text: "What is the capital of France?"}]}],
+              inferenceConfig: {
+                maxTokens: 300
+              }
+            }.to_json,
+            content_type: "application/json",
+            accept: "application/json"
+          ))
+          .and_return(response_object)
+      end
+
+      it "returns a completion" do
+        expect(
+          subject.chat(
+            messages: [{role: "user", content: [{text: "What is the capital of France?"}]}],
+            model: model_id
+          ).chat_completion
+        ).to eq("The capital of France is Paris.")
+      end
+    end
   end
 
   describe "#complete" do
