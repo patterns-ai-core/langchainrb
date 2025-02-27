@@ -25,7 +25,6 @@ module Langchain::LLM
     attr_reader :client, :defaults
 
     SUPPORTED_COMPLETION_PROVIDERS = %i[
-      amazon
       anthropic
       ai21
       cohere
