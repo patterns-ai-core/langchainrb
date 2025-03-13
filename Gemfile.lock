@@ -4,7 +4,7 @@ PATH
     langchainrb (0.19.4)
       baran (~> 0.1.9)
       csv
-      json-schema (~> 4)
+      json-schema (>= 4, < 6)
       matrix
       pragmatic_segmenter (~> 0.3.0)
       zeitwerk (~> 2.5)
@@ -204,8 +204,9 @@ GEM
       reline (>= 0.4.2)
     jmespath (1.6.2)
     json (2.9.1)
-    json-schema (4.3.0)
-      addressable (>= 2.8)
+    json-schema (5.1.1)
+      addressable (~> 2.8)
+      bigdecimal (~> 3.1)
     jwt (2.10.1)
       base64
     language_server-protocol (3.17.0.3)
