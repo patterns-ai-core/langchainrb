@@ -11,6 +11,13 @@
 
 ## [Unreleased]
 
+## [0.19.4] - 2025-02-17
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/894] Tools can now output image_urls, and all tool output must be wrapped by a tool_response() method
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/921] Fix for Assistant when OpenAI o1/o3 models are used
+
+## [0.19.3] - 2025-01-13
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/900] Empty text content should not be set when content is nil when using AnthropicMessage
+
 ## [0.19.2] - 2024-11-26
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/884] Add `tool_execution_callback` to `Langchain::Assistant`, a callback function (proc, lambda) that is called right before a tool is executed
 

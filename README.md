@@ -580,11 +580,11 @@ class MovieInfoTool
   end
 
   def search_movie(query:)
-    ...
+    tool_response(...)
   end
 
   def get_movie_details(movie_id:)
-    ...
+    tool_response(...)
   end
 end
 ```

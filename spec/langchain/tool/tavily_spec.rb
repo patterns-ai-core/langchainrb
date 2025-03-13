@@ -11,13 +11,13 @@ RSpec.describe Langchain::Tool::Tavily do
     it "returns a response" do
       allow(Net::HTTP).to receive(:start).and_return(double(body: response))
 
-      expect(
-        subject.search(
-          query: "What's the height of Burj Khalifa?",
-          max_results: 1,
-          include_answer: true
-        )
-      ).to eq(response)
+      result = subject.search(
+        query: "What's the height of Burj Khalifa?",
+        max_results: 1,
+        include_answer: true
+      )
+      expect(result).to be_a(Langchain::ToolResponse)
+      expect(result.content).to eq(response)
     end
   end
 end
