@@ -55,15 +55,15 @@ module Langchain::Tool
       params = {appid: @api_key, q: [city, state_code, country_code].compact.join(","), units: units}
 
       location_response = send_request(path: "geo/1.0/direct", params: params.except(:units))
-      return location_response if location_response.is_a?(String) # Error occurred
+      return tool_response(content: location_response) if location_response.is_a?(String) # Error occurred
 
       location = location_response.first
-      return "Location not found" unless location
+      return tool_response(content: "Location not found") unless location
 
       params = params.merge(lat: location["lat"], lon: location["lon"]).except(:q)
       weather_data = send_request(path: "data/2.5/weather", params: params)
 
-      parse_weather_response(weather_data, units)
+      tool_response(content: parse_weather_response(weather_data, units))
     end
 
     def send_request(path:, params:)
