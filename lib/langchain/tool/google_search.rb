@@ -27,7 +27,7 @@ module Langchain::Tool
     # @param api_key [String] Search API key
     # @return [Langchain::Tool::GoogleSearch] Google search tool
     #
-    def initialize(api_key:)
+    def initialize(api_key: ENV["SERPAPI_API_KEY"])
       depends_on "google_search_results"
 
       @api_key = api_key
