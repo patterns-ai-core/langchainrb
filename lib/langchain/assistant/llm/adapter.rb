@@ -7,17 +7,17 @@ module Langchain
       class Adapter
         def self.build(llm)
           if llm.is_a?(Langchain::LLM::Anthropic)
-            LLM::Adapters::Anthropic.new
+            LLM::Adapters::Anthropic.new(llm: llm)
           elsif llm.is_a?(Langchain::LLM::AwsBedrock) && llm.defaults[:chat_model].include?("anthropic")
-            LLM::Adapters::AwsBedrockAnthropic.new
+            LLM::Adapters::AwsBedrockAnthropic.new(llm: llm)
           elsif llm.is_a?(Langchain::LLM::GoogleGemini) || llm.is_a?(Langchain::LLM::GoogleVertexAI)
-            LLM::Adapters::GoogleGemini.new
+            LLM::Adapters::GoogleGemini.new(llm: llm)
           elsif llm.is_a?(Langchain::LLM::MistralAI)
-            LLM::Adapters::MistralAI.new
+            LLM::Adapters::MistralAI.new(llm: llm)
           elsif llm.is_a?(Langchain::LLM::Ollama)
-            LLM::Adapters::Ollama.new
+            LLM::Adapters::Ollama.new(llm: llm)
           elsif llm.is_a?(Langchain::LLM::OpenAI)
-            LLM::Adapters::OpenAI.new
+            LLM::Adapters::OpenAI.new(llm: llm)
           else
             raise ArgumentError, "Unsupported LLM type: #{llm.class}"
           end
