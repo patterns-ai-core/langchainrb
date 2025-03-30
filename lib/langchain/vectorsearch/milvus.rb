@@ -16,6 +16,7 @@ module Langchain::Vectorsearch
 
       @client = ::Milvus::Client.new(
         url: url,
+        api_key: api_key,
         logger: Langchain.logger
       )
       @index_name = index_name
