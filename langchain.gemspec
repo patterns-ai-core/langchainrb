@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
 
   # development dependencies
   spec.add_development_dependency "dotenv-rails", "~> 3.1.6"
-  spec.add_development_dependency "pry-byebug", "~> 3.10.0"
+  spec.add_development_dependency "pry-byebug", "~> 3.11.0"
   spec.add_development_dependency "yard", "~> 0.9.34"
   spec.add_development_dependency "rdiscount", "~> 2.2.7" # for github-flavored markdown in yard
   spec.add_development_dependency "vcr"
