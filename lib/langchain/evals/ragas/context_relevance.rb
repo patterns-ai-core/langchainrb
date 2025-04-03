@@ -17,7 +17,7 @@ module Langchain
         # @param question [String] Question
         # @param context [String] Context
         # @return [Float] Context Relevance score
-        def score(question:, context:)
+        def score(question:, context:, **_kwargs)
           prompt = context_relevance_prompt_template.format(
             question: question,
             context: context
