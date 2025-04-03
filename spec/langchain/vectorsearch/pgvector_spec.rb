@@ -14,6 +14,7 @@ if ENV["POSTGRES_URL"]
 
   RSpec.describe Langchain::Vectorsearch::Pgvector do
     let(:client) { client }
+    let(:metadata) { { "source" => "test" } }
 
     subject {
       subject
@@ -44,6 +45,16 @@ if ENV["POSTGRES_URL"]
       it "adds texts" do
         result = subject.add_texts(texts: ["Hello World", "Hello World"])
         expect(result.size).to eq(2)
+      end
+
+      it "adds texts with metadata" do
+        result = subject.add_texts(texts: ["Hello World", "Hello World"], metadata: metadata)
+        expect(result.size).to eq(2)
+
+        result.each do |id|
+          record = client.exec_params("SELECT * FROM products WHERE id = $1;", [id]).first
+          expect(JSON.parse(record["metadata"])).to eq(metadata)
+        end
       end
     end
 
@@ -77,11 +88,25 @@ if ENV["POSTGRES_URL"]
       end
 
       it "updates texts" do
-        values = subject.add_texts(texts: ["Hello World", "Hello World"])
-        ids = values.flatten
+        ids = subject.add_texts(texts: ["Hello World", "Hello World"])
         result = subject.update_texts(texts: ["Hello World", "Hello World".reverse], ids: ids)
 
         expect(result.size).to eq(2)
+
+        second_record = client.exec_params("SELECT * FROM products WHERE id = $1;", [ids.last]).first
+        expect(second_record["content"]).to eq("Hello World".reverse)
+      end
+
+      it "updates texts with metadata" do
+        ids = subject.add_texts(texts: ["Hello World", "Hello World"])
+        result = subject.update_texts(texts: ["Hello World", "Hello World".reverse], ids: ids, metadata: metadata)
+
+        expect(result.size).to eq(2)
+
+        ids.each do |id|
+          record = client.exec_params("SELECT * FROM products WHERE id = $1;", [id]).first
+          expect(JSON.parse(record["metadata"])).to eq(metadata)
+        end
       end
 
       it "adds texts with a namespace" do
@@ -132,8 +157,7 @@ if ENV["POSTGRES_URL"]
       before do
         allow_any_instance_of(
           OpenAI::Client
-        ).to receive(:embeddings)
-          .with(
+        ).to receive(:embeddings).with(
             parameters: {
               dimensions: 1536,
               model: "text-embedding-3-small",
@@ -146,19 +170,48 @@ if ENV["POSTGRES_URL"]
               {"embedding" => 1536.times.map { 0 }}
             ]
           })
+
+        allow_any_instance_of(
+          OpenAI::Client
+        ).to receive(:embeddings).with(
+          parameters: {
+            dimensions: 1536,
+            model: "text-embedding-3-small",
+            input: "hello"
+          }
+        ).and_return({
+          "object" => "list",
+          "data" => [
+            {"embedding" => 1536.times.map { 0 }}
+          ] }
+        )
       end
 
       before {
-        subject.documents_model.new(content: "something about earth", vectors: 1536.times.map { 0 }).save
+        subject.documents_model.new(content: "something about earth",
+                                    vectors: 1536.times.map { 0 },
+                                    metadata: { topic: "earth" }.to_json
+        ).save
+
         4.times do |i|
-          subject.documents_model.new(content: "Hello World", vectors: 1536.times.map { rand }).save
+          subject.documents_model.new(content: "Hello World #{i}",
+                                      vectors: 1536.times.map { rand },
+                                      metadata: { topic: "topic_#{i}" }.to_json
+          ).save
         end
       }
 
       it "searches for similar texts" do
-        result = subject.similarity_search(query: "earth")
+        results = subject.similarity_search(query: "earth")
 
-        expect(result.first.content).to eq("something about earth")
+        expect(results.first.content).to eq("something about earth")
+      end
+
+      it "searches for similar texts filtered by metadata" do
+        results = subject.similarity_search(query: "hello", metadata_filter: { topic: "topic_1" })
+
+        expect(results.size).to eq(1)
+        expect(results.first.content).to eq("Hello World 1")
       end
 
       it "searches for similar texts using a namespace" do
@@ -253,6 +306,32 @@ if ENV["POSTGRES_URL"]
             expect(captured_output).to match(/Received chunk from llm.chat/)
           end
         end
+      end
+    end
+
+    describe "#add_data" do
+      let(:paths) do
+        [
+          Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
+          Langchain.root.join("../spec/fixtures/loaders/test_doc.pdf"),
+          Langchain.root.join("../spec/fixtures/loaders/example.txt")
+        ]
+      end
+
+      it "allows adding multiple paths" do
+        expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), metadata: nil)
+
+        subject.add_data(paths: paths)
+      end
+
+      it "requires paths" do
+        expect { subject.add_data(paths: []) }.to raise_error(ArgumentError, /Paths must be provided/)
+      end
+
+      it "allows adding multiple paths with metadata" do
+        expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), metadata: metadata)
+
+        subject.add_data(paths: paths, metadata: metadata)
       end
     end
   end
