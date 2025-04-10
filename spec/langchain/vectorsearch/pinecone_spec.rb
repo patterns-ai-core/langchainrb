@@ -313,6 +313,23 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
         expect(subject.similarity_search_by_vector(embedding: embedding, filter: filter)).to be_a(Array)
       end
     end
+
+    describe "with a score threshold" do
+      before(:each) do
+        allow_any_instance_of(Pinecone::Index).to receive(:query).with(
+          vector: embedding,
+          namespace: "",
+          top_k: k,
+          include_values: true,
+          include_metadata: true,
+          score_threshold: 0.75
+        ).and_return(results)
+      end
+
+      it "searches for similar texts with minimum score" do
+        expect(subject.similarity_search_by_vector(embedding: embedding, score_threshold: 0.75)).to be_a(Array)
+      end
+    end
   end
 
   describe "#similarity_search" do
@@ -323,7 +340,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     describe "without a namespace" do
       before do
         allow(subject).to receive(:similarity_search_by_vector).with(
-          embedding: embedding, k: k, namespace: "", filter: nil
+          embedding: embedding, k: k, namespace: "", filter: nil, score_threshold: nil
         ).and_return(matches)
       end
 
@@ -337,7 +354,7 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     describe "with a namespace" do
       before do
         allow(subject).to receive(:similarity_search_by_vector).with(
-          embedding: embedding, k: k, namespace: namespace, filter: nil
+          embedding: embedding, k: k, namespace: namespace, filter: nil, score_threshold: nil
         ).and_return(matches)
       end
 
@@ -350,12 +367,25 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     describe "with a filter" do
       before do
         allow(subject).to receive(:similarity_search_by_vector).with(
-          embedding: embedding, k: k, namespace: "", filter: filter
+          embedding: embedding, k: k, namespace: "", filter: filter, score_threshold: nil
         ).and_return(matches)
       end
 
       it "searches for similar texts" do
         response = subject.similarity_search(query: query, k: k, filter: filter)
+        expect(response).to eq(matches)
+      end
+    end
+
+    describe "with a score threshold" do
+      before do
+        allow(subject).to receive(:similarity_search_by_vector).with(
+          embedding: embedding, k: k, namespace: "", filter: nil, score_threshold: 0.75
+        ).and_return(matches)
+      end
+
+      it "searches for similar texts with minimum score" do
+        response = subject.similarity_search(query: query, k: k, score_threshold: 0.75)
         expect(response).to eq(matches)
       end
     end

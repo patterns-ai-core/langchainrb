@@ -125,12 +125,14 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of results to return
     # @param namespace [String] The namespace to search in
     # @param filter [String] The filter to use
+    # @param score_threshold [Float] Minimum similarity score threshold (Optional)
     # @return [Array] The list of results
     def similarity_search(
       query:,
       k: 4,
       namespace: "",
-      filter: nil
+      filter: nil,
+      score_threshold: nil
     )
       embedding = llm.embed(text: query).embedding
 
@@ -138,7 +140,8 @@ module Langchain::Vectorsearch
         embedding: embedding,
         k: k,
         namespace: namespace,
-        filter: filter
+        filter: filter,
+        score_threshold: score_threshold
       )
     end
 
@@ -147,8 +150,9 @@ module Langchain::Vectorsearch
     # @param k [Integer] The number of results to return
     # @param namespace [String] The namespace to search in
     # @param filter [String] The filter to use
+    # @param score_threshold [Float] Minimum similarity score threshold (Optional)
     # @return [Array] The list of results
-    def similarity_search_by_vector(embedding:, k: 4, namespace: "", filter: nil)
+    def similarity_search_by_vector(embedding:, k: 4, namespace: "", filter: nil, score_threshold: nil)
       index = client.index(index_name)
 
       query_params = {
@@ -157,7 +161,8 @@ module Langchain::Vectorsearch
         filter: filter,
         top_k: k,
         include_values: true,
-        include_metadata: true
+        include_metadata: true,
+        score_threshold: score_threshold
       }.compact
 
       response = index.query(query_params)
