@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/859] Add metadata support to PgVector storage
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/939] Fix Langchain::Vectorsearch::Milvus initializer by passing :api_key
 
 ## [0.19.4] - 2025-02-17
