@@ -50,32 +50,14 @@ module Langchain
         #
         # @return [Hash] The message as an OpenAI API-compatible hash
         def to_hash
-          {}.tap do |h|
-            h[:role] = role
-
-            if tool_calls.any?
-              h[:tool_calls] = tool_calls
-            else
-              h[:tool_call_id] = tool_call_id if tool_call_id
-
-              h[:content] = []
-
-              if content && !content.empty?
-                h[:content] << {
-                  type: "text",
-                  text: content
-                }
-              end
-
-              if image_url
-                h[:content] << {
-                  type: "image_url",
-                  image_url: {
-                    url: image_url
-                  }
-                }
-              end
-            end
+          if assistant?
+            assistant_hash
+          elsif system?
+            system_hash
+          elsif tool?
+            tool_hash
+          elsif user?
+            user_hash
           end
         end
 
@@ -98,6 +80,76 @@ module Langchain
         # @return [Boolean] true/false whether this message is a tool call
         def tool?
           role == "tool"
+        end
+
+        def user?
+          role == "user"
+        end
+
+        # Convert the message to an OpenAI API-compatible hash
+        # @return [Hash] The message as an OpenAI API-compatible hash, with the role as "assistant"
+        def assistant_hash
+          if tool_calls.any?
+            {
+              role: "assistant",
+              tool_calls: tool_calls
+            }
+          else
+            {
+              role: "assistant",
+              content: build_content_array
+            }
+          end
+        end
+
+        # Convert the message to an OpenAI API-compatible hash
+        # @return [Hash] The message as an OpenAI API-compatible hash, with the role as "system"
+        def system_hash
+          {
+            role: "system",
+            content: build_content_array
+          }
+        end
+
+        # Convert the message to an OpenAI API-compatible hash
+        # @return [Hash] The message as an OpenAI API-compatible hash, with the role as "tool"
+        def tool_hash
+          {
+            role: "tool",
+            tool_call_id: tool_call_id,
+            content: build_content_array
+          }
+        end
+
+        # Convert the message to an OpenAI API-compatible hash
+        # @return [Hash] The message as an OpenAI API-compatible hash, with the role as "user"
+        def user_hash
+          {
+            role: "user",
+            content: build_content_array
+          }
+        end
+
+        # Builds the content value for the message hash
+        # @return [Array<Hash>] An array of content hashes, with keys :type and :text or :image_url.
+        def build_content_array
+          content_details = []
+          if content && !content.empty?
+            content_details << {
+              type: "text",
+              text: content
+            }
+          end
+
+          if image_url
+            content_details << {
+              type: "image_url",
+              image_url: {
+                url: image_url
+              }
+            }
+          end
+          content_details
         end
       end
     end

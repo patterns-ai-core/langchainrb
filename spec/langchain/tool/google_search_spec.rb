@@ -24,13 +24,16 @@ RSpec.describe Langchain::Tool::GoogleSearch do
 
   describe "#execute_search" do
     it "returns the raw hash" do
-      expect(subject.execute_search(input: "how tall is empire state building")).to be_a(Hash)
+      result = subject.execute_search(input: "how tall is empire state building")
+      expect(result).to be_a(Hash)
     end
   end
 
   describe "#execute" do
     it "returns the answer" do
-      expect(subject.execute(input: "how tall is empire state building")).to eq("1,250′, 1,454′ to tip")
+      response = subject.execute(input: "how tall is empire state building")
+      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response.content).to eq("1,250′, 1,454′ to tip")
     end
   end
 end

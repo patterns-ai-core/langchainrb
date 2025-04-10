@@ -6,7 +6,7 @@ module Langchain::Vectorsearch
     # The PostgreSQL vector search adapter
     #
     # Gem requirements:
-    #     gem "sequel", "~> 5.68.0"
+    #     gem "sequel", "~> 5.87.0"
     #     gem "pgvector", "~> 0.2"
     #
     # Usage:

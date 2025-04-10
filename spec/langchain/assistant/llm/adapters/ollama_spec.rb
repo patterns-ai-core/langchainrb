@@ -29,4 +29,16 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::Ollama do
       expect(subject.tool_role).to eq("tool")
     end
   end
+
+  describe "#build_message" do
+    it "returns an Ollama message" do
+      expect(
+        subject.build_message(
+          role: "user",
+          content: "Hello",
+          image_url: "https://example.com/image.jpg"
+        )
+      ).to be_a(Langchain::Assistant::Messages::OllamaMessage)
+    end
+  end
 end

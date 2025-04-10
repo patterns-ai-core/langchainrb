@@ -53,13 +53,14 @@ module Langchain
         #
         # @return [Hash] The message as an Anthropic API-compatible hash, with the role as "assistant"
         def assistant_hash
+          content_array = []
+          if content && !content.empty?
+            content_array << {type: "text", text: content}
+          end
+
           {
             role: "assistant",
-            content: if tool_calls.any?
-                       tool_calls
-                     else
-                       content
-                     end
+            content: content_array.concat(tool_calls)
           }
         end
 
