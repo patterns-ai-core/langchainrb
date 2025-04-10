@@ -163,6 +163,44 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
       expect(subject.similarity_search(text: "simple", k: 5)).to eq(response)
     end
 
+    it "filters results by minimum score" do
+      response = [
+        {_id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6]},
+        {_id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1]}
+      ]
+      es_response = double("Elasticsearch::API::Response")
+
+      allow(es_response).to receive(:body).and_return(response)
+      allow_any_instance_of(::Elasticsearch::Client)
+        .to receive(:search).with(body: {
+          query: subject.default_query([0.1, 0.2, 0.3]),
+          size: 5,
+          post_filter: {
+            range: {
+              _score: {
+                gte: 0.7
+              }
+            }
+          }
+        }).and_return(es_response)
+
+      expect_any_instance_of(::Elasticsearch::Client)
+        .to receive(:search).with(body: {
+          query: subject.default_query([0.1, 0.2, 0.3]),
+          size: 5,
+          post_filter: {
+            range: {
+              _score: {
+                gte: 0.7
+              }
+            }
+          }
+        })
+      expect(es_response).to receive(:body)
+
+      expect(subject.similarity_search(text: "simple", k: 5, min_score: 0.7)).to eq(response)
+    end
+
     it "able to search with custom query" do
       es_response = double("Elasticsearch::API::Response")
       response = [
@@ -213,6 +251,44 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
       expect(es_response).to receive(:body)
 
       expect(subject.similarity_search_by_vector(embedding: [0.5, 0.6, 0.7], k: 5)).to eq(response)
+    end
+
+    it "filters results by minimum score" do
+      response = [
+        {_id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6]},
+        {_id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1]}
+      ]
+      es_response = double("Elasticsearch::API::Response")
+
+      allow(es_response).to receive(:body).and_return(response)
+      allow_any_instance_of(::Elasticsearch::Client)
+        .to receive(:search).with(body: {
+          query: subject.default_query([0.5, 0.6, 0.7]),
+          size: 5,
+          post_filter: {
+            range: {
+              _score: {
+                gte: 0.8
+              }
+            }
+          }
+        }).and_return(es_response)
+
+      expect_any_instance_of(::Elasticsearch::Client)
+        .to receive(:search).with(body: {
+          query: subject.default_query([0.5, 0.6, 0.7]),
+          size: 5,
+          post_filter: {
+            range: {
+              _score: {
+                gte: 0.8
+              }
+            }
+          }
+        })
+      expect(es_response).to receive(:body)
+
+      expect(subject.similarity_search_by_vector(embedding: [0.5, 0.6, 0.7], k: 5, min_score: 0.8)).to eq(response)
     end
 
     it "able to search with custom query" do

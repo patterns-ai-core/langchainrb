@@ -163,34 +163,59 @@ module Langchain::Vectorsearch
     # @param text [String] The text to search for
     # @param k [Integer] The number of results to return
     # @param query [Hash] Elasticsearch query that needs to be used while searching (Optional)
+    # @param min_score [Float] Minimum similarity score threshold (Optional)
     # @return [Elasticsearch::Response] The response from the server
-    def similarity_search(text: "", k: 10, query: {})
+    def similarity_search(text: "", k: 10, query: {}, min_score: nil)
       if text.empty? && query.empty?
         raise "Either text or query should pass as an argument"
       end
 
       if query.empty?
         query_vector = llm.embed(text: text).embedding
-
         query = default_query(query_vector)
       end
 
-      es_client.search(body: {query: query, size: k}).body
+      search_body = {query: query, size: k}
+
+      if min_score
+        search_body[:post_filter] = {
+          range: {
+            _score: {
+              gte: min_score
+            }
+          }
+        }
+      end
+
+      es_client.search(body: search_body).body
     end
 
     # Search for similar texts by embedding
     # @param embedding [Array<Float>] The embedding to search for
     # @param k [Integer] The number of results to return
     # @param query [Hash] Elasticsearch query that needs to be used while searching (Optional)
+    # @param min_score [Float] Minimum similarity score threshold (Optional)
     # @return [Elasticsearch::Response] The response from the server
-    def similarity_search_by_vector(embedding: [], k: 10, query: {})
+    def similarity_search_by_vector(embedding: [], k: 10, query: {}, min_score: nil)
       if embedding.empty? && query.empty?
         raise "Either embedding or query should pass as an argument"
       end
 
       query = default_query(embedding) if query.empty?
 
-      es_client.search(body: {query: query, size: k}).body
+      search_body = {query: query, size: k}
+
+      if min_score
+        search_body[:post_filter] = {
+          range: {
+            _score: {
+              gte: min_score
+            }
+          }
+        }
+      end
+
+      es_client.search(body: search_body).body
     end
   end
 end
