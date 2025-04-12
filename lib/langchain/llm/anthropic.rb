@@ -25,7 +25,12 @@ module Langchain::LLM
     # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, completion_model:, chat_model:, max_tokens: }
     # @return [Langchain::LLM::Anthropic] Langchain::LLM::Anthropic instance
     def initialize(api_key:, llm_options: {}, default_options: {})
-      depends_on "anthropic"
+      begin
+        depends_on "ruby-anthropic", req: "anthropic"
+      rescue Langchain::DependencyHelper::LoadError
+        # Falls back to the older `anthropic` gem if `ruby-anthropic` gem cannot be loaded.
+        depends_on "anthropic"
+      end
 
       @client = ::Anthropic::Client.new(access_token: api_key, **llm_options)
       @defaults = DEFAULTS.merge(default_options)
