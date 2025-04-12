@@ -34,12 +34,19 @@ module Langchain
           # Build a OpenAI message
           #
           # @param role [String] The role of the message
-          # @param content [String] The content of the message
+          # @param content [String | Array<Hash>] The content of the message
           # @param image_url [String] The image URL
           # @param tool_calls [Array] The tool calls
           # @param tool_call_id [String] The tool call ID
           # @return [Messages::OpenAIMessage] The OpenAI message
           def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+            if content.is_a?(Array)
+              content.each do |c|
+                content = c[:text] if c[:type] == "text"
+                image_url = c[:image_url][:url] if c[:type] == "image_url"
+              end
+            end
+
             Messages::OpenAIMessage.new(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
