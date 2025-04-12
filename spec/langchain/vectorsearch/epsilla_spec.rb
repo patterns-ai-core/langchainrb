@@ -236,6 +236,18 @@ if ENV["EPSILLA_URL"]
         end
       end
 
+      context 'with system prompt' do
+        let(:system_prompt) { 'You are a helpful assistant' }
+        before do
+          allow(subject.llm).to receive(:chat).with(messages: [{role: 'system', content: system_prompt}, *messages]).and_return(response)
+          expect(response).to receive(:context=).with(text)
+        end
+
+        it "asks a question and returns the answer" do
+          expect(subject.ask(question: question, k: k, system_prompt: system_prompt).completion).to eq(answer)
+        end
+      end
+
       context "with block" do
         let(:block) { proc { |chunk| puts "Received chunk: #{chunk}" } }
 
