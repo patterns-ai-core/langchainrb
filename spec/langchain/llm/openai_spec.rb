@@ -619,6 +619,53 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
     end
 
+    context "when streaming with a block" do
+      let(:messages) { [{role: "user", content: "Tell me a joke"}] }
+      let(:stream_chunks) do
+        now = Time.now.to_i # Use a single timestamp for simplicity in the mock
+        model_name = "gpt-4o-mini" # Define model name once
+        chunk_id = "chatcmpl-stream-test" # Use a consistent ID
+
+        [
+          {"id" => chunk_id, "object" => "chat.completion.chunk", "created" => now, "model" => model_name, "choices" => [{"index" => 0, "delta" => {"role" => "assistant"}}]},
+          {"id" => chunk_id, "object" => "chat.completion.chunk", "created" => now, "model" => model_name, "choices" => [{"index" => 0, "delta" => {"content" => "Why did the chicken cross the road?"}}]},
+          {"id" => chunk_id, "object" => "chat.completion.chunk", "created" => now, "model" => model_name, "choices" => [{"index" => 0, "delta" => {}, "finish_reason" => "stop"}]},
+          {"id" => chunk_id, "object" => "chat.completion.chunk", "created" => now, "model" => model_name, "usage" => {"prompt_tokens" => 5, "completion_tokens" => 10, "total_tokens" => 15}}
+        ]
+      end
+      let(:collected_yielded_chunks) { [] }
+      let(:streaming_block) { proc { |chunk| collected_yielded_chunks << chunk } }
+      let(:expected_completion) { "Why did the chicken cross the road?" }
+
+      before do
+        allow(subject.client).to receive(:chat) do |parameters:|
+          expect(parameters[:stream]).to be_a(Proc)
+          expect(parameters[:stream_options]).to eq({include_usage: true})
+          stream_chunks.each { |chunk| parameters[:stream].call(chunk, chunk.to_json.bytesize) }
+          nil # Simulate nil return after streaming
+        end
+      end
+
+      it "does not raise NoMethodError and returns correctly assembled response" do
+        expect {
+          response = subject.chat(messages: messages, &streaming_block)
+          expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+          expect(response.chat_completion).to eq(expected_completion)
+          expect(response.role).to eq("assistant")
+          expect(response.prompt_tokens).to eq(5)
+          expect(response.completion_tokens).to eq(10)
+          expect(response.total_tokens).to eq(15)
+        }.not_to raise_error
+      end
+
+      it "yields the processed delta chunks to the block" do
+        subject.chat(messages: messages, &streaming_block)
+        expected_yielded_chunks = stream_chunks.map { |c| c.dig("choices", 0) || {} }
+        expect(collected_yielded_chunks).to eq(expected_yielded_chunks)
+        expect(collected_yielded_chunks.map { |c| c.dig("delta", "content") }.compact.join).to eq(expected_completion)
+      end
+    end
+
     context "with streaming" do
       let(:streamed_response_chunk) do
         {
