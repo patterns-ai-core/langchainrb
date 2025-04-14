@@ -22,7 +22,7 @@ module Langchain::LLM
     #
     # @param api_key [String] The API key to use
     # @param llm_options [Hash] Options to pass to the Anthropic client
-    # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, completion_model:, chat_model:, max_tokens: }
+    # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, completion_model:, chat_model:, max_tokens:, thinking: }
     # @return [Langchain::LLM::Anthropic] Langchain::LLM::Anthropic instance
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "anthropic"
@@ -34,7 +34,8 @@ module Langchain::LLM
         temperature: {default: @defaults[:temperature]},
         max_tokens: {default: @defaults[:max_tokens]},
         metadata: {},
-        system: {}
+        system: {},
+        thinking: {default: @defaults[:thinking]}
       )
       chat_parameters.ignore(:n, :user)
       chat_parameters.remap(stop: :stop_sequences)
@@ -97,6 +98,7 @@ module Langchain::LLM
     # @option params [String] :system System prompt
     # @option params [Float] :temperature Amount of randomness injected into the response
     # @option params [Array<String>] :tools Definitions of tools that the model may use
+    # @option params [Hash] :thinking Enable extended thinking mode, e.g. { type: "enabled", budget_tokens: 4000 }
     # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
     # @option params [Float] :top_p Use nucleus sampling.
     # @return [Langchain::LLM::AnthropicResponse] The chat completion
