@@ -41,23 +41,12 @@ module Langchain
         #
         # @return [Hash] The message as a Google Gemini API-compatible hash
         def to_hash
-          {}.tap do |h|
-            h[:role] = role
-            h[:parts] = if function?
-              [{
-                functionResponse: {
-                  name: tool_call_id,
-                  response: {
-                    name: tool_call_id,
-                    content: content
-                  }
-                }
-              }]
-            elsif tool_calls.any?
-              tool_calls
-            else
-              [{text: content}]
-            end
+          if tool?
+            tool_hash
+          elsif model?
+            model_hash
+          elsif user?
+            user_hash
           end
         end
 
@@ -73,11 +62,63 @@ module Langchain
           function?
         end
 
+        # Check if the message is a user call
+        #
+        # @return [Boolean] true/false whether this message is a user call
+        def user?
+          role == "user"
+        end
+
         # Check if the message is a tool call
         #
         # @return [Boolean] true/false whether this message is a tool call
         def function?
           role == "function"
+        end
+
+        # Convert the message to an GoogleGemini API-compatible hash
+        # @return [Hash] The message as an GoogleGemini API-compatible hash, with the role as "model"
+        def model_hash
+          {
+            role: role,
+            parts: build_parts
+          }
+        end
+
+        # Convert the message to an GoogleGemini API-compatible hash
+        # @return [Hash] The message as an GoogleGemini API-compatible hash, with the role as "function"
+        def tool_hash
+          {
+            role: role,
+            parts: [{
+              functionResponse: {
+                name: tool_call_id,
+                response: {
+                  name: tool_call_id,
+                  content: content
+                }
+              }
+            }]
+          }
+        end
+
+        # Convert the message to an GoogleGemini API-compatible hash
+        # @return [Hash] The message as an GoogleGemini API-compatible hash, with the role as "user"
+        def user_hash
+          {
+            role: role,
+            parts: build_parts
+          }
+        end
+
+        # Builds the part value for the message hash
+        # @return [Array<Hash>] An array of content hashes of the text or of the tool calls if present
+        def build_parts
+          if tool_calls.any?
+            tool_calls
+          else
+            [{text: content}]
+          end
         end
 
         # Check if the message came from an LLM

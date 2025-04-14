@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Assistant::LLM::Adapters::Anthropic do
-  subject { described_class.new }
-
   describe "#build_chat_params" do
     it "returns the chat parameters" do
       expect(

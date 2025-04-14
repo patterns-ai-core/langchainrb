@@ -133,7 +133,7 @@ messages = [
   { role: "system", content: "You are a helpful assistant." },
   { role: "user", content: "What's the weather like today?" }
   # Google Gemini and Google VertexAI expect messages in a different format:
-  # { role: "user", parts: [{ text: "why is the sky blue?" }]
+  # { role: "user", parts: [{ text: "why is the sky blue?" }]}
 ]
 response = llm.chat(messages: messages)
 chat_completion = response.chat_completion
@@ -536,6 +536,13 @@ Note that streaming is not currently supported for all LLMs.
 * `tool_choice`: Specifies how tools should be selected. Default: "auto". A specific tool function name can be passed. This will force the Assistant to **always** use this function.
 * `parallel_tool_calls`: Whether to make multiple parallel tool calls. Default: true
 * `add_message_callback`: A callback function (proc, lambda) that is called when any message is added to the conversation (optional)
+```ruby
+assistant.add_message_callback = -> (message) { puts "New message: #{message}" }
+```
+* `tool_execution_callback`: A callback function (proc, lambda) that is called right before a tool is executed (optional)
+```ruby
+assistant.tool_execution_callback = -> (tool_call_id, tool_name, method_name, tool_arguments) { puts "Executing tool_call_id: #{tool_call_id}, tool_name: #{tool_name}, method_name: #{method_name}, tool_arguments: #{tool_arguments}" }
+```
 
 ### Key Methods
 * `add_message`: Adds a user message to the messages array
@@ -558,7 +565,7 @@ Note that streaming is not currently supported for all LLMs.
 The Langchain::Assistant can be easily extended with custom tools by creating classes that `extend Langchain::ToolDefinition` module and implement required methods.
 ```ruby
 class MovieInfoTool
-  include Langchain::ToolDefinition
+  extend Langchain::ToolDefinition
 
   define_function :search_movie, description: "MovieInfoTool: Search for a movie by title" do
     property :query, type: "string", description: "The movie title to search for", required: true
@@ -573,11 +580,11 @@ class MovieInfoTool
   end
 
   def search_movie(query:)
-    ...
+    tool_response(...)
   end
 
   def get_movie_details(movie_id:)
-    ...
+    tool_response(...)
   end
 end
 ```

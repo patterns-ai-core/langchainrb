@@ -50,6 +50,10 @@ module Langchain
           # TODO: Should we return :unknown or raise an error?
           :unknown
         end
+
+        def image
+          image_url ? Utils::ImageWrapper.new(image_url) : nil
+        end
       end
     end
   end

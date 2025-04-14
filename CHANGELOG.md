@@ -4,12 +4,34 @@
 - [BREAKING]: A breaking change. After an upgrade, your app may need modifications to keep working correctly.
 - [FEATURE]: A non-breaking improvement to the app. Either introduces new functionality, or improves on an existing feature.
 - [BUGFIX]: Fixes a bug with a non-breaking change.
-- [COMPAT]: Compatibility improvements - changes to make Administrate more compatible with different dependency versions.
+- [COMPAT]: Compatibility improvements - changes to make Langchain.rb more compatible with different dependency versions.
 - [OPTIM]: Optimization or performance increase.
 - [DOCS]: Documentation changes. No changes to the library's behavior.
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/859] Add metadata support to PgVector storage
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/939] Fix Langchain::Vectorsearch::Milvus initializer by passing :api_key
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/953] Handle nil response in OpenAI LLM streaming
+
+## [0.19.4] - 2025-02-17
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/894] Tools can now output image_urls, and all tool output must be wrapped by a tool_response() method
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/921] Fix for Assistant when OpenAI o1/o3 models are used
+
+## [0.19.3] - 2025-01-13
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/900] Empty text content should not be set when content is nil when using AnthropicMessage
+
+## [0.19.2] - 2024-11-26
+- [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/884] Add `tool_execution_callback` to `Langchain::Assistant`, a callback function (proc, lambda) that is called right before a tool is executed
+
+## [0.19.1] - 2024-11-21
+- [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/858] Assistant, when using Anthropic, now also accepts image_url in the message.
+- [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/861] Clean up passing `max_tokens` to Anthropic constructor and chat method
+- [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/849] Langchain::Assistant now works with AWS Bedrock-hosted Anthropic models
+- [OPTIM] [https://github.com/patterns-ai-core/langchainrb/pull/867] Refactor `GoogleGeminiMessage#to_hash` and `OpenAIMessage#to_hash` methods.
+- [OPTIM] [https://github.com/patterns-ai-core/langchainrb/pull/849] Simplify Langchain::LLM::AwsBedrock class
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/869] AnthropicMessage now correctly handles tool calls with content.
+- [OPTIM] [https://github.com/patterns-ai-core/langchainrb/pull/870] Assistant, when using Ollama (e.g.: llava model), now also accepts image_url in the message.
 
 ## [0.19.0] - 2024-10-23
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/840] Rename `chat_completion_model_name` parameter to `chat_model` in Langchain::LLM parameters.
@@ -19,6 +41,7 @@
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/837] Fix bug when tool functions with no input variables are used with Langchain::LLM::Anthropic
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/836] Fix bug when assistant.instructions = nil did not remove the system message
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/838] Allow setting safety_settings: [] in default_options for Langchain::LLM::GoogleGemini and Langchain::LLM::GoogleVertexAI constructors
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/871] Allow passing in options hash to Ollama
 
 ## [0.18.0] - 2024-10-12
 - [BREAKING] Remove `Langchain::Assistant#clear_thread!` method
