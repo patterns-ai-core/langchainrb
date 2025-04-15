@@ -29,14 +29,14 @@ Gem::Specification.new do |spec|
   # Not sure if we should require this as it only applies to OpenAI usecase.
   spec.add_dependency "baran", "~> 0.1.9"
   spec.add_dependency "csv"
-  spec.add_dependency "json-schema", "~> 4"
+  spec.add_dependency "json-schema", ">= 4", "< 6"
   spec.add_dependency "zeitwerk", "~> 2.5"
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
   spec.add_dependency "matrix"
 
   # development dependencies
   spec.add_development_dependency "dotenv-rails", "~> 3.1.6"
-  spec.add_development_dependency "pry-byebug", "~> 3.10.0"
+  spec.add_development_dependency "pry-byebug", "~> 3.11.0"
   spec.add_development_dependency "yard", "~> 0.9.34"
   spec.add_development_dependency "rdiscount", "~> 2.2.7" # for github-flavored markdown in yard
   spec.add_development_dependency "vcr"
@@ -44,7 +44,7 @@ Gem::Specification.new do |spec|
 
   # optional dependencies
   spec.add_development_dependency "ai21", "~> 0.2.1"
-  spec.add_development_dependency "anthropic", "~> 0.3"
+  spec.add_development_dependency "ruby-anthropic", "~> 0.4"
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.1"
   spec.add_development_dependency "chroma-db", "~> 0.6.0"
   spec.add_development_dependency "cohere-ruby", "~> 0.9.10"

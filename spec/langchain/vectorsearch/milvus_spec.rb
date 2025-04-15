@@ -8,6 +8,7 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
   subject {
     described_class.new(
       url: "http://localhost:8000",
+      api_key: "123",
       index_name: index_name,
       llm: Langchain::LLM::OpenAI.new(api_key: "123")
     )

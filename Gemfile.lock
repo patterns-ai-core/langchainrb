@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    langchainrb (0.19.3)
+    langchainrb (0.19.4)
       baran (~> 0.1.9)
       csv
-      json-schema (~> 4)
+      json-schema (>= 4, < 6)
       matrix
       pragmatic_segmenter (~> 0.3.0)
       zeitwerk (~> 2.5)
@@ -46,10 +46,6 @@ GEM
       public_suffix (>= 2.0.2, < 7.0)
     afm (0.2.2)
     ai21 (0.2.1)
-    anthropic (0.3.2)
-      event_stream_parser (>= 0.3.0, < 2.0.0)
-      faraday (>= 1)
-      faraday-multipart (>= 1)
     ast (2.4.2)
     aws-eventstream (1.3.0)
     aws-partitions (1.992.0)
@@ -68,7 +64,7 @@ GEM
     benchmark (0.4.0)
     bigdecimal (3.1.8)
     builder (3.3.0)
-    byebug (11.1.3)
+    byebug (12.0.0)
     childprocess (5.0.0)
     chroma-db (0.6.0)
       dry-monads (~> 1.6)
@@ -181,7 +177,7 @@ GEM
     graphlient (0.8.0)
       faraday (~> 2.0)
       graphql-client
-    graphql (2.3.16)
+    graphql (2.3.21)
       base64
       fiber-storage
     graphql-client (0.23.0)
@@ -204,8 +200,9 @@ GEM
       reline (>= 0.4.2)
     jmespath (1.6.2)
     json (2.9.1)
-    json-schema (4.3.0)
-      addressable (>= 2.8)
+    json-schema (5.1.1)
+      addressable (~> 2.8)
+      bigdecimal (~> 3.1)
     jwt (2.10.1)
       base64
     language_server-protocol (3.17.0.3)
@@ -246,20 +243,20 @@ GEM
       timeout
     net-smtp (0.5.0)
       net-protocol
-    nokogiri (1.18.2)
+    nokogiri (1.18.6)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    nokogiri (1.18.2-aarch64-linux-gnu)
+    nokogiri (1.18.6-aarch64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.18.2-arm-linux-gnu)
+    nokogiri (1.18.6-arm-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.18.2-arm64-darwin)
+    nokogiri (1.18.6-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.18.2-x86_64-darwin)
+    nokogiri (1.18.6-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.18.2-x86_64-linux-gnu)
+    nokogiri (1.18.6-x86_64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.18.2-x86_64-linux-musl)
+    nokogiri (1.18.6-x86_64-linux-musl)
       racc (~> 1.4)
     open_router (0.3.3)
       activesupport (>= 6.0)
@@ -290,12 +287,12 @@ GEM
       rubyzip (~> 2.0)
     pragmatic_segmenter (0.3.23)
       unicode
-    pry (0.14.2)
+    pry (0.15.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry-byebug (3.10.1)
-      byebug (~> 11.0)
-      pry (>= 0.13, < 0.15)
+    pry-byebug (3.11.0)
+      byebug (~> 12.0)
+      pry (>= 0.13, < 0.16)
     psych (5.2.1)
       date
       stringio
@@ -303,7 +300,7 @@ GEM
     qdrant-ruby (0.9.8)
       faraday (>= 2.0.1, < 3)
     racc (1.8.1)
-    rack (3.1.10)
+    rack (3.1.12)
     rack-session (2.0.0)
       rack (>= 3.0.0)
     rack-test (2.1.0)
@@ -376,6 +373,10 @@ GEM
     rubocop-performance (1.21.1)
       rubocop (>= 1.48.1, < 2.0)
       rubocop-ast (>= 1.31.1, < 2.0)
+    ruby-anthropic (0.4.2)
+      event_stream_parser (>= 0.3.0, < 2.0.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ruby-next (1.0.3)
       paco (~> 0.2)
       require-hooks (~> 0.2)
@@ -434,7 +435,7 @@ GEM
     unparser (0.6.13)
       diff-lcs (~> 1.3)
       parser (>= 3.3.0)
-    uri (1.0.2)
+    uri (1.0.3)
     useragent (0.16.11)
     vcr (6.2.0)
     weaviate-ruby (0.9.2)
@@ -460,7 +461,6 @@ PLATFORMS
 
 DEPENDENCIES
   ai21 (~> 0.2.1)
-  anthropic (~> 0.3)
   aws-sdk-bedrockruntime (~> 1.1)
   chroma-db (~> 0.6.0)
   cohere-ruby (~> 0.9.10)
@@ -486,7 +486,7 @@ DEPENDENCIES
   pgvector (~> 0.2.1)
   pinecone (~> 0.1.6)
   power_point_pptx (~> 0.1.0)
-  pry-byebug (~> 3.10.0)
+  pry-byebug (~> 3.11.0)
   qdrant-ruby (~> 0.9.8)
   rake (~> 13.0)
   rdiscount (~> 2.2.7)
@@ -495,6 +495,7 @@ DEPENDENCIES
   roo-xls (~> 1.2.0)
   rspec (~> 3.0)
   rubocop
+  ruby-anthropic (~> 0.4)
   ruby-openai (~> 7.1.0)
   safe_ruby (~> 1.0.4)
   sequel (~> 5.87.0)
