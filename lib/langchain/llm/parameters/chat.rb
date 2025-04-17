@@ -21,6 +21,7 @@ module Langchain::LLM::Parameters
 
       stop: {}, # multiple types (e.g. OpenAI also allows Array, null)
       stream: {}, # Enable streaming
+      stream_options: {}, # Enable usage data for streaming (at least with OpenAI)
 
       max_tokens: {}, # Range: [1, context_length)
       temperature: {}, # Range: [0, 2]
