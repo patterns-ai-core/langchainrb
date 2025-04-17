@@ -222,7 +222,7 @@ RSpec.describe Langchain::ToolDefinition do
       end
     end
 
-    describe "#to_openai_format" do
+    describe "#functions" do
       before do
         function_schemas.add_function(method_name: :test_method, description: "Test description") do
           property :test_prop, type: "string", description: "Test property"
@@ -230,40 +230,10 @@ RSpec.describe Langchain::ToolDefinition do
       end
 
       it "returns an array of function schemas" do
-        result = function_schemas.to_openai_format
+        result = function_schemas.functions
         expect(result).to be_an(Array)
         expect(result.first[:type]).to eq("function")
         expect(result.first[:function]).to be_a(Hash)
-      end
-    end
-
-    describe "#to_anthropic_format" do
-      before do
-        function_schemas.add_function(method_name: :test_method, description: "Test description") do
-          property :test_prop, type: "string", description: "Test property"
-        end
-      end
-
-      it "returns an array of function schemas with input_schema instead of parameters" do
-        result = function_schemas.to_anthropic_format
-        expect(result).to be_an(Array)
-        expect(result.first).to have_key(:input_schema)
-        expect(result.first).not_to have_key(:parameters)
-      end
-    end
-
-    describe "#to_google_gemini_format" do
-      before do
-        function_schemas.add_function(method_name: :test_method, description: "Test description") do
-          property :test_prop, type: "string", description: "Test property"
-        end
-      end
-
-      it "returns an array of function schemas without the type key" do
-        result = function_schemas.to_google_gemini_format
-        expect(result).to be_an(Array)
-        expect(result.first).not_to have_key(:type)
-        expect(result.first[:name]).to eq("test_tool__test_method")
       end
     end
   end
