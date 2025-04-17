@@ -106,6 +106,30 @@ RSpec.describe Langchain::LLM::Anthropic do
       end
     end
 
+    context "with thinking parameter" do
+      let(:thinking_params) { {type: "enabled", budget_tokens: 4000} }
+
+      context "passed in default_options" do
+        subject { described_class.new(api_key: "123", default_options: {thinking: thinking_params}) }
+
+        it "includes thinking parameter in the request" do
+          expect(subject.client).to receive(:messages)
+            .with(parameters: hash_including(thinking: thinking_params))
+            .and_return(response)
+          subject.chat(messages: messages)
+        end
+      end
+
+      context "passed directly to chat method" do
+        it "includes thinking parameter in the request" do
+          expect(subject.client).to receive(:messages)
+            .with(parameters: hash_including(thinking: thinking_params))
+            .and_return(response)
+          subject.chat(messages: messages, thinking: thinking_params)
+        end
+      end
+    end
+
     context "with streaming" do
       let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream.json") }
       let(:response) { JSON.parse(fixture) }
