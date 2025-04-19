@@ -50,7 +50,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "cohere-ruby", "~> 0.9.10"
   spec.add_development_dependency "docx", "~> 0.8.0"
   spec.add_development_dependency "elasticsearch", "~> 8.2.0"
-  spec.add_development_dependency "epsilla-ruby", "~> 0.0.4"
   spec.add_development_dependency "eqn", "~> 1.6.5"
   spec.add_development_dependency "faraday"
   spec.add_development_dependency "googleauth"
