@@ -14,6 +14,7 @@
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/939] Fix Langchain::Vectorsearch::Milvus initializer by passing :api_key
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/953] Handle nil response in OpenAI LLM streaming
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/956] Deprecate `Langchain::Vectorsearch::Epsilla` class
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/961] Deprecate `Langchain::LLM::LlamaCpp` class
 
 ## [0.19.4] - 2025-02-17
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/894] Tools can now output image_urls, and all tool output must be wrapped by a tool_response() method
