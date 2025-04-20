@@ -175,6 +175,23 @@ RSpec.describe Langchain::LLM::Anthropic do
         expect(rsp.tool_calls.first["name"]).to eq("get_weather")
         expect(rsp.tool_calls.first["input"]).to eq({location: "San Francisco, CA", unit: "fahrenheit"})
       end
+
+      context "response has empty input" do
+        let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream_with_empty_tool_input.json") }
+  
+        it "handles empty input in tool calls correctly" do
+          # The test will pass if no exception is raised during processing
+          rsp = subject.chat(messages: [{role: "user", content: "What's the weather?"}], &stream_handler)
+          
+          # Verify the response
+          expect(rsp).to be_a(Langchain::LLM::AnthropicResponse)
+          expect(rsp.chat_completion).to eq("I'll check the weather for you:")
+          
+          # Verify the tool call with empty input is handled correctly
+          expect(rsp.tool_calls.first["name"]).to eq("get_weather")
+          expect(rsp.tool_calls.first["input"]).to be_nil  # Should be nil (null in Ruby) because input was empty
+        end
+      end
     end
   end
 end
