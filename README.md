@@ -65,7 +65,6 @@ The `Langchain::LLM` module provides a unified interface for interacting with va
 - Google Gemini
 - Google Vertex AI
 - HuggingFace
-- LlamaCpp
 - Mistral AI
 - Ollama
 - OpenAI
