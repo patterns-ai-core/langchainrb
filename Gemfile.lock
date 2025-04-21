@@ -205,7 +205,6 @@ GEM
       base64
     language_server-protocol (3.17.0.3)
     lint_roller (1.1.0)
-    llama_cpp (0.9.5)
     logger (1.6.5)
     loofah (2.23.1)
       crass (~> 1.0.2)
@@ -467,7 +466,6 @@ DEPENDENCIES
   hnswlib (~> 0.8.1)
   hugging-face (~> 0.3.4)
   langchainrb!
-  llama_cpp (~> 0.9.4)
   mail (~> 2.8)
   milvus (~> 0.10.3)
   mistral-ai

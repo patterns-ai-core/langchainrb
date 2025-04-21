@@ -14,7 +14,6 @@ module Langchain::LLM
   # - {Langchain::LLM::GoogleGemini}
   # - {Langchain::LLM::GoogleVertexAI}
   # - {Langchain::LLM::HuggingFace}
-  # - {Langchain::LLM::LlamaCpp}
   # - {Langchain::LLM::OpenAI}
   # - {Langchain::LLM::Replicate}
   #
