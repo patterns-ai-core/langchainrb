@@ -57,7 +57,6 @@ The `Langchain::LLM` module provides a unified interface for interacting with va
 
 ## Supported LLM Providers
 
-- AI21
 - Anthropic
 - AWS Bedrock
 - Azure OpenAI
