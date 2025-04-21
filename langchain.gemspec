@@ -44,13 +44,12 @@ Gem::Specification.new do |spec|
 
   # optional dependencies
   spec.add_development_dependency "ai21", "~> 0.2.1"
-  spec.add_development_dependency "anthropic", "~> 0.3"
+  spec.add_development_dependency "ruby-anthropic", "~> 0.4"
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.1"
   spec.add_development_dependency "chroma-db", "~> 0.6.0"
   spec.add_development_dependency "cohere-ruby", "~> 0.9.10"
   spec.add_development_dependency "docx", "~> 0.8.0"
   spec.add_development_dependency "elasticsearch", "~> 8.2.0"
-  spec.add_development_dependency "epsilla-ruby", "~> 0.0.4"
   spec.add_development_dependency "eqn", "~> 1.6.5"
   spec.add_development_dependency "faraday"
   spec.add_development_dependency "googleauth"
@@ -58,7 +57,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "hnswlib", "~> 0.8.1"
   spec.add_development_dependency "hugging-face", "~> 0.3.4"
   spec.add_development_dependency "milvus", "~> 0.10.3"
-  spec.add_development_dependency "llama_cpp", "~> 0.9.4"
   spec.add_development_dependency "nokogiri", "~> 1.13"
   spec.add_development_dependency "mail", "~> 2.8"
   spec.add_development_dependency "mistral-ai"

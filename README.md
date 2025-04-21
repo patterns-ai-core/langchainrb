@@ -57,7 +57,6 @@ The `Langchain::LLM` module provides a unified interface for interacting with va
 
 ## Supported LLM Providers
 
-- AI21
 - Anthropic
 - AWS Bedrock
 - Azure OpenAI
@@ -65,7 +64,6 @@ The `Langchain::LLM` module provides a unified interface for interacting with va
 - Google Gemini
 - Google Vertex AI
 - HuggingFace
-- LlamaCpp
 - Mistral AI
 - Ollama
 - OpenAI
@@ -387,7 +385,6 @@ Langchain.rb provides a convenient unified interface on top of supported vectors
 | Database                                                                                   | Open-source        | Cloud offering     |
 | --------                                                                                   |:------------------:| :------------:     |
 | [Chroma](https://trychroma.com/?utm_source=langchainrb&utm_medium=github)                  | ✅                 | ✅                 |
-| [Epsilla](https://epsilla.com/?utm_source=langchainrb&utm_medium=github)                   | ✅                 | ✅                 |
 | [Hnswlib](https://github.com/nmslib/hnswlib/?utm_source=langchainrb&utm_medium=github)     | ✅                 | ❌                 |
 | [Milvus](https://milvus.io/?utm_source=langchainrb&utm_medium=github)                      | ✅                 | ✅ Zilliz Cloud    |
 | [Pinecone](https://www.pinecone.io/?utm_source=langchainrb&utm_medium=github)              | ❌                 | ✅                 |
@@ -420,7 +417,6 @@ client = Langchain::Vectorsearch::Weaviate.new(
 You can instantiate any other supported vector search database:
 ```ruby
 client = Langchain::Vectorsearch::Chroma.new(...)   # `gem "chroma-db", "~> 0.6.0"`
-client = Langchain::Vectorsearch::Epsilla.new(...)  # `gem "epsilla-ruby", "~> 0.0.3"`
 client = Langchain::Vectorsearch::Hnswlib.new(...)  # `gem "hnswlib", "~> 0.8.1"`
 client = Langchain::Vectorsearch::Milvus.new(...)   # `gem "milvus", "~> 0.9.3"`
 client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`

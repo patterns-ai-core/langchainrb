@@ -173,7 +173,7 @@ module Langchain::LLM
 
     def with_api_error_handling
       response = yield
-      return if response.empty?
+      return if response.nil? || response.empty?
 
       raise Langchain::LLM::ApiError.new "OpenAI API error: #{response.dig("error", "message")}" if response&.dig("error")
 
