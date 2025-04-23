@@ -2,14 +2,14 @@
 ---
 ⚡ Building LLM-powered applications in Ruby ⚡
 
-For deep Rails integration see: [langchainrb_rails](https://github.com/patterns-ai-core/langchabinrb_rails) gem.
+For deep Rails integration see: [langchainrb_rails](https://github.com/patterns-ai-core/langchainrb_rails) gem.
 
 Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.io).
 
-![Tests status](https://github.com/patterns-ai-core/langchabinrb/actions/workflows/ci.yml/badge.svg?branch=main)
+![Tests status](https://github.com/patterns-ai-core/langchainrb/actions/workflows/ci.yml/badge.svg?branch=main)
 [![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
 [![Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/gems/langchainrb)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/patterns-ai-core/langchabinrb/blob/main/LICENSE.txt)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/patterns-ai-core/langchainrb/blob/main/LICENSE.txt)
 [![](https://dcbadge.vercel.app/api/server/WDARp7J2n8?compact=true&style=flat)](https://discord.gg/WDARp7J2n8)
 [![X](https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20%40rushing_andrei)](https://twitter.com/rushing_andrei)
 
@@ -367,7 +367,7 @@ fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
 fix_parser.parse(llm_response)
 ```
 
-See [here](https://github.com/patterns-ai-core/langchabinrb/tree/main/examples/create_and_manage_prompt_templates_using_structured_output_parser.rb) for a concrete example
+See [here](https://github.com/patterns-ai-core/langchainrb/tree/main/examples/create_and_manage_prompt_templates_using_structured_output_parser.rb) for a concrete example
 
 ## Building Retrieval Augment Generation (RAG) system
 RAG is a methodology that assists LLMs generate accurate and up-to-date information.
@@ -635,7 +635,7 @@ ragas.score(answer: "", question: "", context: "")
 ```
 
 ## Examples
-Additional examples available: [/examples](https://github.com/patterns-ai-core/langchabinrb/tree/main/examples)
+Additional examples available: [/examples](https://github.com/patterns-ai-core/langchainrb/tree/main/examples)
 
 ## Logging
 
@@ -661,7 +661,7 @@ gem install unicode -- --with-cflags="-Wno-incompatible-function-pointer-types"
 
 ## Development
 
-1. `git clone https://github.com/patterns-ai-core/langchabinrb.git`
+1. `git clone https://github.com/patterns-ai-core/langchainrb.git`
 2. `cp .env.example .env`, then fill out the environment variables in `.env`
 3. `bundle exec rake` to ensure that the tests pass and to run standardrb
 4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
@@ -676,7 +676,7 @@ Join us in the [Langchain.rb](https://discord.gg/WDARp7J2n8) Discord server.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/patterns-ai-core/langchabinrb.
+Bug reports and pull requests are welcome on GitHub at https://github.com/patterns-ai-core/langchainrb.
 
 ## License
 
