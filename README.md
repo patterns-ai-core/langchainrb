@@ -2,7 +2,7 @@
 ---
 ⚡ Building LLM-powered applications in Ruby ⚡
 
-For deep Rails integration see: [langchainrb_rails](https://github.com/patterns-ai-core/langchabinrb_rails) gem.
+For deep Rails integration see: [langchainrb_rails](https://github.com/patterns-ai-core/langchainrb_rails) gem.
 
 Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.io).
 
