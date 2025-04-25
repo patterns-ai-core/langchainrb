@@ -316,7 +316,7 @@ RSpec.describe Langchain::LLM::OpenAI do
           parameters: {
             n: 1,
             model: "gpt-4o-mini",
-            messages: [{content: "Hello World", role: "user"}],
+            messages: [{content: "Hello World", role: "user"}]
           }
         }
       end
@@ -357,7 +357,7 @@ RSpec.describe Langchain::LLM::OpenAI do
             {
               n: 1,
               model: "text-davinci-003",
-              prompt: "Hello World",
+              prompt: "Hello World"
             }
           }
         end
