@@ -47,6 +47,7 @@ module Langchain
       # Callbacks
       add_message_callback: nil,
       tool_execution_callback: nil,
+      metadata: nil,
       &block
     )
       unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
@@ -70,6 +71,8 @@ module Langchain
       @total_prompt_tokens = 0
       @total_completion_tokens = 0
       @total_tokens = 0
+
+      @metadata = metadata
     end
 
     # Add a user message to the messages array
@@ -343,7 +346,8 @@ module Langchain
         messages: array_of_message_hashes,
         tools: @tools,
         tool_choice: tool_choice,
-        parallel_tool_calls: parallel_tool_calls
+        parallel_tool_calls: parallel_tool_calls,
+        metadata: @metadata
       )
       @llm.chat(**params, &@block)
     end

@@ -118,6 +118,7 @@ module Langchain::LLM
     # @option params [String] :model ID of the model to use
     def chat(params = {}, &block)
       parameters = chat_parameters.to_params(params)
+      parameters[:metadata] = params[:metadata] if params[:metadata]
 
       raise ArgumentError.new("messages argument is required") if Array(parameters[:messages]).empty?
       raise ArgumentError.new("model argument is required") if parameters[:model].to_s.empty?
