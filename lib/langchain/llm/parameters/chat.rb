@@ -30,6 +30,7 @@ module Langchain::LLM::Parameters
       presence_penalty: {}, # Range: [-2, 2]
       repetition_penalty: {}, # Range: (0, 2]
       seed: {}, # OpenAI only
+      store: {}, # store messages with OpenAI
 
       # Function-calling
       tools: {default: []},
