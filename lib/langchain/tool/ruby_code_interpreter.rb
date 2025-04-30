@@ -5,7 +5,7 @@ module Langchain::Tool
   # A tool that execute Ruby code in a sandboxed environment.
   #
   # Gem requirements:
-  #     gem "safe_ruby", "~> 1.0.4"
+  #     gem "safe_ruby", "~> 1.0.5"
   #
   # Usage:
   #    interpreter = Langchain::Tool::RubyCodeInterpreter.new
