@@ -18,6 +18,8 @@ module Langchain
             LLM::Adapters::Ollama.new
           elsif llm.is_a?(Langchain::LLM::OpenAI)
             LLM::Adapters::OpenAI.new
+          elsif llm.is_a?(Langchain::LLM::OpenRouter)
+            LLM::Adapters::OpenAI.new # Open Router follows OpenAI's API format
           else
             raise ArgumentError, "Unsupported LLM type: #{llm.class}"
           end
