@@ -24,7 +24,10 @@ module Langchain
         def initialize(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
           raise ArgumentError, "Role must be one of #{ROLES.join(", ")}" unless ROLES.include?(role)
           raise ArgumentError, "Tool calls must be an array of hashes" unless tool_calls.is_a?(Array) && tool_calls.all? { |tool_call| tool_call.is_a?(Hash) }
-          raise ArgumentError, "image_url must be a valid url" if image_url && !URI::DEFAULT_PARSER.make_regexp.match?(image_url)
+
+          # Ensure compatibility with `URI::RFC2396_PARSER` (Ruby 3.4+) and `URI::DEFAULT_PARSER` (<= 3.3).
+          uri_parser = defined?(URI::RFC2396_PARSER) ? URI::RFC2396_PARSER : URI::DEFAULT_PARSER
+          raise ArgumentError, "image_url must be a valid url" if image_url && !uri_parser.make_regexp.match?(image_url)
 
           @role = role
           # Some Tools return content as a JSON hence `.to_s`

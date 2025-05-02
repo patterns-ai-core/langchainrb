@@ -91,7 +91,11 @@ module Langchain
 
     def load_from_url
       unescaped_url = URI.decode_www_form_component(@path)
-      escaped_url = URI::DEFAULT_PARSER.escape(unescaped_url)
+
+      # Ensure compatibility with `URI::RFC2396_PARSER` (Ruby 3.4+) and `URI::DEFAULT_PARSER` (<= 3.3).
+      uri_parser = defined?(URI::RFC2396_PARSER) ? URI::RFC2396_PARSER : URI::DEFAULT_PARSER
+      escaped_url = uri_parser.escape(unescaped_url)
+
       URI.parse(escaped_url).open
     end
 
