@@ -30,7 +30,8 @@ module Langchain
         # TODO: Make it work with local files
         uri = URI.parse(image_url)
         raise URI::InvalidURIError, "Invalid URL scheme" unless %w[http https].include?(uri.scheme)
-        @open_image ||= URI.open(image_url) # rubocop:disable Security/Open
+
+        @open_image ||= uri.open
       end
     end
   end
