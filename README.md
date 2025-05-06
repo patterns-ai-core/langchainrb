@@ -2,14 +2,14 @@
 ---
 ⚡ Building LLM-powered applications in Ruby ⚡
 
-For deep Rails integration see: [langchainrb_rails](https://github.com/andreibondarev/langchainrb_rails) gem.
+For deep Rails integration see: [langchainrb_rails](https://github.com/patterns-ai-core/langchainrb_rails) gem.
 
 Available for paid consulting engagements! [Email me](mailto:andrei@sourcelabs.io).
 
-![Tests status](https://github.com/andreibondarev/langchainrb/actions/workflows/ci.yml/badge.svg?branch=main)
+![Tests status](https://github.com/patterns-ai-core/langchainrb/actions/workflows/ci.yml/badge.svg?branch=main)
 [![Gem Version](https://badge.fury.io/rb/langchainrb.svg)](https://badge.fury.io/rb/langchainrb)
 [![Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/gems/langchainrb)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/andreibondarev/langchainrb/blob/main/LICENSE.txt)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/patterns-ai-core/langchainrb/blob/main/LICENSE.txt)
 [![](https://dcbadge.vercel.app/api/server/WDARp7J2n8?compact=true&style=flat)](https://discord.gg/WDARp7J2n8)
 [![X](https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20%40rushing_andrei)](https://twitter.com/rushing_andrei)
 
@@ -57,7 +57,6 @@ The `Langchain::LLM` module provides a unified interface for interacting with va
 
 ## Supported LLM Providers
 
-- AI21
 - Anthropic
 - AWS Bedrock
 - Azure OpenAI
@@ -65,7 +64,6 @@ The `Langchain::LLM` module provides a unified interface for interacting with va
 - Google Gemini
 - Google Vertex AI
 - HuggingFace
-- LlamaCpp
 - Mistral AI
 - Ollama
 - OpenAI
@@ -369,7 +367,7 @@ fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
 fix_parser.parse(llm_response)
 ```
 
-See [here](https://github.com/andreibondarev/langchainrb/tree/main/examples/create_and_manage_prompt_templates_using_structured_output_parser.rb) for a concrete example
+See [here](https://github.com/patterns-ai-core/langchainrb/tree/main/examples/create_and_manage_prompt_templates_using_structured_output_parser.rb) for a concrete example
 
 ## Building Retrieval Augment Generation (RAG) system
 RAG is a methodology that assists LLMs generate accurate and up-to-date information.
@@ -387,7 +385,6 @@ Langchain.rb provides a convenient unified interface on top of supported vectors
 | Database                                                                                   | Open-source        | Cloud offering     |
 | --------                                                                                   |:------------------:| :------------:     |
 | [Chroma](https://trychroma.com/?utm_source=langchainrb&utm_medium=github)                  | ✅                 | ✅                 |
-| [Epsilla](https://epsilla.com/?utm_source=langchainrb&utm_medium=github)                   | ✅                 | ✅                 |
 | [Hnswlib](https://github.com/nmslib/hnswlib/?utm_source=langchainrb&utm_medium=github)     | ✅                 | ❌                 |
 | [Milvus](https://milvus.io/?utm_source=langchainrb&utm_medium=github)                      | ✅                 | ✅ Zilliz Cloud    |
 | [Pinecone](https://www.pinecone.io/?utm_source=langchainrb&utm_medium=github)              | ❌                 | ✅                 |
@@ -420,7 +417,6 @@ client = Langchain::Vectorsearch::Weaviate.new(
 You can instantiate any other supported vector search database:
 ```ruby
 client = Langchain::Vectorsearch::Chroma.new(...)   # `gem "chroma-db", "~> 0.6.0"`
-client = Langchain::Vectorsearch::Epsilla.new(...)  # `gem "epsilla-ruby", "~> 0.0.3"`
 client = Langchain::Vectorsearch::Hnswlib.new(...)  # `gem "hnswlib", "~> 0.8.1"`
 client = Langchain::Vectorsearch::Milvus.new(...)   # `gem "milvus", "~> 0.9.3"`
 client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
@@ -555,11 +551,13 @@ assistant.tool_execution_callback = -> (tool_call_id, tool_name, method_name, to
 * `Langchain::Tool::Calculator`: Useful for evaluating math expressions. Requires `gem "eqn"`.
 * `Langchain::Tool::Database`: Connect your SQL database. Requires `gem "sequel"`.
 * `Langchain::Tool::FileSystem`: Interact with the file system (read & write).
-* `Langchain::Tool::RubyCodeInterpreter`: Useful for evaluating generated Ruby code. Requires `gem "safe_ruby"` (In need of a better solution).
+* `Langchain::Tool::GoogleSearch`: Wrapper around SerpApi's Google Search API. Requires `gem "google_search_results"`.
 * `Langchain::Tool::NewsRetriever`: A wrapper around [NewsApi.org](https://newsapi.org) to fetch news articles.
+* `Langchain::Tool::RubyCodeInterpreter`: Useful for evaluating generated Ruby code. Requires `gem "safe_ruby"` (In need of a better solution).
 * `Langchain::Tool::Tavily`: A wrapper around [Tavily AI](https://tavily.com).
+* `Langchain::Tool::Vectorsearch`: A wrapper for vector search classes.
 * `Langchain::Tool::Weather`: Calls [Open Weather API](https://home.openweathermap.org) to retrieve the current weather.
-* `Langchain::Tool::Wikipedia`: Calls Wikipedia API.
+* `Langchain::Tool::Wikipedia`: Calls Wikipedia API. Requires `gem "wikipedia-client"`.
 
 ### Creating custom Tools
 The Langchain::Assistant can be easily extended with custom tools by creating classes that `extend Langchain::ToolDefinition` module and implement required methods.
@@ -639,7 +637,7 @@ ragas.score(answer: "", question: "", context: "")
 ```
 
 ## Examples
-Additional examples available: [/examples](https://github.com/andreibondarev/langchainrb/tree/main/examples)
+Additional examples available: [/examples](https://github.com/patterns-ai-core/langchainrb/tree/main/examples)
 
 ## Logging
 
@@ -665,7 +663,7 @@ gem install unicode -- --with-cflags="-Wno-incompatible-function-pointer-types"
 
 ## Development
 
-1. `git clone https://github.com/andreibondarev/langchainrb.git`
+1. `git clone https://github.com/patterns-ai-core/langchainrb.git`
 2. `cp .env.example .env`, then fill out the environment variables in `.env`
 3. `bundle exec rake` to ensure that the tests pass and to run standardrb
 4. `bin/console` to load the gem in a REPL session. Feel free to add your own instances of LLMs, Tools, Agents, etc. and experiment with them.
@@ -680,7 +678,7 @@ Join us in the [Langchain.rb](https://discord.gg/WDARp7J2n8) Discord server.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/andreibondarev/langchainrb.
+Bug reports and pull requests are welcome on GitHub at https://github.com/patterns-ai-core/langchainrb.
 
 ## License
 

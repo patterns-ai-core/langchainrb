@@ -15,7 +15,6 @@ module Langchain::LLM
   class OpenAI < Base
     DEFAULTS = {
       n: 1,
-      temperature: 0.0,
       chat_model: "gpt-4o-mini",
       embedding_model: "text-embedding-3-small"
     }.freeze
@@ -173,7 +172,7 @@ module Langchain::LLM
 
     def with_api_error_handling
       response = yield
-      return if response.empty?
+      return if response.nil? || response.empty?
 
       raise Langchain::LLM::ApiError.new "OpenAI API error: #{response.dig("error", "message")}" if response&.dig("error")
 

@@ -649,4 +649,36 @@ RSpec.describe Langchain::LLM::AwsBedrock do
       end
     end
   end
+
+  describe "#parse_model_id" do
+    it "strips the 'us.' prefix" do
+      input = "us.anthropic.claude-3-5-sonnet-20240620-v1:0"
+      result = subject.send(:parse_model_id, input)
+      expect(result).to eq(["anthropic", "claude-3-5-sonnet-20240620-v1:0"])
+    end
+
+    it "strips the 'eu.' prefix" do
+      input = "eu.anthropic.claude-3-5-sonnet-20240620-v1:0"
+      result = subject.send(:parse_model_id, input)
+      expect(result).to eq(["anthropic", "claude-3-5-sonnet-20240620-v1:0"])
+    end
+
+    it "strips the 'apac.' prefix" do
+      input = "apac.anthropic.claude-3-5-sonnet-20240620-v1:0"
+      result = subject.send(:parse_model_id, input)
+      expect(result).to eq(["anthropic", "claude-3-5-sonnet-20240620-v1:0"])
+    end
+
+    it "strips the 'us-gov.' prefix" do
+      input = "us-gov.anthropic.claude-3-5-sonnet-20240620-v1:0"
+      result = subject.send(:parse_model_id, input)
+      expect(result).to eq(["anthropic", "claude-3-5-sonnet-20240620-v1:0"])
+    end
+
+    it "returns the correct output when no region prefix is present" do
+      input = "anthropic.claude-3-5-sonnet-20240620-v1:0"
+      result = subject.send(:parse_model_id, input)
+      expect(result).to eq(["anthropic", "claude-3-5-sonnet-20240620-v1:0"])
+    end
+  end
 end
