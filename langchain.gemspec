@@ -68,7 +68,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "qdrant-ruby", "~> 0.9.8"
   spec.add_development_dependency "roo", "~> 2.10.0"
   spec.add_development_dependency "roo-xls", "~> 1.2.0"
-  spec.add_development_dependency "ruby-openai", "~> 7.1.0"
+  spec.add_development_dependency "ruby-openai", "~> 8.1.0"
   spec.add_development_dependency "safe_ruby", "~> 1.0.5"
   spec.add_development_dependency "sequel", "~> 5.87.0"
   spec.add_development_dependency "weaviate-ruby", "~> 0.9.2"
