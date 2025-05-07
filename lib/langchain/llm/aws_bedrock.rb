@@ -32,6 +32,7 @@ module Langchain::LLM
     ].freeze
 
     SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[
+      amazon
       anthropic
       ai21
       mistral
@@ -216,6 +217,8 @@ module Langchain::LLM
         params
       elsif provider_name(model_id) == :mistral
         params
+      elsif provider_name(model_id) == :amazon
+        compose_parameters_amazon(params)
       end
     end
 
@@ -238,6 +241,8 @@ module Langchain::LLM
         Langchain::LLM::AwsBedrockMetaResponse.new(JSON.parse(response.body.string))
       elsif provider_name(model_id) == :mistral
         Langchain::LLM::MistralAIResponse.new(JSON.parse(response.body.string))
+      elsif provider_name(model_id) == :amazon
+        Langchain::LLM::AwsBedrockAmazonResponse.new(JSON.parse(response.body.string))
       end
     end
 
@@ -286,6 +291,18 @@ module Langchain::LLM
 
     def compose_parameters_anthropic(params)
       params.merge(anthropic_version: "bedrock-2023-05-31")
+    end
+
+    def compose_parameters_amazon(params)
+      params = params.merge(inferenceConfig: {
+        maxTokens: params[:max_tokens],
+        temperature: params[:temperature],
+        topP: params[:top_p],
+        topK: params[:top_k],
+        stopSequences: params[:stop_sequences]
+      }.compact)
+
+      params.reject { |k, _| k == :max_tokens || k == :temperature }
     end
 
     def response_from_chunks(chunks)
