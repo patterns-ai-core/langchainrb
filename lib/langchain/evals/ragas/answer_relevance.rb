@@ -20,7 +20,7 @@ module Langchain
         # @param question [String] Question
         # @param answer [String] Answer
         # @return [Float] Answer Relevance score
-        def score(question:, answer:)
+        def score(question:, answer:, **_kwargs)
           generated_questions = []
 
           batch_size.times do |i|
