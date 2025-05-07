@@ -48,12 +48,25 @@ module Langchain::Vectorsearch
 
     # Add a list of texts to the index
     # @param texts [Array<String>] The list of texts to add
+    # @param metadatas [Array<Hash>] Optional list of metadata hashes to store alongside each text. Must be the same length as texts when provided.
     # @return [Elasticsearch::Response] from the Elasticsearch server
-    def add_texts(texts: [])
-      body = texts.map do |text|
+    def add_texts(texts: [], metadatas: [])
+      metadatas = Array(metadatas)
+
+      if !metadatas.empty? && (metadatas.length != texts.length)
+        raise ArgumentError, "`metadatas` must be the same length as `texts` when provided"
+      end
+
+      body = texts.map.with_index do |text, i|
+        document_body = {
+          input: text,
+          input_vector: llm.embed(text: text).embedding
+        }
+        document_body[:metadata] = metadatas[i] if metadatas[i]
+
         [
           {index: {_index: index_name}},
-          {input: text, input_vector: llm.embed(text: text).embedding}
+          document_body
         ]
       end.flatten
 
@@ -63,12 +76,25 @@ module Langchain::Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array<String>] The list of texts to update
     # @param texts [Array<Integer>] The list of texts to update
+    # @param metadatas [Array<Hash>] Optional list of metadata hashes to update alongside each text. Must be the same length as texts when provided.
     # @return [Elasticsearch::Response] from the Elasticsearch server
-    def update_texts(texts: [], ids: [])
+    def update_texts(texts: [], ids: [], metadatas: [])
+      metadatas = Array(metadatas)
+
+      if !metadatas.empty? && (metadatas.length != texts.length)
+        raise ArgumentError, "`metadatas` must be the same length as `texts` when provided"
+      end
+
       body = texts.map.with_index do |text, i|
+        document_body = {
+          input: text,
+          input_vector: llm.embed(text: text).embedding
+        }
+        document_body[:metadata] = metadatas[i] if metadatas[i]
+
         [
           {index: {_index: index_name, _id: ids[i]}},
-          {input: text, input_vector: llm.embed(text: text).embedding}
+          document_body
         ]
       end.flatten
 
@@ -118,7 +144,11 @@ module Langchain::Vectorsearch
             input: {
               type: "text"
             },
-            input_vector: vector_settings
+            input_vector: vector_settings,
+            metadata: {
+              type: "object",
+              dynamic: true
+            }
           }
         }
       }
@@ -163,34 +193,45 @@ module Langchain::Vectorsearch
     # @param text [String] The text to search for
     # @param k [Integer] The number of results to return
     # @param query [Hash] Elasticsearch query that needs to be used while searching (Optional)
+    # @param filter [Hash] Elasticsearch filter that needs to be used while searching (Optional)
     # @return [Elasticsearch::Response] The response from the server
-    def similarity_search(text: "", k: 10, query: {})
+    def similarity_search(text: "", k: 10, query: {}, filter: {})
       if text.empty? && query.empty?
         raise "Either text or query should pass as an argument"
       end
 
+      # Build base similarity query (script_score by default)
       if query.empty?
         query_vector = llm.embed(text: text).embedding
-
         query = default_query(query_vector)
       end
 
-      es_client.search(body: {query: query, size: k}).body
+      # Apply filter if provided
+      final_query = if filter.empty?
+        query
+      else
+        {bool: {must: query, filter: filter}}
+      end
+
+      es_client.search(body: {query: final_query, size: k}).body
     end
 
     # Search for similar texts by embedding
     # @param embedding [Array<Float>] The embedding to search for
     # @param k [Integer] The number of results to return
     # @param query [Hash] Elasticsearch query that needs to be used while searching (Optional)
+    # @param filter [Hash] Elasticsearch filter that needs to be used while searching (Optional)
     # @return [Elasticsearch::Response] The response from the server
-    def similarity_search_by_vector(embedding: [], k: 10, query: {})
+    def similarity_search_by_vector(embedding: [], k: 10, query: {}, filter: {})
       if embedding.empty? && query.empty?
         raise "Either embedding or query should pass as an argument"
       end
 
       query = default_query(embedding) if query.empty?
 
-      es_client.search(body: {query: query, size: k}).body
+      final_query = filter.empty? ? query : {bool: {must: query, filter: filter}}
+
+      es_client.search(body: {query: final_query, size: k}).body
     end
   end
 end
