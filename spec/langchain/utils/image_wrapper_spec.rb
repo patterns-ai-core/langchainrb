@@ -2,9 +2,12 @@
 
 RSpec.describe Langchain::Utils::ImageWrapper do
   let(:image_url) { "https://example.com/sf-cable-car.jpeg" }
+  let(:uri_https) { instance_double(URI::HTTPS) }
 
   before do
-    allow(URI).to receive(:open).with(image_url).and_return(File.open("./spec/fixtures/loaders/sf-cable-car.jpeg"))
+    allow(URI).to receive(:parse).with(image_url).and_return(uri_https)
+    allow(uri_https).to receive(:scheme).and_return("https")
+    allow(uri_https).to receive(:open).and_return(File.open("./spec/fixtures/loaders/sf-cable-car.jpeg"))
   end
 
   subject { described_class.new(image_url) }
