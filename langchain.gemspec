@@ -63,7 +63,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pg", "~> 1.5"
   spec.add_development_dependency "pgvector", "~> 0.2.1"
   spec.add_development_dependency "pdf-reader", "~> 2.0"
-  spec.add_development_dependency "pinecone", "~> 0.1.6"
+  spec.add_development_dependency "pinecone", "~> 1.0"
   spec.add_development_dependency "replicate-ruby", "~> 0.2.2"
   spec.add_development_dependency "qdrant-ruby", "~> 0.9.8"
   spec.add_development_dependency "roo", "~> 2.10.0"
