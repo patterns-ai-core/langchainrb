@@ -4,6 +4,9 @@ module Langchain::LLM
   # Interface to Ollama API.
   # Available models: https://ollama.ai/library
   #
+  # Gem requirements:
+  #    gem "faraday"
+  #
   # Usage:
   #    llm = Langchain::LLM::Ollama.new(url: ENV["OLLAMA_URL"], default_options: {})
   #
