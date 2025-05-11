@@ -1,34 +1,34 @@
 # frozen_string_literal: true
 
 module Langchain::Vectorsearch
+  #
+  # Wrapper around Elasticsearch vector search capabilities.
+  #
+  # Setting up Elasticsearch:
+  # 1. Get Elasticsearch up and running with Docker: https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+  # 2. Copy the HTTP CA certificate SHA-256 fingerprint and set the ELASTICSEARCH_CA_FINGERPRINT environment variable
+  # 3. Set the ELASTICSEARCH_URL environment variable
+  #
+  # Gem requirements:
+  #     gem "elasticsearch", "~> 8.0.0"
+  #
+  # Usage:
+  #     llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+  #     es = Langchain::Vectorsearch::Elasticsearch.new(
+  #       url: ENV["ELASTICSEARCH_URL"],
+  #       index_name: "docs",
+  #       llm: llm,
+  #       es_options: {
+  #         transport_options: {ssl: {verify: false}},
+  #         ca_fingerprint: ENV["ELASTICSEARCH_CA_FINGERPRINT"]
+  #       }
+  #     )
+  #
+  #     es.create_default_schema
+  #     es.add_texts(texts: ["..."])
+  #     es.similarity_search(text: "...")
+  #
   class Elasticsearch < Base
-    #
-    # Wrapper around Elasticsearch vector search capabilities.
-    #
-    # Setting up Elasticsearch:
-    # 1. Get Elasticsearch up and running with Docker: https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
-    # 2. Copy the HTTP CA certificate SHA-256 fingerprint and set the ELASTICSEARCH_CA_FINGERPRINT environment variable
-    # 3. Set the ELASTICSEARCH_URL environment variable
-    #
-    # Gem requirements:
-    #     gem "elasticsearch", "~> 8.0.0"
-    #
-    # Usage:
-    #     llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-    #     es = Langchain::Vectorsearch::Elasticsearch.new(
-    #       url: ENV["ELASTICSEARCH_URL"],
-    #       index_name: "docs",
-    #       llm: llm,
-    #       es_options: {
-    #         transport_options: {ssl: {verify: false}},
-    #         ca_fingerprint: ENV["ELASTICSEARCH_CA_FINGERPRINT"]
-    #       }
-    #     )
-    #
-    #     es.create_default_schema
-    #     es.add_texts(texts: ["..."])
-    #     es.similarity_search(text: "...")
-    #
     attr_accessor :es_client, :index_name, :options
 
     def initialize(url:, index_name:, llm:, api_key: nil, es_options: {})

@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
 module Langchain::Vectorsearch
+  #
+  # Wrapper around Weaviate
+  #
+  # Gem requirements:
+  #     gem "weaviate-ruby", "~> 0.9.2"
+  #
+  # Usage:
+  #     weaviate = Langchain::Vectorsearch::Weaviate.new(url: ENV["WEAVIATE_URL"], api_key: ENV["WEAVIATE_API_KEY"], index_name: "Docs", llm: llm)
+  #
   class Weaviate < Base
-    #
-    # Wrapper around Weaviate
-    #
-    # Gem requirements:
-    #     gem "weaviate-ruby", "~> 0.9.2"
-    #
-    # Usage:
-    #     weaviate = Langchain::Vectorsearch::Weaviate.new(url: ENV["WEAVIATE_URL"], api_key: ENV["WEAVIATE_API_KEY"], index_name: "Docs", llm: llm)
-    #
-
     # Initialize the Weaviate adapter
     # @param url [String] The URL of the Weaviate instance
     # @param api_key [String] The API key to use
