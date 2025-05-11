@@ -26,9 +26,13 @@ module Langchain::LLM
     # Default LLM options. Can be overridden by passing `default_options: {}` to the Langchain::LLM::* constructors.
     attr_reader :defaults
 
-    # Ensuring backward compatibility after https://github.com/patterns-ai-core/langchainrb/pull/586
-    # TODO: Delete this method later
+    # Ensuring backward compatibility for `default_dimensions`.
+    #
+    # @deprecated Use `default_dimensions` instead.
+    # @see https://github.com/patterns-ai-core/langchainrb/pull/586
     def default_dimension
+      Langchain.logger.warn "DEPRECATED: `default_dimension` is deprecated, and will be removed in the next major version. Please use `default_dimensions` instead."
+
       default_dimensions
     end
 
