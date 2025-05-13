@@ -10,6 +10,7 @@ module Langchain::LLM
   # Usage:
   #     llm = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
   #
+  # @deprecated Use another LLM provider.
   class AI21 < Base
     DEFAULTS = {
       temperature: 0.0,
