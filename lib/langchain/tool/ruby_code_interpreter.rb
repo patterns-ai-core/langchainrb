@@ -5,7 +5,7 @@ module Langchain::Tool
   # A tool that execute Ruby code in a sandboxed environment.
   #
   # Gem requirements:
-  #     gem "safe_ruby", "~> 1.0.4"
+  #     gem "safe_ruby", "~> 1.0.5"
   #
   # Usage:
   #    interpreter = Langchain::Tool::RubyCodeInterpreter.new
@@ -27,11 +27,11 @@ module Langchain::Tool
     # Executes Ruby code in a sandboxes environment.
     #
     # @param input [String] ruby code expression
-    # @return [String] Answer
+    # @return [Langchain::Tool::Response] Answer
     def execute(input:)
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
-      safe_eval(input)
+      tool_response(content: safe_eval(input))
     end
 
     def safe_eval(code)

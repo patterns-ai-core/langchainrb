@@ -24,6 +24,7 @@ module Langchain
 
     attr_accessor :tools,
       :add_message_callback,
+      :tool_execution_callback,
       :parallel_tool_calls
 
     # Create a new assistant
@@ -35,6 +36,7 @@ module Langchain
     # @param parallel_tool_calls [Boolean] Whether or not to run tools in parallel
     # @param messages [Array<Langchain::Assistant::Messages::Base>] The messages
     # @param add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
+    # @param tool_execution_callback [Proc] A callback function (Proc or lambda) that is called right before a tool function is executed
     def initialize(
       llm:,
       tools: [],
@@ -42,7 +44,9 @@ module Langchain
       tool_choice: "auto",
       parallel_tool_calls: true,
       messages: [],
+      # Callbacks
       add_message_callback: nil,
+      tool_execution_callback: nil,
       &block
     )
       unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
@@ -52,11 +56,8 @@ module Langchain
       @llm = llm
       @llm_adapter = LLM::Adapter.build(llm)
 
-      # TODO: Validate that it is, indeed, a Proc or lambda
-      if !add_message_callback.nil? && !add_message_callback.respond_to?(:call)
-        raise ArgumentError, "add_message_callback must be a callable object, like Proc or lambda"
-      end
-      @add_message_callback = add_message_callback
+      @add_message_callback = add_message_callback if validate_callback!("add_message_callback", add_message_callback)
+      @tool_execution_callback = tool_execution_callback if validate_callback!("tool_execution_callback", tool_execution_callback)
 
       self.messages = messages
       @tools = tools
@@ -353,14 +354,30 @@ module Langchain
     def run_tools(tool_calls)
       # Iterate over each function invocation and submit tool output
       tool_calls.each do |tool_call|
-        tool_call_id, tool_name, method_name, tool_arguments = @llm_adapter.extract_tool_call_args(tool_call: tool_call)
+        run_tool(tool_call)
+      end
+    end
 
-        tool_instance = tools.find do |t|
-          t.class.tool_name == tool_name
-        end or raise ArgumentError, "Tool: #{tool_name} not found in assistant.tools"
+    # Run the tool call
+    #
+    # @param tool_call [Hash] The tool call to run
+    # @return [Object] The result of the tool call
+    def run_tool(tool_call)
+      tool_call_id, tool_name, method_name, tool_arguments = @llm_adapter.extract_tool_call_args(tool_call: tool_call)
 
-        output = tool_instance.send(method_name, **tool_arguments)
+      tool_instance = tools.find do |t|
+        t.class.tool_name == tool_name
+      end or raise ArgumentError, "Tool: #{tool_name} not found in assistant.tools"
 
+      # Call the callback if set
+      tool_execution_callback.call(tool_call_id, tool_name, method_name, tool_arguments) if tool_execution_callback # rubocop:disable Style/SafeNavigation
+
+      output = tool_instance.send(method_name, **tool_arguments)
+
+      # Handle both ToolResponse and legacy return values
+      if output.is_a?(ToolResponse)
+        add_message(role: @llm_adapter.tool_role, content: output.content, image_url: output.image_url, tool_call_id: tool_call_id)
+      else
         submit_tool_output(tool_call_id: tool_call_id, output: output)
       end
     end
@@ -391,6 +408,14 @@ module Langchain
 
     def available_tool_names
       llm_adapter.available_tool_names(tools)
+    end
+
+    def validate_callback!(attr_name, callback)
+      if !callback.nil? && !callback.respond_to?(:call)
+        raise ArgumentError, "#{attr_name} must be a callable object, like Proc or lambda"
+      end
+
+      true
     end
   end
 end

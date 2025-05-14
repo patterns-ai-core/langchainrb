@@ -9,7 +9,27 @@
 - [DOCS]: Documentation changes. No changes to the library's behavior.
 - [SECURITY]: A change which fixes a security vulnerability.
 
-## [Unreleased]
+## [0.19.5]
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/859] Add metadata support to PgVector storage
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/939] Fix Langchain::Vectorsearch::Milvus initializer by passing :api_key
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/953] Handle nil response in OpenAI LLM streaming
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/956] Deprecate `Langchain::Vectorsearch::Epsilla` class
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/961] Deprecate `Langchain::LLM::LlamaCpp` class
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/962] Deprecate `Langchain::LLM::AI21` class
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/971] Exclude `temperature` from being automatically added to OpenAI LLM parameters
+- [OPTIM] [https://github.com/patterns-ai-core/langchainrb/pull/977] Enable `Langchain::Tool::RubyCodeInterpreter` on Ruby 3.3+
+
+## [0.19.4] - 2025-02-17
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/894] Tools can now output image_urls, and all tool output must be wrapped by a tool_response() method
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/921] Fix for Assistant when OpenAI o1/o3 models are used
+
+## [0.19.3] - 2025-01-13
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/900] Empty text content should not be set when content is nil when using AnthropicMessage
+
+## [0.19.2] - 2024-11-26
+- [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/884] Add `tool_execution_callback` to `Langchain::Assistant`, a callback function (proc, lambda) that is called right before a tool is executed
+
+## [0.19.1] - 2024-11-21
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/858] Assistant, when using Anthropic, now also accepts image_url in the message.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/861] Clean up passing `max_tokens` to Anthropic constructor and chat method
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/849] Langchain::Assistant now works with AWS Bedrock-hosted Anthropic models

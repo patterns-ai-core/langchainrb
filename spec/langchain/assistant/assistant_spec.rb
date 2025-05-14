@@ -20,6 +20,16 @@ RSpec.describe Langchain::Assistant do
       end
     end
 
+    describe "#tool_execution_callback" do
+      it "raises an error if the callback is not a Proc" do
+        expect { described_class.new(llm: llm, tool_execution_callback: "foo") }.to raise_error(ArgumentError)
+      end
+
+      it "does not raise an error if the callback is a Proc" do
+        expect { described_class.new(llm: llm, tool_execution_callback: -> {}) }.not_to raise_error
+      end
+    end
+
     it "raises an error if LLM class does not implement `chat()` method" do
       llm = Langchain::LLM::Replicate.new(api_key: "123")
       expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
@@ -324,6 +334,68 @@ RSpec.describe Langchain::Assistant do
           expect(subject.messages).to be_empty
           expect(Langchain.logger).to receive(:warn).with("#{described_class} - No messages to process")
           subject.run
+        end
+      end
+    end
+
+    describe "#handle_tool_call" do
+      let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+      let(:calculator) { Langchain::Tool::Calculator.new }
+      let(:assistant) { described_class.new(llm: llm, tools: [calculator]) }
+
+      context "when tool returns a ToolResponse" do
+        let(:tool_call) do
+          {
+            "id" => "call_123",
+            "type" => "function",
+            "function" => {
+              "name" => "langchain_tool_calculator__execute",
+              "arguments" => {input: "2+2"}.to_json
+            }
+          }
+        end
+        let(:tool_response) { Langchain::ToolResponse.new(content: "4", image_url: "http://example.com/image.jpg") }
+
+        before do
+          allow_any_instance_of(Langchain::Tool::Calculator).to receive(:execute).and_return(tool_response)
+        end
+
+        it "adds a message with the ToolResponse content and image_url" do
+          expect {
+            assistant.send(:run_tool, tool_call)
+          }.to change { assistant.messages.count }.by(1)
+
+          last_message = assistant.messages.last
+          expect(last_message.content).to eq("4")
+          expect(last_message.image_url).to eq("http://example.com/image.jpg")
+          expect(last_message.tool_call_id).to eq("call_123")
+        end
+      end
+
+      context "when tool returns a simple value" do
+        let(:tool_call) do
+          {
+            "id" => "call_123",
+            "type" => "function",
+            "function" => {
+              "name" => "langchain_tool_calculator__execute",
+              "arguments" => {input: "2+2"}.to_json
+            }
+          }
+        end
+
+        before do
+          allow_any_instance_of(Langchain::Tool::Calculator).to receive(:execute).and_return("4")
+        end
+
+        it "adds a message with the simple value as content" do
+          expect {
+            assistant.send(:run_tool, tool_call)
+          }.to change { assistant.messages.count }.by(1)
+
+          last_message = assistant.messages.last
+          expect(last_message.content).to eq("4")
+          expect(last_message.tool_call_id).to eq("call_123")
         end
       end
     end

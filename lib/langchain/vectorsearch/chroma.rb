@@ -116,7 +116,8 @@ module Langchain::Vectorsearch
       count = collection.count
       n_results = [count, k].min
 
-      collection.query(query_embeddings: [embedding], results: n_results)
+      # workaround mentioned here: https://github.com/mariochavez/chroma/issues/29
+      collection.query(query_embeddings: [embedding], results: n_results, where: nil, where_document: nil)
     end
 
     # Ask a question and return the answer
