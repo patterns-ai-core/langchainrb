@@ -1,1 +1,1 @@
-require "langchain"
+require_relative "langchain"

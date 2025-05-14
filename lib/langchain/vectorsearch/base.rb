@@ -7,7 +7,6 @@ module Langchain::Vectorsearch
   # == Available vector databases
   #
   # - {Langchain::Vectorsearch::Chroma}
-  # - {Langchain::Vectorsearch::Epsilla}
   # - {Langchain::Vectorsearch::Elasticsearch}
   # - {Langchain::Vectorsearch::Hnswlib}
   # - {Langchain::Vectorsearch::Milvus}
@@ -30,7 +29,6 @@ module Langchain::Vectorsearch
   #     )
   #
   #     # You can instantiate other supported vector databases the same way:
-  #     epsilla  = Langchain::Vectorsearch::Epsilla.new(...)
   #     milvus   = Langchain::Vectorsearch::Milvus.new(...)
   #     qdrant   = Langchain::Vectorsearch::Qdrant.new(...)
   #     pinecone = Langchain::Vectorsearch::Pinecone.new(...)

@@ -15,7 +15,6 @@ module Langchain::LLM
   class OpenAI < Base
     DEFAULTS = {
       n: 1,
-      temperature: 0.0,
       chat_model: "gpt-4o-mini",
       embedding_model: "text-embedding-3-small"
     }.freeze

@@ -144,7 +144,7 @@ module Langchain::Vectorsearch
     # @yield [String] Stream responses back one String at a time
     # @return [String] The answer to the question
     def ask(question:, k: 4, &block)
-      search_results = similarity_search(query: question, k: k)
+      search_results = similarity_search(text: question, k: k)
 
       context = search_results.map do |result|
         result[:input]
