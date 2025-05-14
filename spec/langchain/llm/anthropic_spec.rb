@@ -5,6 +5,30 @@ require "anthropic"
 RSpec.describe Langchain::LLM::Anthropic do
   let(:subject) { described_class.new(api_key: "123") }
 
+  describe "#initialize" do
+    context "when default_options are passed" do
+      let(:default_options) { {max_tokens: 512} }
+
+      subject { described_class.new(api_key: "123", default_options: default_options) }
+
+      it "sets the defaults options" do
+        expect(subject.defaults[:max_tokens]).to eq(512)
+      end
+
+      it "get passed to consecutive chat() call" do
+        subject
+        expect(subject.client).to receive(:messages).with(parameters: hash_including(default_options)).and_return({})
+        subject.chat(messages: [{role: "user", content: "Hello json!"}])
+      end
+
+      it "can be overridden" do
+        subject
+        expect(subject.client).to receive(:messages).with(parameters: hash_including({max_tokens: 1024})).and_return({})
+        subject.chat(messages: [{role: "user", content: "Hello json!"}], max_tokens: 1024)
+      end
+    end
+  end
+
   describe "#complete" do
     let(:completion) { "How high is the sky?" }
     let(:fixture) { File.read("spec/fixtures/llm/anthropic/complete.json") }
@@ -14,10 +38,10 @@ RSpec.describe Langchain::LLM::Anthropic do
       before do
         allow(subject.client).to receive(:complete)
           .with(parameters: {
-            model: described_class::DEFAULTS[:completion_model_name],
+            model: described_class::DEFAULTS[:completion_model],
             prompt: completion,
             temperature: described_class::DEFAULTS[:temperature],
-            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens_to_sample]
+            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens]
           })
           .and_return(response)
       end
@@ -37,10 +61,10 @@ RSpec.describe Langchain::LLM::Anthropic do
       before do
         allow(subject.client).to receive(:complete)
           .with(parameters: {
-            model: described_class::DEFAULTS[:completion_model_name],
+            model: described_class::DEFAULTS[:completion_model],
             prompt: completion,
             temperature: described_class::DEFAULTS[:temperature],
-            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens_to_sample]
+            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens]
           })
           .and_return(JSON.parse(fixture))
       end
@@ -60,10 +84,10 @@ RSpec.describe Langchain::LLM::Anthropic do
       before do
         allow(subject.client).to receive(:messages)
           .with(parameters: {
-            model: described_class::DEFAULTS[:chat_completion_model_name],
+            model: described_class::DEFAULTS[:chat_model],
             messages: messages,
             temperature: described_class::DEFAULTS[:temperature],
-            max_tokens: described_class::DEFAULTS[:max_tokens_to_sample],
+            max_tokens: described_class::DEFAULTS[:max_tokens],
             stop_sequences: ["beep"]
           })
           .and_return(response)
@@ -79,6 +103,30 @@ RSpec.describe Langchain::LLM::Anthropic do
         expect(
           subject.chat(messages: messages, stop_sequences: ["beep"]).model
         ).to eq("claude-3-sonnet-20240229")
+      end
+    end
+
+    context "with thinking parameter" do
+      let(:thinking_params) { {type: "enabled", budget_tokens: 4000} }
+
+      context "passed in default_options" do
+        subject { described_class.new(api_key: "123", default_options: {thinking: thinking_params}) }
+
+        it "includes thinking parameter in the request" do
+          expect(subject.client).to receive(:messages)
+            .with(parameters: hash_including(thinking: thinking_params))
+            .and_return(response)
+          subject.chat(messages: messages)
+        end
+      end
+
+      context "passed directly to chat method" do
+        it "includes thinking parameter in the request" do
+          expect(subject.client).to receive(:messages)
+            .with(parameters: hash_including(thinking: thinking_params))
+            .and_return(response)
+          subject.chat(messages: messages, thinking: thinking_params)
+        end
       end
     end
 
@@ -126,6 +174,23 @@ RSpec.describe Langchain::LLM::Anthropic do
 
         expect(rsp.tool_calls.first["name"]).to eq("get_weather")
         expect(rsp.tool_calls.first["input"]).to eq({location: "San Francisco, CA", unit: "fahrenheit"})
+      end
+
+      context "response has empty input" do
+        let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream_with_empty_tool_input.json") }
+
+        it "handles empty input in tool calls correctly" do
+          # The test will pass if no exception is raised during processing
+          rsp = subject.chat(messages: [{role: "user", content: "What's the weather?"}], &stream_handler)
+
+          # Verify the response
+          expect(rsp).to be_a(Langchain::LLM::AnthropicResponse)
+          expect(rsp.chat_completion).to eq("I'll check the weather for you:")
+
+          # Verify the tool call with empty input is handled correctly
+          expect(rsp.tool_calls.first["name"]).to eq("get_weather")
+          expect(rsp.tool_calls.first["input"]).to be_nil  # Should be nil (null in Ruby) because input was empty
+        end
       end
     end
   end

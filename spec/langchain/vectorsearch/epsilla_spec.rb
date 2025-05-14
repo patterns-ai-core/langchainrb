@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "epsilla"
-
 if ENV["EPSILLA_URL"]
+  require "epsilla"
+
   RSpec.describe Langchain::Vectorsearch::Epsilla do
     let(:index_name) { "documents" }
 

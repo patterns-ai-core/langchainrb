@@ -3,7 +3,8 @@
 require "faraday"
 
 RSpec.describe Langchain::LLM::Ollama do
-  let(:subject) { described_class.new(url: "http://localhost:11434", default_options: {completion_model_name: "llama3.1", embeddings_model_name: "llama3.1"}) }
+  let(:default_url) { "http://localhost:11434" }
+  let(:subject) { described_class.new(url: default_url, default_options: {completion_model: "llama3.2", embedding_model: "llama3.2"}) }
   let(:client) { subject.send(:client) }
 
   describe "#initialize" do
@@ -13,7 +14,7 @@ RSpec.describe Langchain::LLM::Ollama do
 
     it "initialize with default arguments" do
       expect { described_class.new }.not_to raise_error
-      expect(described_class.new.url).to eq("http://localhost:11434")
+      expect(described_class.new.url).to eq(default_url)
     end
 
     it "sets auth headers if api_key is passed" do
@@ -23,8 +24,8 @@ RSpec.describe Langchain::LLM::Ollama do
     end
 
     context "when default_options are passed" do
-      let(:default_options) { {response_format: "json"} }
-      let(:messages) { [{role: "user", content: "Return data from the following sentence: John is a 30 year old software engineering living in SF."}] }
+      let(:default_options) { {response_format: "json", options: {num_ctx: 8_192}} }
+      let(:messages) { [{role: "user", content: "Return data from the following sentence: John is a 30 year old software engineer living in SF."}] }
       let(:response) { subject.chat(messages: messages) { |resp| streamed_responses << resp } }
       let(:streamed_responses) { [] }
 
@@ -32,11 +33,12 @@ RSpec.describe Langchain::LLM::Ollama do
 
       it "sets the defaults options" do
         expect(subject.defaults[:response_format]).to eq("json")
+        expect(subject.defaults[:options]).to eq(num_ctx: 8_192)
       end
 
-      it "get passed to consecutive chat() call", vcr: {cassette_name: "Langchain_LLM_Ollama_chat_returns_a_chat_completion_format_json"} do
-        expect(client).to receive(:post).with("api/chat", hash_including(format: "json")).and_call_original
-        expect(JSON.parse(response.chat_completion)).to eq({"Name" => "John", "Age" => 30, "Profession" => "Software Engineering", "Location" => "SF"})
+      it "get passed to consecutive chat() call", vcr: {record: :once} do
+        expect(client).to receive(:post).with("api/chat", hash_including(format: "json", options: {num_ctx: 8_192})).and_call_original
+        expect(JSON.parse(response.chat_completion)).to eq({"name" => "John", "age" => 30, "occupation" => "software engineer", "location" => "SF"})
       end
     end
   end
@@ -82,7 +84,7 @@ RSpec.describe Langchain::LLM::Ollama do
 
     it "returns a completion", :vcr do
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
-      expect(response.completion).to eq("fragile.")
+      expect(response.completion).to eq("Complicated.")
     end
 
     it "does not use streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_complete_returns_a_completion"} do
@@ -96,8 +98,8 @@ RSpec.describe Langchain::LLM::Ollama do
 
       it "returns a completion", :vcr do
         expect(response).to be_a(Langchain::LLM::OllamaResponse)
-        expect(response.completion).to eq("unpredictable.")
-        expect(response.total_tokens).to eq(22)
+        expect(response.completion).to eq("Complicated.")
+        expect(response.total_tokens).to eq(36)
       end
 
       it "uses streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_complete_when_passing_a_block_returns_a_completion"} do
@@ -107,9 +109,9 @@ RSpec.describe Langchain::LLM::Ollama do
 
       it "yields the intermediate responses to the block", vcr: {cassette_name: "Langchain_LLM_Ollama_complete_when_passing_a_block_returns_a_completion"} do
         response
-        expect(streamed_responses.length).to eq 5
+        expect(streamed_responses.length).to eq 4
         expect(streamed_responses).to be_all { |resp| resp.is_a?(Langchain::LLM::OllamaResponse) }
-        expect(streamed_responses.map(&:completion).join).to eq("unpredictable.")
+        expect(streamed_responses.map(&:completion).join).to eq("Complicated.")
       end
     end
   end
@@ -120,7 +122,7 @@ RSpec.describe Langchain::LLM::Ollama do
 
     it "returns a chat completion", :vcr do
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
-      expect(response.chat_completion).to include("I'm just an AI")
+      expect(response.chat_completion).to include("I'm just a language model")
     end
 
     it "does not use streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_chat_returns_a_chat_completion"} do
@@ -144,7 +146,7 @@ RSpec.describe Langchain::LLM::Ollama do
 
       it "yields the intermediate responses to the block", vcr: {cassette_name: "Langchain_LLM_Ollama_chat_when_passing_a_block_returns_a_chat_completion"} do
         response
-        expect(streamed_responses.length).to eq 42
+        expect(streamed_responses.length).to eq 51
         expect(streamed_responses).to be_all { |resp| resp.is_a?(Langchain::LLM::OllamaResponse) }
         expect(streamed_responses.map(&:chat_completion).join).to include("I'm just a language model")
       end
@@ -161,56 +163,17 @@ RSpec.describe Langchain::LLM::Ollama do
 
       expect(response).to be_a(Langchain::LLM::OllamaResponse)
       expect(response.completion).not_to match(/summary/)
-      expect(response.completion).to start_with("A little lamb follows Mary everywhere she goes")
+      expect(response.completion).to start_with("A young girl named Mary has a pet lamb")
     end
   end
 
   describe "#default_dimensions" do
-    it "returns size of llama3 embeddings" do
-      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "llama3.1"})
-
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of llava embeddings" do
-      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "llava"})
-
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of mistral embeddings" do
-      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mistral"})
-
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of mixtral embeddings" do
-      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mixtral"})
-
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of dolphin-mixtral embeddings" do
-      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "dolphin-mixtral"})
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of mistral-openorca embeddings" do
-      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "mistral-openorca"})
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    it "returns size of codellama embeddings" do
-      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "codellama"})
-      expect(subject.default_dimensions).to eq(4_096)
-    end
-
-    # this one has not been hardcoded, but will be looked up
-    # by generating an embedding and checking its size
-    it "returns size of tinydolphin embeddings", vcr: true do
-      subject = described_class.new(url: "http://localhost:11434", default_options: {embeddings_model_name: "tinydolphin"})
-
-      expect(subject.default_dimensions).to eq(2_048)
+    it "returns size of embeddings" do
+      embeddings = described_class::EMBEDDING_SIZES
+      embeddings.each_pair do |model, size|
+        subject = described_class.new(url: default_url, default_options: {embedding_model: model})
+        expect(subject.default_dimensions).to eq(size)
+      end
     end
   end
 end

@@ -6,7 +6,7 @@ module Langchain::Vectorsearch
     # The PostgreSQL vector search adapter
     #
     # Gem requirements:
-    #     gem "sequel", "~> 5.68.0"
+    #     gem "sequel", "~> 5.87.0"
     #     gem "pgvector", "~> 0.2"
     #
     # Usage:
@@ -51,16 +51,29 @@ module Langchain::Vectorsearch
     # Upsert a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<Integer>] The ids of the objects to add to the index, in the same order as the texts
+    # @param metadata [Array<Hash>] The metadata to associate with each text, in the same order as the texts
     # @return [PG::Result] The response from the database including the ids of
     # the added or updated texts.
-    def upsert_texts(texts:, ids:)
-      data = texts.zip(ids).flat_map do |(text, id)|
-        {id: id, content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace}
+    def upsert_texts(texts:, ids:, metadata: nil)
+      metadata = Array.new(texts.size, {}) if metadata.nil?
+
+      data = texts.zip(ids, metadata).flat_map do |text, id, meta|
+        {
+          id: id,
+          content: text,
+          vectors: llm.embed(text: text).embedding.to_s,
+          namespace: namespace,
+          metadata: meta.to_json
+        }
       end
       @db[table_name.to_sym]
         .insert_conflict(
           target: :id,
-          update: {content: Sequel[:excluded][:content], vectors: Sequel[:excluded][:vectors]}
+          update: {
+            content: Sequel[:excluded][:content],
+            vectors: Sequel[:excluded][:vectors],
+            metadata: Sequel[:excluded][:metadata]
+          }
         )
         .multi_insert(data, return: :primary_key)
     end
@@ -68,25 +81,34 @@ module Langchain::Vectorsearch
     # Add a list of texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
+    # @param metadata [Array<Hash>] The metadata to associate with each text, in the same order as the texts
     # @return [Array<Integer>] The the ids of the added texts.
-    def add_texts(texts:, ids: nil)
+    def add_texts(texts:, ids: nil, metadata: nil)
+      metadata = Array.new(texts.size, {}) if metadata.nil?
+
       if ids.nil? || ids.empty?
-        data = texts.map do |text|
-          {content: text, vectors: llm.embed(text: text).embedding.to_s, namespace: namespace}
+        data = texts.zip(metadata).map do |text, meta|
+          {
+            content: text,
+            vectors: llm.embed(text: text).embedding.to_s,
+            namespace: namespace,
+            metadata: meta.to_json
+          }
         end
 
         @db[table_name.to_sym].multi_insert(data, return: :primary_key)
       else
-        upsert_texts(texts: texts, ids: ids)
+        upsert_texts(texts: texts, ids: ids, metadata: metadata)
       end
     end
 
     # Update a list of ids and corresponding texts to the index
     # @param texts [Array<String>] The texts to add to the index
     # @param ids [Array<String>] The ids to add to the index, in the same order as the texts
+    # @param metadata [Array<Hash>] The metadata to associate with each text, in the same order as the texts
     # @return [Array<Integer>] The ids of the updated texts.
-    def update_texts(texts:, ids:)
-      upsert_texts(texts: texts, ids: ids)
+    def update_texts(texts:, ids:, metadata: nil)
+      upsert_texts(texts: texts, ids: ids, metadata: metadata)
     end
 
     # Remove a list of texts from the index
@@ -106,6 +128,7 @@ module Langchain::Vectorsearch
         text :content
         column :vectors, "vector(#{vector_dimensions})"
         text namespace_column.to_sym, default: nil
+        jsonb :metadata, default: "{}"
       end
     end
 
@@ -135,6 +158,7 @@ module Langchain::Vectorsearch
     def similarity_search_by_vector(embedding:, k: 4)
       db.transaction do # BEGIN
         documents_model
+          .select(:content, :metadata)
           .nearest_neighbors(:vectors, embedding, distance: operator).limit(k)
           .where(namespace_column.to_sym => namespace)
       end

@@ -33,7 +33,7 @@ module Langchain::LLM
       )
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
-        model: {default: @defaults[:chat_completion_model_name]},
+        model: {default: @defaults[:chat_model]},
         logprobs: {},
         top_logprobs: {},
         n: {default: @defaults[:n]},

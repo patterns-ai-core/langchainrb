@@ -33,7 +33,8 @@ RSpec.describe Langchain::Tool::Weather do
 
       it "returns the parsed weather data" do
         result = weather_tool.get_current_weather(city: city, state_code: state_code, country_code: country_code)
-        expect(result).to eq({
+        expect(result).to be_a(Langchain::ToolResponse)
+        expect(result.content).to eq({
           temperature: "72 °F",
           humidity: "50%",
           description: "clear sky",
@@ -56,7 +57,8 @@ RSpec.describe Langchain::Tool::Weather do
 
       it "returns an error message" do
         result = weather_tool.get_current_weather(city: city, state_code: state_code)
-        expect(result).to eq("Location not found")
+        expect(result).to be_a(Langchain::ToolResponse)
+        expect(result.content).to eq("Location not found")
       end
     end
 
@@ -67,7 +69,8 @@ RSpec.describe Langchain::Tool::Weather do
 
       it "returns the error message" do
         result = weather_tool.get_current_weather(city: city, state_code: state_code)
-        expect(result).to eq("API request failed: 404 - Not Found")
+        expect(result).to be_a(Langchain::ToolResponse)
+        expect(result.content).to eq("API request failed: 404 - Not Found")
       end
     end
   end

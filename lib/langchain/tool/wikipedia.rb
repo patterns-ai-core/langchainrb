@@ -27,13 +27,13 @@ module Langchain::Tool
     # Executes Wikipedia API search and returns the answer
     #
     # @param input [String] search query
-    # @return [String] Answer
+    # @return [Langchain::Tool::Response] Answer
     def execute(input:)
       Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       page = ::Wikipedia.find(input)
       # It would be nice to figure out a way to provide page.content but the LLM token limit is an issue
-      page.summary
+      tool_response(content: page.summary)
     end
   end
 end

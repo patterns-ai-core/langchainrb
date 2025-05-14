@@ -91,8 +91,14 @@ RSpec.describe Langchain::LLM::OpenAI do
 
       it "get passed to consecutive chat() call" do
         subject
-        expect(subject.client).to receive(:chat).with(parameters: hash_including({response_format: {type: "json_object"}})).and_return({})
+        expect(subject.client).to receive(:chat).with(parameters: hash_including(default_options)).and_return({})
         subject.chat(messages: [{role: "user", content: "Hello json!"}])
+      end
+
+      it "can be overridden" do
+        subject
+        expect(subject.client).to receive(:chat).with(parameters: hash_including({response_format: {type: "text"}})).and_return({})
+        subject.chat(messages: [{role: "user", content: "Hello json!"}], response_format: {type: "text"})
       end
     end
   end
@@ -185,7 +191,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
         let(:subject) do
           described_class.new(api_key: "123", default_options: {
-            embeddings_model_name: model,
+            embedding_model: model,
             dimensions: dimensions_size
           })
         end
@@ -310,9 +316,7 @@ RSpec.describe Langchain::LLM::OpenAI do
           parameters: {
             n: 1,
             model: "gpt-4o-mini",
-            messages: [{content: "Hello World", role: "user"}],
-            temperature: 0.0
-            # max_tokens: 4087
+            messages: [{content: "Hello World", role: "user"}]
           }
         }
       end
@@ -344,7 +348,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         let(:subject) {
           described_class.new(
             api_key: "123",
-            default_options: {completion_model_name: "text-davinci-003"}
+            default_options: {completion_model: "text-davinci-003"}
           )
         }
         let(:parameters) do
@@ -353,9 +357,7 @@ RSpec.describe Langchain::LLM::OpenAI do
             {
               n: 1,
               model: "text-davinci-003",
-              prompt: "Hello World",
-              temperature: 0.0
-              # max_tokens: 4095
+              prompt: "Hello World"
             }
           }
         end
@@ -369,10 +371,8 @@ RSpec.describe Langchain::LLM::OpenAI do
           expect(subject.client).to receive(:chat).with({
             parameters: {
               n: 1,
-              # max_tokens: 4087,
               model: "gpt-4o-mini",
-              messages: [{content: "Hello World", role: "user"}],
-              temperature: 0.0
+              messages: [{content: "Hello World", role: "user"}]
             }
           }).and_return(response)
           subject.complete(prompt: "Hello World")
@@ -383,7 +383,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         let(:subject) {
           described_class.new(
             api_key: "123",
-            default_options: {completion_model_name: "gpt-3.5-turbo-16k"}
+            default_options: {completion_model: "gpt-3.5-turbo-16k"}
           )
         }
 
@@ -392,9 +392,7 @@ RSpec.describe Langchain::LLM::OpenAI do
             parameters: {
               n: 1,
               model: "gpt-3.5-turbo",
-              messages: [{content: "Hello World", role: "user"}],
-              temperature: 0.0 # ,
-              # max_tokens: 4086
+              messages: [{content: "Hello World", role: "user"}]
             }
           }
         end
@@ -403,10 +401,8 @@ RSpec.describe Langchain::LLM::OpenAI do
           expect(subject.client).to receive(:chat).with({
             parameters: {
               n: 1,
-              # max_tokens: 4087 ,
               model: "gpt-4o-mini",
-              messages: [{content: "Hello World", role: "user"}],
-              temperature: 0.0
+              messages: [{content: "Hello World", role: "user"}]
             }
           }).and_return(response)
           subject.complete(prompt: "Hello World")
@@ -416,11 +412,11 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with prompt and parameters" do
       let(:parameters) do
-        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}], temperature: 1.0}} # , max_tokens: 4087}}
+        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}]}}
       end
 
       it "returns a completion" do
-        response = subject.complete(prompt: "Hello World", model: "gpt-3.5-turbo", temperature: 1.0)
+        response = subject.complete(prompt: "Hello World", model: "gpt-3.5-turbo")
 
         expect(response.completion).to eq("The meaning of life is subjective and can vary from person to person.")
       end
@@ -428,7 +424,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "with failed API call" do
       let(:parameters) do
-        {parameters: {n: 1, model: "gpt-4o-mini", messages: [{content: "Hello World", role: "user"}], temperature: 0.0}} # , max_tokens: 4087}}
+        {parameters: {n: 1, model: "gpt-4o-mini", messages: [{content: "Hello World", role: "user"}]}}
       end
       let(:response) do
         {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
@@ -450,7 +446,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     context "when the dimensions is passed as an argument" do
       let(:subject) do
         described_class.new(api_key: "123", default_options: {
-          embeddings_model_name: "text-embedding-3-small",
+          embedding_model: "text-embedding-3-small",
           dimensions: 512
         })
       end
@@ -464,10 +460,9 @@ RSpec.describe Langchain::LLM::OpenAI do
   describe "#chat" do
     let(:prompt) { "What is the meaning of life?" }
     let(:model) { "gpt-4o-mini" }
-    let(:temperature) { 0.0 }
     let(:n) { 1 }
     let(:history) { [content: prompt, role: "user"] }
-    let(:parameters) { {parameters: {n: n, messages: history, model: model, temperature: temperature}} }  # max_tokens: be_between(4014, 4096)}} }
+    let(:parameters) { {parameters: {n: n, messages: history, model: model}} }
     let(:answer) { "As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?" }
     let(:answer_2) { "Alternative answer" }
     let(:choices) do
@@ -579,11 +574,10 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
 
     context "with options" do
-      let(:temperature) { 0.75 }
       let(:model) { "gpt-3.5-turbo-0301" }
 
       it "sends prompt as message and additional params and returns a response message" do
-        response = subject.complete(prompt: prompt, model: model, temperature: temperature)
+        response = subject.complete(prompt: prompt, model: model)
 
         expect(response.chat_completion).to eq(answer)
       end
@@ -606,10 +600,57 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         it "returns multiple response messages" do
-          response = subject.chat(messages: [content: prompt, role: "user"], model: model, temperature: temperature, n: 2)
+          response = subject.chat(messages: [content: prompt, role: "user"], model: model, n: 2)
 
           expect(response.completions).to eq(choices)
         end
+      end
+    end
+
+    context "when streaming with a block" do
+      let(:messages) { [{role: "user", content: "Tell me a joke"}] }
+      let(:stream_chunks) do
+        now = Time.now.to_i # Use a single timestamp for simplicity in the mock
+        model_name = "gpt-4o-mini" # Define model name once
+        chunk_id = "chatcmpl-stream-test" # Use a consistent ID
+
+        [
+          {"id" => chunk_id, "object" => "chat.completion.chunk", "created" => now, "model" => model_name, "choices" => [{"index" => 0, "delta" => {"role" => "assistant"}}]},
+          {"id" => chunk_id, "object" => "chat.completion.chunk", "created" => now, "model" => model_name, "choices" => [{"index" => 0, "delta" => {"content" => "Why did the chicken cross the road?"}}]},
+          {"id" => chunk_id, "object" => "chat.completion.chunk", "created" => now, "model" => model_name, "choices" => [{"index" => 0, "delta" => {}, "finish_reason" => "stop"}]},
+          {"id" => chunk_id, "object" => "chat.completion.chunk", "created" => now, "model" => model_name, "usage" => {"prompt_tokens" => 5, "completion_tokens" => 10, "total_tokens" => 15}}
+        ]
+      end
+      let(:collected_yielded_chunks) { [] }
+      let(:streaming_block) { proc { |chunk| collected_yielded_chunks << chunk } }
+      let(:expected_completion) { "Why did the chicken cross the road?" }
+
+      before do
+        allow(subject.client).to receive(:chat) do |parameters:|
+          expect(parameters[:stream]).to be_a(Proc)
+          expect(parameters[:stream_options]).to eq({include_usage: true})
+          stream_chunks.each { |chunk| parameters[:stream].call(chunk, chunk.to_json.bytesize) }
+          nil # Simulate nil return after streaming
+        end
+      end
+
+      it "does not raise NoMethodError and returns correctly assembled response" do
+        expect {
+          response = subject.chat(messages: messages, &streaming_block)
+          expect(response).to be_a(Langchain::LLM::OpenAIResponse)
+          expect(response.chat_completion).to eq(expected_completion)
+          expect(response.role).to eq("assistant")
+          expect(response.prompt_tokens).to eq(5)
+          expect(response.completion_tokens).to eq(10)
+          expect(response.total_tokens).to eq(15)
+        }.not_to raise_error
+      end
+
+      it "yields the processed delta chunks to the block" do
+        subject.chat(messages: messages, &streaming_block)
+        expected_yielded_chunks = stream_chunks.map { |c| c.dig("choices", 0) || {} }
+        expect(collected_yielded_chunks).to eq(expected_yielded_chunks)
+        expect(collected_yielded_chunks.map { |c| c.dig("delta", "content") }.compact.join).to eq(expected_completion)
       end
     end
 

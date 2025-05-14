@@ -21,6 +21,8 @@ module Langchain::Vectorsearch
     # @param index_name [String] The name of the Epsilla table to use
     # @param llm [Object] The LLM client to use
     def initialize(url:, db_name:, db_path:, index_name:, llm:)
+      Langchain.logger.warn "DEPRECATED: `Langchain::Vectorsearch::Epsilla` is deprecated, and will be removed in the next major version. Please use other vector storage engines."
+
       depends_on "epsilla-ruby", req: "epsilla"
 
       uri = URI.parse(url)

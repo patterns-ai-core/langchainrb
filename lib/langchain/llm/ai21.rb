@@ -17,6 +17,8 @@ module Langchain::LLM
     }.freeze
 
     def initialize(api_key:, default_options: {})
+      Langchain.logger.warn "DEPRECATED: `Langchain::LLM::AI21` is deprecated, and will be removed in the next major version. Please use another LLM provider."
+
       depends_on "ai21"
 
       @client = ::AI21::Client.new(api_key)

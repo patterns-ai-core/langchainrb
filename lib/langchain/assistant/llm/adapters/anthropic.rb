@@ -38,9 +38,7 @@ module Langchain
           # @param tool_call_id [String] The tool call ID
           # @return [Messages::AnthropicMessage] The Anthropic message
           def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
-            Langchain.logger.warn "WARNING: Image URL is not supported by Anthropic currently" if image_url
-
-            Messages::AnthropicMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+            Messages::AnthropicMessage.new(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
           # Extract the tool call information from the Anthropic tool call hash
