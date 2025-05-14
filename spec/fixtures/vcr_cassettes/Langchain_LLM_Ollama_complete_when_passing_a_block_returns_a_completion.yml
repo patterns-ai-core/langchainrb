@@ -5,10 +5,10 @@ http_interactions:
     uri: http://localhost:11434/api/generate
     body:
       encoding: UTF-8
-      string: '{"prompt":"In one word, life is ","model":"llama3.1","stream":true,"options":{"temperature":0.0}}'
+      string: '{"prompt":"In one word, life is ","model":"llama3.2","stream":true,"options":{"temperature":0.0}}'
     headers:
       User-Agent:
-      - Faraday v2.9.0
+      - Faraday v2.12.0
       Content-Type:
       - application/json
       Accept-Encoding:
@@ -23,16 +23,15 @@ http_interactions:
       Content-Type:
       - application/x-ndjson
       Date:
-      - Thu, 30 May 2024 16:22:42 GMT
+      - Sat, 30 Nov 2024 03:33:56 GMT
       Transfer-Encoding:
       - chunked
     body:
       encoding: UTF-8
       string: |
-        {"model":"llama3.1","created_at":"2024-05-30T16:22:42.660071544Z","response":"un","done":false}
-        {"model":"llama3.1","created_at":"2024-05-30T16:22:42.852453836Z","response":"predict","done":false}
-        {"model":"llama3.1","created_at":"2024-05-30T16:22:43.044623127Z","response":"able","done":false}
-        {"model":"llama3.1","created_at":"2024-05-30T16:22:43.236631836Z","response":".","done":false}
-        {"model":"llama3.1","created_at":"2024-05-30T16:22:43.428864044Z","response":"","done":true,"done_reason":"stop","context":[128006,882,128007,198,198,644,832,3492,11,2324,374,220,128009,128006,78191,128007,198,198,1844,35798,481,13,128009],"total_duration":6055987712,"load_duration":2979520169,"prompt_eval_count":17,"prompt_eval_duration":2306663000,"eval_count":5,"eval_duration":768848000}
-  recorded_at: Thu, 30 May 2024 16:22:43 GMT
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:56.023803Z","response":"Comp","done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:56.037834Z","response":"licated","done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:56.052315Z","response":".","done":false}
+        {"model":"llama3.2","created_at":"2024-11-30T03:33:56.06672Z","response":"","done":true,"done_reason":"stop","context":[128006,9125,128007,271,38766,1303,33025,2696,25,6790,220,2366,18,271,128009,128006,882,128007,271,644,832,3492,11,2324,374,220,128009,128006,78191,128007,271,13864,14040,13],"total_duration":119446542,"load_duration":8969375,"prompt_eval_count":32,"prompt_eval_duration":66000000,"eval_count":4,"eval_duration":43000000}
+  recorded_at: Sat, 30 Nov 2024 03:33:56 GMT
 recorded_with: VCR 6.2.0

@@ -30,6 +30,7 @@ module Langchain::LLM::Parameters
       presence_penalty: {}, # Range: [-2, 2]
       repetition_penalty: {}, # Range: (0, 2]
       seed: {}, # OpenAI only
+      store: {}, # store messages with OpenAI
 
       # Function-calling
       tools: {default: []},
@@ -37,7 +38,10 @@ module Langchain::LLM::Parameters
       parallel_tool_calls: {},
 
       # Additional optional parameters
-      logit_bias: {}
+      logit_bias: {},
+
+      # Additional llm options. Ollama only.
+      options: {}
     }
 
     def initialize(parameters: {})

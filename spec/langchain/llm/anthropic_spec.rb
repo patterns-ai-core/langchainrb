@@ -106,6 +106,30 @@ RSpec.describe Langchain::LLM::Anthropic do
       end
     end
 
+    context "with thinking parameter" do
+      let(:thinking_params) { {type: "enabled", budget_tokens: 4000} }
+
+      context "passed in default_options" do
+        subject { described_class.new(api_key: "123", default_options: {thinking: thinking_params}) }
+
+        it "includes thinking parameter in the request" do
+          expect(subject.client).to receive(:messages)
+            .with(parameters: hash_including(thinking: thinking_params))
+            .and_return(response)
+          subject.chat(messages: messages)
+        end
+      end
+
+      context "passed directly to chat method" do
+        it "includes thinking parameter in the request" do
+          expect(subject.client).to receive(:messages)
+            .with(parameters: hash_including(thinking: thinking_params))
+            .and_return(response)
+          subject.chat(messages: messages, thinking: thinking_params)
+        end
+      end
+    end
+
     context "with streaming" do
       let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream.json") }
       let(:response) { JSON.parse(fixture) }
@@ -150,6 +174,23 @@ RSpec.describe Langchain::LLM::Anthropic do
 
         expect(rsp.tool_calls.first["name"]).to eq("get_weather")
         expect(rsp.tool_calls.first["input"]).to eq({location: "San Francisco, CA", unit: "fahrenheit"})
+      end
+
+      context "response has empty input" do
+        let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream_with_empty_tool_input.json") }
+
+        it "handles empty input in tool calls correctly" do
+          # The test will pass if no exception is raised during processing
+          rsp = subject.chat(messages: [{role: "user", content: "What's the weather?"}], &stream_handler)
+
+          # Verify the response
+          expect(rsp).to be_a(Langchain::LLM::AnthropicResponse)
+          expect(rsp.chat_completion).to eq("I'll check the weather for you:")
+
+          # Verify the tool call with empty input is handled correctly
+          expect(rsp.tool_calls.first["name"]).to eq("get_weather")
+          expect(rsp.tool_calls.first["input"]).to be_nil  # Should be nil (null in Ruby) because input was empty
+        end
       end
     end
   end

@@ -6,6 +6,7 @@ RSpec.describe Langchain::Assistant::Messages::OllamaMessage do
   let(:valid_roles) { ["system", "assistant", "user", "tool"] }
   let(:role) { "assistant" }
   let(:content) { "This is a message" }
+  let(:image_url) { "https://example.com/image.jpg" }
   let(:raw_response) { JSON.parse(File.read("spec/fixtures/llm/ollama/chat_with_tool_calls.json")) }
   let(:response) { Langchain::LLM::OllamaResponse.new(raw_response) }
   let(:tool_calls) { response.tool_calls }
@@ -14,7 +15,7 @@ RSpec.describe Langchain::Assistant::Messages::OllamaMessage do
   describe "#initialize" do
     context "with valid arguments" do
       it "creates an instance of OllamaMessage" do
-        message = described_class.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
+        message = described_class.new(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
         expect(message).to be_an_instance_of(described_class)
       end
     end
@@ -32,6 +33,14 @@ RSpec.describe Langchain::Assistant::Messages::OllamaMessage do
 
       it "raises an ArgumentError" do
         expect { described_class.new(role: role, tool_calls: tool_calls) }.to raise_error(ArgumentError, "Tool calls must be an array of hashes")
+      end
+    end
+
+    context "with invalid image_url" do
+      let(:image_url) { "invalid_image_url" }
+
+      it "raises an ArgumentError" do
+        expect { described_class.new(role: role, image_url: image_url) }.to raise_error(ArgumentError, "image_url must be a valid url")
       end
     end
   end
@@ -70,6 +79,16 @@ RSpec.describe Langchain::Assistant::Messages::OllamaMessage do
 
       it "returns a hash with the tool_calls key" do
         expect(message.to_hash).to eq({role: "assistant", content: "", tool_calls: [tool_call]})
+      end
+    end
+
+    context "with an image" do
+      let(:message) { described_class.new(role: "user", content: "Describe this image", image_url: "https://example.com/image.jpg") }
+
+      it "returns a hash with the images key" do
+        allow(message).to receive(:image).and_return(double(base64: "base64_data", mime_type: "image/jpeg"))
+
+        expect(message.to_hash).to eq({role: "user", content: "Describe this image", images: ["base64_data"]})
       end
     end
   end

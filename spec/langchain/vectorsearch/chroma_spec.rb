@@ -123,7 +123,7 @@ RSpec.describe Langchain::Vectorsearch::Chroma do
   describe "#similarity_search_by_vector" do
     before do
       allow_any_instance_of(Chroma::Resources::Collection).to receive(:count).and_return(count)
-      allow_any_instance_of(Chroma::Resources::Collection).to receive(:query).with(query_embeddings: [embedding], results: count).and_return(results)
+      allow_any_instance_of(Chroma::Resources::Collection).to receive(:query).with(query_embeddings: [embedding], results: count, where: nil, where_document: nil).and_return(results)
     end
 
     it "searches for similar texts" do

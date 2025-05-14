@@ -167,7 +167,7 @@ module Langchain::LLM
 
     def parse_model_id(model_id)
       model_id
-        .gsub("us.", "") # Meta append "us." to their model ids
+        .gsub(/^(us|eu|apac|us-gov)\./, "") # Meta append "us." to their model ids, and AWS region prefixes are used by Bedrock cross-region model IDs.
         .split(".")
     end
 

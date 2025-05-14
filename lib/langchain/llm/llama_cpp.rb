@@ -23,6 +23,8 @@ module Langchain::LLM
     # @param n_threads [Integer] The CPU number of threads to use
     # @param seed [Integer] The seed to use
     def initialize(model_path:, n_gpu_layers: 1, n_ctx: 2048, n_threads: 1, seed: 0)
+      Langchain.logger.warn "DEPRECATED: `Langchain::LLM::LlamaCpp` is deprecated, and will be removed in the next major version. Please use `Langchain::LLM::Ollama` for self-hosted LLM inference."
+
       depends_on "llama_cpp"
 
       @model_path = model_path
