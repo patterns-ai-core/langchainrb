@@ -86,7 +86,6 @@ module Langchain::Vectorsearch
   #
   class Base
     include Langchain::DependencyHelper
-    extend Forwardable
 
     attr_reader :client, :index_name, :llm
 
