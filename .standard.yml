@@ -1,3 +1,6 @@
 ignore:
   - "**/*":
     - Style/ArgumentsForwarding
+
+# Specify the minimum supported Ruby version supported by Langchain.rb.
+ruby_version: 3.1
