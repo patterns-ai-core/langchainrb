@@ -20,7 +20,7 @@ module Langchain
             tool_choice:,
             parallel_tool_calls:
           )
-            Langchain.logger.warn "WARNING: `parallel_tool_calls:` is not supported by Mistral AI currently"
+            Langchain.logger.warn "WARNING: `parallel_tool_calls:` is not supported by Mistral AI currently" if parallel_tool_calls
 
             params = {messages: messages}
             if tools.any?
