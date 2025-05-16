@@ -13,6 +13,7 @@ module Langchain::LLM
   #       n_threads: Integer(ENV["LLAMACPP_N_THREADS"])
   #     )
   #
+  # @deprecated Use {Langchain::LLM::Ollama} for self-hosted LLM inference.
   class LlamaCpp < Base
     attr_accessor :model_path, :n_gpu_layers, :n_ctx, :seed
     attr_writer :n_threads

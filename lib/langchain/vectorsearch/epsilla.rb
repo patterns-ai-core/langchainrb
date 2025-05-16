@@ -13,6 +13,8 @@ module Langchain::Vectorsearch
   # Usage:
   #     epsilla = Langchain::Vectorsearch::Epsilla.new(url:, db_name:, db_path:, index_name:, llm:)
   #
+  # @deprecated Use other vector storage engines.
+  #
   class Epsilla < Base
     # Initialize Epsilla client
     # @param url [String] URL to connect to the Epsilla db instance, protocol://host:port
