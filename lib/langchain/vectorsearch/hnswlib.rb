@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 module Langchain::Vectorsearch
+  #
+  # Wrapper around HNSW (Hierarchical Navigable Small World) library.
+  # HNSWLib is an in-memory vectorstore that can be saved to a file on disk.
+  #
+  # Gem requirements:
+  #     gem "hnswlib", "~> 0.8.1"
+  #
+  # Usage:
+  #     hnsw = Langchain::Vectorsearch::Hnswlib.new(llm:, path_to_index:)
+  #
   class Hnswlib < Base
-    #
-    # Wrapper around HNSW (Hierarchical Navigable Small World) library.
-    # HNSWLib is an in-memory vectorstore that can be saved to a file on disk.
-    #
-    # Gem requirements:
-    #     gem "hnswlib", "~> 0.8.1"
-    #
-    # Usage:
-    #     hnsw = Langchain::Vectorsearch::Hnswlib.new(llm:, path_to_index:)
-
     attr_reader :client, :path_to_index
 
     #
