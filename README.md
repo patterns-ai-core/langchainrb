@@ -419,7 +419,7 @@ You can instantiate any other supported vector search database:
 client = Langchain::Vectorsearch::Chroma.new(...)   # `gem "chroma-db", "~> 0.6.0"`
 client = Langchain::Vectorsearch::Hnswlib.new(...)  # `gem "hnswlib", "~> 0.8.1"`
 client = Langchain::Vectorsearch::Milvus.new(...)   # `gem "milvus", "~> 0.9.3"`
-client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 0.1.6"`
+client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 1.0"`
 client = Langchain::Vectorsearch::Pgvector.new(...) # `gem "pgvector", "~> 0.2"`
 client = Langchain::Vectorsearch::Qdrant.new(...)   # `gem "qdrant-ruby", "~> 0.9.3"`
 client = Langchain::Vectorsearch::Elasticsearch.new(...)   # `gem "elasticsearch", "~> 8.2.0"`
@@ -551,11 +551,13 @@ assistant.tool_execution_callback = -> (tool_call_id, tool_name, method_name, to
 * `Langchain::Tool::Calculator`: Useful for evaluating math expressions. Requires `gem "eqn"`.
 * `Langchain::Tool::Database`: Connect your SQL database. Requires `gem "sequel"`.
 * `Langchain::Tool::FileSystem`: Interact with the file system (read & write).
-* `Langchain::Tool::RubyCodeInterpreter`: Useful for evaluating generated Ruby code. Requires `gem "safe_ruby"` (In need of a better solution).
+* `Langchain::Tool::GoogleSearch`: Wrapper around SerpApi's Google Search API. Requires `gem "google_search_results"`.
 * `Langchain::Tool::NewsRetriever`: A wrapper around [NewsApi.org](https://newsapi.org) to fetch news articles.
+* `Langchain::Tool::RubyCodeInterpreter`: Useful for evaluating generated Ruby code. Requires `gem "safe_ruby"` (In need of a better solution).
 * `Langchain::Tool::Tavily`: A wrapper around [Tavily AI](https://tavily.com).
+* `Langchain::Tool::Vectorsearch`: A wrapper for vector search classes.
 * `Langchain::Tool::Weather`: Calls [Open Weather API](https://home.openweathermap.org) to retrieve the current weather.
-* `Langchain::Tool::Wikipedia`: Calls Wikipedia API.
+* `Langchain::Tool::Wikipedia`: Calls Wikipedia API. Requires `gem "wikipedia-client"`.
 
 ### Creating custom Tools
 The Langchain::Assistant can be easily extended with custom tools by creating classes that `extend Langchain::ToolDefinition` module and implement required methods.

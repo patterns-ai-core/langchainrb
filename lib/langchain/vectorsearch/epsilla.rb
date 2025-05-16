@@ -4,16 +4,18 @@ require "securerandom"
 require "timeout"
 
 module Langchain::Vectorsearch
+  #
+  # Wrapper around Epsilla client library
+  #
+  # Gem requirements:
+  #     gem "epsilla-ruby", "~> 0.0.3"
+  #
+  # Usage:
+  #     epsilla = Langchain::Vectorsearch::Epsilla.new(url:, db_name:, db_path:, index_name:, llm:)
+  #
+  # @deprecated Use other vector storage engines.
+  #
   class Epsilla < Base
-    #
-    # Wrapper around Epsilla client library
-    #
-    # Gem requirements:
-    #     gem "epsilla-ruby", "~> 0.0.3"
-    #
-    # Usage:
-    #     epsilla = Langchain::Vectorsearch::Epsilla.new(url:, db_name:, db_path:, index_name:, llm:)
-    #
     # Initialize Epsilla client
     # @param url [String] URL to connect to the Epsilla db instance, protocol://host:port
     # @param db_name [String] The name of the database to use
