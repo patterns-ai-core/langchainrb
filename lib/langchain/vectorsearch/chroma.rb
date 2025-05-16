@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
 module Langchain::Vectorsearch
+  #
+  # Wrapper around Chroma DB
+  #
+  # Gem requirements:
+  #     gem "chroma-db", "~> 0.6.0"
+  #
+  # Usage:
+  #     chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, api_key: nil)
+  #
   class Chroma < Base
-    #
-    # Wrapper around Chroma DB
-    #
-    # Gem requirements:
-    #     gem "chroma-db", "~> 0.6.0"
-    #
-    # Usage:
-    # chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, api_key: nil)
-    #
-
     # Initialize the Chroma client
     # @param url [String] The URL of the Chroma server
     # @param index_name [String] The name of the index to use

@@ -98,6 +98,7 @@ module Langchain::LLM
     # @param prompt [String] The prompt to generate a completion for
     # @param params [Hash] The parameters to pass to the `chat()` method
     # @return [Langchain::LLM::OpenAIResponse] Response object
+    # @deprecated Use {chat} instead.
     def complete(prompt:, **params)
       Langchain.logger.warn "DEPRECATED: `Langchain::LLM::OpenAI#complete` is deprecated, and will be removed in the next major version. Use `Langchain::LLM::OpenAI#chat` instead."
 
