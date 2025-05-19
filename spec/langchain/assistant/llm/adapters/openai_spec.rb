@@ -31,4 +31,33 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::OpenAI do
       expect(subject.tool_role).to eq("tool")
     end
   end
+
+  describe "#build_message" do
+    context "when content is a string" do
+      it "returns the OpenAI message" do
+        expect(
+          subject.build_message(
+            role: "user",
+            content: "Hello",
+            image_url: "https://example.com/image.png",
+            tool_calls: [{"id" => "tool_call_id", "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"a\": 1, \"b\": 2}"}}],
+            tool_call_id: "tool_call_id"
+          )
+        ).to have_attributes(role: "user", content: "Hello", image_url: "https://example.com/image.png", tool_calls: [{"id" => "tool_call_id", "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"a\": 1, \"b\": 2}"}}], tool_call_id: "tool_call_id")
+      end
+    end
+
+    context "when content is an array" do
+      it "returns the OpenAI message" do
+        expect(
+          subject.build_message(
+            role: "user",
+            content: [{type: "text", text: "Hello"}, {type: "image_url", image_url: {url: "https://example.com/image.png"}}],
+            tool_calls: [{"id" => "tool_call_id", "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"a\": 1, \"b\": 2}"}}],
+            tool_call_id: "tool_call_id"
+          )
+        ).to have_attributes(role: "user", content: "Hello", image_url: "https://example.com/image.png", tool_calls: [{"id" => "tool_call_id", "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"a\": 1, \"b\": 2}"}}], tool_call_id: "tool_call_id")
+      end
+    end
+  end
 end
