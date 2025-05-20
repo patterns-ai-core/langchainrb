@@ -1,0 +1,15 @@
+{
+  "choices":
+  [
+    {
+      "delta":
+      {
+        "content": " помощь"
+      },
+      "index": 0
+    }
+  ],
+  "created": 1683034756,
+  "model": "GigaChat",
+  "object": "chat.completion"
+}
