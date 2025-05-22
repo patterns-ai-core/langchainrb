@@ -1,18 +1,17 @@
 # frozen_string_literal: true
 
 module Langchain::Vectorsearch
+  #
+  # The PostgreSQL vector search adapter
+  #
+  # Gem requirements:
+  #     gem "sequel", "~> 5.87.0"
+  #     gem "pgvector", "~> 0.2"
+  #
+  # Usage:
+  #     pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace: nil)
+  #
   class Pgvector < Base
-    #
-    # The PostgreSQL vector search adapter
-    #
-    # Gem requirements:
-    #     gem "sequel", "~> 5.87.0"
-    #     gem "pgvector", "~> 0.2"
-    #
-    # Usage:
-    #     pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace: nil)
-    #
-
     # The operators supported by the PostgreSQL vector search adapter
     OPERATORS = {
       "cosine_distance" => "cosine",

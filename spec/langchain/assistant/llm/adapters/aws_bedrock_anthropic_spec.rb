@@ -3,7 +3,7 @@
 RSpec.describe Langchain::Assistant::LLM::Adapters::AwsBedrockAnthropic do
   describe "#build_tool_choice" do
     it "returns the tool choice object with 'auto'" do
-      expect(subject.send(:build_tool_choice, "auto", true)).to eq({type: "auto"})
+      expect(subject.send(:build_tool_choice, "auto", false)).to eq({type: "auto"})
     end
 
     it "returns the tool choice object with selected tool function" do

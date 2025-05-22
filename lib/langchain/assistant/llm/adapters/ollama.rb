@@ -20,8 +20,8 @@ module Langchain
             tool_choice:,
             parallel_tool_calls:
           )
-            Langchain.logger.warn "WARNING: `parallel_tool_calls:` is not supported by Ollama currently"
-            Langchain.logger.warn "WARNING: `tool_choice:` is not supported by Ollama currently"
+            Langchain.logger.warn "WARNING: `parallel_tool_calls:` is not supported by Ollama currently" if parallel_tool_calls
+            Langchain.logger.warn "WARNING: `tool_choice:` is not supported by Ollama currently" if tool_choice
 
             params = {messages: messages}
             if tools.any?

@@ -9,6 +9,10 @@
 - [DOCS]: Documentation changes. No changes to the library's behavior.
 - [SECURITY]: A change which fixes a security vulnerability.
 
+## [Unreleased]
+- [COMPAT] [https://github.com/patterns-ai-core/langchainrb/pull/980] Suppress a Ruby 3.4 warning for URI parser.
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/997] Remove `Langchain::Vectorsearch::Epsilla` class
+
 ## [0.19.5]
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/859] Add metadata support to PgVector storage
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/939] Fix Langchain::Vectorsearch::Milvus initializer by passing :api_key
