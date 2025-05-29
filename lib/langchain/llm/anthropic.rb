@@ -57,7 +57,7 @@ module Langchain::LLM
     # @param top_k [Integer] The top k value to use
     # @param metadata [Hash] The metadata to use
     # @param stream [Boolean] Whether to stream the response
-    # @return [Langchain::LLM::AnthropicResponse] The completion
+    # @return [Langchain::LLM::Response::AnthropicResponse] The completion
     def complete(
       prompt:,
       model: @defaults[:completion_model],
@@ -88,7 +88,7 @@ module Langchain::LLM
         client.complete(parameters: parameters)
       end
 
-      Langchain::LLM::AnthropicResponse.new(response)
+      Langchain::LLM::Response::AnthropicResponse.new(response)
     end
 
     # Generate a chat completion for given messages
@@ -106,7 +106,7 @@ module Langchain::LLM
     # @option params [Hash] :thinking Enable extended thinking mode, e.g. { type: "enabled", budget_tokens: 4000 }
     # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
     # @option params [Float] :top_p Use nucleus sampling.
-    # @return [Langchain::LLM::AnthropicResponse] The chat completion
+    # @return [Langchain::LLM::Response::AnthropicResponse] The chat completion
     def chat(params = {}, &block)
       set_extra_headers! if params[:tools]
 
@@ -129,7 +129,7 @@ module Langchain::LLM
       response = response_from_chunks if block
       reset_response_chunks
 
-      Langchain::LLM::AnthropicResponse.new(response)
+      Langchain::LLM::Response::AnthropicResponse.new(response)
     end
 
     def with_api_error_handling

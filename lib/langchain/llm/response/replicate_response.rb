@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module Langchain::LLM::Response
   class ReplicateResponse < BaseResponse
     def completions
       # Response comes back as an array of strings, e.g.: ["Hi", "how ", "are ", "you?"]

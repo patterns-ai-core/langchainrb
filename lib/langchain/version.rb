@@ -2,4 +2,5 @@
 
 module Langchain
   VERSION = "0.19.5"
+  Version = VERSION
 end

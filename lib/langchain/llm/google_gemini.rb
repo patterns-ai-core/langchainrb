@@ -61,7 +61,7 @@ module Langchain::LLM
 
       parsed_response = http_post(uri, parameters)
 
-      wrapped_response = Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
+      wrapped_response = Langchain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
 
       if wrapped_response.chat_completion || Array(wrapped_response.tool_calls).any?
         wrapped_response
@@ -88,7 +88,7 @@ module Langchain::LLM
 
       parsed_response = http_post(uri, params)
 
-      Langchain::LLM::GoogleGeminiResponse.new(parsed_response, model: model)
+      Langchain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: model)
     end
 
     private

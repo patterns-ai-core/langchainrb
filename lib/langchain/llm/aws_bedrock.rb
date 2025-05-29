@@ -86,7 +86,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params  extra parameters passed to Aws::BedrockRuntime::Client#invoke_model
-    # @return [Langchain::LLM::AnthropicResponse], [Langchain::LLM::CohereResponse] or [Langchain::LLM::AI21Response] Response object
+    # @return [Langchain::LLM::Response::AnthropicResponse], [Langchain::LLM::Response::CohereResponse] or [Langchain::LLM::AI21Response] Response object
     #
     def complete(
       prompt:,
@@ -124,7 +124,7 @@ module Langchain::LLM
     # @option params [Float] :top_p Use nucleus sampling.
     # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
     # @yield [Hash] Provides chunks of the response as they are received
-    # @return [Langchain::LLM::AnthropicResponse] Response object
+    # @return [Langchain::LLM::Response::AnthropicResponse] Response object
     def chat(params = {}, &block)
       parameters = chat_parameters.to_params(params)
       parameters = compose_parameters(parameters, parameters[:model])
@@ -229,15 +229,15 @@ module Langchain::LLM
 
     def parse_response(response, model_id)
       if provider_name(model_id) == :anthropic
-        Langchain::LLM::AnthropicResponse.new(JSON.parse(response.body.string))
+        Langchain::LLM::Response::AnthropicResponse.new(JSON.parse(response.body.string))
       elsif provider_name(model_id) == :cohere
-        Langchain::LLM::CohereResponse.new(JSON.parse(response.body.string))
+        Langchain::LLM::Response::CohereResponse.new(JSON.parse(response.body.string))
       elsif provider_name(model_id) == :ai21
-        Langchain::LLM::AI21Response.new(JSON.parse(response.body.string, symbolize_names: true))
+        Langchain::LLM::Response::AI21Response.new(JSON.parse(response.body.string, symbolize_names: true))
       elsif provider_name(model_id) == :meta
-        Langchain::LLM::AwsBedrockMetaResponse.new(JSON.parse(response.body.string))
+        Langchain::LLM::Response::AwsBedrockMetaResponse.new(JSON.parse(response.body.string))
       elsif provider_name(model_id) == :mistral
-        Langchain::LLM::MistralAIResponse.new(JSON.parse(response.body.string))
+        Langchain::LLM::Response::MistralAIResponse.new(JSON.parse(response.body.string))
       end
     end
 
@@ -245,9 +245,9 @@ module Langchain::LLM
       json_response = JSON.parse(response.body.string)
 
       if embedding_provider == :amazon
-        Langchain::LLM::AwsTitanResponse.new(json_response)
+        Langchain::LLM::Response::AwsTitanResponse.new(json_response)
       elsif embedding_provider == :cohere
-        Langchain::LLM::CohereResponse.new(json_response)
+        Langchain::LLM::Response::CohereResponse.new(json_response)
       end
     end
 
@@ -317,7 +317,7 @@ module Langchain::LLM
         end
       end
 
-      Langchain::LLM::AnthropicResponse.new(raw_response)
+      Langchain::LLM::Response::AnthropicResponse.new(raw_response)
     end
   end
 end
