@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "pdf-reader"
+
 module Langchain
   module Processors
     class PDF < Base

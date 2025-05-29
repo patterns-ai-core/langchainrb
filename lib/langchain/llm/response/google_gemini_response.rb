@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module Langchain::LLM::Response
   class GoogleGeminiResponse < BaseResponse
     def initialize(raw_response, model: nil)
       super

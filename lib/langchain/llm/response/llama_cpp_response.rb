@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module Langchain::LLM::Response
   class LlamaCppResponse < BaseResponse
     def embedding
       embeddings

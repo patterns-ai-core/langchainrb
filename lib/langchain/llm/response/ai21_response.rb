@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module Langchain::LLM::Response
   class AI21Response < BaseResponse
     def completions
       raw_response.dig(:completions)
