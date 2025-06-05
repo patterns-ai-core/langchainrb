@@ -372,7 +372,7 @@ module Langchain
       # Call the callback if set
       tool_execution_callback.call(tool_call_id, tool_name, method_name, tool_arguments) if tool_execution_callback # rubocop:disable Style/SafeNavigation
 
-      output = tool_instance.send(method_name, **tool_arguments)
+      output = tool_instance.public_send(method_name, **tool_arguments)
 
       # Handle both ToolResponse and legacy return values
       if output.is_a?(ToolResponse)
