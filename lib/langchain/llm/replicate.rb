@@ -39,7 +39,7 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Langchain::LLM::ReplicateResponse] Response object
+    # @return [Langchain::LLM::Response::ReplicateResponse] Response object
     #
     def embed(text:)
       response = embeddings_model.predict(input: text)
@@ -49,7 +49,7 @@ module Langchain::LLM
         sleep(0.1)
       end
 
-      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:embedding_model])
+      Langchain::LLM::Response::ReplicateResponse.new(response, model: @defaults[:embedding_model])
     end
 
     #
@@ -66,7 +66,7 @@ module Langchain::LLM
         sleep(0.1)
       end
 
-      Langchain::LLM::ReplicateResponse.new(response, model: @defaults[:completion_model])
+      Langchain::LLM::Response::ReplicateResponse.new(response, model: @defaults[:completion_model])
     end
 
     #

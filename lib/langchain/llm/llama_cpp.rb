@@ -45,7 +45,7 @@ module Langchain::LLM
       return unless embedding_input.size.positive?
 
       context.eval(tokens: embedding_input, n_past: 0)
-      Langchain::LLM::LlamaCppResponse.new(context, model: context.model.desc)
+      Langchain::LLM::Response::LlamaCppResponse.new(context, model: context.model.desc)
     end
 
     # @param prompt [String] The prompt to complete

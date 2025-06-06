@@ -43,7 +43,7 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Langchain::LLM::CohereResponse] Response object
+    # @return [Langchain::LLM::Response::CohereResponse] Response object
     #
     def embed(text:)
       response = client.embed(
@@ -51,7 +51,7 @@ module Langchain::LLM
         model: @defaults[:embedding_model]
       )
 
-      Langchain::LLM::CohereResponse.new response, model: @defaults[:embedding_model]
+      Langchain::LLM::Response::CohereResponse.new response, model: @defaults[:embedding_model]
     end
 
     #
@@ -59,7 +59,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params[:stop_sequences]
-    # @return [Langchain::LLM::CohereResponse] Response object
+    # @return [Langchain::LLM::Response::CohereResponse] Response object
     #
     def complete(prompt:, **params)
       default_params = {
@@ -76,7 +76,7 @@ module Langchain::LLM
       default_params.merge!(params)
 
       response = client.generate(**default_params)
-      Langchain::LLM::CohereResponse.new response, model: @defaults[:completion_model]
+      Langchain::LLM::Response::CohereResponse.new response, model: @defaults[:completion_model]
     end
 
     # Generate a chat completion for given messages
@@ -92,7 +92,7 @@ module Langchain::LLM
     # @option params [Array<String>] :tools Definitions of tools that the model may use
     # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
     # @option params [Float] :top_p Use nucleus sampling.
-    # @return [Langchain::LLM::CohereResponse] The chat completion
+    # @return [Langchain::LLM::Response::CohereResponse] The chat completion
     def chat(params = {})
       raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
 
@@ -104,7 +104,7 @@ module Langchain::LLM
 
       response = client.chat(**parameters)
 
-      Langchain::LLM::CohereResponse.new(response)
+      Langchain::LLM::Response::CohereResponse.new(response)
     end
 
     # Generate a summary in English for a given text
