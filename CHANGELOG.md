@@ -17,6 +17,7 @@
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/961] Deprecate `Langchain::LLM::LlamaCpp` class
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/962] Deprecate `Langchain::LLM::AI21` class
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/971] Exclude `temperature` from being automatically added to OpenAI LLM parameters
+- [OPTIM] [https://github.com/patterns-ai-core/langchainrb/pull/977] Enable `Langchain::Tool::RubyCodeInterpreter` on Ruby 3.3+
 
 ## [0.19.4] - 2025-02-17
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/894] Tools can now output image_urls, and all tool output must be wrapped by a tool_response() method
