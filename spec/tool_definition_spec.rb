@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "spec_helper"
+
 RSpec.describe Langchain::ToolDefinition do
   let(:dummy_class) do
     Class.new do

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "spec_helper"
+
 RSpec.describe Langchain::ToolResponse do
   describe "#initialize" do
     context "with content" do

@@ -45,14 +45,14 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to embed
-    # @return [Langchain::LLM::HuggingFaceResponse] Response object
+    # @return [Langchain::LLM::Response::HuggingFaceResponse] Response object
     #
     def embed(text:)
       response = client.embedding(
         input: text,
         model: @defaults[:embedding_model]
       )
-      Langchain::LLM::HuggingFaceResponse.new(response, model: @defaults[:embedding_model])
+      Langchain::LLM::Response::HuggingFaceResponse.new(response, model: @defaults[:embedding_model])
     end
   end
 end

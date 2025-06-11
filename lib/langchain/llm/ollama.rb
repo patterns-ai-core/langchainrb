@@ -74,7 +74,7 @@ module Langchain::LLM
     #   For a list of valid parameters and values, see:
     #   https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values
     # @option block [Proc] Receive the intermediate responses as a stream of +OllamaResponse+ objects.
-    # @return [Langchain::LLM::OllamaResponse] Response object
+    # @return [Langchain::LLM::Response::OllamaResponse] Response object
     #
     # Example:
     #
@@ -151,7 +151,7 @@ module Langchain::LLM
         req.options.on_data = json_responses_chunk_handler do |parsed_chunk|
           responses_stream << parsed_chunk
 
-          block&.call(OllamaResponse.new(parsed_chunk, model: parameters[:model]))
+          block&.call(Langchain::LLM::Response::OllamaResponse.new(parsed_chunk, model: parameters[:model]))
         end
       end
 
@@ -169,7 +169,7 @@ module Langchain::LLM
     # @option params [Float] :temperature The temperature to use
     # @option params [String] :template The prompt template to use (overrides what is defined in the `Modelfile`)
     # @option block [Proc] Receive the intermediate responses as a stream of +OllamaResponse+ objects.
-    # @return [Langchain::LLM::OllamaResponse] Response object
+    # @return [Langchain::LLM::Response::OllamaResponse] Response object
     #
     # Example:
     #
@@ -188,7 +188,7 @@ module Langchain::LLM
         req.options.on_data = json_responses_chunk_handler do |parsed_chunk|
           responses_stream << parsed_chunk
 
-          block&.call(OllamaResponse.new(parsed_chunk, model: parameters[:model]))
+          block&.call(Langchain::LLM::Response::OllamaResponse.new(parsed_chunk, model: parameters[:model]))
         end
       end
 
@@ -201,7 +201,7 @@ module Langchain::LLM
     # @param text [String] The text to generate an embedding for
     # @param model [String] The model to use
     # @param options [Hash] The options to use
-    # @return [Langchain::LLM::OllamaResponse] Response object
+    # @return [Langchain::LLM::Response::OllamaResponse] Response object
     #
     def embed(
       text:,
@@ -253,7 +253,7 @@ module Langchain::LLM
         req.body = parameters
       end
 
-      OllamaResponse.new(response.body, model: parameters[:model])
+      Langchain::LLM::Response::OllamaResponse.new(response.body, model: parameters[:model])
     end
 
     # Generate a summary for a given text
@@ -318,7 +318,7 @@ module Langchain::LLM
         "response" => responses_stream.map { |resp| resp["response"] }.join
       )
 
-      OllamaResponse.new(final_response, model: model)
+      Langchain::LLM::Response::OllamaResponse.new(final_response, model: model)
     end
 
     # BUG: If streamed, this method does not currently return the tool_calls response.
@@ -326,7 +326,7 @@ module Langchain::LLM
       final_response = responses_stream.last
       final_response["message"]["content"] = responses_stream.map { |resp| resp.dig("message", "content") }.join
 
-      OllamaResponse.new(final_response, model: model)
+      Langchain::LLM::Response::OllamaResponse.new(final_response, model: model)
     end
   end
 end

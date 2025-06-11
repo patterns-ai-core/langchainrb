@@ -37,7 +37,7 @@ module Langchain::LLM
       parameters = complete_parameters params
 
       response = client.complete(prompt, parameters)
-      Langchain::LLM::AI21Response.new response, model: parameters[:model]
+      Langchain::LLM::Response::AI21Response.new response, model: parameters[:model]
     end
 
     #
