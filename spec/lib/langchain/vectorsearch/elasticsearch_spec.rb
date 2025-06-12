@@ -17,16 +17,23 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   end
 
   describe "#add_texts" do
-    it "indexes data into elasticsearch" do
+    it "indexes data into elasticsearch with metadata" do
+      metadata = {lang: "en"}
       es_body = [
         {index: {_index: "langchain"}},
-        {input: "simple text", input_vector: [0.1, 0.2, 0.3]}
+        {input: "simple text", input_vector: [0.1, 0.2, 0.3], metadata: metadata}
       ]
 
       allow_any_instance_of(::Elasticsearch::Client).to receive(:bulk).with(body: es_body)
       expect_any_instance_of(::Elasticsearch::Client).to receive(:bulk).with(body: es_body).once
 
-      subject.add_texts(texts: ["simple text"])
+      subject.add_texts(texts: ["simple text"], metadatas: [metadata])
+    end
+
+    it "raises error when metadatas length mismatch" do
+      expect {
+        subject.add_texts(texts: ["t1", "t2"], metadatas: [{foo: 1}])
+      }.to raise_error(ArgumentError)
     end
   end
 
@@ -38,16 +45,17 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
         .and_return([0.1, 0.2, 0.3, 0.4])
     end
 
-    it "updates respective document" do
+    it "updates respective document with metadata" do
+      metadata = {version: 2}
       es_body = [
         {index: {_index: "langchain", _id: 1}},
-        {input: "updated text", input_vector: [0.1, 0.2, 0.3, 0.4]}
+        {input: "updated text", input_vector: [0.1, 0.2, 0.3, 0.4], metadata: metadata}
       ]
 
       allow_any_instance_of(::Elasticsearch::Client).to receive(:bulk).with(body: es_body)
       expect_any_instance_of(::Elasticsearch::Client).to receive(:bulk).with(body: es_body).once
 
-      subject.update_texts(texts: ["updated text"], ids: [1])
+      subject.update_texts(texts: ["updated text"], ids: [1], metadatas: [metadata])
     end
   end
 
@@ -100,7 +108,8 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
             input: {
               type: "text"
             },
-            input_vector: {type: "dense_vector", dims: 384}
+            input_vector: {type: "dense_vector", dims: 384},
+            metadata: {type: "object", dynamic: true}
           }
         }
       }
@@ -117,7 +126,8 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
             input: {
               type: "text"
             },
-            input_vector: {type: "dense_vector", dims: 500}
+            input_vector: {type: "dense_vector", dims: 500},
+            metadata: {type: "object", dynamic: true}
           }
         }
       }
@@ -145,7 +155,8 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   end
 
   describe "#similarity_search" do
-    it "should return similar documents" do
+    it "should return similar documents with metadata filter" do
+      filter = {term: {"metadata.lang": "en"}}
       response = [
         {_id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6]},
         {_id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1]}
@@ -154,13 +165,13 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
 
       allow(es_response).to receive(:body).and_return(response)
       allow_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: {query: subject.default_query([0.1, 0.2, 0.3]), size: 5}).and_return(es_response)
+        .to receive(:search).with(body: {query: {bool: {must: subject.default_query([0.1, 0.2, 0.3]), filter: filter}}, size: 5}).and_return(es_response)
 
       expect_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: {query: subject.default_query([0.1, 0.2, 0.3]), size: 5})
+        .to receive(:search).with(body: {query: {bool: {must: subject.default_query([0.1, 0.2, 0.3]), filter: filter}}, size: 5})
       expect(es_response).to receive(:body)
 
-      expect(subject.similarity_search(text: "simple", k: 5)).to eq(response)
+      expect(subject.similarity_search(text: "simple", k: 5, filter: filter)).to eq(response)
     end
 
     it "able to search with custom query" do
@@ -197,7 +208,8 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
   end
 
   describe "#similarity_search_by_vector" do
-    it "should return similar documents" do
+    it "should return similar documents with metadata filter" do
+      filter = {term: {"metadata.lang": "en"}}
       response = [
         {_id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6]},
         {_id: 2, input: "update text", input_vector: [0.5, 0.3, 0.1]}
@@ -206,13 +218,13 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
 
       allow(es_response).to receive(:body).and_return(response)
       allow_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: {query: subject.default_query([0.5, 0.6, 0.7]), size: 5}).and_return(es_response)
+        .to receive(:search).with(body: {query: {bool: {must: subject.default_query([0.5, 0.6, 0.7]), filter: filter}}, size: 5}).and_return(es_response)
 
       expect_any_instance_of(::Elasticsearch::Client)
-        .to receive(:search).with(body: {query: subject.default_query([0.5, 0.6, 0.7]), size: 5})
+        .to receive(:search).with(body: {query: {bool: {must: subject.default_query([0.5, 0.6, 0.7]), filter: filter}}, size: 5})
       expect(es_response).to receive(:body)
 
-      expect(subject.similarity_search_by_vector(embedding: [0.5, 0.6, 0.7], k: 5)).to eq(response)
+      expect(subject.similarity_search_by_vector(embedding: [0.5, 0.6, 0.7], k: 5, filter: filter)).to eq(response)
     end
 
     it "able to search with custom query" do
