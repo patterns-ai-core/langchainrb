@@ -26,7 +26,7 @@ module Langchain::Tool
       end
     end
 
-    def initialize(api_key:)
+    def initialize(api_key: ENV["TAVILY_API_KEY"])
       @api_key = api_key
     end
 

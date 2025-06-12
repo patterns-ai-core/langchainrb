@@ -11,7 +11,7 @@ assistant = Langchain::Assistant.new(
   llm: openai,
   instructions: "You are a Meteorologist Assistant that is able to pull the weather for any location",
   tools: [
-    Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
+    Langchain::Tool::Weather.new
   ]
 )
 
