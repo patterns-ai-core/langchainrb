@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "functions_state_id": "77d3fb14-457a-46ba-937e-8d856156d003",
+        "function_call": {
+          "name": "weather_forecast",
+          "arguments": {
+            "location": "Москва",
+            "format": "celsius"
+          }
+        }
+      },
+      "index": 0,
+      "finish_reason": "function_call"
+    }
+  ],
+  "created": 1700471392,
+  "model": "GigaChat",
+  "usage": {
+    "prompt_tokens": 150,
+    "completion_tokens": 35,
+    "total_tokens": 185
+  },
+  "object": "chat.completion"
+}
