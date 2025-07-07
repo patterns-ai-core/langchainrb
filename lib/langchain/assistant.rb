@@ -309,12 +309,12 @@ module Langchain
     end
 
     def set_state_for(response:)
-      if response.tool_calls.any?
-        :in_progress
-      elsif response.chat_completion
+      if response.chat_completion
         :completed
       elsif response.completion # Currently only used by Ollama
         :completed
+      elsif response.tool_calls.any?
+        :in_progress
       else
         Langchain.logger.error("#{self.class} - LLM response does not contain tool calls, chat or completion response")
         :failed
