@@ -7,6 +7,8 @@ module Langchain
         attr_reader :role,
           :content,
           :image_url,
+          :input_audio,
+          :file,
           :tool_calls,
           :tool_call_id
 

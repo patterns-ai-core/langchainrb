@@ -20,6 +20,52 @@ RSpec.describe Langchain::Assistant::Messages::OpenAIMessage do
           })
         end
       end
+
+      context "when input_audio is present with a .mp3" do
+        let(:content) { "data:audio/mpeg;base64,abcdef"}
+        let(:message) { described_class.new(role: "user", content: "Please describe this sound", input_audio: { data: content, format: "mp3" })}
+
+        it "returns a user_hash with the input_audio key" do
+          expect(message.to_hash).to eq({
+            role: "user",
+            content: [
+              {type: "text", text: "Please describe this sound"},
+              {type: "input_audio", input_audio: { data: content, format: "mp3" } }
+            ]
+          })
+        end
+      end
+
+      context "when input_audio is present with a .wav" do
+        let(:content) { "data:audio/wav;base64,abcdef"}
+        let(:message) { described_class.new(role: "user", content: "Please describe this sound", input_audio: { data: content, format: "wav" })}
+
+        it "returns a user_hash with the input_audio key" do
+          expect(message.to_hash).to eq({
+            role: "user",
+            content: [
+              {type: "text", text: "Please describe this sound"},
+              {type: "input_audio", input_audio: { data: content, format: "wav" } }
+            ]
+          })
+        end
+      end
+
+      context "when file is present with a pdf" do
+        let(:content) { "data:application/pdf;base64,abcdef" }
+        let(:message) { described_class.new(role: "user", content: "Please describe this document", file: { file_data: content, filename: "document.pdf" }) }
+
+        it "returns a user_hash with the file key" do
+          expect(message.to_hash).to eq({
+            role: "user",
+            content: [
+              {type: "text", text: "Please describe this document"},
+              {type: "file", file: { file_data: content, filename: "document.pdf"}}
+            ]
+          })
+        end 
+      end
+
       context "when image_url is absent" do
         let(:message) { described_class.new(role: role, content: "Hello, how can I help you?") }
 

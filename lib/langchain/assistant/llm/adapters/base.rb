@@ -39,7 +39,7 @@ module Langchain
           # @param tool_calls [Array] The tool calls
           # @param tool_call_id [String] The tool call ID
           # @return [Messages::Base] The message
-          def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+          def build_message(role:, content: nil, image_url: nil, input_audio: nil, file: nil, tool_calls: [], tool_call_id: nil)
             raise NotImplementedError, "Subclasses must implement build_message"
           end
 

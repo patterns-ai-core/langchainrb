@@ -25,6 +25,8 @@ module Langchain
           role:,
           content: nil,
           image_url: nil,
+          input_audio: nil,
+          file: nil,
           tool_calls: [],
           tool_call_id: nil
         )
@@ -35,6 +37,8 @@ module Langchain
           # Some Tools return content as a JSON hence `.to_s`
           @content = content.to_s
           @image_url = image_url
+          @input_audio = input_audio
+          @file = file
           @tool_calls = tool_calls
           @tool_call_id = tool_call_id
         end
@@ -149,6 +153,21 @@ module Langchain
               }
             }
           end
+
+          if input_audio
+            content_details << {
+              type: "input_audio",
+              input_audio: input_audio
+            }
+          end
+
+          if file
+            content_details << {
+              type: "file",
+              file: file
+            }
+          end
+
           content_details
         end
       end

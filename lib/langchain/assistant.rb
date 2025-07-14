@@ -83,7 +83,7 @@ module Langchain
     # @param tool_calls [Array<Hash>] The tool calls to include in the message
     # @param tool_call_id [String] The ID of the tool call to include in the message
     # @return [Array<Langchain::Message>] The messages
-    def add_message(role: "user", content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+    def add_message(role: "user", content: nil, image_url: nil, input_audio: nil, file: nil, tool_calls: [], tool_call_id: nil)
       message = build_message(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
 
       # Call the callback with the message
@@ -384,8 +384,8 @@ module Langchain
     # @param tool_calls [Array<Hash>] The tool calls to include in the message
     # @param tool_call_id [String] The ID of the tool call to include in the message
     # @return [Langchain::Message] The Message object
-    def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
-      @llm_adapter.build_message(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
+    def build_message(role:, content: nil, image_url: nil, input_audio: nil, file: nil, tool_calls: [], tool_call_id: nil)
+      @llm_adapter.build_message(role: role, content: content, image_url: image_url, input_audio: input_audio, file: file, tool_calls: tool_calls, tool_call_id: tool_call_id)
     end
 
     # Increment the tokens count based on the last interaction with the LLM

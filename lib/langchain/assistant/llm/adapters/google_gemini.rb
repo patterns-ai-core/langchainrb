@@ -42,8 +42,10 @@ module Langchain
           # @param tool_calls [Array] The tool calls
           # @param tool_call_id [String] The tool call ID
           # @return [Messages::GoogleGeminiMessage] The Google Gemini message
-          def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+          def build_message(role:, content: nil, image_url: nil, input_audio: nil, file: nil, tool_calls: [], tool_call_id: nil)
             Langchain.logger.warn "Image URL is not supported by Google Gemini" if image_url
+            raise NotImplementedError if input_audio
+            raise NotImplementedError if file
 
             Messages::GoogleGeminiMessage.new(role: role, content: content, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end

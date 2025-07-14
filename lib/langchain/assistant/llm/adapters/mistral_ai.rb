@@ -39,7 +39,10 @@ module Langchain
           # @param tool_calls [Array] The tool calls
           # @param tool_call_id [String] The tool call ID
           # @return [Messages::MistralAIMessage] The Mistral AI message
-          def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+          def build_message(role:, content: nil, image_url: nil, input_audio: nil, file: nil, tool_calls: [], tool_call_id: nil)
+            raise NotImplementedError if input_audio
+            raise NotImplementedError if file
+            
             Messages::MistralAIMessage.new(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
