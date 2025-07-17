@@ -19,11 +19,11 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"] = "https://github.com/patterns-ai-core/langchainrb/blob/main/CHANGELOG.md"
   spec.metadata["documentation_uri"] = "https://rubydoc.info/gems/langchainrb"
 
-  # Specify which files should be added to the gem when it is released.
-  spec.files = Dir["LICENSE.txt", "README.md", "CHANGELOG.md", "lib/**/*"]
-  spec.bindir = "exe"
-  spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.files = Dir.chdir(File.expand_path(__dir__)) do
+    Dir["{app,config,db,lib}/**/*", "LICENSE.txt", "Rakefile", "README.md"]
+  end
+
+  spec.add_dependency "rails", ">= 6.1.0"
 
   # dependencies
   # Not sure if we should require this as it only applies to OpenAI usecase.

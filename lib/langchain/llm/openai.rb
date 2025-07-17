@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "openai"
+
 module Langchain::LLM
   # LLM interface for OpenAI APIs: https://platform.openai.com/overview
   #
@@ -57,7 +59,7 @@ module Langchain::LLM
     # @param model [String] ID of the model to use
     # @param encoding_format [String] The format to return the embeddings in. Can be either float or base64.
     # @param user [String] A unique identifier representing your end-user
-    # @return [Langchain::LLM::OpenAIResponse] Response object
+    # @return [Langchain::LLM::Response::OpenAIResponse] Response object
     def embed(
       text:,
       model: defaults[:embedding_model],
@@ -89,7 +91,7 @@ module Langchain::LLM
         client.embeddings(parameters: parameters)
       end
 
-      Langchain::LLM::OpenAIResponse.new(response)
+      Langchain::LLM::Response::OpenAIResponse.new(response)
     end
 
     # rubocop:disable Style/ArgumentsForwarding
@@ -97,7 +99,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params [Hash] The parameters to pass to the `chat()` method
-    # @return [Langchain::LLM::OpenAIResponse] Response object
+    # @return [Langchain::LLM::Response::OpenAIResponse] Response object
     # @deprecated Use {chat} instead.
     def complete(prompt:, **params)
       Langchain.logger.warn "DEPRECATED: `Langchain::LLM::OpenAI#complete` is deprecated, and will be removed in the next major version. Use `Langchain::LLM::OpenAI#chat` instead."
@@ -143,7 +145,7 @@ module Langchain::LLM
       response = response_from_chunks if block
       reset_response_chunks
 
-      Langchain::LLM::OpenAIResponse.new(response)
+      Langchain::LLM::Response::OpenAIResponse.new(response)
     end
 
     # Generate a summary for a given text

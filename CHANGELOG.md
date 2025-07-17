@@ -12,6 +12,7 @@
 ## [Unreleased]
 - [COMPAT] [https://github.com/patterns-ai-core/langchainrb/pull/980] Suppress a Ruby 3.4 warning for URI parser.
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/997] Remove `Langchain::Vectorsearch::Epsilla` class
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/1003] Response classes are now namespaced under `Langchain::LLM::Response`, converted to Rails engine
 
 ## [0.19.5]
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/859] Add metadata support to PgVector storage
@@ -238,7 +239,7 @@
 
 ## [0.8.0]
 - [BREAKING] Updated llama_cpp.rb to 0.9.4. The model file format used by the underlying llama.cpp library has changed to GGUF. llama.cpp ships with scripts to convert existing files and GGUF format models can be downloaded from HuggingFace.
-- Introducing Langchain::LLM::GoogleVertexAi LLM provider
+- Introducing Langchain::LLM::GoogleVertexAI LLM provider
 
 ## [0.7.5] - 2023-11-13
 - Fixes
