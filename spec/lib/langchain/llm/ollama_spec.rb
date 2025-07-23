@@ -87,6 +87,11 @@ RSpec.describe Langchain::LLM::Ollama do
       expect(response.completion).to eq("Complicated.")
     end
 
+    it "handles multiline json", :vcr do
+      expect { response }.not_to raise_error
+      expect(response.completion).to eq("Complicated.")
+    end
+
     it "does not use streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_complete_returns_a_completion"} do
       expect(client).to receive(:post).with("api/generate", hash_including(stream: false)).and_call_original
       response
@@ -100,6 +105,11 @@ RSpec.describe Langchain::LLM::Ollama do
         expect(response).to be_a(Langchain::LLM::Response::OllamaResponse)
         expect(response.completion).to eq("Complicated.")
         expect(response.total_tokens).to eq(36)
+      end
+
+      it "handles multiline json", :vcr do
+        expect { response }.not_to raise_error
+        expect(response.completion).to eq("Complicated.")
       end
 
       it "uses streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_complete_when_passing_a_block_returns_a_completion"} do
@@ -125,6 +135,11 @@ RSpec.describe Langchain::LLM::Ollama do
       expect(response.chat_completion).to include("I'm just a language model")
     end
 
+    it "handles multiline json", :vcr do
+      expect { response }.not_to raise_error
+      expect(response.chat_completion).to include("I'm just a language model")
+    end
+
     it "does not use streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_chat_returns_a_chat_completion"} do
       expect(client).to receive(:post).with("api/chat", hash_including(stream: false)).and_call_original
       response
@@ -136,6 +151,11 @@ RSpec.describe Langchain::LLM::Ollama do
 
       it "returns a chat completion", :vcr do
         expect(response).to be_a(Langchain::LLM::Response::OllamaResponse)
+        expect(response.chat_completion).to include("I'm just a language model")
+      end
+
+      it "handles multiline json", :vcr do
+        expect { response }.not_to raise_error
         expect(response.chat_completion).to include("I'm just a language model")
       end
 
