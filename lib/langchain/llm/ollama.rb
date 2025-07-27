@@ -287,8 +287,8 @@ module Langchain::LLM
     end
 
     def json_responses_chunk_handler(&block)
+      incomplete_chunk_line = nil
       proc do |chunk, _size|
-        incomplete_chunk_line = nil
         chunk.split("\n").each do |chunk_line|
           if incomplete_chunk_line
             chunk_line = incomplete_chunk_line + chunk_line
