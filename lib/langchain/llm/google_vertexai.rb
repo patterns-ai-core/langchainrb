@@ -28,7 +28,7 @@ module Langchain::LLM
     def initialize(project_id:, region:, default_options: {})
       depends_on "googleauth"
 
-      @authorizer = ::Google::Auth.get_application_default(scope: [
+      @authorizer = ::Google::Auth.get_application_default([
         "https://www.googleapis.com/auth/cloud-platform",
         "https://www.googleapis.com/auth/generative-language.retriever"
       ])
