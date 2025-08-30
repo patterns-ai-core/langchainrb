@@ -22,7 +22,7 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::Anthropic do
 
   describe "#support_system_message?" do
     it "returns true" do
-      expect(subject.support_system_message?).to eq(false)
+      expect(subject.support_system_message?).to eq(true)
     end
   end
 
