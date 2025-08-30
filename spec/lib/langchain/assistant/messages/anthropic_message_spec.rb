@@ -96,6 +96,32 @@ RSpec.describe Langchain::Assistant::Messages::AnthropicMessage do
       end
     end
 
+    context "when role is system" do
+      let(:role) { "system" }
+
+      it "returns system_hash" do
+        message = described_class.new(role: role, content: "You are a helpful assistant.")
+        expect(message).to receive(:system_hash).and_call_original
+        expect(message.to_hash).to eq(
+          role: role,
+          content: [
+            {
+              type: "text",
+              text: "You are a helpful assistant."
+            }
+          ]
+        )
+      end
+
+      it "returns system_hash without content" do
+        message = described_class.new(role: role, content: nil)
+        expect(message.to_hash).to eq(
+          role: role,
+          content: []
+        )
+      end
+    end
+
     context "when role is tool_result" do
       let(:message) { described_class.new(role: "tool_result", content: "4.0", tool_call_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H") }
 
@@ -151,6 +177,18 @@ RSpec.describe Langchain::Assistant::Messages::AnthropicMessage do
           ]
         )
       end
+    end
+  end
+
+  describe "#system?" do
+    it "returns true when role is system" do
+      message = described_class.new(role: "system", content: "You are a helpful assistant.")
+      expect(message.system?).to be true
+    end
+
+    it "returns false when role is not system" do
+      message = described_class.new(role: "user", content: "Hello")
+      expect(message.system?).to be false
     end
   end
 end
