@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM::Response
+module LangChain::LLM::Response
   class OllamaResponse < BaseResponse
     def initialize(raw_response, model: nil, prompt_tokens: nil)
       @prompt_tokens = prompt_tokens

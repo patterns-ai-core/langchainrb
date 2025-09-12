@@ -2,7 +2,7 @@
 
 require_relative "spec_helper"
 
-RSpec.describe Langchain::OutputParsers::StructuredOutputParser do
+RSpec.describe LangChain::OutputParsers::StructuredOutputParser do
   let!(:json_with_backticks_text_response) do
     <<~RESPONSE
       I'm responding with a narrative even though you asked for only json response:
@@ -19,7 +19,7 @@ RSpec.describe Langchain::OutputParsers::StructuredOutputParser do
         described_class.new(
           schema: schema_example
         )
-      ).to be_a(Langchain::OutputParsers::StructuredOutputParser)
+      ).to be_a(LangChain::OutputParsers::StructuredOutputParser)
     end
 
     it "creates a new instance from a Hash schema" do
@@ -27,7 +27,7 @@ RSpec.describe Langchain::OutputParsers::StructuredOutputParser do
         described_class.new(
           schema: schema_example
         )
-      ).to be_a(Langchain::OutputParsers::StructuredOutputParser)
+      ).to be_a(LangChain::OutputParsers::StructuredOutputParser)
     end
 
     it "fails if input is not a valid json schema" do
@@ -88,7 +88,7 @@ RSpec.describe Langchain::OutputParsers::StructuredOutputParser do
       parser = described_class.from_json_schema(schema_example)
       expect {
         parser.parse("Sorry, I'm just a large language model blah blah..")
-      }.to raise_error(Langchain::OutputParsers::OutputParserException)
+      }.to raise_error(LangChain::OutputParsers::OutputParserException)
     end
 
     it "fails to parse response text if the json does not conform to the schema" do
@@ -96,7 +96,7 @@ RSpec.describe Langchain::OutputParsers::StructuredOutputParser do
       expect {
         parser.parse(invalid_schema_json_text_response)
       }.to raise_error(
-        Langchain::OutputParsers::OutputParserException,
+        LangChain::OutputParsers::OutputParserException,
         /'#\/interests' did not contain a minimum number of items/
       )
     end
@@ -105,7 +105,7 @@ RSpec.describe Langchain::OutputParsers::StructuredOutputParser do
   describe ".from_json_schema" do
     it "creates a new instance from given JSON::Schema" do
       parser = described_class.from_json_schema(schema_example)
-      expect(parser).to be_a(Langchain::OutputParsers::StructuredOutputParser)
+      expect(parser).to be_a(LangChain::OutputParsers::StructuredOutputParser)
       expect(parser.schema.to_json).to eq(schema_example.to_json)
     end
   end

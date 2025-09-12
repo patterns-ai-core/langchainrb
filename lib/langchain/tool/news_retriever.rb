@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-module Langchain::Tool
+module LangChain::Tool
   #
   # A tool that retrieves latest news from various sources via https://newsapi.org/.
   # An API key needs to be obtained from https://newsapi.org/ to use this tool.
   #
   # Usage:
-  #    news_retriever = Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])
+  #    news_retriever = LangChain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])
   #
   class NewsRetriever
-    extend Langchain::ToolDefinition
+    extend LangChain::ToolDefinition
 
     define_function :get_everything, description: "News Retriever: Search through millions of articles from over 150,000 large and small news sources and blogs" do
       property :q, type: "string", description: 'Keywords or phrases to search for in the article title and body. Surround phrases with quotes (") for exact match. Alternatively you can use the AND / OR / NOT keywords, and optionally group these with parenthesis. Must be URL-encoded'
@@ -57,7 +57,7 @@ module Langchain::Tool
     # @param page_size [Integer] The number of results to return per page. 20 is the API's default, 100 is the maximum. Our default is 5.
     # @param page [Integer] Use this to page through the results.
     #
-    # @return [Langchain::Tool::Response] JSON response
+    # @return [LangChain::Tool::Response] JSON response
     def get_everything(
       q: nil,
       search_in: nil,
@@ -71,7 +71,7 @@ module Langchain::Tool
       page_size: 5, # The API default is 20 but that's too many.
       page: nil
     )
-      Langchain.logger.debug("#{self.class} - Retrieving all news")
+      LangChain.logger.debug("#{self.class} - Retrieving all news")
 
       params = {apiKey: @api_key}
       params[:q] = q if q
@@ -99,7 +99,7 @@ module Langchain::Tool
     # @param page_size [Integer] The number of results to return per page. 20 is the API's default, 100 is the maximum. Our default is 5.
     # @param page [Integer] Use this to page through the results.
     #
-    # @return [Langchain::Tool::Response] JSON response
+    # @return [LangChain::Tool::Response] JSON response
     def get_top_headlines(
       country: nil,
       category: nil,
@@ -108,7 +108,7 @@ module Langchain::Tool
       page_size: 5,
       page: nil
     )
-      Langchain.logger.debug("#{self.class} - Retrieving top news headlines")
+      LangChain.logger.debug("#{self.class} - Retrieving top news headlines")
 
       params = {apiKey: @api_key}
       params[:country] = country if country
@@ -128,13 +128,13 @@ module Langchain::Tool
     # @param language [String] The 2-letter ISO-639-1 code of the language you want to get headlines for. Possible options: ar, de, en, es, fr, he, it, nl, no, pt, ru, se, ud, zh.
     # @param country [String] The 2-letter ISO 3166-1 code of the country you want to get headlines for. Possible options: ae, ar, at, au, be, bg, br, ca, ch, cn, co, cu, cz, de, eg, fr, gb, gr, hk, hu, id, ie, il, in, it, jp, kr, lt, lv, ma, mx, my, ng, nl, no, nz, ph, pl, pt, ro, rs, ru, sa, se, sg, si, sk, th, tr, tw, ua, us, ve, za.
     #
-    # @return [Langchain::Tool::Response] JSON response
+    # @return [LangChain::Tool::Response] JSON response
     def get_sources(
       category: nil,
       language: nil,
       country: nil
     )
-      Langchain.logger.debug("#{self.class} - Retrieving news sources")
+      LangChain.logger.debug("#{self.class} - Retrieving news sources")
 
       params = {apiKey: @api_key}
       params[:country] = country if country

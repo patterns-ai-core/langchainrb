@@ -2,7 +2,7 @@
 
 require "pdf-reader"
 
-module Langchain
+module LangChain
   module Processors
     class PDF < Base
       EXTENSIONS = [".pdf"]

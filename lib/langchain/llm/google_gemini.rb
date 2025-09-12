@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   # Usage:
-  #     llm = Langchain::LLM::GoogleGemini.new(api_key: ENV['GOOGLE_GEMINI_API_KEY'])
+  #     llm = LangChain::LLM::GoogleGemini.new(api_key: ENV['GOOGLE_GEMINI_API_KEY'])
   class GoogleGemini < Base
     DEFAULTS = {
       chat_model: "gemini-1.5-pro-latest",
@@ -61,7 +61,7 @@ module Langchain::LLM
 
       parsed_response = http_post(uri, parameters)
 
-      wrapped_response = Langchain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
+      wrapped_response = LangChain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
 
       if wrapped_response.chat_completion || Array(wrapped_response.tool_calls).any?
         wrapped_response
@@ -88,7 +88,7 @@ module Langchain::LLM
 
       parsed_response = http_post(uri, params)
 
-      Langchain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: model)
+      LangChain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: model)
     end
 
     private
@@ -96,7 +96,7 @@ module Langchain::LLM
     def http_post(url, params)
       http = Net::HTTP.new(url.hostname, url.port)
       http.use_ssl = url.scheme == "https"
-      http.set_debug_output(Langchain.logger) if Langchain.logger.debug?
+      http.set_debug_output(LangChain.logger) if LangChain.logger.debug?
 
       request = Net::HTTP::Post.new(url)
       request.content_type = "application/json"

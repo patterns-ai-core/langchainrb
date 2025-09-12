@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Processors::Eml do
+RSpec.describe LangChain::Processors::Eml do
   describe "#parse" do
     let(:file) { File.open("spec/fixtures/loaders/sample.eml") }
     let(:text) { "Lorem Ipsum.\nDolor sit amet." }

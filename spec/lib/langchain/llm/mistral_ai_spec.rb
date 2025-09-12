@@ -2,7 +2,7 @@
 
 require "mistral-ai"
 
-RSpec.describe Langchain::LLM::MistralAI do
+RSpec.describe LangChain::LLM::MistralAI do
   let(:subject) { described_class.new(api_key: "123") }
 
   let(:mock_client) { instance_double(Mistral::Controllers::Client) }

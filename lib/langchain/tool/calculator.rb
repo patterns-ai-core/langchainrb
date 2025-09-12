@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Tool
+module LangChain::Tool
   #
   # A calculator tool
   #
@@ -8,11 +8,11 @@ module Langchain::Tool
   #     gem "eqn", "~> 1.6.5"
   #
   # Usage:
-  #     calculator = Langchain::Tool::Calculator.new
+  #     calculator = LangChain::Tool::Calculator.new
   #
   class Calculator
-    extend Langchain::ToolDefinition
-    include Langchain::DependencyHelper
+    extend LangChain::ToolDefinition
+    include LangChain::DependencyHelper
 
     define_function :execute, description: "Evaluates a pure math expression" do
       property :input, type: "string", description: "Math expression", required: true
@@ -25,9 +25,9 @@ module Langchain::Tool
     # Evaluates a pure math expression
     #
     # @param input [String] math expression
-    # @return [Langchain::Tool::Response] Answer
+    # @return [LangChain::Tool::Response] Answer
     def execute(input:)
-      Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
+      LangChain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       result = Eqn::Calculator.calc(input)
       tool_response(content: result)

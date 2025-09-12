@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Vectorsearch
+module LangChain::Vectorsearch
   #
   # Wrapper around Elasticsearch vector search capabilities.
   #
@@ -13,8 +13,8 @@ module Langchain::Vectorsearch
   #     gem "elasticsearch", "~> 8.0.0"
   #
   # Usage:
-  #     llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-  #     es = Langchain::Vectorsearch::Elasticsearch.new(
+  #     llm = LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+  #     es = LangChain::Vectorsearch::Elasticsearch.new(
   #       url: ENV["ELASTICSEARCH_URL"],
   #       index_name: "docs",
   #       llm: llm,
@@ -37,7 +37,7 @@ module Langchain::Vectorsearch
       @options = {
         url: url,
         request_timeout: 20,
-        logger: Langchain.logger
+        logger: LangChain.logger
       }.merge(es_options)
 
       @es_client = ::Elasticsearch::Client.new(**options)

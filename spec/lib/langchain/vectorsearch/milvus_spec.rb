@@ -2,7 +2,7 @@
 
 require "milvus"
 
-RSpec.describe Langchain::Vectorsearch::Milvus do
+RSpec.describe LangChain::Vectorsearch::Milvus do
   let(:index_name) { "documents" }
 
   subject {
@@ -10,7 +10,7 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
       url: "http://localhost:8000",
       api_key: "123",
       index_name: index_name,
-      llm: Langchain::LLM::OpenAI.new(api_key: "123")
+      llm: LangChain::LLM::OpenAI.new(api_key: "123")
     )
   }
 

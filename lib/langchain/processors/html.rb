@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   module Processors
     class HTML < Base
       EXTENSIONS = [".html", ".htm"]

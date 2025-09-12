@@ -2,7 +2,7 @@
 
 require "matrix"
 
-module Langchain
+module LangChain
   module Evals
     module Ragas
       # Answer Relevance refers to the idea that the generated answer should address the actual question that was provided.
@@ -10,7 +10,7 @@ module Langchain
       class AnswerRelevance
         attr_reader :llm, :batch_size
 
-        # @param llm [Langchain::LLM::*] Langchain::LLM::* object
+        # @param llm [LangChain::LLM::*] LangChain::LLM::* object
         # @param batch_size [Integer] Batch size, i.e., number of generated questions to compare to the original question
         def initialize(llm:, batch_size: 3)
           @llm = llm
@@ -61,8 +61,8 @@ module Langchain
 
         # @return [PromptTemplate] PromptTemplate instance
         def answer_relevance_prompt_template
-          @template ||= Langchain::Prompt.load_from_path(
-            file_path: Langchain.root.join("langchain/evals/ragas/prompts/answer_relevance.yml")
+          @template ||= LangChain::Prompt.load_from_path(
+            file_path: LangChain.root.join("langchain/evals/ragas/prompts/answer_relevance.yml")
           )
         end
       end

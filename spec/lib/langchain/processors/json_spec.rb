@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Processors::JSON do
+RSpec.describe LangChain::Processors::JSON do
   describe "#parse" do
     let(:file) { File.open("spec/fixtures/loaders/example.json") }
     let(:data) do

@@ -2,7 +2,7 @@ require "logger"
 require "langchain/version"
 require "langchain/engine"
 
-module Langchain
+module LangChain
   class << self
     # @return [Logger]
     attr_accessor :logger
@@ -43,7 +43,7 @@ module Langchain
   end
 
   LOGGER_OPTIONS = {
-    progname: "Langchain.rb",
+    progname: "LangChain.rb",
 
     formatter: ->(severity, time, progname, msg) do
       Logger::Formatter.new.call(
@@ -57,4 +57,13 @@ module Langchain
 
   self.logger ||= ::Logger.new($stdout, **LOGGER_OPTIONS)
   @root = Pathname.new(__dir__)
+end
+
+module Langchain
+  def self.const_missing(name)
+    message = LangChain::Colorizer.yellow("`Langchain` is deprecated. Use `LangChain` instead.")
+    warn(message, uplevel: 1)
+
+    LangChain.const_get(name)
+  end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Vectorsearch
+module LangChain::Vectorsearch
   #
   # Wrapper around Qdrant
   #
@@ -8,7 +8,7 @@ module Langchain::Vectorsearch
   #     gem "qdrant-ruby", "~> 0.9.8"
   #
   # Usage:
-  #     qdrant = Langchain::Vectorsearch::Qdrant.new(url:, api_key:, index_name:, llm:)
+  #     qdrant = LangChain::Vectorsearch::Qdrant.new(url:, api_key:, index_name:, llm:)
   #
   class Qdrant < Base
     # Initialize the Qdrant client
@@ -22,7 +22,7 @@ module Langchain::Vectorsearch
       @client = ::Qdrant::Client.new(
         url: url,
         api_key: api_key,
-        logger: Langchain.logger
+        logger: LangChain.logger
       )
       @index_name = index_name
 

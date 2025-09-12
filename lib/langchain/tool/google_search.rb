@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Tool
+module LangChain::Tool
   #
   # Wrapper around SerpApi's Google Search API
   #
@@ -8,12 +8,12 @@ module Langchain::Tool
   #     gem "google_search_results", "~> 2.0.0"
   #
   # Usage:
-  #     search = Langchain::Tool::GoogleSearch.new(api_key: "YOUR_API_KEY")
+  #     search = LangChain::Tool::GoogleSearch.new(api_key: "YOUR_API_KEY")
   #     search.execute(input: "What is the capital of France?")
   #
   class GoogleSearch
-    extend Langchain::ToolDefinition
-    include Langchain::DependencyHelper
+    extend LangChain::ToolDefinition
+    include LangChain::DependencyHelper
 
     define_function :execute, description: "Executes Google Search and returns the result" do
       property :input, type: "string", description: "Search query", required: true
@@ -25,7 +25,7 @@ module Langchain::Tool
     # Initializes the Google Search tool
     #
     # @param api_key [String] Search API key
-    # @return [Langchain::Tool::GoogleSearch] Google search tool
+    # @return [LangChain::Tool::GoogleSearch] Google search tool
     #
     def initialize(api_key:)
       depends_on "google_search_results"
@@ -36,9 +36,9 @@ module Langchain::Tool
     # Executes Google Search and returns the result
     #
     # @param input [String] search query
-    # @return [Langchain::Tool::Response] Answer
+    # @return [LangChain::Tool::Response] Answer
     def execute(input:)
-      Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
+      LangChain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       results = execute_search(input: input)
 

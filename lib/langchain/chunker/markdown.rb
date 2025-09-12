@@ -2,12 +2,12 @@
 
 require "baran"
 
-module Langchain
+module LangChain
   module Chunker
     # Simple text chunker
     #
     # Usage:
-    #     Langchain::Chunker::Markdown.new(text).chunks
+    #     LangChain::Chunker::Markdown.new(text).chunks
     class Markdown < Base
       attr_reader :text, :chunk_size, :chunk_overlap
 
@@ -21,7 +21,7 @@ module Langchain
         @chunk_overlap = chunk_overlap
       end
 
-      # @return [Array<Langchain::Chunk>]
+      # @return [Array<LangChain::Chunk>]
       def chunks
         splitter = Baran::MarkdownSplitter.new(
           chunk_size: chunk_size,
@@ -29,7 +29,7 @@ module Langchain
         )
 
         splitter.chunks(text).map do |chunk|
-          Langchain::Chunk.new(text: chunk[:text])
+          LangChain::Chunk.new(text: chunk[:text])
         end
       end
     end

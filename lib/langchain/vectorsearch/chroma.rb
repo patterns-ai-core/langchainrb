@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Vectorsearch
+module LangChain::Vectorsearch
   #
   # Wrapper around Chroma DB
   #
@@ -8,7 +8,7 @@ module Langchain::Vectorsearch
   #     gem "chroma-db", "~> 0.6.0"
   #
   # Usage:
-  #     chroma = Langchain::Vectorsearch::Chroma.new(url:, index_name:, llm:, api_key: nil)
+  #     chroma = LangChain::Vectorsearch::Chroma.new(url:, index_name:, llm:, api_key: nil)
   #
   class Chroma < Base
     # Initialize the Chroma client
@@ -19,8 +19,8 @@ module Langchain::Vectorsearch
       depends_on "chroma-db"
 
       ::Chroma.connect_host = url
-      ::Chroma.logger = Langchain.logger
-      ::Chroma.log_level = Langchain.logger.level
+      ::Chroma.logger = LangChain.logger
+      ::Chroma.log_level = LangChain.logger.level
 
       @index_name = index_name
 

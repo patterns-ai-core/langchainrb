@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Langchain::Utils::ToBoolean do
+RSpec.describe LangChain::Utils::ToBoolean do
   describe "#to_bool" do
     subject(:to_bool) { described_class.new.to_bool(value) }
 

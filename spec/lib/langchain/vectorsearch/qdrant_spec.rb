@@ -2,7 +2,7 @@
 
 require "qdrant"
 
-RSpec.describe Langchain::Vectorsearch::Qdrant do
+RSpec.describe LangChain::Vectorsearch::Qdrant do
   let(:index_name) { "documents" }
 
   subject {
@@ -10,7 +10,7 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
       url: "http://localhost:8000",
       index_name: index_name,
       api_key: "secret",
-      llm: Langchain::LLM::OpenAI.new(api_key: "123")
+      llm: LangChain::LLM::OpenAI.new(api_key: "123")
     )
   }
 

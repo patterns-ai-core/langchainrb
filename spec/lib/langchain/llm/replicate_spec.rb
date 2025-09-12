@@ -2,7 +2,7 @@
 
 require "replicate"
 
-RSpec.describe Langchain::LLM::Replicate do
+RSpec.describe LangChain::LLM::Replicate do
   let(:subject) { described_class.new(api_key: "123") }
 
   describe "#completion_model" do

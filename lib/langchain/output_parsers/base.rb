@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::OutputParsers
+module LangChain::OutputParsers
   # Structured output parsers from the LLM.
   #
   # @abstract

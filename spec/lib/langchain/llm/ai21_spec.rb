@@ -2,7 +2,7 @@
 
 require "ai21"
 
-RSpec.describe Langchain::LLM::AI21 do
+RSpec.describe LangChain::LLM::AI21 do
   let(:subject) { described_class.new(api_key: "123") }
 
   describe "#complete" do

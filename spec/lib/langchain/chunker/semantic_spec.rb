@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Chunker::Semantic do
+RSpec.describe LangChain::Chunker::Semantic do
   let(:source) { "spec/fixtures/loaders/random_facts.txt" }
   let(:text) { File.read(source) }
-  let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+  let(:llm) { LangChain::LLM::OpenAI.new(api_key: "123") }
 
   subject { described_class.new(text, llm: llm) }
 

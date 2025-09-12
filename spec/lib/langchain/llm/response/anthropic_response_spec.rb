@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::LLM::Response::AnthropicResponse do
+RSpec.describe LangChain::LLM::Response::AnthropicResponse do
   let(:raw_chat_completions_response) {
     JSON.parse File.read("spec/fixtures/llm/anthropic/chat.json")
   }

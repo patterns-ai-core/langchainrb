@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Vectorsearch
+module LangChain::Vectorsearch
   #
   # Wrapper around Pinecone API.
   #
@@ -8,7 +8,7 @@ module Langchain::Vectorsearch
   #     gem "pinecone", "~> 0.1"
   #
   # Usage:
-  #     pinecone = Langchain::Vectorsearch::Pinecone.new(environment:, api_key:, index_name:, llm:)
+  #     pinecone = LangChain::Vectorsearch::Pinecone.new(environment:, api_key:, index_name:, llm:)
   #
   class Pinecone < Base
     # Initialize the Pinecone client
@@ -64,13 +64,13 @@ module Langchain::Vectorsearch
       index.upsert(vectors: vectors, namespace: namespace)
     end
 
-    def add_data(paths:, namespace: "", options: {}, chunker: Langchain::Chunker::Text)
+    def add_data(paths:, namespace: "", options: {}, chunker: LangChain::Chunker::Text)
       raise ArgumentError, "Paths must be provided" if Array(paths).empty?
 
       texts = Array(paths)
         .flatten
         .map do |path|
-          data = Langchain::Loader.new(path, options, chunker: chunker)&.load&.chunks
+          data = LangChain::Loader.new(path, options, chunker: chunker)&.load&.chunks
           data.map { |chunk| chunk.text }
         end
 

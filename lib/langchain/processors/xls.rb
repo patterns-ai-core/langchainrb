@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   module Processors
     class Xls < Base
       EXTENSIONS = [".xls"].freeze

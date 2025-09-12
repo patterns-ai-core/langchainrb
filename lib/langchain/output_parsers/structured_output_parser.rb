@@ -2,7 +2,7 @@
 
 require "json-schema"
 
-module Langchain::OutputParsers
+module LangChain::OutputParsers
   # = Structured Output Parser
   class StructuredOutputParser < Base
     attr_reader :schema

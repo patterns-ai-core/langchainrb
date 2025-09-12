@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::LLM::Response::MistralAIResponse do
+RSpec.describe LangChain::LLM::Response::MistralAIResponse do
   let(:raw_chat_completions_response) {
     JSON.parse File.read("spec/fixtures/llm/mistral_ai/chat.json")
   }

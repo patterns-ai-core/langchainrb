@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   # A wrapper around the LlamaCpp.rb library
   #
   # Gem requirements:
   #     gem "llama_cpp"
   #
   # Usage:
-  #     llama = Langchain::LLM::LlamaCpp.new(
+  #     llama = LangChain::LLM::LlamaCpp.new(
   #       model_path: ENV["LLAMACPP_MODEL_PATH"],
   #       n_gpu_layers: Integer(ENV["LLAMACPP_N_GPU_LAYERS"]),
   #       n_threads: Integer(ENV["LLAMACPP_N_THREADS"])
   #     )
   #
-  # @deprecated Use {Langchain::LLM::Ollama} for self-hosted LLM inference.
+  # @deprecated Use {LangChain::LLM::Ollama} for self-hosted LLM inference.
   class LlamaCpp < Base
     attr_accessor :model_path, :n_gpu_layers, :n_ctx, :seed
     attr_writer :n_threads
@@ -24,7 +24,7 @@ module Langchain::LLM
     # @param n_threads [Integer] The CPU number of threads to use
     # @param seed [Integer] The seed to use
     def initialize(model_path:, n_gpu_layers: 1, n_ctx: 2048, n_threads: 1, seed: 0)
-      Langchain.logger.warn "DEPRECATED: `Langchain::LLM::LlamaCpp` is deprecated, and will be removed in the next major version. Please use `Langchain::LLM::Ollama` for self-hosted LLM inference."
+      LangChain.logger.warn "DEPRECATED: `LangChain::LLM::LlamaCpp` is deprecated, and will be removed in the next major version. Please use `LangChain::LLM::Ollama` for self-hosted LLM inference."
 
       depends_on "llama_cpp"
 
@@ -45,7 +45,7 @@ module Langchain::LLM
       return unless embedding_input.size.positive?
 
       context.eval(tokens: embedding_input, n_past: 0)
-      Langchain::LLM::Response::LlamaCppResponse.new(context, model: context.model.desc)
+      LangChain::LLM::Response::LlamaCppResponse.new(context, model: context.model.desc)
     end
 
     # @param prompt [String] The prompt to complete

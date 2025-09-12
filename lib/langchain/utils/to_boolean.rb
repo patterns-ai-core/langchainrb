@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   module Utils
     class ToBoolean
       TRUTHABLE_STRINGS = %w[1 true t yes y]

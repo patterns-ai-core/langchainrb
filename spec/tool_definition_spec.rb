@@ -2,10 +2,10 @@
 
 require "spec_helper"
 
-RSpec.describe Langchain::ToolDefinition do
+RSpec.describe LangChain::ToolDefinition do
   let(:dummy_class) do
     Class.new do
-      extend Langchain::ToolDefinition
+      extend LangChain::ToolDefinition
 
       def self.name
         "DummyTool"
@@ -26,9 +26,10 @@ RSpec.describe Langchain::ToolDefinition do
 
     it "returns the correct snake_case name for complex class names" do
       complex_class = Class.new do
-        extend Langchain::ToolDefinition
+        extend LangChain::ToolDefinition
+
         def self.name
-          "Langchain::Tool::API1Interface"
+          "LangChain::Tool::API1Interface"
         end
       end
       expect(complex_class.tool_name).to eq("langchain_tool_api1_interface")
@@ -45,7 +46,7 @@ RSpec.describe Langchain::ToolDefinition do
     end
   end
 
-  describe Langchain::ToolDefinition::ParameterBuilder do
+  describe LangChain::ToolDefinition::ParameterBuilder do
     let(:builder) { described_class.new(parent_type: "object") }
 
     it "aliases item to property" do
@@ -173,7 +174,7 @@ RSpec.describe Langchain::ToolDefinition do
     end
   end
 
-  describe Langchain::ToolDefinition::FunctionSchemas do
+  describe LangChain::ToolDefinition::FunctionSchemas do
     let(:tool_name) { "test_tool" }
     subject(:function_schemas) { described_class.new(tool_name) }
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Processors::JSONL do
+RSpec.describe LangChain::Processors::JSONL do
   describe "#parse" do
     let(:file) { File.open("spec/fixtures/loaders/example.jsonl") }
     let(:data) do

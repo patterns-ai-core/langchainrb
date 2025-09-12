@@ -2,16 +2,16 @@
 
 require "hnswlib"
 
-RSpec.describe Langchain::Vectorsearch::Hnswlib do
+RSpec.describe LangChain::Vectorsearch::Hnswlib do
   before do
     FileUtils.rm("./test.ann") if File.exist?("./test.ann")
   end
 
   before do
-    allow_any_instance_of(Langchain::LLM::GoogleGemini).to receive(:default_dimensions).and_return(3)
+    allow_any_instance_of(LangChain::LLM::GoogleGemini).to receive(:default_dimensions).and_return(3)
   end
 
-  let(:llm) { Langchain::LLM::GoogleGemini.new(api_key: "123") }
+  let(:llm) { LangChain::LLM::GoogleGemini.new(api_key: "123") }
   subject { described_class.new(llm: llm, path_to_index: "./test.ann") }
 
   describe "#initialize" do

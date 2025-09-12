@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::LLM::Response::CohereResponse do
+RSpec.describe LangChain::LLM::Response::CohereResponse do
   let(:raw_chat_completions_response) {
     JSON.parse File.read("spec/fixtures/llm/cohere/chat.json")
   }

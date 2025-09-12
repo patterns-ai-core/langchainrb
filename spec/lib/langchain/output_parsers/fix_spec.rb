@@ -2,24 +2,24 @@
 
 require_relative "spec_helper"
 
-RSpec.describe Langchain::OutputParsers::OutputFixingParser do
+RSpec.describe LangChain::OutputParsers::OutputFixingParser do
   let!(:llm_example) do
-    Langchain::LLM::OpenAI.new(api_key: "123")
+    LangChain::LLM::OpenAI.new(api_key: "123")
   end
 
   let!(:parser_example) do
-    Langchain::OutputParsers::StructuredOutputParser.from_json_schema(schema_example)
+    LangChain::OutputParsers::StructuredOutputParser.from_json_schema(schema_example)
   end
 
   let!(:prompt_template_example) do
-    Langchain::Prompt::PromptTemplate.new(
+    LangChain::Prompt::PromptTemplate.new(
       template: "Generate details of a fictional character.\n{format_instructions}\nCharacter description: {description}",
       input_variables: ["description", "format_instructions"]
     )
   end
 
   let!(:fix_prompt_template_example) do
-    Langchain::Prompt::PromptTemplate.from_template(
+    LangChain::Prompt::PromptTemplate.from_template(
       <<~INSTRUCTIONS
         Custom Instructions:
         --------------
@@ -59,13 +59,13 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
 
   describe "#initialize" do
     it "creates a new instance" do
-      expect(described_class.new(**kwargs_example)).to be_a(Langchain::OutputParsers::OutputFixingParser)
+      expect(described_class.new(**kwargs_example)).to be_a(LangChain::OutputParsers::OutputFixingParser)
     end
 
     [
-      {named: "llm", expect_class: "Langchain::LLM", llm: {}},
-      {named: "parser", expect_class: "Langchain::OutputParsers", parser: {}},
-      {named: "prompt", expect_class: "Langchain::Prompt::PromptTemplate", prompt: {}}
+      {named: "llm", expect_class: "LangChain::LLM", llm: {}},
+      {named: "parser", expect_class: "LangChain::OutputParsers", parser: {}},
+      {named: "prompt", expect_class: "LangChain::Prompt::PromptTemplate", prompt: {}}
     ].each do |data|
       named = data[:named]
       expect_class = data[:expect_class]
@@ -80,13 +80,13 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
   describe ".from_llm" do
     it "creates a new instance from given llm, parser and prompt" do
       parser = described_class.from_llm(**kwargs_example)
-      expect(parser).to be_a(Langchain::OutputParsers::OutputFixingParser)
+      expect(parser).to be_a(LangChain::OutputParsers::OutputFixingParser)
       expect(parser.prompt.to_h).to eq(kwargs_example[:prompt].to_h)
     end
 
     it "defaults prompt to a naive_fix_prompt" do
       parser = described_class.from_llm(llm: kwargs_example[:llm], parser: kwargs_example[:parser])
-      expect(parser).to be_a(Langchain::OutputParsers::OutputFixingParser)
+      expect(parser).to be_a(LangChain::OutputParsers::OutputFixingParser)
       expect(parser.prompt.template).to eq(
         <<~INSTRUCTIONS.chomp
           Instructions:
@@ -110,8 +110,8 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
     end
 
     [
-      {named: "llm", expect_class: "Langchain::LLM", llm: nil},
-      {named: "parser", expect_class: "Langchain::OutputParsers", parser: nil}
+      {named: "llm", expect_class: "LangChain::LLM", llm: nil},
+      {named: "parser", expect_class: "LangChain::OutputParsers", parser: nil}
     ].each do |data|
       named = data[:named]
       expect_class = data[:expect_class]
@@ -173,7 +173,7 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
         .with(prompt: match(fix_prompt_matcher_example))
         .with(no_args)
         .and_return("I still don't understand, I'm only a large language model :)")
-      expect { parser.parse("Whoops I don't understand") }.to raise_error(Langchain::OutputParsers::OutputParserException)
+      expect { parser.parse("Whoops I don't understand") }.to raise_error(LangChain::OutputParsers::OutputParserException)
       expect(parser.llm).to have_received(:chat).once
     end
 
@@ -183,7 +183,7 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
         .with(prompt: match(fix_prompt_matcher_example))
         .with(no_args)
         .and_return(invalid_schema_json_text_response)
-      expect { parser.parse("Whoops I don't understand") }.to raise_error(Langchain::OutputParsers::OutputParserException)
+      expect { parser.parse("Whoops I don't understand") }.to raise_error(LangChain::OutputParsers::OutputParserException)
       expect(parser.llm).to have_received(:chat).once
     end
   end

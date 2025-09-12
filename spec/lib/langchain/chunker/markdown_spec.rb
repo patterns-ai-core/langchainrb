@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Chunker::Markdown do
+RSpec.describe LangChain::Chunker::Markdown do
   let(:source) { "spec/fixtures/loaders/example.md" }
   let(:markdown) { File.read(source) }
 

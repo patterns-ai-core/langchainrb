@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   # Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries.
   # Assistants can be configured with an LLM of your choice, any vector search database and easily extended with additional tools.
   #
   # Usage:
-  #     llm = Langchain::LLM::GoogleGemini.new(api_key: ENV["GOOGLE_GEMINI_API_KEY"])
-  #     assistant = Langchain::Assistant.new(
+  #     llm = LangChain::LLM::GoogleGemini.new(api_key: ENV["GOOGLE_GEMINI_API_KEY"])
+  #     assistant = LangChain::Assistant.new(
   #       llm: llm,
   #       instructions: "You're a News Reporter AI",
-  #       tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
+  #       tools: [LangChain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
   #     )
   class Assistant
     attr_reader :llm,
@@ -29,12 +29,12 @@ module Langchain
 
     # Create a new assistant
     #
-    # @param llm [Langchain::LLM::Base] LLM instance that the assistant will use
-    # @param tools [Array<Langchain::Tool::Base>] Tools that the assistant has access to
+    # @param llm [LangChain::LLM::Base] LLM instance that the assistant will use
+    # @param tools [Array<LangChain::Tool::Base>] Tools that the assistant has access to
     # @param instructions [String] The system instructions
     # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
     # @param parallel_tool_calls [Boolean] Whether or not to run tools in parallel
-    # @param messages [Array<Langchain::Assistant::Messages::Base>] The messages
+    # @param messages [Array<LangChain::Assistant::Messages::Base>] The messages
     # @param add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
     # @param tool_execution_callback [Proc] A callback function (Proc or lambda) that is called right before a tool function is executed
     def initialize(
@@ -49,8 +49,8 @@ module Langchain
       tool_execution_callback: nil,
       &block
     )
-      unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
-        raise ArgumentError, "Tools must be an array of objects extending Langchain::ToolDefinition"
+      unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(LangChain::ToolDefinition) }
+        raise ArgumentError, "Tools must be an array of objects extending LangChain::ToolDefinition"
       end
 
       @llm = llm
@@ -79,7 +79,7 @@ module Langchain
     # @param image_url [String] The URL of the image to include in the message
     # @param tool_calls [Array<Hash>] The tool calls to include in the message
     # @param tool_call_id [String] The ID of the tool call to include in the message
-    # @return [Array<Langchain::Message>] The messages
+    # @return [Array<LangChain::Message>] The messages
     def add_message(role: "user", content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
       message = build_message(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
 
@@ -110,10 +110,10 @@ module Langchain
 
     # Set multiple messages
     #
-    # @param messages [Array<Langchain::Message>] The messages to set
-    # @return [Array<Langchain::Message>] The messages
+    # @param messages [Array<LangChain::Message>] The messages to set
+    # @return [Array<LangChain::Message>] The messages
     def messages=(messages)
-      raise ArgumentError, "messages array must only contain Langchain::Message instance(s)" unless messages.is_a?(Array) && messages.all? { |m| m.is_a?(Messages::Base) }
+      raise ArgumentError, "messages array must only contain LangChain::Message instance(s)" unless messages.is_a?(Array) && messages.all? { |m| m.is_a?(Messages::Base) }
 
       @messages = messages
     end
@@ -121,7 +121,7 @@ module Langchain
     # Add multiple messages
     #
     # @param messages [Array<Hash>] The messages to add
-    # @return [Array<Langchain::Message>] The messages
+    # @return [Array<LangChain::Message>] The messages
     def add_messages(messages:)
       messages.each do |message_hash|
         add_message(**message_hash.slice(:content, :role, :tool_calls, :tool_call_id))
@@ -131,10 +131,10 @@ module Langchain
     # Run the assistant
     #
     # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
-    # @return [Array<Langchain::Message>] The messages
+    # @return [Array<LangChain::Message>] The messages
     def run(auto_tool_execution: false)
       if messages.empty?
-        Langchain.logger.warn("#{self.class} - No messages to process")
+        LangChain.logger.warn("#{self.class} - No messages to process")
         @state = :completed
         return
       end
@@ -147,7 +147,7 @@ module Langchain
 
     # Run the assistant with automatic tool execution
     #
-    # @return [Array<Langchain::Message>] The messages
+    # @return [Array<LangChain::Message>] The messages
     def run!
       run(auto_tool_execution: true)
     end
@@ -156,7 +156,7 @@ module Langchain
     #
     # @param content [String] The content of the message
     # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
-    # @return [Array<Langchain::Message>] The messages
+    # @return [Array<LangChain::Message>] The messages
     def add_message_and_run(content: nil, image_url: nil, auto_tool_execution: false)
       add_message(content: content, image_url: image_url, role: "user")
       run(auto_tool_execution: auto_tool_execution)
@@ -165,7 +165,7 @@ module Langchain
     # Add a user message and run the assistant with automatic tool execution
     #
     # @param content [String] The content of the message
-    # @return [Array<Langchain::Message>] The messages
+    # @return [Array<LangChain::Message>] The messages
     def add_message_and_run!(content: nil, image_url: nil)
       add_message_and_run(content: content, image_url: image_url, auto_tool_execution: true)
     end
@@ -174,7 +174,7 @@ module Langchain
     #
     # @param tool_call_id [String] The ID of the tool call to submit output for
     # @param output [String] The output of the tool
-    # @return [Array<Langchain::Message>] The messages
+    # @return [Array<LangChain::Message>] The messages
     def submit_tool_output(tool_call_id:, output:)
       # TODO: Validate that `tool_call_id` is valid by scanning messages and checking if this tool call ID was invoked
       add_message(role: @llm_adapter.tool_role, content: output, tool_call_id: tool_call_id)
@@ -191,7 +191,7 @@ module Langchain
     # Set new instructions
     #
     # @param new_instructions [String] New instructions that will be set as a system message
-    # @return [Array<Langchain::Message>] The messages
+    # @return [Array<LangChain::Message>] The messages
     def instructions=(new_instructions)
       @instructions = new_instructions
 
@@ -215,7 +215,7 @@ module Langchain
     # Replace old system message with new one
     #
     # @param content [String] New system message content
-    # @return [Array<Langchain::Message>] The messages
+    # @return [Array<LangChain::Message>] The messages
     def replace_system_message!(content:)
       messages.delete_if(&:system?)
       return if content.nil?
@@ -277,7 +277,7 @@ module Langchain
     #
     # @return [Symbol] The completed state
     def handle_system_message
-      Langchain.logger.warn("#{self.class} - At least one user message is required after a system message")
+      LangChain.logger.warn("#{self.class} - At least one user message is required after a system message")
       :completed
     end
 
@@ -292,7 +292,7 @@ module Langchain
     #
     # @return [Symbol] The failed state
     def handle_unexpected_message
-      Langchain.logger.error("#{self.class} - Unexpected message role encountered: #{messages.last.standard_role}")
+      LangChain.logger.error("#{self.class} - Unexpected message role encountered: #{messages.last.standard_role}")
       :failed
     end
 
@@ -316,7 +316,7 @@ module Langchain
       elsif response.completion # Currently only used by Ollama
         :completed
       else
-        Langchain.logger.error("#{self.class} - LLM response does not contain tool calls, chat or completion response")
+        LangChain.logger.error("#{self.class} - LLM response does not contain tool calls, chat or completion response")
         :failed
       end
     end
@@ -328,15 +328,15 @@ module Langchain
       run_tools(messages.last.tool_calls)
       :in_progress
     rescue => e
-      Langchain.logger.error("#{self.class} - Error running tools: #{e.message}; #{e.backtrace.join('\n')}")
+      LangChain.logger.error("#{self.class} - Error running tools: #{e.message}; #{e.backtrace.join('\n')}")
       :failed
     end
 
     # Call to the LLM#chat() method
     #
-    # @return [Langchain::LLM::BaseResponse] The LLM response object
+    # @return [LangChain::LLM::BaseResponse] The LLM response object
     def chat_with_llm
-      Langchain.logger.debug("#{self.class} - Sending a call to #{llm.class}")
+      LangChain.logger.debug("#{self.class} - Sending a call to #{llm.class}")
 
       params = @llm_adapter.build_chat_params(
         instructions: @instructions,
@@ -389,7 +389,7 @@ module Langchain
     # @param image_url [String] The URL of the image to include in the message
     # @param tool_calls [Array<Hash>] The tool calls to include in the message
     # @param tool_call_id [String] The ID of the tool call to include in the message
-    # @return [Langchain::Message] The Message object
+    # @return [LangChain::Message] The Message object
     def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
       @llm_adapter.build_message(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
     end

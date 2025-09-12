@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Assistant::Messages::Base do
+RSpec.describe LangChain::Assistant::Messages::Base do
   describe "tool?" do
     it "raises an error" do
       expect { described_class.new.tool? }.to raise_error(NotImplementedError)

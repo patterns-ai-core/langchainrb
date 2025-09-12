@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Vectorsearch::Base do
-  subject { described_class.new(llm: Langchain::LLM::OpenAI.new(api_key: "123")) }
+RSpec.describe LangChain::Vectorsearch::Base do
+  subject { described_class.new(llm: LangChain::LLM::OpenAI.new(api_key: "123")) }
 
   describe "#initialize" do
     it "correctly sets llm" do
       expect(
         subject.llm
-      ).to be_a(Langchain::LLM::OpenAI)
+      ).to be_a(LangChain::LLM::OpenAI)
     end
   end
 
@@ -110,9 +110,9 @@ RSpec.describe Langchain::Vectorsearch::Base do
   describe "#add_data" do
     it "allows adding multiple paths" do
       paths = [
-        Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
-        Langchain.root.join("../spec/fixtures/loaders/test_doc.pdf"),
-        Langchain.root.join("../spec/fixtures/loaders/example.txt")
+        LangChain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
+        LangChain.root.join("../spec/fixtures/loaders/test_doc.pdf"),
+        LangChain.root.join("../spec/fixtures/loaders/example.txt")
       ]
 
       expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14))
@@ -126,15 +126,15 @@ RSpec.describe Langchain::Vectorsearch::Base do
 
     context "with an optional chunker class" do
       subject do
-        described_class.new(llm: Langchain::LLM::OpenAI.new(api_key: "123"))
+        described_class.new(llm: LangChain::LLM::OpenAI.new(api_key: "123"))
       end
 
-      let(:paths) { Langchain.root.join("../spec/fixtures/loaders/example.txt") }
+      let(:paths) { LangChain.root.join("../spec/fixtures/loaders/example.txt") }
 
-      it "passes an optional chunker class to Langchain::Loader", :aggregate_failures do
-        expect(Langchain::Loader).to receive(:new).with(paths, {}, chunker: Langchain::Chunker::RecursiveText).and_call_original
+      it "passes an optional chunker class to LangChain::Loader", :aggregate_failures do
+        expect(LangChain::Loader).to receive(:new).with(paths, {}, chunker: LangChain::Chunker::RecursiveText).and_call_original
         # #add_data will raise NotImplementedError when it calls #add_texts, this is expected and ignored in this test
-        expect { subject.add_data(paths: paths, chunker: Langchain::Chunker::RecursiveText) }.to raise_error(NotImplementedError)
+        expect { subject.add_data(paths: paths, chunker: LangChain::Chunker::RecursiveText) }.to raise_error(NotImplementedError)
       end
     end
   end

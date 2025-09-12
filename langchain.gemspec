@@ -4,12 +4,12 @@ require_relative "lib/langchain/version"
 
 Gem::Specification.new do |spec|
   spec.name = "langchainrb"
-  spec.version = Langchain::VERSION
+  spec.version = LangChain::VERSION
   spec.authors = ["Andrei Bondarev"]
   spec.email = ["andrei.bondarev13@gmail.com"]
 
-  spec.summary = "Build LLM-backed Ruby applications with Ruby's Langchain.rb"
-  spec.description = "Build LLM-backed Ruby applications with Ruby's Langchain.rb"
+  spec.summary = "Build LLM-backed Ruby applications with Ruby's LangChain.rb"
+  spec.description = "Build LLM-backed Ruby applications with Ruby's LangChain.rb"
   spec.homepage = "https://rubygems.org/gems/langchainrb"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.1.0"

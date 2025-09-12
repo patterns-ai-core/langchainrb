@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   module Utils
     class CosineSimilarity
       attr_reader :vector_a, :vector_b

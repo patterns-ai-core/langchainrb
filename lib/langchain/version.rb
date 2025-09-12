@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   VERSION = "0.19.5"
   Version = VERSION
 end

@@ -1,4 +1,4 @@
-module Langchain
+module LangChain
   module Utils
     class HashTransformer
       def self.symbolize_keys(hash)

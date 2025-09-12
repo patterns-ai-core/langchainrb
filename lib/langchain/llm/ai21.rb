@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   #
   # Wrapper around AI21 Studio APIs.
   #
@@ -8,7 +8,7 @@ module Langchain::LLM
   #   gem "ai21", "~> 0.2.1"
   #
   # Usage:
-  #     llm = Langchain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
+  #     llm = LangChain::LLM::AI21.new(api_key: ENV["AI21_API_KEY"])
   #
   # @deprecated Use another LLM provider.
   class AI21 < Base
@@ -18,7 +18,7 @@ module Langchain::LLM
     }.freeze
 
     def initialize(api_key:, default_options: {})
-      Langchain.logger.warn "DEPRECATED: `Langchain::LLM::AI21` is deprecated, and will be removed in the next major version. Please use another LLM provider."
+      LangChain.logger.warn "DEPRECATED: `LangChain::LLM::AI21` is deprecated, and will be removed in the next major version. Please use another LLM provider."
 
       depends_on "ai21"
 
@@ -31,13 +31,13 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params [Hash] The parameters to pass to the API
-    # @return [Langchain::LLM::AI21Response] The completion
+    # @return [LangChain::LLM::AI21Response] The completion
     #
     def complete(prompt:, **params)
       parameters = complete_parameters params
 
       response = client.complete(prompt, parameters)
-      Langchain::LLM::Response::AI21Response.new response, model: parameters[:model]
+      LangChain::LLM::Response::AI21Response.new response, model: parameters[:model]
     end
 
     #
@@ -50,7 +50,7 @@ module Langchain::LLM
     def summarize(text:, **params)
       response = client.summarize(text, "TEXT", params)
       response.dig(:summary)
-      # Should we update this to also return a Langchain::LLM::AI21Response?
+      # Should we update this to also return a LangChain::LLM::AI21Response?
     end
 
     private

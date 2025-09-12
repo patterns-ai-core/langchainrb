@@ -2,7 +2,7 @@
 
 require "csv"
 
-module Langchain
+module LangChain
   module Processors
     class CSV < Base
       class InvalidChunkMode < StandardError; end

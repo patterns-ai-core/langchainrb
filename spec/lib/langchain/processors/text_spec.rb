@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Processors::Text do
+RSpec.describe LangChain::Processors::Text do
   describe "#parse" do
     let(:file) { File.open("spec/fixtures/loaders/example.txt") }
     let(:text) { "Lorem Ipsum is simply dummy text of the printing and typesetting industry" }

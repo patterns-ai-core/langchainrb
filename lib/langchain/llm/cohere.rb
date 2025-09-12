@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   #
   # Wrapper around the Cohere API.
   #
@@ -8,7 +8,7 @@ module Langchain::LLM
   #     gem "cohere-ruby", "~> 0.9.6"
   #
   # Usage:
-  #     llm = Langchain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
+  #     llm = LangChain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
   #
   class Cohere < Base
     DEFAULTS = {
@@ -43,7 +43,7 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Langchain::LLM::Response::CohereResponse] Response object
+    # @return [LangChain::LLM::Response::CohereResponse] Response object
     #
     def embed(text:)
       response = client.embed(
@@ -51,7 +51,7 @@ module Langchain::LLM
         model: @defaults[:embedding_model]
       )
 
-      Langchain::LLM::Response::CohereResponse.new response, model: @defaults[:embedding_model]
+      LangChain::LLM::Response::CohereResponse.new response, model: @defaults[:embedding_model]
     end
 
     #
@@ -59,7 +59,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params[:stop_sequences]
-    # @return [Langchain::LLM::Response::CohereResponse] Response object
+    # @return [LangChain::LLM::Response::CohereResponse] Response object
     #
     def complete(prompt:, **params)
       default_params = {
@@ -76,12 +76,12 @@ module Langchain::LLM
       default_params.merge!(params)
 
       response = client.generate(**default_params)
-      Langchain::LLM::Response::CohereResponse.new response, model: @defaults[:completion_model]
+      LangChain::LLM::Response::CohereResponse.new response, model: @defaults[:completion_model]
     end
 
     # Generate a chat completion for given messages
     #
-    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @param [Hash] params unified chat parmeters from [LangChain::LLM::Parameters::Chat::SCHEMA]
     # @option params [Array<String>] :messages Input messages
     # @option params [String] :model The model that will complete your prompt
     # @option params [Integer] :max_tokens Maximum number of tokens to generate before stopping
@@ -92,7 +92,7 @@ module Langchain::LLM
     # @option params [Array<String>] :tools Definitions of tools that the model may use
     # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
     # @option params [Float] :top_p Use nucleus sampling.
-    # @return [Langchain::LLM::Response::CohereResponse] The chat completion
+    # @return [LangChain::LLM::Response::CohereResponse] The chat completion
     def chat(params = {})
       raise ArgumentError.new("messages argument is required") if Array(params[:messages]).empty?
 
@@ -104,7 +104,7 @@ module Langchain::LLM
 
       response = client.chat(**parameters)
 
-      Langchain::LLM::Response::CohereResponse.new(response)
+      LangChain::LLM::Response::CohereResponse.new(response)
     end
 
     # Generate a summary in English for a given text

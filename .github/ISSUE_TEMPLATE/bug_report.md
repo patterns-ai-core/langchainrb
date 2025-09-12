@@ -25,7 +25,7 @@ If applicable, add screenshots to help explain your problem.
 
 - OS: [e.g. OS X, Linux, Ubuntu, Windows]
 - Ruby version [e.g. 3.1, 3.2, 3.3]
-- Langchain.rb version [e.g. 0.13.0]
+- LangChain.rb version [e.g. 0.13.0]
 
 **Additional context**
 Add any other context about the problem here.

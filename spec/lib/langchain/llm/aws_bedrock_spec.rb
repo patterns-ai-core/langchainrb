@@ -2,7 +2,7 @@
 
 require "aws-sdk-bedrockruntime"
 
-RSpec.describe Langchain::LLM::AwsBedrock do
+RSpec.describe LangChain::LLM::AwsBedrock do
   let(:subject) { described_class.new }
 
   before do
@@ -114,7 +114,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
             i += 1
           end
 
-          expect(response).to be_a(Langchain::LLM::Response::AnthropicResponse)
+          expect(response).to be_a(LangChain::LLM::Response::AnthropicResponse)
           expect(response.chat_completion).to eq("The capital of France is Paris.")
         end
       end
@@ -473,7 +473,7 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     it "returns an AnthropicResponse" do
       response = subject.send(:response_from_chunks, chunks)
 
-      expect(response).to be_a(Langchain::LLM::Response::AnthropicResponse)
+      expect(response).to be_a(LangChain::LLM::Response::AnthropicResponse)
       expect(response.chat_completion).to eq("The capital of France is Paris.")
     end
 

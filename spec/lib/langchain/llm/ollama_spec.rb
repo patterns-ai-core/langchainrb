@@ -2,7 +2,7 @@
 
 require "faraday"
 
-RSpec.describe Langchain::LLM::Ollama do
+RSpec.describe LangChain::LLM::Ollama do
   let(:default_url) { "http://localhost:11434" }
   let(:subject) { described_class.new(url: default_url, default_options: {completion_model: "llama3.2", embedding_model: "llama3.2"}) }
   let(:client) { subject.send(:client) }
@@ -53,7 +53,7 @@ RSpec.describe Langchain::LLM::Ollama do
     end
 
     it "returns an embedding" do
-      expect(subject.embed(text: "Hello, world!")).to be_a(Langchain::LLM::Response::OllamaResponse)
+      expect(subject.embed(text: "Hello, world!")).to be_a(LangChain::LLM::Response::OllamaResponse)
       expect(subject.embed(text: "Hello, world!").embedding.count).to eq(3)
     end
 
@@ -83,11 +83,11 @@ RSpec.describe Langchain::LLM::Ollama do
     let(:response) { subject.complete(prompt: prompt) }
 
     it "returns a completion", :vcr do
-      expect(response).to be_a(Langchain::LLM::Response::OllamaResponse)
+      expect(response).to be_a(LangChain::LLM::Response::OllamaResponse)
       expect(response.completion).to eq("Complicated.")
     end
 
-    it "does not use streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_complete_returns_a_completion"} do
+    it "does not use streamed responses", vcr: {cassette_name: "LangChain_LLM_Ollama_complete_returns_a_completion"} do
       expect(client).to receive(:post).with("api/generate", hash_including(stream: false)).and_call_original
       response
     end
@@ -97,20 +97,20 @@ RSpec.describe Langchain::LLM::Ollama do
       let(:streamed_responses) { [] }
 
       it "returns a completion", :vcr do
-        expect(response).to be_a(Langchain::LLM::Response::OllamaResponse)
+        expect(response).to be_a(LangChain::LLM::Response::OllamaResponse)
         expect(response.completion).to eq("Complicated.")
         expect(response.total_tokens).to eq(36)
       end
 
-      it "uses streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_complete_when_passing_a_block_returns_a_completion"} do
+      it "uses streamed responses", vcr: {cassette_name: "LangChain_LLM_Ollama_complete_when_passing_a_block_returns_a_completion"} do
         expect(client).to receive(:post).with("api/generate", hash_including(stream: true)).and_call_original
         response
       end
 
-      it "yields the intermediate responses to the block", vcr: {cassette_name: "Langchain_LLM_Ollama_complete_when_passing_a_block_returns_a_completion"} do
+      it "yields the intermediate responses to the block", vcr: {cassette_name: "LangChain_LLM_Ollama_complete_when_passing_a_block_returns_a_completion"} do
         response
         expect(streamed_responses.length).to eq 4
-        expect(streamed_responses).to be_all { |resp| resp.is_a?(Langchain::LLM::Response::OllamaResponse) }
+        expect(streamed_responses).to be_all { |resp| resp.is_a?(LangChain::LLM::Response::OllamaResponse) }
         expect(streamed_responses.map(&:completion).join).to eq("Complicated.")
       end
     end
@@ -121,11 +121,11 @@ RSpec.describe Langchain::LLM::Ollama do
     let(:response) { subject.chat(messages: messages) }
 
     it "returns a chat completion", :vcr do
-      expect(response).to be_a(Langchain::LLM::Response::OllamaResponse)
+      expect(response).to be_a(LangChain::LLM::Response::OllamaResponse)
       expect(response.chat_completion).to include("I'm just a language model")
     end
 
-    it "does not use streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_chat_returns_a_chat_completion"} do
+    it "does not use streamed responses", vcr: {cassette_name: "LangChain_LLM_Ollama_chat_returns_a_chat_completion"} do
       expect(client).to receive(:post).with("api/chat", hash_including(stream: false)).and_call_original
       response
     end
@@ -135,19 +135,19 @@ RSpec.describe Langchain::LLM::Ollama do
       let(:streamed_responses) { [] }
 
       it "returns a chat completion", :vcr do
-        expect(response).to be_a(Langchain::LLM::Response::OllamaResponse)
+        expect(response).to be_a(LangChain::LLM::Response::OllamaResponse)
         expect(response.chat_completion).to include("I'm just a language model")
       end
 
-      it "uses streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_chat_when_passing_a_block_returns_a_chat_completion"} do
+      it "uses streamed responses", vcr: {cassette_name: "LangChain_LLM_Ollama_chat_when_passing_a_block_returns_a_chat_completion"} do
         expect(client).to receive(:post).with("api/chat", hash_including(stream: true)).and_call_original
         response
       end
 
-      it "yields the intermediate responses to the block", vcr: {cassette_name: "Langchain_LLM_Ollama_chat_when_passing_a_block_returns_a_chat_completion"} do
+      it "yields the intermediate responses to the block", vcr: {cassette_name: "LangChain_LLM_Ollama_chat_when_passing_a_block_returns_a_chat_completion"} do
         response
         expect(streamed_responses.length).to eq 51
-        expect(streamed_responses).to be_all { |resp| resp.is_a?(Langchain::LLM::Response::OllamaResponse) }
+        expect(streamed_responses).to be_all { |resp| resp.is_a?(LangChain::LLM::Response::OllamaResponse) }
         expect(streamed_responses.map(&:chat_completion).join).to include("I'm just a language model")
       end
     end
@@ -161,7 +161,7 @@ RSpec.describe Langchain::LLM::Ollama do
     it "returns a summarization", :vcr do
       response = subject.summarize(text: mary_had_a_little_lamb_text)
 
-      expect(response).to be_a(Langchain::LLM::Response::OllamaResponse)
+      expect(response).to be_a(LangChain::LLM::Response::OllamaResponse)
       expect(response.completion).not_to match(/summary/)
       expect(response.completion).to start_with("A young girl named Mary has a pet lamb")
     end

@@ -37,8 +37,8 @@ json_schema = {
   required: ["name", "age", "interests"],
   additionalProperties: false
 }
-parser = Langchain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
-prompt = Langchain::Prompt::PromptTemplate.new(template: "Generate details of a fictional character.\n{format_instructions}\nCharacter description: {description}", input_variables: ["description", "format_instructions"])
+parser = LangChain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
+prompt = LangChain::Prompt::PromptTemplate.new(template: "Generate details of a fictional character.\n{format_instructions}\nCharacter description: {description}", input_variables: ["description", "format_instructions"])
 prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)
 # Generate details of a fictional character.
 # You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
@@ -58,7 +58,7 @@ prompt.format(description: "Korean chemistry student", format_instructions: pars
 
 # Character description: Korean chemistry student
 
-llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+llm = LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 llm_response = llm.chat(
   messages: [{
     role: "user",
@@ -91,7 +91,7 @@ llm_response = llm.chat(
 #   ```
 # RESPONSE
 
-fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
+fix_parser = LangChain::OutputParsers::OutputFixingParser.from_llm(
   llm: llm,
   parser: parser
 )

@@ -1,6 +1,6 @@
 # freeze_string_literal: true
 
-module Langchain
+module LangChain
   module Evals
     # The RAGAS (Retrieval Augmented Generative Assessment) is a framework for evaluating RAG (Retrieval Augmented Generation) pipelines.
     # Based on the following research: https://arxiv.org/pdf/2309.15217.pdf
@@ -50,19 +50,19 @@ module Langchain
           (3 / reciprocal_sum)
         end
 
-        # @return [Langchain::Evals::Ragas::AnswerRelevance] Class instance
+        # @return [LangChain::Evals::Ragas::AnswerRelevance] Class instance
         def answer_relevance
-          @answer_relevance ||= Langchain::Evals::Ragas::AnswerRelevance.new(llm: llm)
+          @answer_relevance ||= LangChain::Evals::Ragas::AnswerRelevance.new(llm: llm)
         end
 
-        # @return [Langchain::Evals::Ragas::ContextRelevance] Class instance
+        # @return [LangChain::Evals::Ragas::ContextRelevance] Class instance
         def context_relevance
-          @context_relevance ||= Langchain::Evals::Ragas::ContextRelevance.new(llm: llm)
+          @context_relevance ||= LangChain::Evals::Ragas::ContextRelevance.new(llm: llm)
         end
 
-        # @return [Langchain::Evals::Ragas::Faithfulness] Class instance
+        # @return [LangChain::Evals::Ragas::Faithfulness] Class instance
         def faithfulness
-          @faithfulness ||= Langchain::Evals::Ragas::Faithfulness.new(llm: llm)
+          @faithfulness ||= LangChain::Evals::Ragas::Faithfulness.new(llm: llm)
         end
       end
     end

@@ -2,8 +2,8 @@
 
 require "tempfile"
 
-RSpec.describe Langchain::Prompt::Base do
-  subject { Langchain::Prompt::PromptTemplate.new(template: "Tell me a {adjective} joke.", input_variables: ["adjective"]) }
+RSpec.describe LangChain::Prompt::Base do
+  subject { LangChain::Prompt::PromptTemplate.new(template: "Tell me a {adjective} joke.", input_variables: ["adjective"]) }
 
   describe "#save" do
     let(:file_path) { Tempfile.new(["test_file", ".json"]).path }

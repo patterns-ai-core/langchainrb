@@ -1,4 +1,4 @@
-class Langchain::OutputParsers::OutputParserException < StandardError
+class LangChain::OutputParsers::OutputParserException < StandardError
   def initialize(message, text)
     @message = message
     @text = text

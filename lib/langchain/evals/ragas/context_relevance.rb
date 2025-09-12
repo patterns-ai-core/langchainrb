@@ -2,14 +2,14 @@
 
 require "pragmatic_segmenter"
 
-module Langchain
+module LangChain
   module Evals
     module Ragas
       # Context Relevance refers to the idea that the retrieved context should be focused, containing as little irrelevant information as possible.
       class ContextRelevance
         attr_reader :llm
 
-        # @param llm [Langchain::LLM::*] Langchain::LLM::* object
+        # @param llm [LangChain::LLM::*] LangChain::LLM::* object
         def initialize(llm:)
           @llm = llm
         end
@@ -36,8 +36,8 @@ module Langchain
 
         # @return [PromptTemplate] PromptTemplate instance
         def context_relevance_prompt_template
-          @template ||= Langchain::Prompt.load_from_path(
-            file_path: Langchain.root.join("langchain/evals/ragas/prompts/context_relevance.yml")
+          @template ||= LangChain::Prompt.load_from_path(
+            file_path: LangChain.root.join("langchain/evals/ragas/prompts/context_relevance.yml")
           )
         end
       end

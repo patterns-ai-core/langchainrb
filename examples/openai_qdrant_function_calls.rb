@@ -18,14 +18,14 @@ functions = [
   }
 ]
 
-openai = Langchain::LLM::OpenAI.new(
+openai = LangChain::LLM::OpenAI.new(
   api_key: ENV["OPENAI_API_KEY"],
   default_options: {
     chat_model: "gpt-3.5-turbo-16k"
   }
 )
 
-client = Langchain::Vectorsearch::Qdrant.new(
+client = LangChain::Vectorsearch::Qdrant.new(
   url: ENV["QDRANT_URL"],
   api_key: ENV["QDRANT_API_KEY"],
   index_name: ENV["QDRANT_INDEX"],

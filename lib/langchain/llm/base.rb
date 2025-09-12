@@ -1,29 +1,29 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   class ApiError < StandardError; end
 
   # A LLM is a language model consisting of a neural network with many parameters (typically billions of weights or more), trained on large quantities of unlabeled text using self-supervised learning or semi-supervised learning.
   #
-  # Langchain.rb provides a common interface to interact with all supported LLMs:
+  # LangChain.rb provides a common interface to interact with all supported LLMs:
   #
-  # - {Langchain::LLM::Anthropic}
-  # - {Langchain::LLM::Azure}
-  # - {Langchain::LLM::Cohere}
-  # - {Langchain::LLM::GoogleGemini}
-  # - {Langchain::LLM::GoogleVertexAI}
-  # - {Langchain::LLM::HuggingFace}
-  # - {Langchain::LLM::OpenAI}
-  # - {Langchain::LLM::Replicate}
+  # - {LangChain::LLM::Anthropic}
+  # - {LangChain::LLM::Azure}
+  # - {LangChain::LLM::Cohere}
+  # - {LangChain::LLM::GoogleGemini}
+  # - {LangChain::LLM::GoogleVertexAI}
+  # - {LangChain::LLM::HuggingFace}
+  # - {LangChain::LLM::OpenAI}
+  # - {LangChain::LLM::Replicate}
   #
   # @abstract
   class Base
-    include Langchain::DependencyHelper
+    include LangChain::DependencyHelper
 
     # A client for communicating with the LLM
     attr_accessor :client
 
-    # Default LLM options. Can be overridden by passing `default_options: {}` to the Langchain::LLM::* constructors.
+    # Default LLM options. Can be overridden by passing `default_options: {}` to the LangChain::LLM::* constructors.
     attr_reader :defaults
 
     # Ensuring backward compatibility for {default_dimensions}.
@@ -31,7 +31,7 @@ module Langchain::LLM
     # @deprecated Use {default_dimensions} instead.
     # @see https://github.com/patterns-ai-core/langchainrb/pull/586
     def default_dimension
-      Langchain.logger.warn "DEPRECATED: `default_dimension` is deprecated, and will be removed in the next major version. Please use `default_dimensions` instead."
+      LangChain.logger.warn "DEPRECATED: `default_dimension` is deprecated, and will be removed in the next major version. Please use `default_dimensions` instead."
 
       default_dimensions
     end
@@ -78,10 +78,10 @@ module Langchain::LLM
     end
 
     #
-    # Returns an instance of Langchain::LLM::Parameters::Chat
+    # Returns an instance of LangChain::LLM::Parameters::Chat
     #
     def chat_parameters(params = {})
-      @chat_parameters ||= Langchain::LLM::Parameters::Chat.new(
+      @chat_parameters ||= LangChain::LLM::Parameters::Chat.new(
         parameters: params
       )
     end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   module Chunker
     # = Chunkers
     # Chunkers are used to split documents into smaller chunks before indexing into vector search databases.
@@ -8,12 +8,12 @@ module Langchain
     #
     # == Available chunkers
     #
-    # - {Langchain::Chunker::RecursiveText}
-    # - {Langchain::Chunker::Text}
-    # - {Langchain::Chunker::Semantic}
-    # - {Langchain::Chunker::Sentence}
+    # - {LangChain::Chunker::RecursiveText}
+    # - {LangChain::Chunker::Text}
+    # - {LangChain::Chunker::Semantic}
+    # - {LangChain::Chunker::Sentence}
     class Base
-      # @return [Array<Langchain::Chunk>]
+      # @return [Array<LangChain::Chunk>]
       def chunks
         raise NotImplementedError
       end

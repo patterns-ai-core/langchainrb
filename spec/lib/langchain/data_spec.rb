@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Data do
+RSpec.describe LangChain::Data do
   let(:source) { "spec/fixtures/loaders/example.txt" }
   let(:data) { File.read(source) }
 
@@ -11,18 +11,18 @@ RSpec.describe Langchain::Data do
       chunks = subject.chunks
       split_data = data.split("\n\n")
 
-      expect(chunks).to all(be_a(Langchain::Chunk))
+      expect(chunks).to all(be_a(LangChain::Chunk))
       expect(chunks[0].text).to eq(split_data[0])
       expect(chunks[1].text).to eq(split_data[1])
       expect(chunks[2].text).to eq(split_data[2])
     end
 
     context "with an optional chunker class" do
-      subject { described_class.new(data, source: source, chunker: Langchain::Chunker::RecursiveText) }
-      let(:chunker) { instance_double(Langchain::Chunker::RecursiveText) }
+      subject { described_class.new(data, source: source, chunker: LangChain::Chunker::RecursiveText) }
+      let(:chunker) { instance_double(LangChain::Chunker::RecursiveText) }
 
       before do
-        expect(Langchain::Chunker::RecursiveText).to receive(:new).and_return(chunker)
+        expect(LangChain::Chunker::RecursiveText).to receive(:new).and_return(chunker)
       end
 
       it "uses an optional chunker class" do

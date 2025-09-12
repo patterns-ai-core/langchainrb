@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [COMPAT] [https://github.com/patterns-ai-core/langchainrb/pull/1027] Rename `Langchain` to `LangChain`.
 - [COMPAT] [https://github.com/patterns-ai-core/langchainrb/pull/980] Suppress a Ruby 3.4 warning for URI parser.
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/997] Remove `Langchain::Vectorsearch::Epsilla` class
 - [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/1003] Response classes are now namespaced under `Langchain::LLM::Response`, converted to Rails engine

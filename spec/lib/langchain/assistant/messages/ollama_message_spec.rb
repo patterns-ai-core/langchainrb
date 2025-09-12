@@ -2,13 +2,13 @@
 
 require "spec_helper"
 
-RSpec.describe Langchain::Assistant::Messages::OllamaMessage do
+RSpec.describe LangChain::Assistant::Messages::OllamaMessage do
   let(:valid_roles) { ["system", "assistant", "user", "tool"] }
   let(:role) { "assistant" }
   let(:content) { "This is a message" }
   let(:image_url) { "https://example.com/image.jpg" }
   let(:raw_response) { JSON.parse(File.read("spec/fixtures/llm/ollama/chat_with_tool_calls.json")) }
-  let(:response) { Langchain::LLM::Response::OllamaResponse.new(raw_response) }
+  let(:response) { LangChain::LLM::Response::OllamaResponse.new(raw_response) }
   let(:tool_calls) { response.tool_calls }
   let(:tool_call_id) { "12345" }
 

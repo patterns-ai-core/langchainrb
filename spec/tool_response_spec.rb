@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Langchain::ToolResponse do
+RSpec.describe LangChain::ToolResponse do
   describe "#initialize" do
     context "with content" do
       subject(:response) { described_class.new(content: "test content") }

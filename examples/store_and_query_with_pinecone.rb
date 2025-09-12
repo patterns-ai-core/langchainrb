@@ -5,11 +5,11 @@ require "dotenv/load"
 # or add `gem "pinecone"` to your Gemfile
 
 # Instantiate the Pinecone client
-pinecone = Langchain::Vectorsearch::Pinecone.new(
+pinecone = LangChain::Vectorsearch::Pinecone.new(
   environment: ENV["PINECONE_ENVIRONMENT"],
   api_key: ENV["PINECONE_API_KEY"],
   index_name: "recipes",
-  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+  llm: LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
 # Create the default schema.
@@ -39,7 +39,7 @@ pinecone.ask(
 )
 
 # Generate an embedding and search by it
-openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+openai = LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 embedding = openai.embed(text: "veggie").embedding
 
 pinecone.similarity_search_by_vector(

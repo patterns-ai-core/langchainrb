@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-module Langchain::Vectorsearch
+module LangChain::Vectorsearch
   # = Vector Databases
   # A vector database a type of database that stores data as high-dimensional vectors, which are mathematical representations of features or attributes. Each vector has a certain number of dimensions, which can range from tens to thousands, depending on the complexity and granularity of the data.
   #
   # == Available vector databases
   #
-  # - {Langchain::Vectorsearch::Chroma}
-  # - {Langchain::Vectorsearch::Elasticsearch}
-  # - {Langchain::Vectorsearch::Hnswlib}
-  # - {Langchain::Vectorsearch::Milvus}
-  # - {Langchain::Vectorsearch::Pgvector}
-  # - {Langchain::Vectorsearch::Pinecone}
-  # - {Langchain::Vectorsearch::Qdrant}
-  # - {Langchain::Vectorsearch::Weaviate}
+  # - {LangChain::Vectorsearch::Chroma}
+  # - {LangChain::Vectorsearch::Elasticsearch}
+  # - {LangChain::Vectorsearch::Hnswlib}
+  # - {LangChain::Vectorsearch::Milvus}
+  # - {LangChain::Vectorsearch::Pgvector}
+  # - {LangChain::Vectorsearch::Pinecone}
+  # - {LangChain::Vectorsearch::Qdrant}
+  # - {LangChain::Vectorsearch::Weaviate}
   #
   # == Usage
   #
@@ -21,19 +21,19 @@ module Langchain::Vectorsearch
   # 2. Review its documentation to install the required gems, and create an account, get an API key, etc
   # 3. Instantiate the vector database class:
   #
-  #     weaviate = Langchain::Vectorsearch::Weaviate.new(
+  #     weaviate = LangChain::Vectorsearch::Weaviate.new(
   #       url:         ENV["WEAVIATE_URL"],
   #       api_key:     ENV["WEAVIATE_API_KEY"],
   #       index_name:  "Documents",
-  #       llm:         Langchain::LLM::OpenAI.new(api_key:)
+  #       llm:         LangChain::LLM::OpenAI.new(api_key:)
   #     )
   #
   #     # You can instantiate other supported vector databases the same way:
-  #     milvus   = Langchain::Vectorsearch::Milvus.new(...)
-  #     qdrant   = Langchain::Vectorsearch::Qdrant.new(...)
-  #     pinecone = Langchain::Vectorsearch::Pinecone.new(...)
-  #     chroma   = Langchain::Vectorsearch::Chroma.new(...)
-  #     pgvector = Langchain::Vectorsearch::Pgvector.new(...)
+  #     milvus   = LangChain::Vectorsearch::Milvus.new(...)
+  #     qdrant   = LangChain::Vectorsearch::Qdrant.new(...)
+  #     pinecone = LangChain::Vectorsearch::Pinecone.new(...)
+  #     chroma   = LangChain::Vectorsearch::Chroma.new(...)
+  #     pgvector = LangChain::Vectorsearch::Pgvector.new(...)
   #
   # == Schema Creation
   #
@@ -48,10 +48,10 @@ module Langchain::Vectorsearch
   # You can add data with:
   # 1. `add_data(path:, paths:)` to add any kind of data type
   #
-  #     my_pdf = Langchain.root.join("path/to/my.pdf")
-  #     my_text = Langchain.root.join("path/to/my.txt")
-  #     my_docx = Langchain.root.join("path/to/my.docx")
-  #     my_csv = Langchain.root.join("path/to/my.csv")
+  #     my_pdf = LangChain.root.join("path/to/my.pdf")
+  #     my_text = LangChain.root.join("path/to/my.txt")
+  #     my_docx = LangChain.root.join("path/to/my.docx")
+  #     my_csv = LangChain.root.join("path/to/my.csv")
   #
   #     search.add_data(paths: [my_pdf, my_text, my_docx, my_csv])
   #
@@ -85,7 +85,7 @@ module Langchain::Vectorsearch
   #     search.ask(question: "What is lorem ipsum?")
   #
   class Base
-    include Langchain::DependencyHelper
+    include LangChain::DependencyHelper
 
     attr_reader :client, :index_name, :llm
 
@@ -158,9 +158,9 @@ module Langchain::Vectorsearch
     # @param [String] User's question
     # @return [String] Prompt
     def generate_hyde_prompt(question:)
-      prompt_template = Langchain::Prompt.load_from_path(
+      prompt_template = LangChain::Prompt.load_from_path(
         # Zero-shot prompt to generate a hypothetical document based on a given question
-        file_path: Langchain.root.join("langchain/vectorsearch/prompts/hyde.yaml")
+        file_path: LangChain.root.join("langchain/vectorsearch/prompts/hyde.yaml")
       )
       prompt_template.format(question: question)
     end
@@ -171,19 +171,19 @@ module Langchain::Vectorsearch
     # @param context [String] The context to synthesize the answer from
     # @return [String] Prompt
     def generate_rag_prompt(question:, context:)
-      prompt_template = Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/vectorsearch/prompts/rag.yaml")
+      prompt_template = LangChain::Prompt.load_from_path(
+        file_path: LangChain.root.join("langchain/vectorsearch/prompts/rag.yaml")
       )
       prompt_template.format(question: question, context: context)
     end
 
-    def add_data(paths:, options: {}, chunker: Langchain::Chunker::Text)
+    def add_data(paths:, options: {}, chunker: LangChain::Chunker::Text)
       raise ArgumentError, "Paths must be provided" if Array(paths).empty?
 
       texts = Array(paths)
         .flatten
         .map do |path|
-          data = Langchain::Loader.new(path, options, chunker: chunker)&.load&.chunks
+          data = LangChain::Loader.new(path, options, chunker: chunker)&.load&.chunks
           data.map { |chunk| chunk.text }
         end
 

@@ -2,7 +2,7 @@
 
 require "googleauth"
 
-RSpec.describe Langchain::LLM::GoogleVertexAI do
+RSpec.describe LangChain::LLM::GoogleVertexAI do
   subject { described_class.new(project_id: "123", region: "us-central1") }
 
   before do
@@ -47,7 +47,7 @@ RSpec.describe Langchain::LLM::GoogleVertexAI do
     it "returns valid llm response object" do
       response = subject.embed(text: "Hello world")
 
-      expect(response).to be_a(Langchain::LLM::Response::GoogleGeminiResponse)
+      expect(response).to be_a(LangChain::LLM::Response::GoogleGeminiResponse)
       expect(response.model).to eq("textembedding-gecko")
       expect(response.embedding).to eq(embedding)
     end
@@ -64,7 +64,7 @@ RSpec.describe Langchain::LLM::GoogleVertexAI do
     it "returns valid llm response object" do
       response = subject.chat(messages: messages)
 
-      expect(response).to be_a(Langchain::LLM::Response::GoogleGeminiResponse)
+      expect(response).to be_a(LangChain::LLM::Response::GoogleGeminiResponse)
       expect(response.model).to eq("gemini-1.0-pro")
       expect(response.chat_completion).to eq("The sky is not a physical object with a defined height.")
     end

@@ -2,14 +2,14 @@
 
 require "openai"
 
-module Langchain::LLM
+module LangChain::LLM
   # LLM interface for OpenAI APIs: https://platform.openai.com/overview
   #
   # Gem requirements:
   #    gem "ruby-openai", "~> 6.3.0"
   #
   # Usage:
-  #    llm = Langchain::LLM::OpenAI.new(
+  #    llm = LangChain::LLM::OpenAI.new(
   #      api_key: ENV["OPENAI_API_KEY"],
   #      llm_options: {}, # Available options: https://github.com/alexrudall/ruby-openai/blob/main/lib/openai/client.rb#L5-L13
   #      default_options: {}
@@ -34,10 +34,10 @@ module Langchain::LLM
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "ruby-openai", req: "openai"
 
-      llm_options[:log_errors] = Langchain.logger.debug? unless llm_options.key?(:log_errors)
+      llm_options[:log_errors] = LangChain.logger.debug? unless llm_options.key?(:log_errors)
 
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options) do |f|
-        f.response :logger, Langchain.logger, {headers: true, bodies: true, errors: true}
+        f.response :logger, LangChain.logger, {headers: true, bodies: true, errors: true}
       end
 
       @defaults = DEFAULTS.merge(default_options)
@@ -59,7 +59,7 @@ module Langchain::LLM
     # @param model [String] ID of the model to use
     # @param encoding_format [String] The format to return the embeddings in. Can be either float or base64.
     # @param user [String] A unique identifier representing your end-user
-    # @return [Langchain::LLM::Response::OpenAIResponse] Response object
+    # @return [LangChain::LLM::Response::OpenAIResponse] Response object
     def embed(
       text:,
       model: defaults[:embedding_model],
@@ -91,7 +91,7 @@ module Langchain::LLM
         client.embeddings(parameters: parameters)
       end
 
-      Langchain::LLM::Response::OpenAIResponse.new(response)
+      LangChain::LLM::Response::OpenAIResponse.new(response)
     end
 
     # rubocop:disable Style/ArgumentsForwarding
@@ -99,10 +99,10 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params [Hash] The parameters to pass to the `chat()` method
-    # @return [Langchain::LLM::Response::OpenAIResponse] Response object
+    # @return [LangChain::LLM::Response::OpenAIResponse] Response object
     # @deprecated Use {chat} instead.
     def complete(prompt:, **params)
-      Langchain.logger.warn "DEPRECATED: `Langchain::LLM::OpenAI#complete` is deprecated, and will be removed in the next major version. Use `Langchain::LLM::OpenAI#chat` instead."
+      LangChain.logger.warn "DEPRECATED: `LangChain::LLM::OpenAI#complete` is deprecated, and will be removed in the next major version. Use `LangChain::LLM::OpenAI#chat` instead."
 
       if params[:stop_sequences]
         params[:stop] = params.delete(:stop_sequences)
@@ -116,7 +116,7 @@ module Langchain::LLM
 
     # Generate a chat completion for given messages.
     #
-    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @param [Hash] params unified chat parmeters from [LangChain::LLM::Parameters::Chat::SCHEMA]
     # @option params [Array<Hash>] :messages List of messages comprising the conversation so far
     # @option params [String] :model ID of the model to use
     def chat(params = {}, &block)
@@ -145,7 +145,7 @@ module Langchain::LLM
       response = response_from_chunks if block
       reset_response_chunks
 
-      Langchain::LLM::Response::OpenAIResponse.new(response)
+      LangChain::LLM::Response::OpenAIResponse.new(response)
     end
 
     # Generate a summary for a given text
@@ -153,8 +153,8 @@ module Langchain::LLM
     # @param text [String] The text to generate a summary for
     # @return [String] The summary
     def summarize(text:)
-      prompt_template = Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/llm/prompts/summarize_template.yaml")
+      prompt_template = LangChain::Prompt.load_from_path(
+        file_path: LangChain.root.join("langchain/llm/prompts/summarize_template.yaml")
       )
       prompt = prompt_template.format(text: text)
 
@@ -177,7 +177,7 @@ module Langchain::LLM
       response = yield
       return if response.nil? || response.empty?
 
-      raise Langchain::LLM::ApiError.new "OpenAI API error: #{response.dig("error", "message")}" if response&.dig("error")
+      raise LangChain::LLM::ApiError.new "OpenAI API error: #{response.dig("error", "message")}" if response&.dig("error")
 
       response
     end

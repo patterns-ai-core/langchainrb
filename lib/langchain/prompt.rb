@@ -1,4 +1,4 @@
-module Langchain
+module LangChain
   module Prompt
     include Loading
   end

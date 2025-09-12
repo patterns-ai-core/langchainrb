@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Utils::ImageWrapper do
+RSpec.describe LangChain::Utils::ImageWrapper do
   let(:image_url) { "https://example.com/sf-cable-car.jpeg" }
   let(:uri_https) { instance_double(URI::HTTPS) }
 

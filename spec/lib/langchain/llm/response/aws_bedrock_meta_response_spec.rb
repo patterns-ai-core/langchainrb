@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "#{Langchain.root}/langchain/llm/response/aws_bedrock_meta_response"
+require_relative "#{LangChain.root}/langchain/llm/response/aws_bedrock_meta_response"
 
-RSpec.describe Langchain::LLM::Response::AwsBedrockMetaResponse do
+RSpec.describe LangChain::LLM::Response::AwsBedrockMetaResponse do
   let(:raw_chat_completions_response) {
     JSON.parse File.read("spec/fixtures/llm/aws_bedrock_meta/complete.json")
   }

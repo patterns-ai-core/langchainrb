@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   #
   # Wrapper around the Google Vertex AI APIs: https://cloud.google.com/vertex-ai
   #
@@ -8,7 +8,7 @@ module Langchain::LLM
   #     gem "googleauth"
   #
   # Usage:
-  #     llm = Langchain::LLM::GoogleVertexAI.new(project_id: ENV["GOOGLE_VERTEX_AI_PROJECT_ID"], region: "us-central1")
+  #     llm = LangChain::LLM::GoogleVertexAI.new(project_id: ENV["GOOGLE_VERTEX_AI_PROJECT_ID"], region: "us-central1")
   #
   class GoogleVertexAI < Base
     DEFAULTS = {
@@ -54,7 +54,7 @@ module Langchain::LLM
     #
     # @param text [String] The text to generate an embedding for
     # @param model [String] ID of the model to use
-    # @return [Langchain::LLM::Response::GoogleGeminiResponse] Response object
+    # @return [LangChain::LLM::Response::GoogleGeminiResponse] Response object
     #
     def embed(
       text:,
@@ -66,7 +66,7 @@ module Langchain::LLM
 
       parsed_response = http_post(uri, params)
 
-      Langchain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: model)
+      LangChain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: model)
     end
 
     # Generate a chat completion for given messages
@@ -76,7 +76,7 @@ module Langchain::LLM
     # @param tools [Array<Hash>] The tools to use
     # @param tool_choice [String] The tool choice to use
     # @param system [String] The system instruction to use
-    # @return [Langchain::LLM::Response::GoogleGeminiResponse] Response object
+    # @return [LangChain::LLM::Response::GoogleGeminiResponse] Response object
     def chat(params = {})
       params[:system] = {parts: [{text: params[:system]}]} if params[:system]
       params[:tools] = {function_declarations: params[:tools]} if params[:tools]
@@ -90,7 +90,7 @@ module Langchain::LLM
 
       parsed_response = http_post(uri, parameters)
 
-      wrapped_response = Langchain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
+      wrapped_response = LangChain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: parameters[:model])
 
       if wrapped_response.chat_completion || Array(wrapped_response.tool_calls).any?
         wrapped_response
@@ -104,7 +104,7 @@ module Langchain::LLM
     def http_post(url, params)
       http = Net::HTTP.new(url.hostname, url.port)
       http.use_ssl = url.scheme == "https"
-      http.set_debug_output(Langchain.logger) if Langchain.logger.debug?
+      http.set_debug_output(LangChain.logger) if LangChain.logger.debug?
 
       request = Net::HTTP::Post.new(url)
       request.content_type = "application/json"

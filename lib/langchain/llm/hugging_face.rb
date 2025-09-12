@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   #
   # Wrapper around the HuggingFace Inference API: https://huggingface.co/inference-api
   #
@@ -8,7 +8,7 @@ module Langchain::LLM
   #     gem "hugging-face", "~> 0.3.4"
   #
   # Usage:
-  #     llm = Langchain::LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
+  #     llm = LangChain::LLM::HuggingFace.new(api_key: ENV["HUGGING_FACE_API_KEY"])
   #
   class HuggingFace < Base
     DEFAULTS = {
@@ -45,14 +45,14 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to embed
-    # @return [Langchain::LLM::Response::HuggingFaceResponse] Response object
+    # @return [LangChain::LLM::Response::HuggingFaceResponse] Response object
     #
     def embed(text:)
       response = client.embedding(
         input: text,
         model: @defaults[:embedding_model]
       )
-      Langchain::LLM::Response::HuggingFaceResponse.new(response, model: @defaults[:embedding_model])
+      LangChain::LLM::Response::HuggingFaceResponse.new(response, model: @defaults[:embedding_model])
     end
   end
 end
