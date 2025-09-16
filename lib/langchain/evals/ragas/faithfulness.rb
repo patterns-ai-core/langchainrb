@@ -1,6 +1,6 @@
 # freeze_string_literal: true
 
-module Langchain
+module LangChain
   module Evals
     module Ragas
       # Faithfulness refers to the idea that the answer should be grounded in the given context,
@@ -17,7 +17,7 @@ module Langchain
       class Faithfulness
         attr_reader :llm
 
-        # @param llm [Langchain::LLM::*] Langchain::LLM::* object
+        # @param llm [LangChain::LLM::*] LangChain::LLM::* object
         def initialize(llm:)
           @llm = llm
         end
@@ -68,20 +68,20 @@ module Langchain
 
         # @return [PromptTemplate] PromptTemplate instance
         def statements_verification_prompt_template
-          @template_two ||= Langchain::Prompt.load_from_path(
-            file_path: Langchain.root.join("langchain/evals/ragas/prompts/faithfulness_statements_verification.yml")
+          @template_two ||= LangChain::Prompt.load_from_path(
+            file_path: LangChain.root.join("langchain/evals/ragas/prompts/faithfulness_statements_verification.yml")
           )
         end
 
         # @return [PromptTemplate] PromptTemplate instance
         def statements_extraction_prompt_template
-          @template_one ||= Langchain::Prompt.load_from_path(
-            file_path: Langchain.root.join("langchain/evals/ragas/prompts/faithfulness_statements_extraction.yml")
+          @template_one ||= LangChain::Prompt.load_from_path(
+            file_path: LangChain.root.join("langchain/evals/ragas/prompts/faithfulness_statements_extraction.yml")
           )
         end
 
         def to_boolean(value)
-          Langchain::Utils::ToBoolean.new.to_bool(value)
+          LangChain::Utils::ToBoolean.new.to_bool(value)
         end
       end
     end

@@ -4,10 +4,10 @@ require "langchain"
 # or add `gem "milvus"` to your Gemfile
 
 # Instantiate the OpenAI client
-openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+openai = LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 
 # Instantiate the Milvus client
-milvus = Langchain::Vectorsearch::Milvus.new(
+milvus = LangChain::Vectorsearch::Milvus.new(
   url: ENV["MILVUS_URL"],
   index_name: "recipes",
   llm: openai

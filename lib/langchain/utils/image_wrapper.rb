@@ -3,7 +3,7 @@
 require "open-uri"
 require "base64"
 
-module Langchain
+module LangChain
   module Utils
     class ImageWrapper
       attr_reader :image_url

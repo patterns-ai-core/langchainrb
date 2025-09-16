@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Processors::HTML do
+RSpec.describe LangChain::Processors::HTML do
   describe "#parse" do
     let(:file) { File.open("spec/fixtures/loaders/example.html") }
     let(:text) { "Lorem Ipsum\n\nDolor sit amet." }

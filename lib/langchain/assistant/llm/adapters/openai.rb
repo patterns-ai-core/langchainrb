@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   class Assistant
     module LLM
       module Adapters
@@ -55,7 +55,7 @@ module Langchain
 
             tool_arguments = tool_call.dig("function", "arguments")
             tool_arguments = if tool_arguments.is_a?(Hash)
-              Langchain::Utils::HashTransformer.symbolize_keys(tool_arguments)
+              LangChain::Utils::HashTransformer.symbolize_keys(tool_arguments)
             else
               JSON.parse(tool_arguments, symbolize_names: true)
             end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Processors::PDF do
+RSpec.describe LangChain::Processors::PDF do
   describe "#parse" do
     let(:file) { File.open("spec/fixtures/loaders/cairo-unicode.pdf") }
     let(:text) { "UTF-8 encoded sample plain-text file" }

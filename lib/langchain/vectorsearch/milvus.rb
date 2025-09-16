@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Vectorsearch
+module LangChain::Vectorsearch
   #
   # Wrapper around Milvus REST APIs.
   #
@@ -8,7 +8,7 @@ module Langchain::Vectorsearch
   #     gem "milvus", "~> 0.10.3"
   #
   # Usage:
-  #     milvus = Langchain::Vectorsearch::Milvus.new(url:, index_name:, llm:, api_key:)
+  #     milvus = LangChain::Vectorsearch::Milvus.new(url:, index_name:, llm:, api_key:)
   #
   class Milvus < Base
     def initialize(url:, index_name:, llm:, api_key: nil)
@@ -17,7 +17,7 @@ module Langchain::Vectorsearch
       @client = ::Milvus::Client.new(
         url: url,
         api_key: api_key,
-        logger: Langchain.logger
+        logger: LangChain.logger
       )
       @index_name = index_name
 

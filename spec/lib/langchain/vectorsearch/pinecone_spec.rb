@@ -2,10 +2,10 @@
 
 require "pinecone"
 
-RSpec.describe Langchain::Vectorsearch::Pinecone do
+RSpec.describe LangChain::Vectorsearch::Pinecone do
   let(:index_name) { "documents" }
   let(:namespace) { "namespaced" }
-  let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+  let(:llm) { LangChain::LLM::OpenAI.new(api_key: "123") }
 
   subject {
     described_class.new(
@@ -197,9 +197,9 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
   describe "#add_data" do
     it "allows adding multiple paths" do
       paths = [
-        Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
-        Langchain.root.join("../spec/fixtures/loaders/test_doc.pdf"),
-        Langchain.root.join("../spec/fixtures/loaders/example.txt")
+        LangChain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
+        LangChain.root.join("../spec/fixtures/loaders/test_doc.pdf"),
+        LangChain.root.join("../spec/fixtures/loaders/example.txt")
       ]
 
       expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), namespace: "")
@@ -213,9 +213,9 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
 
     it "allows namespaces" do
       paths = [
-        Langchain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
-        Langchain.root.join("../spec/fixtures/loaders/test_doc.pdf"),
-        Langchain.root.join("../spec/fixtures/loaders/example.txt")
+        LangChain.root.join("../spec/fixtures/loaders/cairo-unicode.pdf"),
+        LangChain.root.join("../spec/fixtures/loaders/test_doc.pdf"),
+        LangChain.root.join("../spec/fixtures/loaders/example.txt")
       ]
 
       expect(subject).to receive(:add_texts).with(texts: array_with_strings_matcher(size: 14), namespace: "earthlings")
@@ -224,12 +224,12 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     end
 
     context "with an optional chunker class" do
-      let(:paths) { Langchain.root.join("../spec/fixtures/loaders/example.txt") }
+      let(:paths) { LangChain.root.join("../spec/fixtures/loaders/example.txt") }
 
-      it "passes an optional chunker class to Langchain::Loader", :aggregate_failures do
-        expect(Langchain::Loader).to receive(:new).with(paths, {}, chunker: Langchain::Chunker::RecursiveText).and_call_original
+      it "passes an optional chunker class to LangChain::Loader", :aggregate_failures do
+        expect(LangChain::Loader).to receive(:new).with(paths, {}, chunker: LangChain::Chunker::RecursiveText).and_call_original
         expect(subject).to receive(:add_texts).and_return(true)
-        subject.add_data(paths: paths, chunker: Langchain::Chunker::RecursiveText)
+        subject.add_data(paths: paths, chunker: LangChain::Chunker::RecursiveText)
       end
     end
   end

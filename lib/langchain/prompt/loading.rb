@@ -4,7 +4,7 @@ require "strscan"
 require "pathname"
 require "yaml"
 
-module Langchain::Prompt
+module LangChain::Prompt
   TYPE_TO_LOADER = {
     "prompt" => ->(config) { load_prompt(config) },
     "few_shot" => ->(config) { load_few_shot_prompt(config) }
@@ -79,7 +79,7 @@ module Langchain::Prompt
       def load_from_config(config)
         # If `_type` key is not present in the configuration hash, add it with a default value of `prompt`
         unless config.key?("_type")
-          Langchain.logger.warn("#{self.class} - No `_type` key found, defaulting to `prompt`")
+          LangChain.logger.warn("#{self.class} - No `_type` key found, defaulting to `prompt`")
           config["_type"] = "prompt"
         end
 

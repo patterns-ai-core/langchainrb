@@ -2,7 +2,7 @@
 
 require "openai"
 
-RSpec.describe Langchain::LLM::Azure do
+RSpec.describe LangChain::LLM::Azure do
   let(:subject) do
     described_class.new(
       api_key: "123",

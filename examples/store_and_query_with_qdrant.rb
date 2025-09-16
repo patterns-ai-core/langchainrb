@@ -5,11 +5,11 @@ require "dotenv/load"
 # or add `gem "qdrant-ruby"` to your Gemfile
 
 # Instantiate the Qdrant client
-qdrant = Langchain::Vectorsearch::Qdrant.new(
+qdrant = LangChain::Vectorsearch::Qdrant.new(
   url: ENV["QDRANT_URL"],
   api_key: ENV["QDRANT_API_KEY"],
   index_name: "recipes",
-  llm: Langchain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
+  llm: LangChain::LLM::Cohere.new(api_key: ENV["COHERE_API_KEY"])
 )
 
 # Create the default schema.

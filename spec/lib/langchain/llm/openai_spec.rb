@@ -2,7 +2,7 @@
 
 require "openai"
 
-RSpec.describe Langchain::LLM::OpenAI do
+RSpec.describe LangChain::LLM::OpenAI do
   let(:subject) { described_class.new(api_key: "123", **options) }
 
   let(:options) { {} }
@@ -12,19 +12,19 @@ RSpec.describe Langchain::LLM::OpenAI do
       expect { subject }.not_to raise_error
     end
 
-    it "forwards the Langchain logger to the client" do
+    it "forwards the LangChain logger to the client" do
       f_mock = double("f_mock", response: nil)
 
       allow(OpenAI::Client).to receive(:new) { |**, &block| block&.call(f_mock) }
 
       subject
 
-      expect(f_mock).to have_received(:response).with(:logger, Langchain.logger, anything)
+      expect(f_mock).to have_received(:response).with(:logger, LangChain.logger, anything)
     end
 
     context "when log level is DEBUG" do
       before do
-        Langchain.logger.level = Logger::DEBUG
+        LangChain.logger.level = Logger::DEBUG
       end
 
       it "configures the client to log the errors" do
@@ -46,7 +46,7 @@ RSpec.describe Langchain::LLM::OpenAI do
 
     context "when log level is not DEBUG" do
       before do
-        Langchain.logger.level = Logger::INFO
+        LangChain.logger.level = Logger::INFO
       end
 
       it "configures the client to NOT log the errors" do
@@ -137,7 +137,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     it "returns valid llm response object" do
       response = subject.embed(text: "Hello World")
 
-      expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+      expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
       expect(response.model).to eq("text-embedding-3-small")
       expect(response.embedding).to eq([-0.007097351, 0.0035200312, -0.0069700438])
       expect(response.prompt_tokens).to eq(2)
@@ -149,7 +149,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "returns an embedding" do
         response = subject.embed(text: "Hello World")
 
-        expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+        expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
         expect(response.embedding).to eq(result)
       end
     end
@@ -162,7 +162,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "returns an embedding" do
         response = subject.embed(text: "Hello World", model: "text-embedding-ada-002", user: "id")
 
-        expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+        expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
         expect(response.embedding).to eq(result)
       end
     end
@@ -205,7 +205,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
     end
 
-    Langchain::LLM::OpenAI::EMBEDDING_SIZES.each do |model_key, dimensions|
+    LangChain::LLM::OpenAI::EMBEDDING_SIZES.each do |model_key, dimensions|
       model = model_key.to_s
 
       context "when using model #{model}" do
@@ -240,7 +240,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         it "generates an embedding using #{model}" do
           embedding_response = subject.embed(text: text, model: model)
 
-          expect(embedding_response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+          expect(embedding_response).to be_a(LangChain::LLM::Response::OpenAIResponse)
           expect(embedding_response.model).to eq(model)
           expect(embedding_response.embedding).to eq(result)
           expect(embedding_response.prompt_tokens).to eq(2)
@@ -324,7 +324,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "returns valid llm response object" do
         response = subject.complete(prompt: "Hello World")
 
-        expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+        expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
         expect(response.model).to eq("gpt-4o-mini-2024-07-18")
         expect(response.completion).to eq("The meaning of life is subjective and can vary from person to person.")
         expect(response.prompt_tokens).to eq(7)
@@ -335,7 +335,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "returns a completion" do
         response = subject.complete(prompt: "Hello World")
 
-        expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+        expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
         expect(response.model).to eq("gpt-4o-mini-2024-07-18")
         expect(response.completions).to eq([{"message" => {"role" => "assistant", "content" => "The meaning of life is subjective and can vary from person to person."}, "finish_reason" => "stop", "index" => 0}])
         expect(response.completion).to eq("The meaning of life is subjective and can vary from person to person.")
@@ -363,7 +363,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         end
 
         before do
-          allow(Langchain).to receive(:logger).and_return(logger)
+          allow(LangChain).to receive(:logger).and_return(logger)
           allow(logger).to receive(:warn)
         end
 
@@ -433,7 +433,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "raises an error" do
         expect {
           subject.complete(prompt: "Hello World")
-        }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
+        }.to raise_error(LangChain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
       end
     end
   end
@@ -503,13 +503,13 @@ RSpec.describe Langchain::LLM::OpenAI do
         beep: :boop
       )
 
-      expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+      expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
     end
 
     it "returns valid llm response object" do
       response = subject.chat(messages: [{role: "user", content: "What is the meaning of life?"}])
 
-      expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+      expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
       expect(response.model).to eq("gpt-4o-mini-2024-07-18")
       expect(response.chat_completion).to eq("As an AI language model, I don't have feelings, but I'm functioning well. How can I assist you today?")
       expect(response.prompt_tokens).to eq(14)
@@ -521,7 +521,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "sends prompt within messages" do
         response = subject.chat(messages: [{role: "user", content: prompt}])
 
-        expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+        expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
         expect(response.model).to eq("gpt-4o-mini-2024-07-18")
         expect(response.completions).to eq(choices)
         expect(response.chat_completion).to eq(answer)
@@ -637,7 +637,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "does not raise NoMethodError and returns correctly assembled response" do
         expect {
           response = subject.chat(messages: messages, &streaming_block)
-          expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+          expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
           expect(response.chat_completion).to eq(expected_completion)
           expect(response.role).to eq("assistant")
           expect(response.prompt_tokens).to eq(5)
@@ -675,7 +675,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         response = subject.chat(messages: [content: prompt, role: "user"]) do |chunk|
           chunk
         end
-        expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+        expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
         expect(response.prompt_tokens).to eq(10)
         expect(response.completion_tokens).to eq(11)
         expect(response.total_tokens).to eq(12)
@@ -712,7 +712,7 @@ RSpec.describe Langchain::LLM::OpenAI do
         response = subject.chat(messages: [content: prompt, role: "user"], n: 2) do |chunk|
           chunk
         end
-        expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+        expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
         expect(response.completions).to eq(
           [
             {"index" => 0, "message" => {"role" => "assistant", "content" => answer}, "finish_reason" => "stop"},
@@ -773,7 +773,7 @@ RSpec.describe Langchain::LLM::OpenAI do
           chunk
         end
 
-        expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
+        expect(response).to be_a(LangChain::LLM::Response::OpenAIResponse)
         expect(response.raw_response.dig("choices", 0, "message", "tool_calls")).to eq(expected_tool_calls)
       end
     end
@@ -786,7 +786,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       it "raises an error" do
         expect {
           subject.chat(messages: [content: prompt, role: "user"])
-        }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
+        }.to raise_error(LangChain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
       end
     end
 

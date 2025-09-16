@@ -2,13 +2,13 @@
 
 require "weaviate"
 
-RSpec.describe Langchain::Vectorsearch::Weaviate do
+RSpec.describe LangChain::Vectorsearch::Weaviate do
   subject {
     described_class.new(
       url: "http://localhost:8080",
       api_key: "123",
       index_name: "Products",
-      llm: Langchain::LLM::OpenAI.new(api_key: "123")
+      llm: LangChain::LLM::OpenAI.new(api_key: "123")
     )
   }
 

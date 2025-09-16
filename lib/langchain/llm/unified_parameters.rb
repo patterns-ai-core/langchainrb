@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   class UnifiedParameters
     include Enumerable
 

@@ -2,7 +2,7 @@
 
 require "wikipedia"
 
-RSpec.describe Langchain::Tool::Wikipedia do
+RSpec.describe LangChain::Tool::Wikipedia do
   describe "#execute" do
     before do
       allow(Wikipedia).to receive(:find)

@@ -2,7 +2,7 @@
 
 require "google_search_results"
 
-RSpec.describe Langchain::Tool::GoogleSearch do
+RSpec.describe LangChain::Tool::GoogleSearch do
   subject {
     described_class.new(api_key: "123")
   }
@@ -32,7 +32,7 @@ RSpec.describe Langchain::Tool::GoogleSearch do
   describe "#execute" do
     it "returns the answer" do
       response = subject.execute(input: "how tall is empire state building")
-      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response).to be_a(LangChain::ToolResponse)
       expect(response.content).to eq("1,250′, 1,454′ to tip")
     end
   end

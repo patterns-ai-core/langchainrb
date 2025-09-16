@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Processors::Markdown do
+RSpec.describe LangChain::Processors::Markdown do
   describe "#parse" do
     let(:file) { File.open("spec/fixtures/loaders/example.md") }
     let(:text) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit." }

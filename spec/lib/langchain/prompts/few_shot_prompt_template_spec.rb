@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
+RSpec.describe LangChain::Prompt::FewShotPromptTemplate do
   let(:input_variables) { ["adjective"] }
   let(:validate_template) { true }
   let(:prompt) do
     described_class.new(
       prefix: "Write antonyms for the following words.",
       suffix: "Input: {adjective}\nOutput:",
-      example_prompt: Langchain::Prompt::PromptTemplate.new(
+      example_prompt: LangChain::Prompt::PromptTemplate.new(
         input_variables: ["input", "output"],
         template: "Input: {input}\nOutput: {output}"
       ),
@@ -22,7 +22,7 @@ RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
 
   describe "#initialize" do
     it "creates a new instance" do
-      expect(prompt).to be_a(Langchain::Prompt::FewShotPromptTemplate)
+      expect(prompt).to be_a(LangChain::Prompt::FewShotPromptTemplate)
       expect(prompt.format(adjective: "good")).to eq(
         <<~PROMPT.chomp
           Write antonyms for the following words.

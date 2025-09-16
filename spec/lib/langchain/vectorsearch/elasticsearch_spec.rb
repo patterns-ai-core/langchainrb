@@ -2,10 +2,10 @@
 
 require "elasticsearch"
 
-RSpec.describe Langchain::Vectorsearch::Elasticsearch do
-  let!(:llm) { Langchain::LLM::HuggingFace.new(api_key: "123456") }
+RSpec.describe LangChain::Vectorsearch::Elasticsearch do
+  let!(:llm) { LangChain::LLM::HuggingFace.new(api_key: "123456") }
   subject {
-    Langchain::Vectorsearch::Elasticsearch.new(
+    LangChain::Vectorsearch::Elasticsearch.new(
       url: "http://localhost:9200",
       index_name: "langchain",
       llm: llm

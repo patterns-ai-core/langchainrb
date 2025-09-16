@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM::Response
+module LangChain::LLM::Response
   class AnthropicResponse < BaseResponse
     def model
       raw_response.dig("model")

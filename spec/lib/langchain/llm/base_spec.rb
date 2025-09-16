@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-class TestLLM < Langchain::LLM::Base
+class TestLLM < LangChain::LLM::Base
 end
 
-class CustomTestLLM < Langchain::LLM::Base
+class CustomTestLLM < LangChain::LLM::Base
   def initialize
     chat_parameters.update(version: {default: 1})
   end
 end
 
-RSpec.describe Langchain::LLM::Base do
+RSpec.describe LangChain::LLM::Base do
   let(:subject) { described_class.new }
 
   describe "#chat" do
@@ -53,12 +53,12 @@ RSpec.describe Langchain::LLM::Base do
 
     it "returns an instance of ChatParameters" do
       chat_params = subject.chat_parameters
-      expect(chat_params).to be_instance_of(Langchain::LLM::Parameters::Chat)
+      expect(chat_params).to be_instance_of(LangChain::LLM::Parameters::Chat)
     end
 
     it "proxies the provided params to the UnifiedParameters" do
       chat_params = subject.chat_parameters({stream: true})
-      expect(chat_params).to be_instance_of(Langchain::LLM::Parameters::Chat)
+      expect(chat_params).to be_instance_of(LangChain::LLM::Parameters::Chat)
       expect(chat_params[:stream]).to be_truthy
     end
 

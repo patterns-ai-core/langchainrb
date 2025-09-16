@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Tool::Tavily do
+RSpec.describe LangChain::Tool::Tavily do
   subject { described_class.new(api_key: "123") }
 
   let(:response) {
@@ -16,7 +16,7 @@ RSpec.describe Langchain::Tool::Tavily do
         max_results: 1,
         include_answer: true
       )
-      expect(result).to be_a(Langchain::ToolResponse)
+      expect(result).to be_a(LangChain::ToolResponse)
       expect(result.content).to eq(response)
     end
   end

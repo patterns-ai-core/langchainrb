@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Vectorsearch
+module LangChain::Vectorsearch
   #
   # Wrapper around Weaviate
   #
@@ -8,7 +8,7 @@ module Langchain::Vectorsearch
   #     gem "weaviate-ruby", "~> 0.9.2"
   #
   # Usage:
-  #     weaviate = Langchain::Vectorsearch::Weaviate.new(url: ENV["WEAVIATE_URL"], api_key: ENV["WEAVIATE_API_KEY"], index_name: "Docs", llm: llm)
+  #     weaviate = LangChain::Vectorsearch::Weaviate.new(url: ENV["WEAVIATE_URL"], api_key: ENV["WEAVIATE_API_KEY"], index_name: "Docs", llm: llm)
   #
   class Weaviate < Base
     # Initialize the Weaviate adapter
@@ -22,7 +22,7 @@ module Langchain::Vectorsearch
       @client = ::Weaviate::Client.new(
         url: url,
         api_key: api_key,
-        logger: Langchain.logger
+        logger: LangChain.logger
       )
 
       # Weaviate requires the class name to be Capitalized: https://weaviate.io/developers/weaviate/configuration/schema-configuration#create-a-class

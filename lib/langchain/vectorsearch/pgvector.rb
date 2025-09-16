@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Vectorsearch
+module LangChain::Vectorsearch
   #
   # The PostgreSQL vector search adapter
   #
@@ -9,7 +9,7 @@ module Langchain::Vectorsearch
   #     gem "pgvector", "~> 0.2"
   #
   # Usage:
-  #     pgvector = Langchain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace: nil)
+  #     pgvector = LangChain::Vectorsearch::Pgvector.new(url:, index_name:, llm:, namespace: nil)
   #
   class Pgvector < Base
     # The operators supported by the PostgreSQL vector search adapter

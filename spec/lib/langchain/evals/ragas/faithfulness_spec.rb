@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Evals::Ragas::Faithfulness do
-  let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+RSpec.describe LangChain::Evals::Ragas::Faithfulness do
+  let(:llm) { LangChain::LLM::OpenAI.new(api_key: "123") }
   subject { described_class.new(llm: llm) }
 
   let(:question) { "Who directed the film Oppenheimer and who stars as J. Robert Oppenheimer in the film?" }

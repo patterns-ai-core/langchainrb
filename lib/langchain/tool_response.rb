@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   # ToolResponse represents the standardized output of a tool.
   # It can contain either text content or an image URL.
   class ToolResponse

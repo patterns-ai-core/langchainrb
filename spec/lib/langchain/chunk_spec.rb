@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Langchain::Chunk do
+RSpec.describe LangChain::Chunk do
   subject { described_class.new(text: "Hello World") }
 
   it "has a text" do

@@ -5,10 +5,10 @@ require "dotenv/load"
 # or add `gem "chroma-db", "~> 0.6.0"` to your Gemfile
 
 # Instantiate the Chroma client
-chroma = Langchain::Vectorsearch::Chroma.new(
+chroma = LangChain::Vectorsearch::Chroma.new(
   url: ENV["CHROMA_URL"],
   index_name: "documents",
-  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+  llm: LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
 # Create the default schema.
@@ -20,9 +20,9 @@ chroma.create_default_schema
 
 # Set up an array of PDF and TXT documents
 docs = [
-  Langchain.root.join("/docs/document.pdf"),
-  Langchain.root.join("/docs/document.txt"),
-  Langchain.root.join("/docs/document.docx")
+  LangChain.root.join("/docs/document.pdf"),
+  LangChain.root.join("/docs/document.txt"),
+  LangChain.root.join("/docs/document.docx")
 ]
 
 # Add data to the index. Weaviate will use OpenAI to generate embeddings behind the scene.

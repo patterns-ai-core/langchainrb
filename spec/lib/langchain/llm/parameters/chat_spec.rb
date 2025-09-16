@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::LLM::Parameters::Chat do
+RSpec.describe LangChain::LLM::Parameters::Chat do
   let(:aliases) do
     {max_tokens_supported: :max_tokens}
   end

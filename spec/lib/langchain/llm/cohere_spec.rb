@@ -2,7 +2,7 @@
 
 require "cohere"
 
-RSpec.describe Langchain::LLM::Cohere do
+RSpec.describe LangChain::LLM::Cohere do
   let(:subject) { described_class.new(api_key: "123") }
 
   describe "#initialize" do
@@ -127,7 +127,7 @@ RSpec.describe Langchain::LLM::Cohere do
           system: "You are a cheerful happy chatbot!",
           messages: [{role: "user", message: "How are you?"}]
         )
-      ).to be_a(Langchain::LLM::Response::CohereResponse)
+      ).to be_a(LangChain::LLM::Response::CohereResponse)
     end
   end
 

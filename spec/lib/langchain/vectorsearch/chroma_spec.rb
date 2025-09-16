@@ -2,14 +2,14 @@
 
 require "chroma-db"
 
-RSpec.describe Langchain::Vectorsearch::Chroma do
+RSpec.describe LangChain::Vectorsearch::Chroma do
   let(:index_name) { "documents" }
 
   subject {
     described_class.new(
       url: "http://localhost:8000",
       index_name: index_name,
-      llm: Langchain::LLM::OpenAI.new(api_key: "123")
+      llm: LangChain::LLM::OpenAI.new(api_key: "123")
     )
   }
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   module LLM::Response
     class BaseResponse
       attr_reader :raw_response, :model

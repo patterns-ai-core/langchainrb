@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Langchain
-  # Abstraction for data loaded by a {Langchain::Loader}
+module LangChain
+  # Abstraction for data loaded by a {LangChain::Loader}
   class Data
     # URL or Path of the data source
     # @return [String]
@@ -9,7 +9,7 @@ module Langchain
 
     # @param data [String] data that was loaded
     # @option options [String] :source URL or Path of the data source
-    def initialize(data, source: nil, chunker: Langchain::Chunker::Text)
+    def initialize(data, source: nil, chunker: LangChain::Chunker::Text)
       @source = source
       @data = data
       @chunker_klass = chunker

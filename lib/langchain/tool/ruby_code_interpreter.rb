@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Tool
+module LangChain::Tool
   #
   # A tool that execute Ruby code in a sandboxed environment.
   #
@@ -8,11 +8,11 @@ module Langchain::Tool
   #     gem "safe_ruby", "~> 1.0.5"
   #
   # Usage:
-  #    interpreter = Langchain::Tool::RubyCodeInterpreter.new
+  #    interpreter = LangChain::Tool::RubyCodeInterpreter.new
   #
   class RubyCodeInterpreter
-    extend Langchain::ToolDefinition
-    include Langchain::DependencyHelper
+    extend LangChain::ToolDefinition
+    include LangChain::DependencyHelper
 
     define_function :execute, description: "Executes Ruby code in a sandboxes environment" do
       property :input, type: "string", description: "Ruby code expression", required: true
@@ -27,9 +27,9 @@ module Langchain::Tool
     # Executes Ruby code in a sandboxes environment.
     #
     # @param input [String] ruby code expression
-    # @return [Langchain::Tool::Response] Answer
+    # @return [LangChain::Tool::Response] Answer
     def execute(input:)
-      Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
+      LangChain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       tool_response(content: safe_eval(input))
     end

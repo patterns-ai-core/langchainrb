@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   class Assistant
     module LLM
       module Adapters
@@ -12,7 +12,7 @@ module Langchain
           # @return [Hash]
           def build_tool_choice(choice, parallel_tool_calls)
             # Aws Bedrock hosted Anthropic does not support parallel tool calls
-            Langchain.logger.warn "WARNING: parallel_tool_calls is not supported by AWS Bedrock Anthropic currently" if parallel_tool_calls
+            LangChain.logger.warn "WARNING: parallel_tool_calls is not supported by AWS Bedrock Anthropic currently" if parallel_tool_calls
 
             tool_choice_object = {}
 

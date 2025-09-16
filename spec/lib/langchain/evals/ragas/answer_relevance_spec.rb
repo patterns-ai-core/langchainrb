@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Evals::Ragas::AnswerRelevance do
-  let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+RSpec.describe LangChain::Evals::Ragas::AnswerRelevance do
+  let(:llm) { LangChain::LLM::OpenAI.new(api_key: "123") }
   subject { described_class.new(llm: llm, batch_size: 1) }
 
   let(:question) { "When is the scheduled launch date and time for the PSLV-C56 mission, and where will it be launched from?" }
@@ -12,7 +12,7 @@ RSpec.describe Langchain::Evals::Ragas::AnswerRelevance do
     let(:generated_question) { "What is the purpose of the PSLV-C56 mission?" }
 
     before do
-      allow(subject.llm).to receive(:complete).and_return(double("Langchain::LLM::Response::OpenAIResponse", completion: generated_question))
+      allow(subject.llm).to receive(:complete).and_return(double("LangChain::LLM::Response::OpenAIResponse", completion: generated_question))
       allow(subject).to receive(:calculate_similarity)
         .with(original_question: question, generated_question: generated_question)
         .and_return(score)

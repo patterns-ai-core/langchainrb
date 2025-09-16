@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Vectorsearch
+module LangChain::Vectorsearch
   #
   # Wrapper around HNSW (Hierarchical Navigable Small World) library.
   # HNSWLib is an in-memory vectorstore that can be saved to a file on disk.
@@ -9,7 +9,7 @@ module Langchain::Vectorsearch
   #     gem "hnswlib", "~> 0.8.1"
   #
   # Usage:
-  #     hnsw = Langchain::Vectorsearch::Hnswlib.new(llm:, path_to_index:)
+  #     hnsw = LangChain::Vectorsearch::Hnswlib.new(llm:, path_to_index:)
   #
   class Hnswlib < Base
     attr_reader :client, :path_to_index
@@ -19,7 +19,7 @@ module Langchain::Vectorsearch
     #
     # @param llm [Object] The LLM client to use
     # @param path_to_index [String] The local path to the index file, e.g.: "/storage/index.ann"
-    # @return [Langchain::Vectorsearch::Hnswlib] Class instance
+    # @return [LangChain::Vectorsearch::Hnswlib] Class instance
     #
     def initialize(llm:, path_to_index:)
       depends_on "hnswlib"
@@ -114,12 +114,12 @@ module Langchain::Vectorsearch
       if File.exist?(path_to_index)
         client.load_index(path_to_index)
 
-        Langchain.logger.debug("#{self.class} - Successfully loaded the index at \"#{path_to_index}\"")
+        LangChain.logger.debug("#{self.class} - Successfully loaded the index at \"#{path_to_index}\"")
       else
         # Default max_elements: 100, but we constantly resize the index as new data is written to it
         client.init_index(max_elements: 100)
 
-        Langchain.logger.debug("#{self.class} - Creating a new index at \"#{path_to_index}\"")
+        LangChain.logger.debug("#{self.class} - Creating a new index at \"#{path_to_index}\"")
       end
     end
   end

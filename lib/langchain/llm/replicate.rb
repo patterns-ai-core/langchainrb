@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   #
   # Wrapper around Replicate.com LLM provider
   #
@@ -8,7 +8,7 @@ module Langchain::LLM
   #     gem "replicate-ruby", "~> 0.2.2"
   #
   # Usage:
-  #     llm = Langchain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
+  #     llm = LangChain::LLM::Replicate.new(api_key: ENV["REPLICATE_API_KEY"])
   class Replicate < Base
     DEFAULTS = {
       # TODO: Figure out how to send the temperature to the API
@@ -39,7 +39,7 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
-    # @return [Langchain::LLM::Response::ReplicateResponse] Response object
+    # @return [LangChain::LLM::Response::ReplicateResponse] Response object
     #
     def embed(text:)
       response = embeddings_model.predict(input: text)
@@ -49,14 +49,14 @@ module Langchain::LLM
         sleep(0.1)
       end
 
-      Langchain::LLM::Response::ReplicateResponse.new(response, model: @defaults[:embedding_model])
+      LangChain::LLM::Response::ReplicateResponse.new(response, model: @defaults[:embedding_model])
     end
 
     #
     # Generate a completion for a given prompt
     #
     # @param prompt [String] The prompt to generate a completion for
-    # @return [Langchain::LLM::ReplicateResponse] Response object
+    # @return [LangChain::LLM::ReplicateResponse] Response object
     #
     def complete(prompt:, **params)
       response = completion_model.predict(prompt: prompt)
@@ -66,7 +66,7 @@ module Langchain::LLM
         sleep(0.1)
       end
 
-      Langchain::LLM::Response::ReplicateResponse.new(response, model: @defaults[:completion_model])
+      LangChain::LLM::Response::ReplicateResponse.new(response, model: @defaults[:completion_model])
     end
 
     #
@@ -76,8 +76,8 @@ module Langchain::LLM
     # @return [String] The summary
     #
     def summarize(text:)
-      prompt_template = Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/llm/prompts/summarize_template.yaml")
+      prompt_template = LangChain::Prompt.load_from_path(
+        file_path: LangChain.root.join("langchain/llm/prompts/summarize_template.yaml")
       )
       prompt = prompt_template.format(text: text)
 

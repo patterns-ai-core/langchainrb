@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-module Langchain::Tool
+module LangChain::Tool
   #
   # Tavily Search is a robust search API tailored specifically for LLM Agents.
   # It seamlessly integrates with diverse data sources to ensure a superior, relevant search experience.
   #
   # Usage:
-  #    tavily = Langchain::Tool::Tavily.new(api_key: ENV["TAVILY_API_KEY"])
+  #    tavily = LangChain::Tool::Tavily.new(api_key: ENV["TAVILY_API_KEY"])
   #
   class Tavily
-    extend Langchain::ToolDefinition
+    extend LangChain::ToolDefinition
 
     define_function :search, description: "Tavily Tool: Robust search API" do
       property :query, type: "string", description: "The search query string", required: true
@@ -41,7 +41,7 @@ module Langchain::Tool
     # @param include_domains [Array<String>] A list of domains to specifically include in the search results. Default is None, which includes all domains.
     # @param exclude_domains [Array<String>] A list of domains to specifically exclude from the search results. Default is None, which doesn't exclude any domains.
     #
-    # @return [Langchain::Tool::Response] The search results in JSON format.
+    # @return [LangChain::Tool::Response] The search results in JSON format.
     def search(
       query:,
       search_depth: "basic",

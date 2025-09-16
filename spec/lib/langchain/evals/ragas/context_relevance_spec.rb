@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Evals::Ragas::ContextRelevance do
-  let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+RSpec.describe LangChain::Evals::Ragas::ContextRelevance do
+  let(:llm) { LangChain::LLM::OpenAI.new(api_key: "123") }
   subject { described_class.new(llm: llm) }
 
   let(:question) { "When was the Chimnabai Clock Tower completed, and who was it named after?" }
@@ -12,7 +12,7 @@ RSpec.describe Langchain::Evals::Ragas::ContextRelevance do
     let(:sentences) { "It was completed in 1896 and named in memory of Chimnabai I (1864–1885), a queen and the first wife of Sayajirao Gaekwad III of Baroda State." }
 
     before do
-      allow(subject.llm).to receive(:complete).and_return(double("Langchain::LLM::Response::OpenAIResponse", completion: sentences))
+      allow(subject.llm).to receive(:complete).and_return(double("LangChain::LLM::Response::OpenAIResponse", completion: sentences))
     end
 
     it "generates the context_relevance score" do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Tool
+module LangChain::Tool
   #
   # Connects to a SQL database, executes SQL queries, and outputs DB schema for Agents to use
   #
@@ -8,11 +8,11 @@ module Langchain::Tool
   #     gem "sequel", "~> 5.87.0"
   #
   # Usage:
-  #     database = Langchain::Tool::Database.new(connection_string: "postgres://user:password@localhost:5432/db_name")
+  #     database = LangChain::Tool::Database.new(connection_string: "postgres://user:password@localhost:5432/db_name")
   #
   class Database
-    extend Langchain::ToolDefinition
-    include Langchain::DependencyHelper
+    extend LangChain::ToolDefinition
+    include LangChain::DependencyHelper
 
     define_function :list_tables, description: "Database Tool: Returns a list of tables in the database"
 
@@ -49,7 +49,7 @@ module Langchain::Tool
 
     # Database Tool: Returns a list of tables in the database
     #
-    # @return [Langchain::Tool::Response] List of tables in the database
+    # @return [LangChain::Tool::Response] List of tables in the database
     def list_tables
       tool_response(content: db.tables)
     end
@@ -57,11 +57,11 @@ module Langchain::Tool
     # Database Tool: Returns the schema for a list of tables
     #
     # @param tables [Array<String>] The tables to describe.
-    # @return [Langchain::Tool::Response] The schema for the tables
+    # @return [LangChain::Tool::Response] The schema for the tables
     def describe_tables(tables: [])
       return "No tables specified" if tables.empty?
 
-      Langchain.logger.debug("#{self.class} - Describing tables: #{tables}")
+      LangChain.logger.debug("#{self.class} - Describing tables: #{tables}")
 
       result = tables
         .map do |table|
@@ -74,9 +74,9 @@ module Langchain::Tool
 
     # Database Tool: Returns the database schema
     #
-    # @return [Langchain::Tool::Response] Database schema
+    # @return [LangChain::Tool::Response] Database schema
     def dump_schema
-      Langchain.logger.debug("#{self.class} - Dumping schema tables and keys")
+      LangChain.logger.debug("#{self.class} - Dumping schema tables and keys")
 
       schemas = db.tables.map do |table|
         describe_table(table)
@@ -88,13 +88,13 @@ module Langchain::Tool
     # Database Tool: Executes a SQL query and returns the results
     #
     # @param input [String] SQL query to be executed
-    # @return [Langchain::Tool::Response] Results from the SQL query
+    # @return [LangChain::Tool::Response] Results from the SQL query
     def execute(input:)
-      Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
+      LangChain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       tool_response(content: db[input].to_a)
     rescue Sequel::DatabaseError => e
-      Langchain.logger.error("#{self.class} - #{e.message}")
+      LangChain.logger.error("#{self.class} - #{e.message}")
       tool_response(content: e.message)
     end
 
@@ -103,7 +103,7 @@ module Langchain::Tool
     # Describes a table and its schema
     #
     # @param table [String] The table to describe
-    # @return [Langchain::Tool::Response] The schema for the table
+    # @return [LangChain::Tool::Response] The schema for the table
     def describe_table(table)
       # TODO: There's probably a clear way to do all of this below
 

@@ -2,7 +2,7 @@
 
 require "delegate"
 
-module Langchain::LLM::Parameters
+module LangChain::LLM::Parameters
   class Chat < SimpleDelegator
     # TODO: At the moment, the UnifiedParamters only considers keys.  In the
     # future, we may consider ActiveModel-style validations and further typed
@@ -46,7 +46,7 @@ module Langchain::LLM::Parameters
 
     def initialize(parameters: {})
       super(
-        ::Langchain::LLM::UnifiedParameters.new(
+        ::LangChain::LLM::UnifiedParameters.new(
           schema: SCHEMA.dup,
           parameters: parameters
         )

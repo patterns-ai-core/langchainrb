@@ -5,14 +5,14 @@ require "pg"
 if ENV["POSTGRES_URL"]
   client = ::PG.connect(ENV["POSTGRES_URL"])
 
-  subject = Langchain::Vectorsearch::Pgvector.new(
+  subject = LangChain::Vectorsearch::Pgvector.new(
     url: ENV["POSTGRES_URL"],
     index_name: "products",
-    llm: Langchain::LLM::OpenAI.new(api_key: "123")
+    llm: LangChain::LLM::OpenAI.new(api_key: "123")
   )
   subject.create_default_schema
 
-  RSpec.describe Langchain::Vectorsearch::Pgvector do
+  RSpec.describe LangChain::Vectorsearch::Pgvector do
     let(:client) { client }
 
     subject {

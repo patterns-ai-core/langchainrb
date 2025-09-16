@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Tool::RubyCodeInterpreter do
+RSpec.describe LangChain::Tool::RubyCodeInterpreter do
   describe "#execute" do
     it "executes the expression" do
       response = subject.execute(input: '"hello world".reverse!')
-      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response).to be_a(LangChain::ToolResponse)
       expect(response.content).to eq("dlrow olleh")
     end
 
@@ -18,7 +18,7 @@ RSpec.describe Langchain::Tool::RubyCodeInterpreter do
       CODE
 
       response = subject.execute(input: code)
-      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response).to be_a(LangChain::ToolResponse)
       expect(response.content).to eq("dlrow olleh")
     end
   end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Chunker::Sentence do
+RSpec.describe LangChain::Chunker::Sentence do
   let(:source) { "spec/fixtures/loaders/the_alchemist.txt" }
   let(:text) { File.read(source) }
 

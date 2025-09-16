@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   #
   # Wrapper around Anthropic APIs.
   #
@@ -8,7 +8,7 @@ module Langchain::LLM
   #   gem "anthropic", "~> 0.3.2"
   #
   # Usage:
-  #     llm = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
+  #     llm = LangChain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
   #
   class Anthropic < Base
     DEFAULTS = {
@@ -23,11 +23,11 @@ module Langchain::LLM
     # @param api_key [String] The API key to use
     # @param llm_options [Hash] Options to pass to the Anthropic client
     # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, completion_model:, chat_model:, max_tokens:, thinking: }
-    # @return [Langchain::LLM::Anthropic] Langchain::LLM::Anthropic instance
+    # @return [LangChain::LLM::Anthropic] LangChain::LLM::Anthropic instance
     def initialize(api_key:, llm_options: {}, default_options: {})
       begin
         depends_on "ruby-anthropic", req: "anthropic"
-      rescue Langchain::DependencyHelper::LoadError
+      rescue LangChain::DependencyHelper::LoadError
         # Falls back to the older `anthropic` gem if `ruby-anthropic` gem cannot be loaded.
         depends_on "anthropic"
       end
@@ -57,7 +57,7 @@ module Langchain::LLM
     # @param top_k [Integer] The top k value to use
     # @param metadata [Hash] The metadata to use
     # @param stream [Boolean] Whether to stream the response
-    # @return [Langchain::LLM::Response::AnthropicResponse] The completion
+    # @return [LangChain::LLM::Response::AnthropicResponse] The completion
     def complete(
       prompt:,
       model: @defaults[:completion_model],
@@ -88,12 +88,12 @@ module Langchain::LLM
         client.complete(parameters: parameters)
       end
 
-      Langchain::LLM::Response::AnthropicResponse.new(response)
+      LangChain::LLM::Response::AnthropicResponse.new(response)
     end
 
     # Generate a chat completion for given messages
     #
-    # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @param [Hash] params unified chat parmeters from [LangChain::LLM::Parameters::Chat::SCHEMA]
     # @option params [Array<String>] :messages Input messages
     # @option params [String] :model The model that will complete your prompt
     # @option params [Integer] :max_tokens Maximum number of tokens to generate before stopping
@@ -106,7 +106,7 @@ module Langchain::LLM
     # @option params [Hash] :thinking Enable extended thinking mode, e.g. { type: "enabled", budget_tokens: 4000 }
     # @option params [Integer] :top_k Only sample from the top K options for each subsequent token
     # @option params [Float] :top_p Use nucleus sampling.
-    # @return [Langchain::LLM::Response::AnthropicResponse] The chat completion
+    # @return [LangChain::LLM::Response::AnthropicResponse] The chat completion
     def chat(params = {}, &block)
       set_extra_headers! if params[:tools]
 
@@ -129,14 +129,14 @@ module Langchain::LLM
       response = response_from_chunks if block
       reset_response_chunks
 
-      Langchain::LLM::Response::AnthropicResponse.new(response)
+      LangChain::LLM::Response::AnthropicResponse.new(response)
     end
 
     def with_api_error_handling
       response = yield
       return if response.empty?
 
-      raise Langchain::LLM::ApiError.new "Anthropic API error: #{response.dig("error", "message")}" if response&.dig("error")
+      raise LangChain::LLM::ApiError.new "Anthropic API error: #{response.dig("error", "message")}" if response&.dig("error")
 
       response
     end

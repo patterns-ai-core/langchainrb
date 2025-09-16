@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   class Assistant
     module LLM
       module Adapters
@@ -20,8 +20,8 @@ module Langchain
             tool_choice:,
             parallel_tool_calls:
           )
-            Langchain.logger.warn "WARNING: `parallel_tool_calls:` is not supported by Ollama currently" if parallel_tool_calls
-            Langchain.logger.warn "WARNING: `tool_choice:` is not supported by Ollama currently" if tool_choice
+            LangChain.logger.warn "WARNING: `parallel_tool_calls:` is not supported by Ollama currently" if parallel_tool_calls
+            LangChain.logger.warn "WARNING: `tool_choice:` is not supported by Ollama currently" if tool_choice
 
             params = {messages: messages}
             if tools.any?
@@ -54,7 +54,7 @@ module Langchain
 
             tool_arguments = tool_call.dig("function", "arguments")
             tool_arguments = if tool_arguments.is_a?(Hash)
-              Langchain::Utils::HashTransformer.symbolize_keys(tool_arguments)
+              LangChain::Utils::HashTransformer.symbolize_keys(tool_arguments)
             else
               JSON.parse(tool_arguments, symbolize_names: true)
             end

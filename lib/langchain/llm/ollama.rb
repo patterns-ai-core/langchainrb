@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   # Interface to Ollama API.
   # Available models: https://ollama.ai/library
   #
@@ -8,7 +8,7 @@ module Langchain::LLM
   #    gem "faraday"
   #
   # Usage:
-  #    llm = Langchain::LLM::Ollama.new(url: ENV["OLLAMA_URL"], default_options: {})
+  #    llm = LangChain::LLM::Ollama.new(url: ENV["OLLAMA_URL"], default_options: {})
   #
   class Ollama < Base
     attr_reader :url, :defaults
@@ -74,7 +74,7 @@ module Langchain::LLM
     #   For a list of valid parameters and values, see:
     #   https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values
     # @option block [Proc] Receive the intermediate responses as a stream of +OllamaResponse+ objects.
-    # @return [Langchain::LLM::Response::OllamaResponse] Response object
+    # @return [LangChain::LLM::Response::OllamaResponse] Response object
     #
     # Example:
     #
@@ -151,7 +151,7 @@ module Langchain::LLM
         req.options.on_data = json_responses_chunk_handler do |parsed_chunk|
           responses_stream << parsed_chunk
 
-          block&.call(Langchain::LLM::Response::OllamaResponse.new(parsed_chunk, model: parameters[:model]))
+          block&.call(LangChain::LLM::Response::OllamaResponse.new(parsed_chunk, model: parameters[:model]))
         end
       end
 
@@ -162,14 +162,14 @@ module Langchain::LLM
     #
     # @param messages [Array] The chat messages
     # @param model [String] The model to use
-    # @param params [Hash] Unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
+    # @param params [Hash] Unified chat parmeters from [LangChain::LLM::Parameters::Chat::SCHEMA]
     # @option params [Array<Hash>] :messages Array of messages
     # @option params [String] :model Model name
     # @option params [String] :format Format to return a response in. Currently the only accepted value is `json`
     # @option params [Float] :temperature The temperature to use
     # @option params [String] :template The prompt template to use (overrides what is defined in the `Modelfile`)
     # @option block [Proc] Receive the intermediate responses as a stream of +OllamaResponse+ objects.
-    # @return [Langchain::LLM::Response::OllamaResponse] Response object
+    # @return [LangChain::LLM::Response::OllamaResponse] Response object
     #
     # Example:
     #
@@ -188,7 +188,7 @@ module Langchain::LLM
         req.options.on_data = json_responses_chunk_handler do |parsed_chunk|
           responses_stream << parsed_chunk
 
-          block&.call(Langchain::LLM::Response::OllamaResponse.new(parsed_chunk, model: parameters[:model]))
+          block&.call(LangChain::LLM::Response::OllamaResponse.new(parsed_chunk, model: parameters[:model]))
         end
       end
 
@@ -201,7 +201,7 @@ module Langchain::LLM
     # @param text [String] The text to generate an embedding for
     # @param model [String] The model to use
     # @param options [Hash] The options to use
-    # @return [Langchain::LLM::Response::OllamaResponse] Response object
+    # @return [LangChain::LLM::Response::OllamaResponse] Response object
     #
     def embed(
       text:,
@@ -253,7 +253,7 @@ module Langchain::LLM
         req.body = parameters
       end
 
-      Langchain::LLM::Response::OllamaResponse.new(response.body, model: parameters[:model])
+      LangChain::LLM::Response::OllamaResponse.new(response.body, model: parameters[:model])
     end
 
     # Generate a summary for a given text
@@ -261,8 +261,8 @@ module Langchain::LLM
     # @param text [String] The text to generate a summary for
     # @return [String] The summary
     def summarize(text:)
-      prompt_template = Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/llm/prompts/ollama/summarize_template.yaml")
+      prompt_template = LangChain::Prompt.load_from_path(
+        file_path: LangChain.root.join("langchain/llm/prompts/ollama/summarize_template.yaml")
       )
       prompt = prompt_template.format(text: text)
 
@@ -276,7 +276,7 @@ module Langchain::LLM
         conn.request :json
         conn.response :json
         conn.response :raise_error
-        conn.response :logger, Langchain.logger, {headers: true, bodies: true, errors: true}
+        conn.response :logger, LangChain.logger, {headers: true, bodies: true, errors: true}
       end
     end
 
@@ -300,7 +300,7 @@ module Langchain::LLM
         "response" => responses_stream.map { |resp| resp["response"] }.join
       )
 
-      Langchain::LLM::Response::OllamaResponse.new(final_response, model: model)
+      LangChain::LLM::Response::OllamaResponse.new(final_response, model: model)
     end
 
     # BUG: If streamed, this method does not currently return the tool_calls response.
@@ -308,7 +308,7 @@ module Langchain::LLM
       final_response = responses_stream.last
       final_response["message"]["content"] = responses_stream.map { |resp| resp.dig("message", "content") }.join
 
-      Langchain::LLM::Response::OllamaResponse.new(final_response, model: model)
+      LangChain::LLM::Response::OllamaResponse.new(final_response, model: model)
     end
   end
 end

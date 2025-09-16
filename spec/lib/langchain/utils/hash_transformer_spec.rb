@@ -1,4 +1,4 @@
-RSpec.describe Langchain::Utils::HashTransformer do
+RSpec.describe LangChain::Utils::HashTransformer do
   describe ".symbolize_keys" do
     it "symbolizes string keys at the top level of the hash" do
       hash = {"name" => "Alice", "age" => 30}

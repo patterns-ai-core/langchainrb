@@ -2,7 +2,7 @@
 
 require "open-uri"
 
-module Langchain
+module LangChain
   class Loader
     class FileNotFound < StandardError; end
 
@@ -10,18 +10,18 @@ module Langchain
 
     URI_REGEX = %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}
 
-    # Load data from a file or URL. Shorthand for  `Langchain::Loader.new(path).load`
+    # Load data from a file or URL. Shorthand for  `LangChain::Loader.new(path).load`
     #
     # == Examples
     #
     #     # load a URL
-    #     data = Langchain::Loader.load("https://example.com/docs/README.md")
+    #     data = LangChain::Loader.load("https://example.com/docs/README.md")
     #
     #     # load a file
-    #     data = Langchain::Loader.load("README.md")
+    #     data = LangChain::Loader.load("README.md")
     #
     #    # Load data using a custom processor
-    #    data = Langchain::Loader.load("README.md") do |raw_data, options|
+    #    data = LangChain::Loader.load("README.md") do |raw_data, options|
     #      # your processing code goes here
     #      # return data at the end here
     #    end
@@ -35,11 +35,11 @@ module Langchain
     end
     # rubocop:enable Style/ArgumentsForwarding
 
-    # Initialize Langchain::Loader
+    # Initialize LangChain::Loader
     # @param path [String | Pathname] path to file or URL
     # @param options [Hash] options passed to the processor class used to process the data
-    # @return [Langchain::Loader] loader instance
-    def initialize(path, options = {}, chunker: Langchain::Chunker::Text)
+    # @return [LangChain::Loader] loader instance
+    def initialize(path, options = {}, chunker: LangChain::Chunker::Text)
       @options = options
       @path = path
       @chunker = chunker
@@ -63,7 +63,7 @@ module Langchain
 
     # Load data from a file or URL
     #
-    #    loader = Langchain::Loader.new("README.md")
+    #    loader = LangChain::Loader.new("README.md")
     #    # Load data using default processor for the file
     #    loader.load
     #
@@ -109,7 +109,7 @@ module Langchain
     def load_from_directory(&block)
       Dir.glob(File.join(@path, "**/*")).map do |file|
         # Only load and add to result files with supported extensions
-        Langchain::Loader.new(file, @options).load(&block)
+        LangChain::Loader.new(file, @options).load(&block)
       rescue
         UnknownFormatError.new("Unknown format: #{source_type}")
       end.flatten.compact
@@ -125,13 +125,13 @@ module Langchain
         processor_klass.new(@options).parse(@raw_data)
       end
 
-      Langchain::Data.new(result, source: @options[:source], chunker: @chunker)
+      LangChain::Data.new(result, source: @options[:source], chunker: @chunker)
     end
 
     def processor_klass
       raise UnknownFormatError.new("Unknown format: #{source_type}") unless (kind = find_processor)
 
-      Langchain::Processors.const_get(kind)
+      LangChain::Processors.const_get(kind)
     end
 
     def find_processor
@@ -139,11 +139,11 @@ module Langchain
     end
 
     def processor_matches?(constant, value)
-      Langchain::Processors.const_get(constant).include?(value)
+      LangChain::Processors.const_get(constant).include?(value)
     end
 
     def processors
-      Langchain::Processors.constants
+      LangChain::Processors.constants
     end
 
     def source_type

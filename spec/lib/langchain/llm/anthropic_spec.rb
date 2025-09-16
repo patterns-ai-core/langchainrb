@@ -2,7 +2,7 @@
 
 require "anthropic"
 
-RSpec.describe Langchain::LLM::Anthropic do
+RSpec.describe LangChain::LLM::Anthropic do
   let(:subject) { described_class.new(api_key: "123") }
 
   describe "#initialize" do
@@ -70,7 +70,7 @@ RSpec.describe Langchain::LLM::Anthropic do
       end
 
       it "raises an error" do
-        expect { subject.complete(prompt: completion) }.to raise_error(Langchain::LLM::ApiError, "Anthropic API error: The request is invalid. Please check the request and try again.")
+        expect { subject.complete(prompt: completion) }.to raise_error(LangChain::LLM::ApiError, "Anthropic API error: The request is invalid. Please check the request and try again.")
       end
     end
   end
@@ -145,7 +145,7 @@ RSpec.describe Langchain::LLM::Anthropic do
 
       it "handles streaming responses correctly" do
         rsp = subject.chat(messages: messages, &stream_handler)
-        expect(rsp).to be_a(Langchain::LLM::Response::AnthropicResponse)
+        expect(rsp).to be_a(LangChain::LLM::Response::AnthropicResponse)
         expect(rsp.completion_tokens).to eq(10)
         expect(rsp.total_tokens).to eq(10)
         expect(rsp.chat_completion).to eq("Life is pretty good")
@@ -167,7 +167,7 @@ RSpec.describe Langchain::LLM::Anthropic do
 
       it "handles streaming responses correctly" do
         rsp = subject.chat(messages: messages, &stream_handler)
-        expect(rsp).to be_a(Langchain::LLM::Response::AnthropicResponse)
+        expect(rsp).to be_a(LangChain::LLM::Response::AnthropicResponse)
         expect(rsp.completion_tokens).to eq(89)
         expect(rsp.total_tokens).to eq(89)
         expect(rsp.chat_completion).to eq("Okay, let's check the weather for San Francisco, CA:")
@@ -184,7 +184,7 @@ RSpec.describe Langchain::LLM::Anthropic do
           rsp = subject.chat(messages: [{role: "user", content: "What's the weather?"}], &stream_handler)
 
           # Verify the response
-          expect(rsp).to be_a(Langchain::LLM::Response::AnthropicResponse)
+          expect(rsp).to be_a(LangChain::LLM::Response::AnthropicResponse)
           expect(rsp.chat_completion).to eq("I'll check the weather for you:")
 
           # Verify the tool call with empty input is handled correctly

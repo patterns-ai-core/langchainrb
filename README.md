@@ -1,4 +1,4 @@
-💎🔗 Langchain.rb
+💎🔗 LangChain.rb
 ---
 ⚡ Building LLM-powered applications in Ruby ⚡
 
@@ -53,7 +53,7 @@ require "langchain"
 
 # Unified Interface for LLMs
 
-The `Langchain::LLM` module provides a unified interface for interacting with various Large Language Model (LLM) providers. This abstraction allows you to easily switch between different LLM backends without changing your application code.
+The `LangChain::LLM` module provides a unified interface for interacting with various Large Language Model (LLM) providers. This abstraction allows you to easily switch between different LLM backends without changing your application code.
 
 ## Supported LLM Providers
 
@@ -71,7 +71,7 @@ The `Langchain::LLM` module provides a unified interface for interacting with va
 
 ## Usage
 
-All LLM classes inherit from `Langchain::LLM::Base` and provide a consistent interface for common operations:
+All LLM classes inherit from `LangChain::LLM::Base` and provide a consistent interface for common operations:
 
 1. Generating embeddings
 2. Generating prompt completions
@@ -82,7 +82,7 @@ All LLM classes inherit from `Langchain::LLM::Base` and provide a consistent int
 Most LLM classes can be initialized with an API key and optional default options:
 
 ```ruby
-llm = Langchain::LLM::OpenAI.new(
+llm = LangChain::LLM::OpenAI.new(
   api_key: ENV["OPENAI_API_KEY"],
   default_options: { temperature: 0.7, chat_model: "gpt-4o" }
 )
@@ -159,13 +159,13 @@ Thanks to the unified interface, you can easily switch between different LLM pro
 
 ```ruby
 # Using Anthropic
-anthropic_llm = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
+anthropic_llm = LangChain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
 
 # Using Google Gemini
-gemini_llm = Langchain::LLM::GoogleGemini.new(api_key: ENV["GOOGLE_GEMINI_API_KEY"])
+gemini_llm = LangChain::LLM::GoogleGemini.new(api_key: ENV["GOOGLE_GEMINI_API_KEY"])
 
 # Using OpenAI
-openai_llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+openai_llm = LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 ```
 
 ## Response Objects
@@ -190,14 +190,14 @@ Each LLM method returns a response object that provides a consistent interface f
 Create a prompt with input variables:
 
 ```ruby
-prompt = Langchain::Prompt::PromptTemplate.new(template: "Tell me a {adjective} joke about {content}.", input_variables: ["adjective", "content"])
+prompt = LangChain::Prompt::PromptTemplate.new(template: "Tell me a {adjective} joke about {content}.", input_variables: ["adjective", "content"])
 prompt.format(adjective: "funny", content: "chickens") # "Tell me a funny joke about chickens."
 ```
 
 Creating a PromptTemplate using just a prompt and no input_variables:
 
 ```ruby
-prompt = Langchain::Prompt::PromptTemplate.from_template("Tell me a funny joke about chickens.")
+prompt = LangChain::Prompt::PromptTemplate.from_template("Tell me a funny joke about chickens.")
 prompt.input_variables # []
 prompt.format # "Tell me a funny joke about chickens."
 ```
@@ -211,7 +211,7 @@ prompt.save(file_path: "spec/fixtures/prompt/prompt_template.json")
 Loading a new prompt template using a JSON file:
 
 ```ruby
-prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.json")
+prompt = LangChain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.json")
 prompt.input_variables # ["adjective", "content"]
 ```
 
@@ -220,10 +220,10 @@ prompt.input_variables # ["adjective", "content"]
 Create a prompt with a few shot examples:
 
 ```ruby
-prompt = Langchain::Prompt::FewShotPromptTemplate.new(
+prompt = LangChain::Prompt::FewShotPromptTemplate.new(
   prefix: "Write antonyms for the following words.",
   suffix: "Input: {adjective}\nOutput:",
-  example_prompt: Langchain::Prompt::PromptTemplate.new(
+  example_prompt: LangChain::Prompt::PromptTemplate.new(
     input_variables: ["input", "output"],
     template: "Input: {input}\nOutput: {output}"
   ),
@@ -257,14 +257,14 @@ prompt.save(file_path: "spec/fixtures/prompt/few_shot_prompt_template.json")
 Loading a new prompt template using a JSON file:
 
 ```ruby
-prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/few_shot_prompt_template.json")
+prompt = LangChain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/few_shot_prompt_template.json")
 prompt.prefix # "Write antonyms for the following words."
 ```
 
 Loading a new prompt template using a YAML file:
 
 ```ruby
-prompt = Langchain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.yaml")
+prompt = LangChain::Prompt.load_from_path(file_path: "spec/fixtures/prompt/prompt_template.yaml")
 prompt.input_variables #=> ["adjective", "content"]
 ```
 
@@ -314,8 +314,8 @@ json_schema = {
   required: ["name", "age", "interests"],
   additionalProperties: false
 }
-parser = Langchain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
-prompt = Langchain::Prompt::PromptTemplate.new(template: "Generate details of a fictional character.\n{format_instructions}\nCharacter description: {description}", input_variables: ["description", "format_instructions"])
+parser = LangChain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
+prompt = LangChain::Prompt::PromptTemplate.new(template: "Generate details of a fictional character.\n{format_instructions}\nCharacter description: {description}", input_variables: ["description", "format_instructions"])
 prompt_text = prompt.format(description: "Korean chemistry student", format_instructions: parser.get_format_instructions)
 # Generate details of a fictional character.
 # You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
@@ -325,7 +325,7 @@ prompt_text = prompt.format(description: "Korean chemistry student", format_inst
 Then parse the llm response:
 
 ```ruby
-llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+llm = LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 llm_response = llm.chat(messages: [{role: "user", content: prompt_text}]).completion
 parser.parse(llm_response)
 # {
@@ -346,8 +346,8 @@ If the parser fails to parse the LLM response, you can use the `OutputFixingPars
 ```ruby
 begin
   parser.parse(llm_response)
-rescue Langchain::OutputParsers::OutputParserException => e
-  fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
+rescue LangChain::OutputParsers::OutputParserException => e
+  fix_parser = LangChain::OutputParsers::OutputFixingParser.from_llm(
     llm: llm,
     parser: parser
   )
@@ -359,8 +359,8 @@ Alternatively, if you don't need to handle the `OutputParserException`, you can 
 
 ```ruby
 # we already have the `OutputFixingParser`:
-# parser = Langchain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
-fix_parser = Langchain::OutputParsers::OutputFixingParser.from_llm(
+# parser = LangChain::OutputParsers::StructuredOutputParser.from_json_schema(json_schema)
+fix_parser = LangChain::OutputParsers::OutputFixingParser.from_llm(
   llm: llm,
   parser: parser
 )
@@ -378,7 +378,7 @@ A typical RAG workflow follows the 3 steps below:
 Most common use-case for a RAG system is powering Q&A systems where users pose natural language questions and receive answers in natural language.
 
 ### Vector search databases
-Langchain.rb provides a convenient unified interface on top of supported vectorsearch databases that make it easy to configure your index, add data, query and retrieve from it.
+LangChain.rb provides a convenient unified interface on top of supported vectorsearch databases that make it easy to configure your index, add data, query and retrieve from it.
 
 #### Supported vector search databases and features:
 
@@ -402,11 +402,11 @@ gem "weaviate-ruby", "~> 0.8.9"
 
 Choose and instantiate the LLM provider you'll be using to generate embeddings
 ```ruby
-llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+llm = LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 ```
 
 ```ruby
-client = Langchain::Vectorsearch::Weaviate.new(
+client = LangChain::Vectorsearch::Weaviate.new(
     url: ENV["WEAVIATE_URL"],
     api_key: ENV["WEAVIATE_API_KEY"],
     index_name: "Documents",
@@ -416,13 +416,13 @@ client = Langchain::Vectorsearch::Weaviate.new(
 
 You can instantiate any other supported vector search database:
 ```ruby
-client = Langchain::Vectorsearch::Chroma.new(...)   # `gem "chroma-db", "~> 0.6.0"`
-client = Langchain::Vectorsearch::Hnswlib.new(...)  # `gem "hnswlib", "~> 0.8.1"`
-client = Langchain::Vectorsearch::Milvus.new(...)   # `gem "milvus", "~> 0.9.3"`
-client = Langchain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 1.0"`
-client = Langchain::Vectorsearch::Pgvector.new(...) # `gem "pgvector", "~> 0.2"`
-client = Langchain::Vectorsearch::Qdrant.new(...)   # `gem "qdrant-ruby", "~> 0.9.3"`
-client = Langchain::Vectorsearch::Elasticsearch.new(...)   # `gem "elasticsearch", "~> 8.2.0"`
+client = LangChain::Vectorsearch::Chroma.new(...)   # `gem "chroma-db", "~> 0.6.0"`
+client = LangChain::Vectorsearch::Hnswlib.new(...)  # `gem "hnswlib", "~> 0.8.1"`
+client = LangChain::Vectorsearch::Milvus.new(...)   # `gem "milvus", "~> 0.9.3"`
+client = LangChain::Vectorsearch::Pinecone.new(...) # `gem "pinecone", "~> 1.0"`
+client = LangChain::Vectorsearch::Pgvector.new(...) # `gem "pgvector", "~> 0.2"`
+client = LangChain::Vectorsearch::Qdrant.new(...)   # `gem "qdrant-ruby", "~> 0.9.3"`
+client = LangChain::Vectorsearch::Elasticsearch.new(...)   # `gem "elasticsearch", "~> 8.2.0"`
 ```
 
 Create the default schema:
@@ -442,9 +442,9 @@ client.add_texts(
 
 Or use the file parsers to load, parse and index data into your database:
 ```ruby
-my_pdf = Langchain.root.join("path/to/my.pdf")
-my_text = Langchain.root.join("path/to/my.txt")
-my_docx = Langchain.root.join("path/to/my.docx")
+my_pdf = LangChain.root.join("path/to/my.pdf")
+my_text = LangChain.root.join("path/to/my.txt")
+my_docx = LangChain.root.join("path/to/my.docx")
 
 client.add_data(paths: [my_pdf, my_text, my_docx])
 ```
@@ -477,7 +477,7 @@ client.ask(question: "...")
 ```
 
 ## Assistants
-`Langchain::Assistant` is a powerful and flexible class that combines Large Language Models (LLMs), tools, and conversation management to create intelligent, interactive assistants. It's designed to handle complex conversations, execute tools, and provide coherent responses based on the context of the interaction.
+`LangChain::Assistant` is a powerful and flexible class that combines Large Language Models (LLMs), tools, and conversation management to create intelligent, interactive assistants. It's designed to handle complex conversations, execute tools, and provide coherent responses based on the context of the interaction.
 
 ### Features
 * Supports multiple LLM providers (OpenAI, Google Gemini, Anthropic, Mistral AI and open-source models via Ollama)
@@ -488,11 +488,11 @@ client.ask(question: "...")
 
 ### Usage
 ```ruby
-llm = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-assistant = Langchain::Assistant.new(
+llm = LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+assistant = LangChain::Assistant.new(
   llm: llm,
   instructions: "You're a helpful AI assistant",
-  tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
+  tools: [LangChain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
 )
 
 # Add a user message and run the assistant
@@ -511,10 +511,10 @@ messages = assistant.messages
 assistant.run(auto_tool_execution: true)
 
 # If you want to stream the response, you can add a response handler
-assistant = Langchain::Assistant.new(
+assistant = LangChain::Assistant.new(
   llm: llm,
   instructions: "You're a helpful AI assistant",
-  tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
+  tools: [LangChain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
 ) do |response_chunk|
   # ...handle the response stream
   # print(response_chunk.inspect)
@@ -548,22 +548,22 @@ assistant.tool_execution_callback = -> (tool_call_id, tool_name, method_name, to
 * `messages`: Returns a list of ongoing messages
 
 ### Built-in Tools 🛠️
-* `Langchain::Tool::Calculator`: Useful for evaluating math expressions. Requires `gem "eqn"`.
-* `Langchain::Tool::Database`: Connect your SQL database. Requires `gem "sequel"`.
-* `Langchain::Tool::FileSystem`: Interact with the file system (read & write).
-* `Langchain::Tool::GoogleSearch`: Wrapper around SerpApi's Google Search API. Requires `gem "google_search_results"`.
-* `Langchain::Tool::NewsRetriever`: A wrapper around [NewsApi.org](https://newsapi.org) to fetch news articles.
-* `Langchain::Tool::RubyCodeInterpreter`: Useful for evaluating generated Ruby code. Requires `gem "safe_ruby"` (In need of a better solution).
-* `Langchain::Tool::Tavily`: A wrapper around [Tavily AI](https://tavily.com).
-* `Langchain::Tool::Vectorsearch`: A wrapper for vector search classes.
-* `Langchain::Tool::Weather`: Calls [Open Weather API](https://home.openweathermap.org) to retrieve the current weather.
-* `Langchain::Tool::Wikipedia`: Calls Wikipedia API. Requires `gem "wikipedia-client"`.
+* `LangChain::Tool::Calculator`: Useful for evaluating math expressions. Requires `gem "eqn"`.
+* `LangChain::Tool::Database`: Connect your SQL database. Requires `gem "sequel"`.
+* `LangChain::Tool::FileSystem`: Interact with the file system (read & write).
+* `LangChain::Tool::GoogleSearch`: Wrapper around SerpApi's Google Search API. Requires `gem "google_search_results"`.
+* `LangChain::Tool::NewsRetriever`: A wrapper around [NewsApi.org](https://newsapi.org) to fetch news articles.
+* `LangChain::Tool::RubyCodeInterpreter`: Useful for evaluating generated Ruby code. Requires `gem "safe_ruby"` (In need of a better solution).
+* `LangChain::Tool::Tavily`: A wrapper around [Tavily AI](https://tavily.com).
+* `LangChain::Tool::Vectorsearch`: A wrapper for vector search classes.
+* `LangChain::Tool::Weather`: Calls [Open Weather API](https://home.openweathermap.org) to retrieve the current weather.
+* `LangChain::Tool::Wikipedia`: Calls Wikipedia API. Requires `gem "wikipedia-client"`.
 
 ### Creating custom Tools
-The Langchain::Assistant can be easily extended with custom tools by creating classes that `extend Langchain::ToolDefinition` module and implement required methods.
+The LangChain::Assistant can be easily extended with custom tools by creating classes that `extend LangChain::ToolDefinition` module and implement required methods.
 ```ruby
 class MovieInfoTool
-  extend Langchain::ToolDefinition
+  extend LangChain::ToolDefinition
 
   define_function :search_movie, description: "MovieInfoTool: Search for a movie by title" do
     property :query, type: "string", description: "The movie title to search for", required: true
@@ -591,7 +591,7 @@ end
 ```ruby
 movie_tool = MovieInfoTool.new(api_key: "...")
 
-assistant = Langchain::Assistant.new(
+assistant = LangChain::Assistant.new(
   llm: llm,
   instructions: "You're a helpful AI assistant that can provide movie information",
   tools: [movie_tool]
@@ -607,8 +607,8 @@ The assistant includes error handling for invalid inputs, unsupported LLM types,
 
 ### Demos
 1. [Building an AI Assistant that operates a simulated E-commerce Store](https://www.loom.com/share/83aa4fd8dccb492aad4ca95da40ed0b2)
-2. [New Langchain.rb Assistants interface](https://www.loom.com/share/e883a4a49b8746c1b0acf9d58cf6da36)
-3. [Langchain.rb Assistant demo with NewsRetriever and function calling on Gemini](https://youtu.be/-ieyahrpDpM&t=1477s) - [code](https://github.com/palladius/gemini-news-crawler)
+2. [New LangChain.rb Assistants interface](https://www.loom.com/share/e883a4a49b8746c1b0acf9d58cf6da36)
+3. [LangChain.rb Assistant demo with NewsRetriever and function calling on Gemini](https://youtu.be/-ieyahrpDpM&t=1477s) - [code](https://github.com/palladius/gemini-news-crawler)
 
 ## Evaluations (Evals)
 The Evaluations module is a collection of tools that can be used to evaluate and track the performance of the output products by LLM and your RAG (Retrieval Augmented Generation) pipelines.
@@ -620,8 +620,8 @@ Ragas helps you evaluate your Retrieval Augmented Generation (RAG) pipelines. Th
 * Answer Relevance - the generated answer addresses the actual question that was provided.
 
 ```ruby
-# We recommend using Langchain::LLM::OpenAI as your llm for Ragas
-ragas = Langchain::Evals::Ragas::Main.new(llm: llm)
+# We recommend using LangChain::LLM::OpenAI as your llm for Ragas
+ragas = LangChain::Evals::Ragas::Main.new(llm: llm)
 
 # The answer that the LLM generated
 # The question (or the original prompt) that was asked
@@ -641,18 +641,18 @@ Additional examples available: [/examples](https://github.com/patterns-ai-core/l
 
 ## Logging
 
-Langchain.rb uses the standard Ruby [Logger](https://ruby-doc.org/stdlib-2.4.0/libdoc/logger/rdoc/Logger.html) mechanism and defaults to same `level` value (currently `Logger::DEBUG`).
+LangChain.rb uses the standard Ruby [Logger](https://ruby-doc.org/stdlib-2.4.0/libdoc/logger/rdoc/Logger.html) mechanism and defaults to same `level` value (currently `Logger::DEBUG`).
 
 To show all log messages:
 
 ```ruby
-Langchain.logger.level = Logger::DEBUG
+LangChain.logger.level = Logger::DEBUG
 ```
 
 The logger logs to `STDOUT` by default. In order to configure the log destination (ie. log to a file) do:
 
 ```ruby
-Langchain.logger = Logger.new("path/to/file", **Langchain::LOGGER_OPTIONS)
+LangChain.logger = Logger.new("path/to/file", **LangChain::LOGGER_OPTIONS)
 ```
 
 ## Problems
@@ -670,7 +670,7 @@ gem install unicode -- --with-cflags="-Wno-incompatible-function-pointer-types"
 5. Optionally, install lefthook git hooks for pre-commit to auto lint: `gem install lefthook && lefthook install -f`
 
 ## Discord
-Join us in the [Langchain.rb](https://discord.gg/WDARp7J2n8) Discord server.
+Join us in the [LangChain.rb](https://discord.gg/WDARp7J2n8) Discord server.
 
 ## Star History
 

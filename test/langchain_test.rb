@@ -1,7 +1,7 @@
 require "test_helper"
 
-class LangchainTest < ActiveSupport::TestCase
+class LangChainTest < ActiveSupport::TestCase
   test "it has a version number" do
-    assert Langchain::VERSION
+    assert LangChain::VERSION
   end
 end

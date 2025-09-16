@@ -5,10 +5,10 @@ require "dotenv/load"
 require "ruby/openai"
 
 # Initialize the Pgvector client
-pgvector = Langchain::Vectorsearch::Pgvector.new(
+pgvector = LangChain::Vectorsearch::Pgvector.new(
   url: ENV["POSTGRES_URL"],
   index_name: "documents",
-  llm: Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+  llm: LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
 )
 
 # Create the default schema if it doesn't exist

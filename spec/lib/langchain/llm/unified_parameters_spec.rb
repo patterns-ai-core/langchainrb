@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::LLM::UnifiedParameters do
+RSpec.describe LangChain::LLM::UnifiedParameters do
   # For now, the unifier only maps keys, but in the future it may be beneficial
   # to introduce an ActiveModel-style validator to restrict inputs to conform to
   # types required of the LLMs APIs

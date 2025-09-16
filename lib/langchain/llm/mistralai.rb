@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-module Langchain::LLM
+module LangChain::LLM
   # Gem requirements:
   #    gem "mistral-ai"
   #
   # Usage:
-  #    llm = Langchain::LLM::MistralAI.new(api_key: ENV["MISTRAL_AI_API_KEY"])
+  #    llm = LangChain::LLM::MistralAI.new(api_key: ENV["MISTRAL_AI_API_KEY"])
   class MistralAI < Base
     DEFAULTS = {
       chat_model: "mistral-large-latest",
@@ -39,7 +39,7 @@ module Langchain::LLM
 
       response = client.chat_completions(parameters)
 
-      Langchain::LLM::Response::MistralAIResponse.new(response.to_h)
+      LangChain::LLM::Response::MistralAIResponse.new(response.to_h)
     end
 
     def embed(
@@ -55,7 +55,7 @@ module Langchain::LLM
 
       response = client.embeddings(params)
 
-      Langchain::LLM::Response::MistralAIResponse.new(response.to_h)
+      LangChain::LLM::Response::MistralAIResponse.new(response.to_h)
     end
   end
 end

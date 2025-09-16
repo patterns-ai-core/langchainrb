@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Assistant::LLM::Adapters::Ollama do
+RSpec.describe LangChain::Assistant::LLM::Adapters::Ollama do
   describe "#build_chat_params" do
     it "returns the chat parameters" do
       expect(
         subject.build_chat_params(
           messages: [{role: "user", content: "Hello"}],
           instructions: "Instructions",
-          tools: [Langchain::Tool::Calculator.new],
+          tools: [LangChain::Tool::Calculator.new],
           tool_choice: nil,
           parallel_tool_calls: false
         )
       ).to eq({
         messages: [{role: "user", content: "Hello"}],
-        tools: Langchain::Tool::Calculator.function_schemas.to_openai_format
+        tools: LangChain::Tool::Calculator.function_schemas.to_openai_format
       })
     end
   end
@@ -38,7 +38,7 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::Ollama do
           content: "Hello",
           image_url: "https://example.com/image.jpg"
         )
-      ).to be_a(Langchain::Assistant::Messages::OllamaMessage)
+      ).to be_a(LangChain::Assistant::Messages::OllamaMessage)
     end
   end
 end

@@ -1,2 +1,2 @@
-Langchain::Engine.routes.draw do
+LangChain::Engine.routes.draw do
 end

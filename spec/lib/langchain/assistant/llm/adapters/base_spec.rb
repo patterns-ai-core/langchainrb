@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Assistant::LLM::Adapters::Base do
+RSpec.describe LangChain::Assistant::LLM::Adapters::Base do
   describe "#build_chat_params" do
     it "raises NotImplementedError" do
       expect { subject.build_chat_params(tools: [], instructions: "", messages: [], tool_choice: "", parallel_tool_calls: false) }.to raise_error(NotImplementedError)

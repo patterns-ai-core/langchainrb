@@ -6,12 +6,12 @@ require "reline"
 # gem install reline
 # or add `gem "reline"` to your Gemfile
 
-openai = Langchain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
-assistant = Langchain::Assistant.new(
+openai = LangChain::LLM::OpenAI.new(api_key: ENV["OPENAI_API_KEY"])
+assistant = LangChain::Assistant.new(
   llm: openai,
   instructions: "You are a Meteorologist Assistant that is able to pull the weather for any location",
   tools: [
-    Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
+    LangChain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
   ]
 )
 

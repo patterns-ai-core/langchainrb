@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Tool
+module LangChain::Tool
   #
   # Tool that adds the capability to search using the Wikipedia API
   #
@@ -8,12 +8,12 @@ module Langchain::Tool
   #     gem "wikipedia-client", "~> 1.17.0"
   #
   # Usage:
-  #     wikipedia = Langchain::Tool::Wikipedia.new
+  #     wikipedia = LangChain::Tool::Wikipedia.new
   #     wikipedia.execute(input: "The Roman Empire")
   #
   class Wikipedia
-    extend Langchain::ToolDefinition
-    include Langchain::DependencyHelper
+    extend LangChain::ToolDefinition
+    include LangChain::DependencyHelper
 
     define_function :execute, description: "Executes Wikipedia API search and returns the answer" do
       property :input, type: "string", description: "Search query", required: true
@@ -27,9 +27,9 @@ module Langchain::Tool
     # Executes Wikipedia API search and returns the answer
     #
     # @param input [String] search query
-    # @return [Langchain::Tool::Response] Answer
+    # @return [LangChain::Tool::Response] Answer
     def execute(input:)
-      Langchain.logger.debug("#{self.class} - Executing \"#{input}\"")
+      LangChain.logger.debug("#{self.class} - Executing \"#{input}\"")
 
       page = ::Wikipedia.find(input)
       # It would be nice to figure out a way to provide page.content but the LLM token limit is an issue

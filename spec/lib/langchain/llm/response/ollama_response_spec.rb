@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::LLM::Response::OllamaResponse do
+RSpec.describe LangChain::LLM::Response::OllamaResponse do
   subject { described_class.new(raw_response) }
 
   describe "chat completions" do

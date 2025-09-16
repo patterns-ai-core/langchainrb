@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Processors::Xlsx do
+RSpec.describe LangChain::Processors::Xlsx do
   describe "#parse" do
     let(:file) { File.open("spec/fixtures/loaders/sample.xlsx") }
     let(:data) {

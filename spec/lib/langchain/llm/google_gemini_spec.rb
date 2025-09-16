@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::LLM::GoogleGemini do
+RSpec.describe LangChain::LLM::GoogleGemini do
   subject { described_class.new(api_key: "123") }
 
   describe "#initialize" do
@@ -40,7 +40,7 @@ RSpec.describe Langchain::LLM::GoogleGemini do
     it "returns valid llm response object" do
       response = subject.embed(text: "Hello world")
 
-      expect(response).to be_a(Langchain::LLM::Response::GoogleGeminiResponse)
+      expect(response).to be_a(LangChain::LLM::Response::GoogleGeminiResponse)
       expect(response.model).to eq("text-embedding-004")
       expect(response.embedding).to eq(embedding)
     end
@@ -88,7 +88,7 @@ RSpec.describe Langchain::LLM::GoogleGemini do
     it "returns valid llm response object" do
       response = subject.chat(messages: messages)
 
-      expect(response).to be_a(Langchain::LLM::Response::GoogleGeminiResponse)
+      expect(response).to be_a(LangChain::LLM::Response::GoogleGeminiResponse)
       expect(response.model).to eq("gemini-1.5-pro-latest")
       expect(response.chat_completion).to eq("The answer is 4.0")
     end

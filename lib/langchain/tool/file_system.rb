@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-module Langchain::Tool
+module LangChain::Tool
   #
   # A tool that wraps the Ruby file system classes.
   #
   # Usage:
-  #    file_system = Langchain::Tool::FileSystem.new
+  #    file_system = LangChain::Tool::FileSystem.new
   #
   class FileSystem
-    extend Langchain::ToolDefinition
+    extend LangChain::ToolDefinition
 
     define_function :list_directory, description: "File System Tool: Lists out the content of a specified directory" do
       property :directory_path, type: "string", description: "Directory path to list", required: true

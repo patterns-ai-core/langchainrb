@@ -2,7 +2,7 @@
 
 require "sequel"
 
-RSpec.describe Langchain::Tool::Database do
+RSpec.describe LangChain::Tool::Database do
   subject { described_class.new(connection_string: "mock:///") }
 
   describe "#execute" do
@@ -24,13 +24,13 @@ RSpec.describe Langchain::Tool::Database do
 
     it "returns salary and count of users" do
       response = subject.execute(input: "SELECT max(salary), count(*) FROM users")
-      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response).to be_a(LangChain::ToolResponse)
       expect(response.content).to eq([{salary: 23500, count: 101}])
     end
 
     it "returns jobs and counts of users" do
       response = subject.execute(input: "SELECT job, count(*) FROM users GROUP BY job")
-      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response).to be_a(LangChain::ToolResponse)
       expect(response.content).to eq([{job: "teacher", count: 5}, {job: "cook", count: 98}])
     end
   end
@@ -44,7 +44,7 @@ RSpec.describe Langchain::Tool::Database do
 
     it "returns the schema" do
       response = subject.dump_schema
-      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response).to be_a(LangChain::ToolResponse)
       expect(response.content).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs(job));\n")
     end
 
@@ -52,7 +52,7 @@ RSpec.describe Langchain::Tool::Database do
       allow(subject.db).to receive(:foreign_key_list).with(:users).and_return([{columns: [:job], table: :jobs, key: nil}])
 
       response = subject.dump_schema
-      expect(response).to be_a(Langchain::ToolResponse)
+      expect(response).to be_a(LangChain::ToolResponse)
       expect(response.content).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs());\n")
     end
   end

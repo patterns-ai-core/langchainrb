@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Evals::Ragas::Main do
-  let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+RSpec.describe LangChain::Evals::Ragas::Main do
+  let(:llm) { LangChain::LLM::OpenAI.new(api_key: "123") }
   subject { described_class.new(llm: llm) }
 
   let(:question) { "Who directed the film Oppenheimer and who stars as J. Robert Oppenheimer in the film?" }
@@ -10,9 +10,9 @@ RSpec.describe Langchain::Evals::Ragas::Main do
 
   describe "#score" do
     before do
-      allow_any_instance_of(Langchain::Evals::Ragas::AnswerRelevance).to receive(:score).and_return(0.9573145866787608)
-      allow_any_instance_of(Langchain::Evals::Ragas::ContextRelevance).to receive(:score).and_return(0.6666666666666666)
-      allow_any_instance_of(Langchain::Evals::Ragas::Faithfulness).to receive(:score).and_return(0.5)
+      allow_any_instance_of(LangChain::Evals::Ragas::AnswerRelevance).to receive(:score).and_return(0.9573145866787608)
+      allow_any_instance_of(LangChain::Evals::Ragas::ContextRelevance).to receive(:score).and_return(0.6666666666666666)
+      allow_any_instance_of(LangChain::Evals::Ragas::Faithfulness).to receive(:score).and_return(0.5)
     end
 
     it "generates the scores" do

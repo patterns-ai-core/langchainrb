@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  mount Langchain::Engine => "/langchain"
+  mount LangChain::Engine => "/langchain"
 end

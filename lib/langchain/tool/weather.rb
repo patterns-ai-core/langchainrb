@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::Tool
+module LangChain::Tool
   #
   # A weather tool that gets current weather data
   #
@@ -8,14 +8,14 @@ module Langchain::Tool
   # Forecast and historical data require registration with credit card, so not supported yet.
   #
   # Usage:
-  #     weather = Langchain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
-  #     assistant = Langchain::Assistant.new(
+  #     weather = LangChain::Tool::Weather.new(api_key: ENV["OPEN_WEATHER_API_KEY"])
+  #     assistant = LangChain::Assistant.new(
   #       llm: llm,
   #       tools: [weather]
   #     )
   #
   class Weather
-    extend Langchain::ToolDefinition
+    extend LangChain::ToolDefinition
 
     define_function :get_current_weather, description: "Returns current weather for a city" do
       property :city,
@@ -44,7 +44,7 @@ module Langchain::Tool
     def get_current_weather(city:, state_code:, country_code: nil, units: "imperial")
       validate_input(city: city, state_code: state_code, country_code: country_code, units: units)
 
-      Langchain.logger.debug("#{self.class} - get_current_weather #{{city:, state_code:, country_code:, units:}}")
+      LangChain.logger.debug("#{self.class} - get_current_weather #{{city:, state_code:, country_code:, units:}}")
 
       fetch_current_weather(city: city, state_code: state_code, country_code: country_code, units: units)
     end
@@ -74,9 +74,9 @@ module Langchain::Tool
       request = Net::HTTP::Get.new(uri.request_uri)
       request["Content-Type"] = "application/json"
 
-      Langchain.logger.debug("#{self.class} - Sending request to OpenWeatherMap API #{{path: path, params: params.except(:appid)}}")
+      LangChain.logger.debug("#{self.class} - Sending request to OpenWeatherMap API #{{path: path, params: params.except(:appid)}}")
       response = http.request(request)
-      Langchain.logger.debug("#{self.class} - Received response from OpenWeatherMap API #{{status: response.code}}")
+      LangChain.logger.debug("#{self.class} - Received response from OpenWeatherMap API #{{status: response.code}}")
 
       if response.code == "200"
         JSON.parse(response.body)

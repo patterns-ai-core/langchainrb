@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::Processors::Pptx do
+RSpec.describe LangChain::Processors::Pptx do
   describe "#parse" do
     let(:file) { File.open("spec/fixtures/loaders/sample.pptx") }
     let(:text) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }

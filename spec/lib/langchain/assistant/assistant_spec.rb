@@ -3,12 +3,12 @@
 require "spec_helper"
 require "googleauth"
 
-RSpec.describe Langchain::Assistant do
+RSpec.describe LangChain::Assistant do
   context "initialization" do
-    let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+    let(:llm) { LangChain::LLM::OpenAI.new(api_key: "123") }
 
-    it "raises an error if tools array contains non-Langchain::Tool instance(s)" do
-      expect { described_class.new(tools: [Langchain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
+    it "raises an error if tools array contains non-LangChain::Tool instance(s)" do
+      expect { described_class.new(tools: [LangChain::Tool::Calculator.new, "foo"]) }.to raise_error(ArgumentError)
     end
 
     describe "#add_message_callback" do
@@ -32,12 +32,12 @@ RSpec.describe Langchain::Assistant do
     end
 
     it "raises an error if LLM class does not implement `chat()` method" do
-      llm = Langchain::LLM::Replicate.new(api_key: "123")
+      llm = LangChain::LLM::Replicate.new(api_key: "123")
       expect { described_class.new(llm: llm) }.to raise_error(ArgumentError)
     end
 
-    it "raises an error if messages array contains non-Langchain::Message instance(s)" do
-      expect { described_class.new(llm: llm, messages: [Langchain::Assistant::Messages::OpenAIMessage.new, "foo"]) }.to raise_error(ArgumentError)
+    it "raises an error if messages array contains non-LangChain::Message instance(s)" do
+      expect { described_class.new(llm: llm, messages: [LangChain::Assistant::Messages::OpenAIMessage.new, "foo"]) }.to raise_error(ArgumentError)
     end
 
     it "parallel_tool_calls defaults to true" do
@@ -46,7 +46,7 @@ RSpec.describe Langchain::Assistant do
   end
 
   context "methods" do
-    let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+    let(:llm) { LangChain::LLM::OpenAI.new(api_key: "123") }
 
     describe "#clear_messages!" do
       it "clears the thread" do
@@ -68,8 +68,8 @@ RSpec.describe Langchain::Assistant do
     describe "#array_of_message_hashes" do
       let(:messages) {
         [
-          Langchain::Assistant::Messages::OpenAIMessage.new(role: "user", content: "hello"),
-          Langchain::Assistant::Messages::OpenAIMessage.new(role: "assistant", content: "hi")
+          LangChain::Assistant::Messages::OpenAIMessage.new(role: "user", content: "hello"),
+          LangChain::Assistant::Messages::OpenAIMessage.new(role: "assistant", content: "hi")
         ]
       }
 
@@ -91,13 +91,13 @@ RSpec.describe Langchain::Assistant do
     describe "#add_message" do
       let(:message) { {role: "user", content: "hello"} }
 
-      it "adds a Langchain::Message instance to the messages array" do
+      it "adds a LangChain::Message instance to the messages array" do
         subject = described_class.new(llm: llm, messages: [])
 
         expect {
           subject.add_message(**message)
         }.to change { subject.messages.count }.from(0).to(1)
-        expect(subject.messages.first).to be_a(Langchain::Assistant::Messages::OpenAIMessage)
+        expect(subject.messages.first).to be_a(LangChain::Assistant::Messages::OpenAIMessage)
         expect(subject.messages.first.role).to eq("user")
         expect(subject.messages.first.content).to eq("hello")
       end
@@ -109,7 +109,7 @@ RSpec.describe Langchain::Assistant do
         expect {
           subject.add_message(**message_with_image)
         }.to change { subject.messages.count }.from(0).to(1)
-        expect(subject.messages.first).to be_a(Langchain::Assistant::Messages::OpenAIMessage)
+        expect(subject.messages.first).to be_a(LangChain::Assistant::Messages::OpenAIMessage)
         expect(subject.messages.first.role).to eq("user")
         expect(subject.messages.first.content).to eq("hello")
         expect(subject.messages.first.image_url).to eq("https://example.com/image.jpg")
@@ -119,7 +119,7 @@ RSpec.describe Langchain::Assistant do
         callback = double("callback", call: true)
         subject = described_class.new(llm: llm, messages: [], add_message_callback: callback)
 
-        expect(callback).to receive(:call).with(instance_of(Langchain::Assistant::Messages::OpenAIMessage))
+        expect(callback).to receive(:call).with(instance_of(LangChain::Assistant::Messages::OpenAIMessage))
 
         subject.add_message(**message)
       end
@@ -127,8 +127,8 @@ RSpec.describe Langchain::Assistant do
   end
 
   context "when llm is OpenAI" do
-    let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
-    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:llm) { LangChain::LLM::OpenAI.new(api_key: "123") }
+    let(:calculator) { LangChain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
 
     subject {
@@ -190,7 +190,7 @@ RSpec.describe Langchain::Assistant do
         callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
-        expect(callback).to receive(:call).with(instance_of(Langchain::Assistant::Messages::OpenAIMessage))
+        expect(callback).to receive(:call).with(instance_of(LangChain::Assistant::Messages::OpenAIMessage))
 
         thread.add_message(role: "user", content: "foo")
       end
@@ -246,7 +246,7 @@ RSpec.describe Langchain::Assistant do
               tool_choice: "auto",
               parallel_tool_calls: true
             )
-            .and_return(Langchain::LLM::Response::OpenAIResponse.new(raw_openai_response))
+            .and_return(LangChain::LLM::Response::OpenAIResponse.new(raw_openai_response))
 
           subject.add_message(role: "user", content: "Please calculate 2+2")
         end
@@ -299,7 +299,7 @@ RSpec.describe Langchain::Assistant do
               tool_choice: "auto",
               parallel_tool_calls: true
             )
-            .and_return(Langchain::LLM::Response::OpenAIResponse.new(raw_openai_response2))
+            .and_return(LangChain::LLM::Response::OpenAIResponse.new(raw_openai_response2))
 
           allow(subject.tools[0]).to receive(:execute).with(
             input: "2+2"
@@ -333,15 +333,15 @@ RSpec.describe Langchain::Assistant do
 
         it "logs a warning" do
           expect(subject.messages).to be_empty
-          expect(Langchain.logger).to receive(:warn).with("#{described_class} - No messages to process")
+          expect(LangChain.logger).to receive(:warn).with("#{described_class} - No messages to process")
           subject.run
         end
       end
     end
 
     describe "#handle_tool_call" do
-      let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
-      let(:calculator) { Langchain::Tool::Calculator.new }
+      let(:llm) { LangChain::LLM::OpenAI.new(api_key: "123") }
+      let(:calculator) { LangChain::Tool::Calculator.new }
       let(:assistant) { described_class.new(llm: llm, tools: [calculator]) }
 
       context "when tool returns a ToolResponse" do
@@ -355,10 +355,10 @@ RSpec.describe Langchain::Assistant do
             }
           }
         end
-        let(:tool_response) { Langchain::ToolResponse.new(content: "4", image_url: "http://example.com/image.jpg") }
+        let(:tool_response) { LangChain::ToolResponse.new(content: "4", image_url: "http://example.com/image.jpg") }
 
         before do
-          allow_any_instance_of(Langchain::Tool::Calculator).to receive(:execute).and_return(tool_response)
+          allow_any_instance_of(LangChain::Tool::Calculator).to receive(:execute).and_return(tool_response)
         end
 
         it "adds a message with the ToolResponse content and image_url" do
@@ -386,7 +386,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         before do
-          allow_any_instance_of(Langchain::Tool::Calculator).to receive(:execute).and_return("4")
+          allow_any_instance_of(LangChain::Tool::Calculator).to receive(:execute).and_return("4")
         end
 
         it "adds a message with the simple value as content" do
@@ -405,7 +405,7 @@ RSpec.describe Langchain::Assistant do
       let(:tool_call) { {"id" => "call_9TewGANaaIjzY31UCpAAGLeV", "type" => "function", "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}} }
 
       it "returns correct data" do
-        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["call_9TewGANaaIjzY31UCpAAGLeV", "langchain_tool_calculator", "execute", {input: "2+2"}])
+        expect(LangChain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["call_9TewGANaaIjzY31UCpAAGLeV", "langchain_tool_calculator", "execute", {input: "2+2"}])
       end
     end
 
@@ -566,8 +566,8 @@ RSpec.describe Langchain::Assistant do
   end
 
   context "when llm is MistralAI" do
-    let(:llm) { Langchain::LLM::MistralAI.new(api_key: "123") }
-    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:llm) { LangChain::LLM::MistralAI.new(api_key: "123") }
+    let(:calculator) { LangChain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
 
     subject {
@@ -606,7 +606,7 @@ RSpec.describe Langchain::Assistant do
         callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
-        expect(callback).to receive(:call).with(instance_of(Langchain::Assistant::Messages::MistralAIMessage))
+        expect(callback).to receive(:call).with(instance_of(LangChain::Assistant::Messages::MistralAIMessage))
 
         thread.add_message(role: "user", content: "foo")
       end
@@ -618,7 +618,7 @@ RSpec.describe Langchain::Assistant do
         expect {
           subject.add_message(**message_with_image)
         }.to change { subject.messages.count }.from(0).to(1)
-        expect(subject.messages.first).to be_a(Langchain::Assistant::Messages::MistralAIMessage)
+        expect(subject.messages.first).to be_a(LangChain::Assistant::Messages::MistralAIMessage)
         expect(subject.messages.first.role).to eq("user")
         expect(subject.messages.first.content).to eq("hello")
         expect(subject.messages.first.image_url).to eq("https://example.com/image.jpg")
@@ -674,7 +674,7 @@ RSpec.describe Langchain::Assistant do
               tools: calculator.class.function_schemas.to_openai_format,
               tool_choice: "auto"
             )
-            .and_return(Langchain::LLM::Response::MistralAIResponse.new(raw_mistralai_response))
+            .and_return(LangChain::LLM::Response::MistralAIResponse.new(raw_mistralai_response))
 
           subject.add_message(role: "user", content: "Please calculate 2+2")
         end
@@ -726,7 +726,7 @@ RSpec.describe Langchain::Assistant do
               tools: calculator.class.function_schemas.to_openai_format,
               tool_choice: "auto"
             )
-            .and_return(Langchain::LLM::Response::MistralAIResponse.new(raw_mistralai_response2))
+            .and_return(LangChain::LLM::Response::MistralAIResponse.new(raw_mistralai_response2))
 
           allow(subject.tools[0]).to receive(:execute).with(
             input: "2+2"
@@ -760,7 +760,7 @@ RSpec.describe Langchain::Assistant do
 
         it "logs a warning" do
           expect(subject.messages).to be_empty
-          expect(Langchain.logger).to receive(:warn).with("#{described_class} - No messages to process")
+          expect(LangChain.logger).to receive(:warn).with("#{described_class} - No messages to process")
           subject.run
         end
       end
@@ -770,7 +770,7 @@ RSpec.describe Langchain::Assistant do
       let(:tool_call) { {"id" => "call_9TewGANaaIjzY31UCpAAGLeV", "type" => "function", "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => "{\"input\":\"2+2\"}"}} }
 
       it "returns correct data" do
-        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["call_9TewGANaaIjzY31UCpAAGLeV", "langchain_tool_calculator", "execute", {input: "2+2"}])
+        expect(LangChain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["call_9TewGANaaIjzY31UCpAAGLeV", "langchain_tool_calculator", "execute", {input: "2+2"}])
       end
     end
 
@@ -924,8 +924,8 @@ RSpec.describe Langchain::Assistant do
   end
 
   context "when llm is GoogleVertexAI" do
-    let(:llm) { Langchain::LLM::GoogleVertexAI.new(project_id: "123", region: "us-central1") }
-    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:llm) { LangChain::LLM::GoogleVertexAI.new(project_id: "123", region: "us-central1") }
+    let(:calculator) { LangChain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
 
     before do
@@ -950,8 +950,8 @@ RSpec.describe Langchain::Assistant do
   end
 
   context "when llm is GoogleGemini" do
-    let(:llm) { Langchain::LLM::GoogleGemini.new(api_key: "123") }
-    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:llm) { LangChain::LLM::GoogleGemini.new(api_key: "123") }
+    let(:calculator) { LangChain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
 
     subject {
@@ -973,7 +973,7 @@ RSpec.describe Langchain::Assistant do
         callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
-        expect(callback).to receive(:call).with(instance_of(Langchain::Assistant::Messages::GoogleGeminiMessage))
+        expect(callback).to receive(:call).with(instance_of(LangChain::Assistant::Messages::GoogleGeminiMessage))
 
         thread.add_message(role: "user", content: "foo")
       end
@@ -1020,7 +1020,7 @@ RSpec.describe Langchain::Assistant do
               tool_choice: {function_calling_config: {mode: "auto"}},
               system: instructions
             )
-            .and_return(Langchain::LLM::Response::GoogleGeminiResponse.new(raw_google_gemini_response))
+            .and_return(LangChain::LLM::Response::GoogleGeminiResponse.new(raw_google_gemini_response))
         end
 
         it "runs the assistant" do
@@ -1061,7 +1061,7 @@ RSpec.describe Langchain::Assistant do
               tool_choice: {function_calling_config: {mode: "auto"}},
               system: instructions
             )
-            .and_return(Langchain::LLM::Response::GoogleGeminiResponse.new(raw_google_gemini_response2))
+            .and_return(LangChain::LLM::Response::GoogleGeminiResponse.new(raw_google_gemini_response2))
         end
 
         it "runs the assistant and automatically executes tool calls" do
@@ -1087,7 +1087,7 @@ RSpec.describe Langchain::Assistant do
 
         it "logs a warning" do
           expect(subject.messages).to be_empty
-          expect(Langchain.logger).to receive(:warn).with("#{described_class} - No messages to process")
+          expect(LangChain.logger).to receive(:warn).with("#{described_class} - No messages to process")
           subject.run
         end
       end
@@ -1097,7 +1097,7 @@ RSpec.describe Langchain::Assistant do
       let(:tool_call) { {"functionCall" => {"name" => "langchain_tool_calculator__execute", "args" => {"input" => "2+2"}}} }
 
       it "returns correct data" do
-        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["langchain_tool_calculator__execute", "langchain_tool_calculator", "execute", {input: "2+2"}])
+        expect(LangChain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["langchain_tool_calculator__execute", "langchain_tool_calculator", "execute", {input: "2+2"}])
       end
     end
 
@@ -1132,8 +1132,8 @@ RSpec.describe Langchain::Assistant do
   end
 
   context "when llm is Anthropic" do
-    let(:llm) { Langchain::LLM::Anthropic.new(api_key: "123") }
-    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:llm) { LangChain::LLM::Anthropic.new(api_key: "123") }
+    let(:calculator) { LangChain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
 
     subject {
@@ -1155,7 +1155,7 @@ RSpec.describe Langchain::Assistant do
         callback = double("callback", call: true)
         thread = described_class.new(llm: llm, instructions: instructions, add_message_callback: callback)
 
-        expect(callback).to receive(:call).with(instance_of(Langchain::Assistant::Messages::AnthropicMessage))
+        expect(callback).to receive(:call).with(instance_of(LangChain::Assistant::Messages::AnthropicMessage))
 
         thread.add_message(role: "user", content: "foo")
       end
@@ -1213,7 +1213,7 @@ RSpec.describe Langchain::Assistant do
               hash_including(
                 system: instructions
               )
-            ).and_return(Langchain::LLM::Response::AnthropicResponse.new(raw_anthropic_response))
+            ).and_return(LangChain::LLM::Response::AnthropicResponse.new(raw_anthropic_response))
           subject.add_message content: "Please calculate 2+2"
           subject.run
         end
@@ -1228,7 +1228,7 @@ RSpec.describe Langchain::Assistant do
               tool_choice: {disable_parallel_tool_use: false, type: "auto"},
               system: instructions
             )
-            .and_return(Langchain::LLM::Response::AnthropicResponse.new(raw_anthropic_response))
+            .and_return(LangChain::LLM::Response::AnthropicResponse.new(raw_anthropic_response))
         end
 
         it "runs the assistant" do
@@ -1245,7 +1245,7 @@ RSpec.describe Langchain::Assistant do
               hash_including(
                 system: instructions
               )
-            ).and_return(Langchain::LLM::Response::AnthropicResponse.new(raw_anthropic_response))
+            ).and_return(LangChain::LLM::Response::AnthropicResponse.new(raw_anthropic_response))
           subject.add_message content: "Please calculate 2+2"
           subject.run
         end
@@ -1287,7 +1287,7 @@ RSpec.describe Langchain::Assistant do
               tool_choice: {disable_parallel_tool_use: false, type: "auto"},
               system: instructions
             )
-            .and_return(Langchain::LLM::Response::AnthropicResponse.new(raw_anthropic_response2))
+            .and_return(LangChain::LLM::Response::AnthropicResponse.new(raw_anthropic_response2))
         end
 
         it "runs the assistant and automatically executes tool calls" do
@@ -1317,7 +1317,7 @@ RSpec.describe Langchain::Assistant do
 
         it "logs a warning" do
           expect(subject.messages).to be_empty
-          expect(Langchain.logger).to receive(:warn).with("#{described_class} - No messages to process")
+          expect(LangChain.logger).to receive(:warn).with("#{described_class} - No messages to process")
           subject.run
         end
       end
@@ -1337,7 +1337,7 @@ RSpec.describe Langchain::Assistant do
       }
 
       it "returns correct data" do
-        expect(Langchain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["toolu_01TjusbFApEbwKPRWTRwzadR", "langchain_tool_news_retriever", "get_top_headlines", {country: "us", page_size: 10}])
+        expect(LangChain::Assistant::LLM::Adapter.build(llm).extract_tool_call_args(tool_call: tool_call)).to eq(["toolu_01TjusbFApEbwKPRWTRwzadR", "langchain_tool_news_retriever", "get_top_headlines", {country: "us", page_size: 10}])
       end
     end
 

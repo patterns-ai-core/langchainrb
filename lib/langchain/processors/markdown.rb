@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain
+module LangChain
   module Processors
     class Markdown < Base
       EXTENSIONS = [".markdown", ".md"]

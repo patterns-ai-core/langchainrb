@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Langchain::OutputParsers
+module LangChain::OutputParsers
   # = Output Fixing Parser
   #
   class OutputFixingParser < Base
@@ -8,13 +8,13 @@ module Langchain::OutputParsers
 
     # Initializes a new instance of the class.
     #
-    # @param llm [Langchain::LLM] The LLM used in the fixing process
-    # @param parser [Langchain::OutputParsers] The parser originally used which resulted in parsing error
-    # @param prompt [Langchain::Prompt::PromptTemplate]
+    # @param llm [LangChain::LLM] The LLM used in the fixing process
+    # @param parser [LangChain::OutputParsers] The parser originally used which resulted in parsing error
+    # @param prompt [LangChain::Prompt::PromptTemplate]
     def initialize(llm:, parser:, prompt:)
-      raise ArgumentError.new("llm must be an instance of Langchain::LLM got: #{llm.class}") unless llm.is_a?(Langchain::LLM::Base)
-      raise ArgumentError.new("parser must be an instance of Langchain::OutputParsers got #{parser.class}") unless parser.is_a?(Langchain::OutputParsers::Base)
-      raise ArgumentError.new("prompt must be an instance of Langchain::Prompt::PromptTemplate got #{prompt.class}") unless prompt.is_a?(Langchain::Prompt::PromptTemplate)
+      raise ArgumentError.new("llm must be an instance of LangChain::LLM got: #{llm.class}") unless llm.is_a?(LangChain::LLM::Base)
+      raise ArgumentError.new("parser must be an instance of LangChain::OutputParsers got #{parser.class}") unless parser.is_a?(LangChain::OutputParsers::Base)
+      raise ArgumentError.new("prompt must be an instance of LangChain::Prompt::PromptTemplate got #{prompt.class}") unless prompt.is_a?(LangChain::Prompt::PromptTemplate)
       @llm = llm
       @parser = parser
       @prompt = prompt
@@ -59,9 +59,9 @@ module Langchain::OutputParsers
 
     # Creates a new instance of the class using the given JSON::Schema.
     #
-    # @param llm [Langchain::LLM] The LLM used in the fixing process
-    # @param parser [Langchain::OutputParsers] The parser originally used which resulted in parsing error
-    # @param prompt [Langchain::Prompt::PromptTemplate]
+    # @param llm [LangChain::LLM] The LLM used in the fixing process
+    # @param parser [LangChain::OutputParsers] The parser originally used which resulted in parsing error
+    # @param prompt [LangChain::Prompt::PromptTemplate]
     #
     # @return [Object] A new instance of the class
     def self.from_llm(llm:, parser:, prompt: nil)
@@ -71,8 +71,8 @@ module Langchain::OutputParsers
     private
 
     private_class_method def self.naive_fix_prompt
-      Langchain::Prompt.load_from_path(
-        file_path: Langchain.root.join("langchain/output_parsers/prompts/naive_fix_prompt.yaml")
+      LangChain::Prompt.load_from_path(
+        file_path: LangChain.root.join("langchain/output_parsers/prompts/naive_fix_prompt.yaml")
       )
     end
   end

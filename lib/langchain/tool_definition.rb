@@ -6,7 +6,7 @@
 #
 # == Usage
 #
-# 1. Extend your class with {Langchain::ToolDefinition}
+# 1. Extend your class with {LangChain::ToolDefinition}
 # 2. Use {#define_function} to define each function of the tool
 #
 # == Key Concepts
@@ -34,7 +34,7 @@
 #     end
 #   end
 #
-module Langchain::ToolDefinition
+module LangChain::ToolDefinition
   # Defines a function for the tool
   #
   # @param method_name [Symbol] Name of the method to define
@@ -57,6 +57,7 @@ module Langchain::ToolDefinition
   def tool_name
     @tool_name ||= name
       .gsub("::", "_")
+      .gsub("LangChain", "Langchain")
       .gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
       .downcase
   end
@@ -69,9 +70,9 @@ module Langchain::ToolDefinition
     # Create a tool response
     # @param content [String, nil] The content of the tool response
     # @param image_url [String, nil] The URL of an image
-    # @return [Langchain::ToolResponse] The tool response
+    # @return [LangChain::ToolResponse] The tool response
     def tool_response(content: nil, image_url: nil)
-      Langchain::ToolResponse.new(content: content, image_url: image_url)
+      LangChain::ToolResponse.new(content: content, image_url: image_url)
     end
   end
 

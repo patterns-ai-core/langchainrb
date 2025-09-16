@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Langchain::LLM::Response::GoogleGeminiResponse do
+RSpec.describe LangChain::LLM::Response::GoogleGeminiResponse do
   describe "#chat_completion" do
     let(:raw_response) {
       JSON.parse File.read("spec/fixtures/llm/google_gemini/chat.json")
