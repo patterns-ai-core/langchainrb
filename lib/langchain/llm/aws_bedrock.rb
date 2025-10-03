@@ -229,7 +229,7 @@ module Langchain::LLM
 
     def parse_response(response, model_id)
       if provider_name(model_id) == :anthropic
-        Langchain::LLM::Response::AnthropicResponse.new(JSON.parse(response.body.string))
+        Langchain::LLM::Response::AwsBedrockAnthropicResponse.new(JSON.parse(response.body.string))
       elsif provider_name(model_id) == :cohere
         Langchain::LLM::Response::CohereResponse.new(JSON.parse(response.body.string))
       elsif provider_name(model_id) == :ai21
@@ -317,7 +317,7 @@ module Langchain::LLM
         end
       end
 
-      Langchain::LLM::Response::AnthropicResponse.new(raw_response)
+      Langchain::LLM::Response::AwsBedrockAnthropicResponse.new(raw_response)
     end
   end
 end

@@ -5,7 +5,7 @@ module Langchain::LLM
   # Wrapper around Anthropic APIs.
   #
   # Gem requirements:
-  #   gem "anthropic", "~> 0.3.2"
+  #   gem "anthropic", "~> 1.10.0"
   #
   # Usage:
   #     llm = Langchain::LLM::Anthropic.new(api_key: ENV["ANTHROPIC_API_KEY"])
@@ -14,7 +14,7 @@ module Langchain::LLM
     DEFAULTS = {
       temperature: 0.0,
       completion_model: "claude-2.1",
-      chat_model: "claude-3-5-sonnet-20240620",
+      chat_model: "claude-sonnet-4-5-20250929",
       max_tokens: 256
     }.freeze
 
@@ -25,14 +25,9 @@ module Langchain::LLM
     # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, completion_model:, chat_model:, max_tokens:, thinking: }
     # @return [Langchain::LLM::Anthropic] Langchain::LLM::Anthropic instance
     def initialize(api_key:, llm_options: {}, default_options: {})
-      begin
-        depends_on "ruby-anthropic", req: "anthropic"
-      rescue Langchain::DependencyHelper::LoadError
-        # Falls back to the older `anthropic` gem if `ruby-anthropic` gem cannot be loaded.
-        depends_on "anthropic"
-      end
+      depends_on "anthropic"
 
-      @client = ::Anthropic::Client.new(access_token: api_key, **llm_options)
+      @client = ::Anthropic::Client.new(api_key: api_key, **llm_options)
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
         model: {default: @defaults[:chat_model]},
@@ -40,7 +35,8 @@ module Langchain::LLM
         max_tokens: {default: @defaults[:max_tokens]},
         metadata: {},
         system: {},
-        thinking: {default: @defaults[:thinking]}
+        thinking: {default: @defaults[:thinking]},
+        request_options: {}
       )
       chat_parameters.ignore(:n, :user)
       chat_parameters.remap(stop: :stop_sequences)
@@ -108,8 +104,6 @@ module Langchain::LLM
     # @option params [Float] :top_p Use nucleus sampling.
     # @return [Langchain::LLM::Response::AnthropicResponse] The chat completion
     def chat(params = {}, &block)
-      set_extra_headers! if params[:tools]
-
       parameters = chat_parameters.to_params(params)
 
       raise ArgumentError.new("messages argument is required") if Array(parameters[:messages]).empty?
@@ -124,7 +118,7 @@ module Langchain::LLM
         end
       end
 
-      response = client.messages(parameters: parameters)
+      response = client.messages.create(parameters)
 
       response = response_from_chunks if block
       reset_response_chunks
@@ -186,10 +180,6 @@ module Langchain::LLM
 
     def reset_response_chunks
       @response_chunks = []
-    end
-
-    def set_extra_headers!
-      ::Anthropic.configuration.extra_headers = {"anthropic-beta": "tools-2024-05-16"}
     end
   end
 end
