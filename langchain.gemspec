@@ -33,7 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "zeitwerk", "~> 2.5"
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
   spec.add_dependency "matrix"
-  spec.add_dependency "octokit", "~> 7.0"
 
   # development dependencies
   spec.add_development_dependency "dotenv-rails", "~> 3.1.6"
@@ -75,4 +74,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "weaviate-ruby", "~> 0.9.2"
   spec.add_development_dependency "wikipedia-client", "~> 1.17.0"
   spec.add_development_dependency "power_point_pptx", "~> 0.1.0"
+  spec.add_development_dependency "octokit", "~> 7.0"
 end
