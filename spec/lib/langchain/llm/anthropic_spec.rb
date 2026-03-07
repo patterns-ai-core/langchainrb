@@ -17,13 +17,13 @@ RSpec.describe Langchain::LLM::Anthropic do
 
       it "get passed to consecutive chat() call" do
         subject
-        expect(subject.client).to receive(:messages).with(parameters: hash_including(default_options)).and_return({})
+        expect(subject.client.messages).to receive(:create).with(hash_including(default_options)).and_return({})
         subject.chat(messages: [{role: "user", content: "Hello json!"}])
       end
 
       it "can be overridden" do
         subject
-        expect(subject.client).to receive(:messages).with(parameters: hash_including({max_tokens: 1024})).and_return({})
+        expect(subject.client.messages).to receive(:create).with(hash_including({max_tokens: 1024})).and_return({})
         subject.chat(messages: [{role: "user", content: "Hello json!"}], max_tokens: 1024)
       end
     end
@@ -32,7 +32,7 @@ RSpec.describe Langchain::LLM::Anthropic do
   describe "#complete" do
     let(:completion) { "How high is the sky?" }
     let(:fixture) { File.read("spec/fixtures/llm/anthropic/complete.json") }
-    let(:response) { JSON.parse(fixture) }
+    let(:response) { JSON.parse(fixture, symbolize_names: true) }
 
     context "with no additional parameters" do
       before do
@@ -78,12 +78,12 @@ RSpec.describe Langchain::LLM::Anthropic do
   describe "#chat" do
     let(:messages) { [{role: "user", content: "How high is the sky?"}] }
     let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat.json") }
-    let(:response) { JSON.parse(fixture) }
+    let(:response) { JSON.parse(fixture, symbolize_names: true) }
 
     context "with no additional parameters" do
       before do
-        allow(subject.client).to receive(:messages)
-          .with(parameters: {
+        allow(subject.client.messages).to receive(:create)
+          .with({
             model: described_class::DEFAULTS[:chat_model],
             messages: messages,
             temperature: described_class::DEFAULTS[:temperature],
@@ -113,8 +113,8 @@ RSpec.describe Langchain::LLM::Anthropic do
         subject { described_class.new(api_key: "123", default_options: {thinking: thinking_params}) }
 
         it "includes thinking parameter in the request" do
-          expect(subject.client).to receive(:messages)
-            .with(parameters: hash_including(thinking: thinking_params))
+          expect(subject.client.messages).to receive(:create)
+            .with(hash_including(thinking: thinking_params))
             .and_return(response)
           subject.chat(messages: messages)
         end
@@ -122,8 +122,8 @@ RSpec.describe Langchain::LLM::Anthropic do
 
       context "passed directly to chat method" do
         it "includes thinking parameter in the request" do
-          expect(subject.client).to receive(:messages)
-            .with(parameters: hash_including(thinking: thinking_params))
+          expect(subject.client.messages).to receive(:create)
+            .with(hash_including(thinking: thinking_params))
             .and_return(response)
           subject.chat(messages: messages, thinking: thinking_params)
         end
@@ -136,11 +136,11 @@ RSpec.describe Langchain::LLM::Anthropic do
       let(:stream_handler) { proc { _1 } }
 
       before do
-        allow(subject.client).to receive(:messages) do |parameters|
+        allow(subject.client.messages).to receive(:create) do |parameters|
           response.each do |chunk|
-            parameters[:parameters][:stream].call(chunk)
+            parameters[:stream].call(chunk)
           end
-        end.and_return("This response will be overritten.")
+        end
       end
 
       it "handles streaming responses correctly" do
@@ -158,11 +158,11 @@ RSpec.describe Langchain::LLM::Anthropic do
       let(:stream_handler) { proc { _1 } }
 
       before do
-        allow(subject.client).to receive(:messages) do |parameters|
+        allow(subject.client.messages).to receive(:create) do |parameters|
           response.each do |chunk|
-            parameters[:parameters][:stream].call(chunk)
+            parameters[:stream].call(chunk)
           end
-        end.and_return("This response will be overritten.")
+        end
       end
 
       it "handles streaming responses correctly" do
@@ -172,8 +172,8 @@ RSpec.describe Langchain::LLM::Anthropic do
         expect(rsp.total_tokens).to eq(89)
         expect(rsp.chat_completion).to eq("Okay, let's check the weather for San Francisco, CA:")
 
-        expect(rsp.tool_calls.first["name"]).to eq("get_weather")
-        expect(rsp.tool_calls.first["input"]).to eq({location: "San Francisco, CA", unit: "fahrenheit"})
+        expect(rsp.tool_calls.first[:name]).to eq("get_weather")
+        expect(rsp.tool_calls.first[:input]).to eq({location: "San Francisco, CA", unit: "fahrenheit"})
       end
 
       context "response has empty input" do
@@ -188,8 +188,8 @@ RSpec.describe Langchain::LLM::Anthropic do
           expect(rsp.chat_completion).to eq("I'll check the weather for you:")
 
           # Verify the tool call with empty input is handled correctly
-          expect(rsp.tool_calls.first["name"]).to eq("get_weather")
-          expect(rsp.tool_calls.first["input"]).to be_nil  # Should be nil (null in Ruby) because input was empty
+          expect(rsp.tool_calls.first[:name]).to eq("get_weather")
+          expect(rsp.tool_calls.first[:input]).to be_nil  # Should be nil (null in Ruby) because input was empty
         end
       end
     end

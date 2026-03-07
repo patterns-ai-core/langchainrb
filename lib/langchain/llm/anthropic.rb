@@ -138,27 +138,28 @@ module Langchain::LLM
     def response_from_chunks
       grouped_chunks = @response_chunks.group_by { |chunk| chunk["index"] }.except(nil)
 
-      usage = @response_chunks.find { |chunk| chunk["type"] == "message_delta" }&.dig("usage")
-      stop_reason = @response_chunks.find { |chunk| chunk["type"] == "message_delta" }&.dig("delta", "stop_reason")
+      usage_chunk = @response_chunks.find { |chunk| chunk["type"] == "message_delta" }
+      usage = usage_chunk&.dig("usage")&.transform_keys(&:to_sym)
+      stop_reason = usage_chunk&.dig("delta", "stop_reason")
 
       content = grouped_chunks.map do |_index, chunks|
         text = chunks.map { |chunk| chunk.dig("delta", "text") }.join
         if !text.nil? && !text.empty?
-          {"type" => "text", "text" => text}
+          {type: "text", text: text}
         else
           tool_calls_from_choice_chunks(chunks)
         end
       end.flatten
 
-      @response_chunks.first&.slice("id", "object", "created", "model")
-        &.merge!(
-          {
-            "content" => content,
-            "usage" => usage,
-            "role" => "assistant",
-            "stop_reason" => stop_reason
-          }
-        )
+      first_chunk = @response_chunks.first
+      {
+        id: first_chunk&.dig("id") || first_chunk&.dig("message", "id"),
+        model: first_chunk&.dig("model") || first_chunk&.dig("message", "model"),
+        content: content,
+        usage: usage,
+        role: "assistant",
+        stop_reason: stop_reason
+      }
     end
 
     def tool_calls_from_choice_chunks(chunks)
@@ -168,10 +169,10 @@ module Langchain::LLM
         input = chunks.select { |chunk| chunk.dig("delta", "partial_json") }
           .map! { |chunk| chunk.dig("delta", "partial_json") }.join
         {
-          "id" => first_block.dig("content_block", "id"),
-          "type" => "tool_use",
-          "name" => first_block.dig("content_block", "name"),
-          "input" => input.empty? ? nil : JSON.parse(input).transform_keys(&:to_sym)
+          id: first_block.dig("content_block", "id"),
+          type: "tool_use",
+          name: first_block.dig("content_block", "name"),
+          input: input.empty? ? nil : JSON.parse(input).transform_keys(&:to_sym)
         }
       end.compact
     end

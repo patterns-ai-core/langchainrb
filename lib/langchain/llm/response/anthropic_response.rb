@@ -11,12 +11,12 @@ module Langchain::LLM::Response
     end
 
     def chat_completion
-      chat_completion = chat_completions.find { |h| h[:type] == :text }
+      chat_completion = chat_completions&.find { |h| h[:type].to_s == "text" }
       chat_completion && chat_completion[:text]
     end
 
     def tool_calls
-      tool_call = chat_completions.find { |h| h[:type] == :tool_use }
+      tool_call = chat_completions&.find { |h| h[:type].to_s == "tool_use" }
       tool_call ? [tool_call.to_h] : []
     end
 
