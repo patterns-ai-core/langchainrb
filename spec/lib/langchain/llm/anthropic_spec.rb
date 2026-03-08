@@ -5,6 +5,24 @@ require "anthropic"
 RSpec.describe Langchain::LLM::Anthropic do
   let(:subject) { described_class.new(api_key: "123") }
 
+  describe "#supports?" do
+    it "supports chat" do
+      expect(subject.supports?(:chat)).to be true
+    end
+
+    it "supports streaming" do
+      expect(subject.supports?(:streaming)).to be true
+    end
+
+    it "supports tools" do
+      expect(subject.supports?(:tools)).to be true
+    end
+
+    it "does not support embedding" do
+      expect(subject.supports?(:embedding)).to be false
+    end
+  end
+
   describe "#initialize" do
     context "when default_options are passed" do
       let(:default_options) { {max_tokens: 512} }
@@ -25,52 +43,6 @@ RSpec.describe Langchain::LLM::Anthropic do
         subject
         expect(subject.client.messages).to receive(:create).with(hash_including({max_tokens: 1024})).and_return({})
         subject.chat(messages: [{role: "user", content: "Hello json!"}], max_tokens: 1024)
-      end
-    end
-  end
-
-  describe "#complete" do
-    let(:completion) { "How high is the sky?" }
-    let(:fixture) { File.read("spec/fixtures/llm/anthropic/complete.json") }
-    let(:response) { JSON.parse(fixture, symbolize_names: true) }
-
-    context "with no additional parameters" do
-      before do
-        allow(subject.client).to receive(:complete)
-          .with(parameters: {
-            model: described_class::DEFAULTS[:completion_model],
-            prompt: completion,
-            temperature: described_class::DEFAULTS[:temperature],
-            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens]
-          })
-          .and_return(response)
-      end
-
-      it "returns a completion" do
-        expect(subject.complete(prompt: completion).completion).to eq(" The sky has no definitive")
-      end
-
-      it "returns model attribute" do
-        expect(subject.complete(prompt: completion).model).to eq("claude-2.1")
-      end
-    end
-
-    context "with failed API call" do
-      let(:fixture) { File.read("spec/fixtures/llm/anthropic/error.json") }
-
-      before do
-        allow(subject.client).to receive(:complete)
-          .with(parameters: {
-            model: described_class::DEFAULTS[:completion_model],
-            prompt: completion,
-            temperature: described_class::DEFAULTS[:temperature],
-            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens]
-          })
-          .and_return(JSON.parse(fixture))
-      end
-
-      it "raises an error" do
-        expect { subject.complete(prompt: completion) }.to raise_error(Langchain::LLM::ApiError, "Anthropic API error: The request is invalid. Please check the request and try again.")
       end
     end
   end
@@ -131,45 +103,85 @@ RSpec.describe Langchain::LLM::Anthropic do
     end
 
     context "with streaming" do
-      let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream.json") }
-      let(:response) { JSON.parse(fixture) }
       let(:stream_handler) { proc { _1 } }
 
-      before do
-        allow(subject.client.messages).to receive(:create) do |parameters|
-          response.each do |chunk|
-            parameters[:stream].call(chunk)
-          end
+      let(:mock_stream) do
+        instance_double("Anthropic::Streaming::MessageStream").tap do |stream|
+          allow(stream).to receive(:each).and_yield("event1").and_yield("event2")
+          allow(stream).to receive(:accumulated_message).and_return(accumulated_message)
         end
+      end
+
+      let(:accumulated_message) do
+        Anthropic::Models::Message.new(
+          id: "msg_019s6T825xb66ZLwPWmvH875",
+          type: :message,
+          model: "claude-3-sonnet-20240229",
+          role: :assistant,
+          content: [Anthropic::Models::TextBlock.new(type: :text, text: "Life is pretty good")],
+          stop_reason: :max_tokens,
+          usage: Anthropic::Models::Usage.new(input_tokens: 5, output_tokens: 10)
+        )
+      end
+
+      before do
+        allow(subject.client.messages).to receive(:stream).and_return(mock_stream)
       end
 
       it "handles streaming responses correctly" do
         rsp = subject.chat(messages: messages, &stream_handler)
         expect(rsp).to be_a(Langchain::LLM::Response::AnthropicResponse)
         expect(rsp.completion_tokens).to eq(10)
-        expect(rsp.total_tokens).to eq(10)
+        expect(rsp.total_tokens).to eq(15)
         expect(rsp.chat_completion).to eq("Life is pretty good")
+      end
+
+      it "yields events to the block" do
+        events = []
+        subject.chat(messages: messages) { |event| events << event }
+        expect(events).to eq(["event1", "event2"])
       end
     end
 
     context "with streaming tools" do
-      let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream_with_tool_calls.json") }
-      let(:response) { JSON.parse(fixture) }
       let(:stream_handler) { proc { _1 } }
 
-      before do
-        allow(subject.client.messages).to receive(:create) do |parameters|
-          response.each do |chunk|
-            parameters[:stream].call(chunk)
-          end
+      let(:mock_stream) do
+        instance_double("Anthropic::Streaming::MessageStream").tap do |stream|
+          allow(stream).to receive(:each)
+          allow(stream).to receive(:accumulated_message).and_return(accumulated_message)
         end
+      end
+
+      let(:accumulated_message) do
+        Anthropic::Models::Message.new(
+          id: "msg_014p7gG3wDgGV9EUtLvnow3U",
+          type: :message,
+          model: "claude-3-haiku-20240307",
+          role: :assistant,
+          content: [
+            Anthropic::Models::TextBlock.new(type: :text, text: "Okay, let's check the weather for San Francisco, CA:"),
+            Anthropic::Models::ToolUseBlock.new(
+              type: :tool_use,
+              id: "toolu_01T1x1fJ34qAmk2tNTrN7Up6",
+              name: "get_weather",
+              input: {location: "San Francisco, CA", unit: "fahrenheit"}
+            )
+          ],
+          stop_reason: :tool_use,
+          usage: Anthropic::Models::Usage.new(input_tokens: 472, output_tokens: 89)
+        )
+      end
+
+      before do
+        allow(subject.client.messages).to receive(:stream).and_return(mock_stream)
       end
 
       it "handles streaming responses correctly" do
         rsp = subject.chat(messages: messages, &stream_handler)
         expect(rsp).to be_a(Langchain::LLM::Response::AnthropicResponse)
         expect(rsp.completion_tokens).to eq(89)
-        expect(rsp.total_tokens).to eq(89)
+        expect(rsp.total_tokens).to eq(561)
         expect(rsp.chat_completion).to eq("Okay, let's check the weather for San Francisco, CA:")
 
         expect(rsp.tool_calls.first[:name]).to eq("get_weather")
@@ -177,19 +189,34 @@ RSpec.describe Langchain::LLM::Anthropic do
       end
 
       context "response has empty input" do
-        let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream_with_empty_tool_input.json") }
+        let(:accumulated_message) do
+          Anthropic::Models::Message.new(
+            id: "msg_014p7gG3wDgGV9EUtLvnow3U",
+            type: :message,
+            model: "claude-3-haiku-20240307",
+            role: :assistant,
+            content: [
+              Anthropic::Models::TextBlock.new(type: :text, text: "I'll check the weather for you:"),
+              Anthropic::Models::ToolUseBlock.new(
+                type: :tool_use,
+                id: "toolu_01T1x1fJ34qAmk2tNTrN7Up6",
+                name: "get_weather",
+                input: nil
+              )
+            ],
+            stop_reason: :tool_use,
+            usage: Anthropic::Models::Usage.new(input_tokens: 0, output_tokens: 10)
+          )
+        end
 
         it "handles empty input in tool calls correctly" do
-          # The test will pass if no exception is raised during processing
           rsp = subject.chat(messages: [{role: "user", content: "What's the weather?"}], &stream_handler)
 
-          # Verify the response
           expect(rsp).to be_a(Langchain::LLM::Response::AnthropicResponse)
           expect(rsp.chat_completion).to eq("I'll check the weather for you:")
 
-          # Verify the tool call with empty input is handled correctly
           expect(rsp.tool_calls.first[:name]).to eq("get_weather")
-          expect(rsp.tool_calls.first[:input]).to be_nil  # Should be nil (null in Ruby) because input was empty
+          expect(rsp.tool_calls.first[:input]).to be_nil
         end
       end
     end

@@ -10,6 +10,8 @@ module Langchain::LLM
       temperature: 0.0
     }
 
+    CAPABILITIES = [:chat, :embedding, :tools].freeze
+
     attr_reader :defaults, :api_key
 
     def initialize(api_key:, default_options: {})

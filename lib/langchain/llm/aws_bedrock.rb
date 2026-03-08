@@ -22,6 +22,8 @@ module Langchain::LLM
       return_likelihoods: "NONE"
     }.freeze
 
+    CAPABILITIES = [:chat, :completion, :embedding, :streaming, :tools].freeze
+
     attr_reader :client, :defaults
 
     SUPPORTED_COMPLETION_PROVIDERS = %i[

@@ -19,6 +19,8 @@ module Langchain::LLM
       dimensions: 384
     }.freeze
 
+    CAPABILITIES = [:completion, :embedding, :summarization].freeze
+
     #
     # Intialize the Replicate LLM
     #

@@ -21,6 +21,8 @@ module Langchain::LLM
       embedding_model: "text-embedding-3-small"
     }.freeze
 
+    CAPABILITIES = [:chat, :completion, :embedding, :streaming, :tools, :summarization].freeze
+
     EMBEDDING_SIZES = {
       "text-embedding-ada-002" => 1536,
       "text-embedding-3-large" => 3072,
@@ -171,15 +173,6 @@ module Langchain::LLM
 
     def reset_response_chunks
       @response_chunks = []
-    end
-
-    def with_api_error_handling
-      response = yield
-      return if response.nil? || response.empty?
-
-      raise Langchain::LLM::ApiError.new "OpenAI API error: #{response.dig("error", "message")}" if response&.dig("error")
-
-      response
     end
 
     def response_from_chunks

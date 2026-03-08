@@ -21,6 +21,8 @@ module Langchain::LLM
       chat_model: "gemini-1.0-pro"
     }.freeze
 
+    CAPABILITIES = [:chat, :embedding, :tools].freeze
+
     # Google Cloud has a project id and a specific region of deployment.
     # For GenAI-related things, a safe choice is us-central1.
     attr_reader :defaults, :url, :authorizer

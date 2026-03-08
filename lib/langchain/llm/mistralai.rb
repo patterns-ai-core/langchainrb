@@ -12,6 +12,8 @@ module Langchain::LLM
       embedding_model: "mistral-embed"
     }.freeze
 
+    CAPABILITIES = [:chat, :embedding, :streaming, :tools].freeze
+
     attr_reader :defaults
 
     def initialize(api_key:, default_options: {})

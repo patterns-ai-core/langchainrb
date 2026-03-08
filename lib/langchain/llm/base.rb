@@ -26,6 +26,19 @@ module Langchain::LLM
     # Default LLM options. Can be overridden by passing `default_options: {}` to the Langchain::LLM::* constructors.
     attr_reader :defaults
 
+    # Capabilities supported by each LLM provider.
+    # Subclasses should override this constant with their supported capabilities.
+    # Valid capabilities: :chat, :completion, :embedding, :streaming, :tools, :summarization, :thinking
+    CAPABILITIES = [].freeze
+
+    # Check if the LLM supports a given capability
+    #
+    # @param capability [Symbol] The capability to check (e.g., :chat, :streaming, :tools)
+    # @return [Boolean]
+    def supports?(capability)
+      self.class::CAPABILITIES.include?(capability.to_sym)
+    end
+
     # Ensuring backward compatibility for {default_dimensions}.
     #
     # @deprecated Use {default_dimensions} instead.
@@ -54,6 +67,7 @@ module Langchain::LLM
     #
     # Generate a completion for a given prompt. Parameters will depend on the LLM.
     #
+    # @deprecated Use {chat} instead.
     # @raise NotImplementedError if not supported by the LLM
     def complete(...)
       raise NotImplementedError, "#{self.class.name} does not support completion"
@@ -84,6 +98,25 @@ module Langchain::LLM
       @chat_parameters ||= Langchain::LLM::Parameters::Chat.new(
         parameters: params
       )
+    end
+
+    private
+
+    # Handles API errors from provider responses.
+    # Checks for error payloads in hash-like responses and raises a unified ApiError.
+    #
+    # @yield Block that makes the API call
+    # @return [Object] The response from the API call
+    # @raise [Langchain::LLM::ApiError] If the response contains an error
+    def with_api_error_handling
+      response = yield
+      return if response.nil? || (response.respond_to?(:empty?) && response.empty?)
+
+      if response.respond_to?(:dig) && response.dig("error")
+        raise Langchain::LLM::ApiError, "#{self.class.name.split("::").last} API error: #{response.dig("error", "message")}"
+      end
+
+      response
     end
   end
 end

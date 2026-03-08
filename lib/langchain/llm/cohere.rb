@@ -20,6 +20,8 @@ module Langchain::LLM
       truncate: "START"
     }.freeze
 
+    CAPABILITIES = [:chat, :completion, :embedding, :summarization, :tools].freeze
+
     def initialize(api_key:, default_options: {})
       depends_on "cohere-ruby", req: "cohere"
 

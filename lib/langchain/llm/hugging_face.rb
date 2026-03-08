@@ -15,6 +15,8 @@ module Langchain::LLM
       embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
     }.freeze
 
+    CAPABILITIES = [:embedding].freeze
+
     EMBEDDING_SIZES = {
       "sentence-transformers/all-MiniLM-L6-v2": 384
     }.freeze

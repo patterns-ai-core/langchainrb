@@ -21,6 +21,8 @@ module Langchain::LLM
       options: {}
     }.freeze
 
+    CAPABILITIES = [:chat, :completion, :embedding, :streaming, :tools, :summarization].freeze
+
     EMBEDDING_SIZES = {
       codellama: 4_096,
       "dolphin-mixtral": 4_096,
