@@ -58,6 +58,11 @@ module Langchain::Tool
       return tool_response(content: location_response) if location_response.is_a?(String) # Error occurred
 
       location = location_response.first
+      if !location && country_code.nil?
+        return tool_response(content: "Location not found. Please provide a valid country code too and try again.")
+      else
+        return tool_response(content: "Location not found") unless location
+      end
       return tool_response(content: "Location not found") unless location
 
       params = params.merge(lat: location["lat"], lon: location["lon"]).except(:q)
