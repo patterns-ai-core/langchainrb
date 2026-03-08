@@ -49,7 +49,7 @@ module Langchain
       tool_execution_callback: nil,
       &block
     )
-      unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.included_modules.include?(Langchain::ToolDefinition) }
+      unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.include?(Langchain::ToolDefinition) }
         raise ArgumentError, "Tools must be an array of objects extending Langchain::ToolDefinition"
       end
 
