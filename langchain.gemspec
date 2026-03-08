@@ -43,7 +43,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "webmock"
 
   # optional dependencies
-  spec.add_development_dependency "ai21", "~> 0.2.1"
   spec.add_development_dependency "anthropic", "~> 1.10"
   spec.add_development_dependency "aws-sdk-bedrockruntime", "~> 1.1"
   spec.add_development_dependency "chroma-db", "~> 0.6.0"

@@ -1,5 +1,4 @@
 ActiveSupport::Inflector.inflections(:en) do |inflect|
-  inflect.acronym "AI21"
   inflect.acronym "CSV"
   inflect.acronym "HTML"
   inflect.acronym "JSON"
@@ -14,6 +13,4 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "MistralAIMessage"
   inflect.acronym "GoogleVertexAI"
   inflect.acronym "VertexAI"
-  inflect.acronym "AI21Response"
-  inflect.acronym "AI21Validator"
 end

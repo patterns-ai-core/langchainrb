@@ -26,14 +26,12 @@ module Langchain::LLM
 
     SUPPORTED_COMPLETION_PROVIDERS = %i[
       anthropic
-      ai21
       cohere
       meta
     ].freeze
 
     SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[
       anthropic
-      ai21
       mistral
     ].freeze
 
@@ -86,7 +84,7 @@ module Langchain::LLM
     #
     # @param prompt [String] The prompt to generate a completion for
     # @param params  extra parameters passed to Aws::BedrockRuntime::Client#invoke_model
-    # @return [Langchain::LLM::Response::AnthropicResponse], [Langchain::LLM::Response::CohereResponse] or [Langchain::LLM::AI21Response] Response object
+    # @return [Langchain::LLM::Response::AnthropicResponse] or [Langchain::LLM::Response::CohereResponse] Response object
     #
     def complete(
       prompt:,
@@ -200,8 +198,6 @@ module Langchain::LLM
         :max_tokens_to_sample
       elsif completion_provider == :cohere
         :max_tokens
-      elsif completion_provider == :ai21
-        :maxTokens
       end
     end
 
@@ -210,8 +206,6 @@ module Langchain::LLM
         compose_parameters_anthropic(params)
       elsif provider_name(model_id) == :cohere
         compose_parameters_cohere(params)
-      elsif provider_name(model_id) == :ai21
-        params
       elsif provider_name(model_id) == :meta
         params
       elsif provider_name(model_id) == :mistral
@@ -232,8 +226,6 @@ module Langchain::LLM
         Langchain::LLM::Response::AwsBedrockAnthropicResponse.new(JSON.parse(response.body.string))
       elsif provider_name(model_id) == :cohere
         Langchain::LLM::Response::CohereResponse.new(JSON.parse(response.body.string))
-      elsif provider_name(model_id) == :ai21
-        Langchain::LLM::Response::AI21Response.new(JSON.parse(response.body.string, symbolize_names: true))
       elsif provider_name(model_id) == :meta
         Langchain::LLM::Response::AwsBedrockMetaResponse.new(JSON.parse(response.body.string))
       elsif provider_name(model_id) == :mistral
