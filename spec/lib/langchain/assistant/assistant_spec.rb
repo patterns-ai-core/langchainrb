@@ -1172,30 +1172,30 @@ RSpec.describe Langchain::Assistant do
     describe "#run" do
       let(:raw_anthropic_response) do
         {
-          "id" => "msg_01FqxtJoQCu8ixTCmrtCq6L5",
-          "type" => "message",
-          "role" => "assistant",
-          "model" => "claude-3-sonnet-20240229",
-          "stop_sequence" => nil,
-          "usage" => {
-            "input_tokens" => 272,
-            "output_tokens" => 55
+          id: "msg_01FqxtJoQCu8ixTCmrtCq6L5",
+          type: "message",
+          role: "assistant",
+          model: "claude-3-sonnet-20240229",
+          stop_sequence: nil,
+          usage: {
+            input_tokens: 272,
+            output_tokens: 55
           },
-          "content" => [
+          content: [
             {
-              "type" => "text",
-              "text" => "Sure, let's calculate it!"
+              type: "text",
+              text: "Sure, let's calculate it!"
             },
             {
-              "type" => "tool_use",
-              "id" => "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
-              "name" => "langchain_tool_calculator__execute",
-              "input" => {
-                "input" => "2+2"
+              type: "tool_use",
+              id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
+              name: "langchain_tool_calculator__execute",
+              input: {
+                input: "2+2"
               }
             }
           ],
-          "stop_reason" => "tool_use"
+          stop_reason: "tool_use"
         }
       end
 
@@ -1236,7 +1236,7 @@ RSpec.describe Langchain::Assistant do
           subject.run(auto_tool_execution: false)
 
           expect(subject.messages.last.role).to eq("assistant")
-          expect(subject.messages.last.tool_calls).to eq([raw_anthropic_response["content"].last])
+          expect(subject.messages.last.tool_calls).to eq([raw_anthropic_response[:content].last])
         end
 
         it "adds a system param to chat when instructions are given" do
@@ -1254,11 +1254,15 @@ RSpec.describe Langchain::Assistant do
       context "when auto_tool_execution is true" do
         let(:raw_anthropic_response2) do
           {
-            "role" => "assistant",
-            "content" => [
+            role: "assistant",
+            usage: {
+              input_tokens: 10,
+              output_tokens: 10
+            },
+            content: [
               {
-                "type" => "text",
-                "text" => "So 2 + 2 = 4."
+                type: "text",
+                text: "So 2 + 2 = 4."
               }
             ]
           }
@@ -1275,10 +1279,10 @@ RSpec.describe Langchain::Assistant do
                     text: "Sure, let's calculate it!"
                   },
                   {
-                    "type" => "tool_use",
-                    "id" => "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
-                    "name" => "langchain_tool_calculator__execute",
-                    "input" => {"input" => "2+2"}
+                    type: "tool_use",
+                    id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H",
+                    name: "langchain_tool_calculator__execute",
+                    input: {input: "2+2"}
                   }
                 ]},
                 {role: "user", content: [{type: "tool_result", tool_use_id: "toolu_014eSx9oBA5DMe8gZqaqcJ3H", content: "4.0"}]}
@@ -1298,8 +1302,8 @@ RSpec.describe Langchain::Assistant do
           subject.add_message(role: "user", content: "Please calculate 2+2")
           subject.add_message(
             role: "assistant",
-            content: raw_anthropic_response["content"].first["text"],
-            tool_calls: [raw_anthropic_response["content"].last]
+            content: raw_anthropic_response[:content].first[:text],
+            tool_calls: [raw_anthropic_response[:content].last]
           )
 
           subject.run(auto_tool_execution: true)
@@ -1326,12 +1330,12 @@ RSpec.describe Langchain::Assistant do
     describe "#extract_tool_call_args" do
       let(:tool_call) {
         {
-          "type" => "tool_use",
-          "id" => "toolu_01TjusbFApEbwKPRWTRwzadR",
-          "name" => "langchain_tool_news_retriever__get_top_headlines",
-          "input" => {
-            "country" => "us",
-            "page_size" => 10
+          type: "tool_use",
+          id: "toolu_01TjusbFApEbwKPRWTRwzadR",
+          name: "langchain_tool_news_retriever__get_top_headlines",
+          input: {
+            country: "us",
+            page_size: 10
           }
         }
       }

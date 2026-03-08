@@ -27,6 +27,7 @@ RSpec.describe Langchain::ToolDefinition do
     it "returns the correct snake_case name for complex class names" do
       complex_class = Class.new do
         extend Langchain::ToolDefinition
+
         def self.name
           "Langchain::Tool::API1Interface"
         end

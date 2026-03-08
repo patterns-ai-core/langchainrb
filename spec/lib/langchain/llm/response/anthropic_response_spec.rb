@@ -2,7 +2,7 @@
 
 RSpec.describe Langchain::LLM::Response::AnthropicResponse do
   let(:raw_chat_completions_response) {
-    JSON.parse File.read("spec/fixtures/llm/anthropic/chat.json")
+    JSON.parse File.read("spec/fixtures/llm/anthropic/chat.json"), symbolize_names: true
   }
 
   describe "#chat_completion" do
@@ -14,7 +14,7 @@ RSpec.describe Langchain::LLM::Response::AnthropicResponse do
 
   describe "#tool_calls" do
     let(:raw_response) {
-      JSON.parse File.read("spec/fixtures/llm/anthropic/chat_with_tool_calls.json")
+      JSON.parse File.read("spec/fixtures/llm/anthropic/chat_with_tool_calls.json"), symbolize_names: true
     }
     let(:response) { described_class.new(raw_response) }
 
@@ -22,13 +22,13 @@ RSpec.describe Langchain::LLM::Response::AnthropicResponse do
       expect(response.tool_calls).to eq(
         [
           {
-            "type" => "tool_use",
-            "id" => "toolu_01UEciZACvRZ6S4rqAwD1syH",
-            "name" => "news_retriever__get_everything",
-            "input" => {
-              "q" => "Google I/O 2024",
-              "sort_by" => "publishedAt",
-              "language" => "en"
+            type: "tool_use",
+            id: "toolu_01UEciZACvRZ6S4rqAwD1syH",
+            name: "news_retriever__get_everything",
+            input: {
+              q: "Google I/O 2024",
+              sort_by: "publishedAt",
+              language: "en"
             }
           }
         ]
