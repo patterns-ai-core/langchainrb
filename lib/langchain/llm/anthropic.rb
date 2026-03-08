@@ -14,7 +14,7 @@ module Langchain::LLM
     DEFAULTS = {
       temperature: 0.0,
       completion_model: "claude-2.1",
-      chat_model: "claude-sonnet-4-5-20250929",
+      chat_model: "claude-sonnet-4-6",
       max_tokens: 256
     }.freeze
 
