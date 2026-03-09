@@ -309,7 +309,7 @@ module Langchain
     end
 
     def set_state_for(response:)
-      if response.tool_calls.any?
+      if response.tool_calls&.any?
         :in_progress
       elsif response.chat_completion
         :completed
