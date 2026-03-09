@@ -15,7 +15,7 @@ module Langchain::LLM::Response
     end
 
     def tool_calls
-      if raw_response.dig("candidates", 0, "content") && raw_response.dig("candidates", 0, "content", "parts", 0).has_key?("functionCall")
+      if raw_response.dig("candidates", 0, "content", "parts", 0) && raw_response.dig("candidates", 0, "content", "parts", 0).has_key?("functionCall")
         raw_response.dig("candidates", 0, "content", "parts")
       else
         []
