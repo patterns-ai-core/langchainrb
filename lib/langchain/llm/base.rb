@@ -78,6 +78,15 @@ module Langchain::LLM
     end
 
     #
+    # Generate an image for a given prompt. Parameters will depend on the LLM provider.
+    #
+    # @raise NotImplementedError if not supported by the LLM
+    #
+    def generate_image(...)
+      raise NotImplementedError, "#{self.class.name} does not support image generation"
+    end
+
+    #
     # Returns an instance of Langchain::LLM::Parameters::Chat
     #
     def chat_parameters(params = {})
