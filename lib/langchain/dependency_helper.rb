@@ -22,9 +22,7 @@ module Langchain
       gem_version = Gem.loaded_specs[gem_name].version
       gem_requirement = Bundler.load.dependencies.find { |g| g.name == gem_name }&.requirement
 
-      raise LoadError unless gem_requirement
-
-      unless gem_requirement.satisfied_by?(gem_version)
+      if gem_requirement && !gem_requirement.satisfied_by?(gem_version)
         raise VersionError, "The #{gem_name} gem is installed, but version #{gem_requirement} is required. You have #{gem_version}."
       end
 

@@ -1,6 +1,9 @@
 require "logger"
+require "pathname"
+require "json"
+require "zeitwerk"
 require "langchain/version"
-require "langchain/engine"
+require "langchain/engine" if defined?(Rails::Engine)
 
 module Langchain
   class << self
@@ -58,3 +61,8 @@ module Langchain
   self.logger ||= ::Logger.new($stdout, **LOGGER_OPTIONS)
   @root = Pathname.new(__dir__)
 end
+
+Zeitwerk::Loader.for_gem.tap do |loader|
+  loader.ignore("#{__dir__}/langchain/engine.rb")
+  loader.ignore("#{__dir__}/langchainrb.rb")
+end.setup
