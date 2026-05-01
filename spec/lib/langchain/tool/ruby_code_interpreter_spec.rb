@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Langchain::Tool::RubyCodeInterpreter do
-  describe "#execute" do
+  describe "#execute", skip: (RUBY_VERSION >= "4.0") ? "safe_ruby gem is incompatible with Ruby 4.0+" : false do
     it "executes the expression" do
       response = subject.execute(input: '"hello world".reverse!')
       expect(response).to be_a(Langchain::ToolResponse)

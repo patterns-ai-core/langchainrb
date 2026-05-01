@@ -46,10 +46,10 @@ module Langchain
           # @param tool_call [Hash] The tool call hash, format: {"type"=>"tool_use", "id"=>"toolu_01TjusbFApEbwKPRWTRwzadR", "name"=>"news_retriever__get_top_headlines", "input"=>{"country"=>"us", "page_size"=>10}}], "stop_reason"=>"tool_use"}
           # @return [Array] The tool call information
           def extract_tool_call_args(tool_call:)
-            tool_call_id = tool_call.dig("id")
-            function_name = tool_call.dig("name")
+            tool_call_id = tool_call.dig(:id)
+            function_name = tool_call.dig(:name)
             tool_name, method_name = function_name.split("__")
-            tool_arguments = tool_call.dig("input").transform_keys(&:to_sym)
+            tool_arguments = tool_call.dig(:input).transform_keys(&:to_sym)
             [tool_call_id, tool_name, method_name, tool_arguments]
           end
 
