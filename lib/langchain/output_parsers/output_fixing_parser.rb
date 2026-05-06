@@ -47,12 +47,7 @@ module Langchain::OutputParsers
       parser.parse(completion)
     rescue OutputParserException => e
       new_completion = llm.chat(
-        messages: [{role: "user",
-                    content: prompt.format(
-                      instructions: parser.get_format_instructions,
-                      completion: completion,
-                      error: e
-                    )}]
+        messages: chat_messages(completion, e)
       ).completion
       parser.parse(new_completion)
     end
@@ -69,6 +64,38 @@ module Langchain::OutputParsers
     end
 
     private
+
+    def chat_messages(completion, e)
+      # For Google LLMs, use the parts format
+      if llm.is_a?(Langchain::LLM::GoogleGemini) || llm.is_a?(Langchain::LLM::GoogleVertexAI)
+        return [
+          {
+            role: "user", 
+            parts: [
+              {
+                text: prompt.format(
+                  instructions: parser.get_format_instructions,
+                  completion: completion,
+                  error: e
+                )
+              }
+            ]
+          }
+        ]
+      end
+            
+      # For other LLMs, use the standard content format
+      [
+        {
+          role: "user", 
+          content: prompt.format(
+            instructions: parser.get_format_instructions,
+            completion: completion,
+            error: e
+          )
+        }
+      ]
+    end
 
     private_class_method def self.naive_fix_prompt
       Langchain::Prompt.load_from_path(
