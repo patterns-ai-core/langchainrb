@@ -14,6 +14,13 @@ module Langchain::LLM
   #      llm_options: {}, # Available options: https://github.com/alexrudall/ruby-openai/blob/main/lib/openai/client.rb#L5-L13
   #      default_options: {}
   #    )
+  #
+  # OpenAI-compatible gateways can be configured through `llm_options`, for example:
+  #    llm = Langchain::LLM::OpenAI.new(
+  #      api_key: ENV["TUNING_ENGINES_API_KEY"],
+  #      llm_options: {uri_base: "https://api.tuningengines.com/v1"},
+  #      default_options: {chat_model: ENV.fetch("TUNING_ENGINES_MODEL", "gpt-4o-mini")}
+  #    )
   class OpenAI < Base
     DEFAULTS = {
       n: 1,

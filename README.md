@@ -88,6 +88,23 @@ llm = Langchain::LLM::OpenAI.new(
 )
 ```
 
+#### OpenAI-compatible gateways
+
+You can route the OpenAI LLM adapter through an OpenAI-compatible gateway by passing the underlying `ruby-openai` client options in `llm_options`. For example, Ruby and Rails apps using [Tuning Engines](https://www.tuningengines.com/) can keep the Langchain.rb interface while centralizing model routing, policy controls, audit logs, traces, approvals, and cost visibility:
+
+```ruby
+llm = Langchain::LLM::OpenAI.new(
+  api_key: ENV["TUNING_ENGINES_API_KEY"],
+  llm_options: {
+    uri_base: "https://api.tuningengines.com/v1"
+  },
+  default_options: {
+    chat_model: ENV.fetch("TUNING_ENGINES_MODEL", "gpt-4o-mini"),
+    embedding_model: ENV.fetch("TUNING_ENGINES_EMBEDDING_MODEL", "text-embedding-3-small")
+  }
+)
+```
+
 ### Generating Embeddings
 
 Use the `embed` method to generate embeddings for given text:
