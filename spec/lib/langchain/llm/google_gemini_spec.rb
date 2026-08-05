@@ -27,6 +27,12 @@ RSpec.describe Langchain::LLM::GoogleGemini do
       expect(subject.defaults[:temperature]).to eq(2.0)
       expect(subject.defaults[:safety_settings]).to eq(default_options[:safety_settings])
     end
+
+    it "accepts a custom read timeout" do
+      subject = described_class.new(api_key: "123", default_options: {read_timeout: 120})
+
+      expect(subject.defaults[:read_timeout]).to eq(120)
+    end
   end
 
   describe "#embed" do
@@ -83,6 +89,19 @@ RSpec.describe Langchain::LLM::GoogleGemini do
       end
 
       subject.chat(params)
+    end
+
+    it "configures the HTTP read timeout from the default options" do
+      subject = described_class.new(api_key: "123", default_options: {read_timeout: 120})
+      http = instance_double(Net::HTTP)
+      allow(Net::HTTP).to receive(:new).and_return(http)
+      allow(http).to receive(:use_ssl=)
+      allow(http).to receive(:set_debug_output)
+      allow(http).to receive(:request).and_return(raw_chat_completions_response)
+
+      expect(http).to receive(:read_timeout=).with(120)
+
+      subject.chat(messages: messages)
     end
 
     it "returns valid llm response object" do
