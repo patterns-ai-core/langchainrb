@@ -105,7 +105,7 @@ module Langchain
 
     # Only used by the Assistant when it calls the LLM#complete() method
     def prompt_of_concatenated_messages
-      messages.map(&:to_s).join
+      messages.join
     end
 
     # Set multiple messages
