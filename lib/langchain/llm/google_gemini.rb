@@ -96,6 +96,7 @@ module Langchain::LLM
     def http_post(url, params)
       http = Net::HTTP.new(url.hostname, url.port)
       http.use_ssl = url.scheme == "https"
+      http.read_timeout = defaults[:read_timeout] if defaults[:read_timeout]
       http.set_debug_output(Langchain.logger) if Langchain.logger.debug?
 
       request = Net::HTTP::Post.new(url)
