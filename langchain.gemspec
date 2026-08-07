@@ -61,7 +61,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "mail", "~> 2.8"
   spec.add_development_dependency "mistral-ai"
   spec.add_development_dependency "pg", "~> 1.5"
-  spec.add_development_dependency "pgvector", "~> 0.2.1"
+  spec.add_development_dependency "pgvector", "~> 0.3.2"
   spec.add_development_dependency "pdf-reader", "~> 2.0"
   spec.add_development_dependency "pinecone", "~> 1.0"
   spec.add_development_dependency "replicate-ruby", "~> 0.2.2"
