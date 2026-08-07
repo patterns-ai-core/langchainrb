@@ -7,7 +7,8 @@ module Langchain
         ROLES = [
           "assistant",
           "user",
-          "tool_result"
+          "tool_result",
+          "system"
         ].freeze
 
         TOOL_ROLE = "tool_result"
@@ -42,6 +43,8 @@ module Langchain
         def to_hash
           if assistant?
             assistant_hash
+          elsif system?
+            system_hash
           elsif tool?
             tool_hash
           elsif user?
@@ -61,6 +64,16 @@ module Langchain
           {
             role: "assistant",
             content: content_array.concat(tool_calls)
+          }
+        end
+
+        # Convert the message to an Anthropic API-compatible hash
+        #
+        # @return [Hash] The message as an Anthropic API-compatible hash, with the role as "system"
+        def system_hash
+          {
+            role: "system",
+            content: build_content_array
           }
         end
 
@@ -125,9 +138,11 @@ module Langchain
           role == "tool_result"
         end
 
-        # Anthropic does not implement system prompts
+        # Check if the message is a system message
+        #
+        # @return [Boolean] true/false whether this message is a system message
         def system?
-          false
+          role == "system"
         end
 
         # Check if the message came from an LLM
