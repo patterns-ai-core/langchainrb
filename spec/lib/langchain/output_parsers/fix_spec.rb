@@ -186,5 +186,26 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
       expect { parser.parse("Whoops I don't understand") }.to raise_error(Langchain::OutputParsers::OutputParserException)
       expect(parser.llm).to have_received(:chat).once
     end
+
+    context "with a Gemini based model" do
+      let(:llm_example) { Langchain::LLM::GoogleGemini.new(api_key: "123") }
+
+      it "parses when the llm is a Gemini based model" do
+        parser = described_class.new(**kwargs_example.merge(prompt: fix_prompt_template_example))
+        expect(parser.llm).to receive(:chat).with({ 
+          messages: [
+            {
+              role: "user",
+              parts: [
+                {
+                  text: match(fix_prompt_matcher_example)
+                }
+              ]
+            }
+          ]
+        }).and_return(double(completion: json_text_response))
+        expect(parser.parse("Whoops I don't understand")).to eq(json_response)
+      end
+    end
   end
 end
