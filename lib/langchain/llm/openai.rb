@@ -18,7 +18,8 @@ module Langchain::LLM
     DEFAULTS = {
       n: 1,
       chat_model: "gpt-4o-mini",
-      embedding_model: "text-embedding-3-small"
+      embedding_model: "text-embedding-3-small",
+      image_generation_model: "dall-e-3"
     }.freeze
 
     EMBEDDING_SIZES = {
@@ -159,6 +160,29 @@ module Langchain::LLM
       prompt = prompt_template.format(text: text)
 
       complete(prompt: prompt)
+    end
+
+    # Generate images for a given prompt using OpenAI Images API
+    #
+    # @param prompt [String] Textual prompt describing the desired image
+    # @param n [Integer] Number of images to generate (default 1)
+    # @param size [String] Requested resolution, eg. "1024x1024" (default "1024x1024")
+    # @return [Langchain::LLM::Response::OpenAIResponse] Wrapper around the raw response
+    def generate_image(prompt:, n: 1, size: "1024x1024")
+      raise ArgumentError, "prompt argument is required" if prompt.to_s.strip.empty?
+
+      parameters = {
+        prompt: prompt,
+        n: n,
+        size: size,
+        model: @defaults[:image_generation_model]
+      }
+
+      response = with_api_error_handling do
+        client.images.generate(parameters: parameters)
+      end
+
+      Langchain::LLM::Response::OpenAIResponse.new(response)
     end
 
     def default_dimensions
