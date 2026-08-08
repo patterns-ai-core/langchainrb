@@ -10,6 +10,8 @@ module Langchain
           :tool_calls,
           :tool_call_id
 
+        attr_writer :tool_calls
+
         # Check if the message came from a user
         #
         # @return [Boolean] true/false whether the message came from a user
