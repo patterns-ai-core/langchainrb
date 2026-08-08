@@ -953,12 +953,14 @@ RSpec.describe Langchain::Assistant do
     let(:llm) { Langchain::LLM::GoogleGemini.new(api_key: "123") }
     let(:calculator) { Langchain::Tool::Calculator.new }
     let(:instructions) { "You are an expert assistant" }
+    let(:parallel_tool_calls) { true }
 
     subject {
       described_class.new(
         llm: llm,
         tools: [calculator],
-        instructions: instructions
+        instructions: instructions,
+        parallel_tool_calls: parallel_tool_calls
       )
     }
 
@@ -1029,6 +1031,120 @@ RSpec.describe Langchain::Assistant do
 
           expect(subject.messages.last.role).to eq("model")
           expect(subject.messages.last.tool_calls).to eq([raw_google_gemini_response["candidates"][0]["content"]["parts"]][0])
+        end
+      end
+
+      context "when parallel_tool_calls is false" do
+        let(:parallel_tool_calls) { false }
+        let(:raw_google_gemini_response_with_parallel_tool_calls) do
+          {
+            "candidates" => [
+              {
+                "content" => {
+                  "parts" => [
+                    {
+                      "functionCall" => {
+                        "name" => "langchain_tool_calculator__execute",
+                        "args" => {"input" => "2+2"}
+                      }
+                    },
+                    {
+                      "functionCall" => {
+                        "name" => "langchain_tool_calculator__execute",
+                        "args" => {"input" => "3+3"}
+                      }
+                    }
+                  ],
+                  "role" => "model"
+                },
+                "finishReason" => "STOP",
+                "index" => 0,
+                "safetyRatings" => []
+              }
+            ]
+          }
+        end
+
+        let(:raw_google_gemini_response_with_second_tool_call) do
+          {
+            "candidates" => [
+              {
+                "content" => {
+                  "parts" => [
+                    {
+                      "functionCall" => {
+                        "name" => "langchain_tool_calculator__execute",
+                        "args" => {"input" => "3+3"}
+                      }
+                    }
+                  ],
+                  "role" => "model"
+                },
+                "finishReason" => "STOP",
+                "index" => 0,
+                "safetyRatings" => []
+              }
+            ]
+          }
+        end
+
+        let(:raw_google_gemini_final_response) do
+          {
+            "candidates" => [
+              {
+                "content" => {
+                  "parts" => [{"text" => "The answer is 4.0"}],
+                  "role" => "model"
+                },
+                "finishReason" => "STOP",
+                "index" => 0,
+                "safetyRatings" => []
+              }
+            ]
+          }
+        end
+
+        it "serializes tool execution to one call per model turn" do
+          first_tool_call = raw_google_gemini_response_with_parallel_tool_calls["candidates"][0]["content"]["parts"][0]
+          second_tool_call = raw_google_gemini_response_with_second_tool_call["candidates"][0]["content"]["parts"][0]
+          expect(subject.tools[0]).to receive(:execute).with(input: "2+2").and_return("4.0")
+          expect(subject.tools[0]).to receive(:execute).with(input: "3+3").and_return("6.0")
+
+          expect(subject.llm).to receive(:chat).with(
+            messages: [{role: "user", parts: [{text: "Please calculate 2+2 and 3+3"}]}],
+            tools: calculator.class.function_schemas.to_google_gemini_format,
+            tool_choice: {function_calling_config: {mode: "auto"}},
+            system: instructions
+          ).and_return(Langchain::LLM::Response::GoogleGeminiResponse.new(raw_google_gemini_response_with_parallel_tool_calls))
+
+          expect(subject.llm).to receive(:chat).with(
+            messages: [
+              {role: "user", parts: [{text: "Please calculate 2+2 and 3+3"}]},
+              {role: "model", parts: [first_tool_call]},
+              {role: "function", parts: [{functionResponse: {name: "langchain_tool_calculator__execute", response: {name: "langchain_tool_calculator__execute", content: "4.0"}}}]}
+            ],
+            tools: calculator.class.function_schemas.to_google_gemini_format,
+            tool_choice: {function_calling_config: {mode: "auto"}},
+            system: instructions
+          ).and_return(Langchain::LLM::Response::GoogleGeminiResponse.new(raw_google_gemini_response_with_second_tool_call))
+
+          expect(subject.llm).to receive(:chat).with(
+            messages: [
+              {role: "user", parts: [{text: "Please calculate 2+2 and 3+3"}]},
+              {role: "model", parts: [first_tool_call]},
+              {role: "function", parts: [{functionResponse: {name: "langchain_tool_calculator__execute", response: {name: "langchain_tool_calculator__execute", content: "4.0"}}}]},
+              {role: "model", parts: [second_tool_call]},
+              {role: "function", parts: [{functionResponse: {name: "langchain_tool_calculator__execute", response: {name: "langchain_tool_calculator__execute", content: "6.0"}}}]}
+            ],
+            tools: calculator.class.function_schemas.to_google_gemini_format,
+            tool_choice: {function_calling_config: {mode: "auto"}},
+            system: instructions
+          ).and_return(Langchain::LLM::Response::GoogleGeminiResponse.new(raw_google_gemini_final_response))
+
+          subject.add_message_and_run!(content: "Please calculate 2+2 and 3+3")
+
+          expect(subject.messages.last.content).to eq("The answer is 4.0")
+          expect(subject.messages[1].tool_calls).to eq([first_tool_call])
         end
       end
 

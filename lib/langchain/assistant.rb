@@ -352,6 +352,15 @@ module Langchain
     #
     # @param tool_calls [Array<Hash>] The tool calls to run
     def run_tools(tool_calls)
+      if parallel_tool_calls == false
+        # Some providers, such as Google Gemini, do not expose an API option
+        # to disable parallel tool calls. Keep the model message in sync with
+        # the single tool response that we submit, then let the next turn
+        # request any remaining tool calls.
+        tool_calls = tool_calls.first(1)
+        messages.last.tool_calls = tool_calls
+      end
+
       # Iterate over each function invocation and submit tool output
       tool_calls.each do |tool_call|
         run_tool(tool_call)
