@@ -66,6 +66,33 @@ RSpec.describe Langchain::LLM::OpenAI do
       end
     end
 
+    context "when retry_options is not passed" do
+      it "does not attach the retry middleware" do
+        f_mock = double("f_mock", response: nil, request: nil)
+
+        allow(OpenAI::Client).to receive(:new) { |**, &block| block&.call(f_mock) }
+
+        subject
+
+        expect(f_mock).not_to have_received(:request)
+      end
+    end
+
+    context "when retry_options is passed" do
+      let(:retry_options) { {max: 2, interval: 0.05, retry_statuses: [429, 503]} }
+      let(:options) { {retry_options: retry_options} }
+
+      it "attaches the retry middleware with the given options" do
+        f_mock = double("f_mock", response: nil, request: nil)
+
+        allow(OpenAI::Client).to receive(:new) { |**, &block| block&.call(f_mock) }
+
+        subject
+
+        expect(f_mock).to have_received(:request).with(:retry, retry_options)
+      end
+    end
+
     context "when llm_options are passed" do
       let(:options) { {llm_options: {uri_base: "http://localhost:1234"}} }
 
