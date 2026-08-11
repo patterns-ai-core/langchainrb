@@ -12,7 +12,17 @@ module Langchain::LLM
   #    llm = Langchain::LLM::OpenAI.new(
   #      api_key: ENV["OPENAI_API_KEY"],
   #      llm_options: {}, # Available options: https://github.com/alexrudall/ruby-openai/blob/main/lib/openai/client.rb#L5-L13
-  #      default_options: {}
+  #      default_options: {},
+  #      # Optional. Requires the "faraday-retry" gem. Retries requests that fail due to
+  #      # network glitches or rate limiting, e.g.:
+  #      # retry_options: {
+  #      #   max: 2,
+  #      #   interval: 0.05,
+  #      #   interval_randomness: 0.5,
+  #      #   backoff_factor: 2,
+  #      #   retry_statuses: [429, 500, 502, 503, 504],
+  #      #   methods: %i[get post]
+  #      # }
   #    )
   class OpenAI < Base
     DEFAULTS = {
@@ -31,13 +41,20 @@ module Langchain::LLM
     #
     # @param api_key [String] The API key to use
     # @param client_options [Hash] Options to pass to the OpenAI::Client constructor
-    def initialize(api_key:, llm_options: {}, default_options: {})
+    # @param retry_options [Hash] Options to pass to Faraday's retry middleware. Requires the "faraday-retry" gem.
+    #   Leave empty (the default) to disable retries.
+    def initialize(api_key:, llm_options: {}, default_options: {}, retry_options: {})
       depends_on "ruby-openai", req: "openai"
 
       llm_options[:log_errors] = Langchain.logger.debug? unless llm_options.key?(:log_errors)
 
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options) do |f|
         f.response :logger, Langchain.logger, {headers: true, bodies: true, errors: true}
+
+        if retry_options.any?
+          depends_on "faraday-retry", req: "faraday/retry"
+          f.request :retry, retry_options
+        end
       end
 
       @defaults = DEFAULTS.merge(default_options)
