@@ -40,8 +40,9 @@ module Langchain::LLM
     # Initialize an OpenAI LLM instance
     #
     # @param api_key [String] The API key to use
-    # @param client_options [Hash] Options to pass to the OpenAI::Client constructor
-    # @param retry_options [Hash] Options to pass to Faraday's retry middleware. Requires the "faraday-retry" gem.
+    # @param llm_options [Hash] Options to pass to the OpenAI::Client constructor
+    # @param default_options [Hash] Default options to use on every call, e.g. chat_model, embedding_model, n
+    # @param retry_options [Hash, nil] Options to pass to Faraday's retry middleware. Requires the "faraday-retry" gem.
     #   Leave empty (the default) to disable retries.
     def initialize(api_key:, llm_options: {}, default_options: {}, retry_options: {})
       depends_on "ruby-openai", req: "openai"
