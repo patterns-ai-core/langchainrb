@@ -51,7 +51,7 @@ module Langchain::LLM
       @client = ::OpenAI::Client.new(access_token: api_key, **llm_options) do |f|
         f.response :logger, Langchain.logger, {headers: true, bodies: true, errors: true}
 
-        if retry_options.any?
+        if retry_options&.any?
           depends_on "faraday-retry", req: "faraday/retry"
           f.request :retry, retry_options
         end
