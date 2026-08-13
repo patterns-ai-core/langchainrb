@@ -18,6 +18,7 @@ module Langchain
       :llm_adapter,
       :messages,
       :tool_choice,
+      :max_turns,
       :total_prompt_tokens,
       :total_completion_tokens,
       :total_tokens
@@ -34,6 +35,7 @@ module Langchain
     # @param instructions [String] The system instructions
     # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
     # @param parallel_tool_calls [Boolean] Whether or not to run tools in parallel
+    # @param max_turns [Integer] Maximum number of LLM turns for an automatic run
     # @param messages [Array<Langchain::Assistant::Messages::Base>] The messages
     # @param add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
     # @param tool_execution_callback [Proc] A callback function (Proc or lambda) that is called right before a tool function is executed
@@ -43,6 +45,7 @@ module Langchain
       instructions: nil,
       tool_choice: "auto",
       parallel_tool_calls: true,
+      max_turns: 10,
       messages: [],
       # Callbacks
       add_message_callback: nil,
@@ -62,10 +65,15 @@ module Langchain
       self.messages = messages
       @tools = tools
       @parallel_tool_calls = parallel_tool_calls
+      @max_turns = max_turns
+      unless @max_turns.is_a?(Integer) && @max_turns.positive?
+        raise ArgumentError, "max_turns must be a positive integer"
+      end
       self.tool_choice = tool_choice
       self.instructions = instructions
       @block = block
       @state = :ready
+      @turns = 0
 
       @total_prompt_tokens = 0
       @total_completion_tokens = 0
@@ -139,6 +147,7 @@ module Langchain
         return
       end
 
+      @turns = 0
       @state = :in_progress
       @state = handle_state until run_finished?(auto_tool_execution)
 
@@ -300,6 +309,12 @@ module Langchain
     #
     # @return [Symbol] The next state
     def handle_user_or_tool_message
+      if @turns >= max_turns
+        Langchain.logger.warn("#{self.class} - Maximum number of turns (#{max_turns}) reached")
+        return :failed
+      end
+
+      @turns += 1
       response = chat_with_llm
 
       add_message(role: response.role, content: response.chat_completion, tool_calls: response.tool_calls)
