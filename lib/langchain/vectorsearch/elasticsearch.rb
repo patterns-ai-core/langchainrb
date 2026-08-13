@@ -175,7 +175,7 @@ module Langchain::Vectorsearch
         query = default_query(query_vector)
       end
 
-      es_client.search(body: {query: query, size: k}).body
+      response_body(es_client.search(body: {query: query, size: k}))
     end
 
     # Search for similar texts by embedding
@@ -190,7 +190,16 @@ module Langchain::Vectorsearch
 
       query = default_query(embedding) if query.empty?
 
-      es_client.search(body: {query: query, size: k}).body
+      response_body(es_client.search(body: {query: query, size: k}))
+    end
+
+    private
+
+    # Some versions of the `elasticsearch` gem return a plain Hash from
+    # `Client#search`, while others wrap it in a `Response` object that
+    # exposes the Hash via `#body`.
+    def response_body(response)
+      response.respond_to?(:body) ? response.body : response
     end
   end
 end
