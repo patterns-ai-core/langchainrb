@@ -311,6 +311,8 @@ module Langchain
     def handle_user_or_tool_message
       if @turns >= max_turns
         Langchain.logger.warn("#{self.class} - Maximum number of turns (#{max_turns}) reached")
+        # Reaching the cap means the assistant did not produce a completed response.
+        # Keep this distinct from :completed so callers can detect the interruption.
         return :failed
       end
 

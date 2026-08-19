@@ -44,7 +44,7 @@ RSpec.describe Langchain::Assistant do
       expect(described_class.new(llm: llm).parallel_tool_calls).to eq(true)
     end
 
-    it "stops processing when the automatic turn limit is reached" do
+    it "marks the run as failed when the automatic turn limit is reached" do
       assistant = described_class.new(llm: llm, max_turns: 1)
       assistant.instance_variable_set(:@turns, 1)
       expect(assistant).not_to receive(:chat_with_llm)
