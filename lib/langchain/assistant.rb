@@ -378,10 +378,29 @@ module Langchain
         messages.last.tool_calls = tool_calls
       end
 
+      first_tool_message_index = messages.length
+
       # Iterate over each function invocation and submit tool output
       tool_calls.each do |tool_call|
         run_tool(tool_call)
       end
+
+      merge_google_gemini_tool_messages(first_tool_message_index) if google_gemini_adapter? && tool_calls.length > 1
+    end
+
+    def google_gemini_adapter?
+      @llm_adapter.is_a?(LLM::Adapters::GoogleGemini)
+    end
+
+    def merge_google_gemini_tool_messages(start_index)
+      tool_messages = messages.slice!(start_index, messages.length - start_index)
+      return if tool_messages.length < 2
+
+      add_message(
+        role: @llm_adapter.tool_role,
+        content: tool_messages.map(&:content),
+        tool_call_id: tool_messages.map(&:tool_call_id)
+      )
     end
 
     # Run the tool call
