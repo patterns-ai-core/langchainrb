@@ -25,7 +25,7 @@ module Langchain
 
           @role = role
           # Some Tools return content as a JSON hence `.to_s`
-          @content = content.to_s
+          @content = content.is_a?(Array) ? content : content.to_s
           @tool_calls = tool_calls
           @tool_call_id = tool_call_id
         end
@@ -88,6 +88,23 @@ module Langchain
         # Convert the message to an GoogleGemini API-compatible hash
         # @return [Hash] The message as an GoogleGemini API-compatible hash, with the role as "function"
         def tool_hash
+          if tool_call_id.is_a?(Array)
+            return {
+              role: role,
+              parts: tool_call_id.zip(content).map do |id, result|
+                {
+                  functionResponse: {
+                    name: id,
+                    response: {
+                      name: id,
+                      content: result
+                    }
+                  }
+                }
+              end
+            }
+          end
+
           {
             role: role,
             parts: [{

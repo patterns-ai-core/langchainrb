@@ -674,7 +674,7 @@ Join us in the [Langchain.rb](https://discord.gg/WDARp7J2n8) Discord server.
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=andreibondarev/langchainrb&type=Date)](https://star-history.com/#andreibondarev/langchainrb&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=andreibondarev/langchainrb&type=Date)](https://star-history.dera.page/#andreibondarev/langchainrb&Date)
 
 ## Contributing
 

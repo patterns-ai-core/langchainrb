@@ -18,6 +18,7 @@ module Langchain
       :llm_adapter,
       :messages,
       :tool_choice,
+      :max_turns,
       :total_prompt_tokens,
       :total_completion_tokens,
       :total_tokens
@@ -34,6 +35,7 @@ module Langchain
     # @param instructions [String] The system instructions
     # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
     # @param parallel_tool_calls [Boolean] Whether or not to run tools in parallel
+    # @param max_turns [Integer] Maximum number of LLM turns for an automatic run
     # @param messages [Array<Langchain::Assistant::Messages::Base>] The messages
     # @param add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
     # @param tool_execution_callback [Proc] A callback function (Proc or lambda) that is called right before a tool function is executed
@@ -43,6 +45,7 @@ module Langchain
       instructions: nil,
       tool_choice: "auto",
       parallel_tool_calls: true,
+      max_turns: 10,
       messages: [],
       # Callbacks
       add_message_callback: nil,
@@ -62,10 +65,15 @@ module Langchain
       self.messages = messages
       @tools = tools
       @parallel_tool_calls = parallel_tool_calls
+      @max_turns = max_turns
+      unless @max_turns.is_a?(Integer) && @max_turns.positive?
+        raise ArgumentError, "max_turns must be a positive integer"
+      end
       self.tool_choice = tool_choice
       self.instructions = instructions
       @block = block
       @state = :ready
+      @turns = 0
 
       @total_prompt_tokens = 0
       @total_completion_tokens = 0
@@ -139,6 +147,7 @@ module Langchain
         return
       end
 
+      @turns = 0
       @state = :in_progress
       @state = handle_state until run_finished?(auto_tool_execution)
 
@@ -300,6 +309,14 @@ module Langchain
     #
     # @return [Symbol] The next state
     def handle_user_or_tool_message
+      if @turns >= max_turns
+        Langchain.logger.warn("#{self.class} - Maximum number of turns (#{max_turns}) reached")
+        # Reaching the cap means the assistant did not produce a completed response.
+        # Keep this distinct from :completed so callers can detect the interruption.
+        return :failed
+      end
+
+      @turns += 1
       response = chat_with_llm
 
       add_message(role: response.role, content: response.chat_completion, tool_calls: response.tool_calls)
@@ -361,10 +378,29 @@ module Langchain
         messages.last.tool_calls = tool_calls
       end
 
+      first_tool_message_index = messages.length
+
       # Iterate over each function invocation and submit tool output
       tool_calls.each do |tool_call|
         run_tool(tool_call)
       end
+
+      merge_google_gemini_tool_messages(first_tool_message_index) if google_gemini_adapter? && tool_calls.length > 1
+    end
+
+    def google_gemini_adapter?
+      @llm_adapter.is_a?(LLM::Adapters::GoogleGemini)
+    end
+
+    def merge_google_gemini_tool_messages(start_index)
+      tool_messages = messages.slice!(start_index, messages.length - start_index)
+      return if tool_messages.length < 2
+
+      add_message(
+        role: @llm_adapter.tool_role,
+        content: tool_messages.map(&:content),
+        tool_call_id: tool_messages.map(&:tool_call_id)
+      )
     end
 
     # Run the tool call
