@@ -194,6 +194,17 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
     it "either text or query parameter is mandatory" do
       expect { subject.similarity_search }.to raise_error("Either text or query should pass as an argument")
     end
+
+    it "handles a client that returns a plain Hash instead of a Response object" do
+      response = [
+        {_id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6]}
+      ]
+
+      allow_any_instance_of(::Elasticsearch::Client)
+        .to receive(:search).with(body: {query: subject.default_query([0.1, 0.2, 0.3]), size: 5}).and_return(response)
+
+      expect(subject.similarity_search(text: "simple", k: 5)).to eq(response)
+    end
   end
 
   describe "#similarity_search_by_vector" do
@@ -245,6 +256,17 @@ RSpec.describe Langchain::Vectorsearch::Elasticsearch do
 
     it "either text or query parameter is mandatory" do
       expect { subject.similarity_search_by_vector }.to raise_error("Either embedding or query should pass as an argument")
+    end
+
+    it "handles a client that returns a plain Hash instead of a Response object" do
+      response = [
+        {_id: 1, input: "simple text", input_vector: [0.1, 0.5, 0.6]}
+      ]
+
+      allow_any_instance_of(::Elasticsearch::Client)
+        .to receive(:search).with(body: {query: subject.default_query([0.5, 0.6, 0.7]), size: 5}).and_return(response)
+
+      expect(subject.similarity_search_by_vector(embedding: [0.5, 0.6, 0.7], k: 5)).to eq(response)
     end
   end
 
