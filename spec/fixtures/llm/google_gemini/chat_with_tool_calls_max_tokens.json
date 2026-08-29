@@ -1,0 +1,11 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "role": "model"
+      }, 
+      "finishReason": "MAX_TOKENS",
+      "index": 0
+    }
+  ]
+}
