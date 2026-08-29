@@ -45,5 +45,16 @@ module Langchain::LLM::Response
     def total_tokens
       raw_response.dig("usageMetadata", "totalTokenCount")
     end
+
+    # Returns array of base64 image data from inline_data parts
+    def image_base64s
+      candidates = raw_response["candidates"] || []
+      candidates.flat_map do |candidate|
+        parts = candidate.dig("content", "parts") || []
+        parts.filter_map { |part| part.dig("inlineData", "data") }
+      end
+    end
+
+    alias_method :image_blobs, :image_base64s
   end
 end

@@ -18,7 +18,8 @@ module Langchain::LLM
       top_k: 40,
       dimensions: 768,
       embedding_model: "textembedding-gecko",
-      chat_model: "gemini-1.0-pro"
+      chat_model: "gemini-1.0-pro",
+      image_generation_model: "imagen-3.0-generate-002"
     }.freeze
 
     # Google Cloud has a project id and a specific region of deployment.
@@ -97,6 +98,33 @@ module Langchain::LLM
       else
         raise StandardError.new(parsed_response)
       end
+    end
+
+    # Generate images with Imagen model via Vertex AI
+    #
+    # @param prompt [String] The text prompt for the image
+    # @param n [Integer] Number of images to generate (1-4)
+    # @return [Langchain::LLM::Response::GoogleVertexAIResponse]
+    def generate_image(prompt:, n: 1)
+      raise ArgumentError.new("prompt argument is required") if prompt.to_s.strip.empty?
+
+      params = {
+        instances: [
+          {
+            prompt: prompt
+          }
+        ],
+        parameters: {
+          sampleCount: n
+        }
+      }
+
+      model = @defaults[:image_generation_model]
+      uri = URI("#{url}#{model}:predict")
+
+      parsed_response = http_post(uri, params)
+
+      Langchain::LLM::Response::GoogleVertexAIResponse.new(parsed_response, model: model)
     end
 
     private

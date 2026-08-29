@@ -48,6 +48,12 @@ RSpec.describe Langchain::LLM::Base do
     end
   end
 
+  describe "#generate_image" do
+    it "raises an error" do
+      expect { subject.generate_image }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe "#chat_parameters(params = {})" do
     subject { TestLLM.new }
 

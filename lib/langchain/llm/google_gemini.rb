@@ -7,6 +7,7 @@ module Langchain::LLM
     DEFAULTS = {
       chat_model: "gemini-1.5-pro-latest",
       embedding_model: "text-embedding-004",
+      image_generation_model: "gemini-2.0-flash-preview-image-generation",
       temperature: 0.0
     }
 
@@ -87,6 +88,30 @@ module Langchain::LLM
       uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{model}:embedContent?key=#{api_key}")
 
       parsed_response = http_post(uri, params)
+
+      Langchain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: model)
+    end
+
+    # Generate an image for a given prompt using Gemini Image Generation capability
+    #
+    # @param prompt [String] The textual prompt for the desired image
+    # @param n [Integer] Number of images to generate (candidateCount) (default 1)
+    # @return [Langchain::LLM::Response::GoogleGeminiResponse] Response wrapper
+    def generate_image(prompt:, n: 1)
+      raise ArgumentError.new("prompt argument is required") if prompt.to_s.strip.empty?
+
+      parameters = {
+        contents: [{parts: [{text: prompt}]}],
+        generationConfig: {
+          responseModalities: ["TEXT", "IMAGE"],
+          candidateCount: n
+        }
+      }
+
+      model = @defaults[:image_generation_model]
+      uri = URI("https://generativelanguage.googleapis.com/v1beta/models/#{model}:generateContent?key=#{api_key}")
+
+      parsed_response = http_post(uri, parameters)
 
       Langchain::LLM::Response::GoogleGeminiResponse.new(parsed_response, model: model)
     end

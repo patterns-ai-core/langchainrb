@@ -59,5 +59,12 @@ module Langchain::LLM::Response
     def total_tokens
       raw_response.dig("usage", "total_tokens")
     end
+
+    # Returns an array of image URLs when the response comes from the Image Generation endpoint
+    #
+    # @return [Array<String>] list of image URLs or [] if not present
+    def image_urls
+      Array(raw_response.dig("data")).map { |d| d["url"] }.compact
+    end
   end
 end
