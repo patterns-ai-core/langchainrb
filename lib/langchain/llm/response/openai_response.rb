@@ -25,11 +25,7 @@ module Langchain::LLM::Response
     end
 
     def tool_calls
-      if chat_completions.dig(0, "message").has_key?("tool_calls")
-        chat_completions.dig(0, "message", "tool_calls")
-      else
-        []
-      end
+      chat_completions&.dig(0, "message", "tool_calls") || []
     end
 
     def embedding

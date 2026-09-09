@@ -15,7 +15,7 @@ module Langchain::LLM::Response
     end
 
     def tool_calls
-      chat_completions.dig(0, "message", "tool_calls") || []
+      chat_completions&.dig(0, "message", "tool_calls") || []
     end
 
     def role
