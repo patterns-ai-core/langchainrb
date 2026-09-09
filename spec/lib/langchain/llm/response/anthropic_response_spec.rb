@@ -34,5 +34,30 @@ RSpec.describe Langchain::LLM::Response::AnthropicResponse do
         ]
       )
     end
+
+    it "returns every tool_use block when the model calls tools in parallel" do
+      raw_response = JSON.parse(
+        File.read("spec/fixtures/llm/anthropic/chat_with_multiple_tool_calls.json"),
+        symbolize_names: true
+      )
+      response = described_class.new(raw_response)
+
+      expect(response.tool_calls).to eq(
+        [
+          {
+            type: "tool_use",
+            id: "toolu_01UEciZACvRZ6S4rqAwD1syH",
+            name: "weather__get_current",
+            input: {city: "Santo Domingo"}
+          },
+          {
+            type: "tool_use",
+            id: "toolu_02VFdjAbDwSA7T5srBxE2tzI",
+            name: "weather__get_current",
+            input: {city: "Toronto"}
+          }
+        ]
+      )
+    end
   end
 end

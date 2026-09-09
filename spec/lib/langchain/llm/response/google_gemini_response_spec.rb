@@ -25,6 +25,12 @@ RSpec.describe Langchain::LLM::Response::GoogleGeminiResponse do
     it "returns tool_calls" do
       expect(response.tool_calls).to eq([{"functionCall" => {"name" => "calculator__execute", "args" => {"input" => "2+2"}}}])
     end
+
+    it "returns [] when the candidate content has no parts (e.g. finishReason SAFETY)" do
+      raw = {"candidates" => [{"content" => {"role" => "model"}, "finishReason" => "SAFETY"}]}
+
+      expect(described_class.new(raw).tool_calls).to eq([])
+    end
   end
 
   describe "#embeddings" do
