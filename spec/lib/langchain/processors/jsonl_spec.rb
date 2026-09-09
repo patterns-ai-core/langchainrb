@@ -17,5 +17,12 @@ RSpec.describe Langchain::Processors::JSONL do
     it "parses the file and returns data" do
       expect(described_class.new.parse(file)).to eq(data)
     end
+
+    it "skips blank lines instead of raising" do
+      require "stringio"
+      io = StringIO.new(%({"a": 1}\n\n  \n{"a": 2}\n))
+
+      expect(described_class.new.parse(io)).to eq([{"a" => 1}, {"a" => 2}])
+    end
   end
 end
