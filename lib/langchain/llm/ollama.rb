@@ -287,8 +287,16 @@ module Langchain::LLM
     end
 
     def json_responses_chunk_handler(&block)
+      incomplete_chunk_line = nil
       proc do |chunk, _size|
         chunk.split("\n").each do |chunk_line|
+          if incomplete_chunk_line
+            chunk_line = incomplete_chunk_line + chunk_line
+            incomplete_chunk_line = nil
+          end
+
+          next incomplete_chunk_line = chunk_line unless chunk_line.end_with?("}")
+
           parsed_chunk = JSON.parse(chunk_line)
           block.call(parsed_chunk)
         end
