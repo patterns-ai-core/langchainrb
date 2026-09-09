@@ -10,8 +10,9 @@ module Langchain
       # @param [File] data
       # @return [Array of Hash]
       def parse(data)
-        data.read.lines.map do |line|
-          ::JSON.parse(line)
+        data.read.each_line.filter_map do |line|
+          line.strip!
+          ::JSON.parse(line) unless line.empty?
         end
       end
     end
