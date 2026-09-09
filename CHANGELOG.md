@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1052] Return every `tool_use` block from `AnthropicResponse#tool_calls` instead of only the first, so parallel tool calls from Claude are no longer silently dropped.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1044] Cap automatic assistant turns to prevent infinite tool execution loops.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1040] Fix `parallel_tool_calls: false` for Google Gemini assistants by serializing tool execution across model turns.
 - [COMPAT] [https://github.com/patterns-ai-core/langchainrb/pull/980] Suppress a Ruby 3.4 warning for URI parser.
