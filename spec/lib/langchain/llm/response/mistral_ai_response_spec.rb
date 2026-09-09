@@ -31,5 +31,9 @@ RSpec.describe Langchain::LLM::Response::MistralAIResponse do
         ]
       )
     end
+
+    it "returns [] when the response has no choices (e.g. an error payload)" do
+      expect(described_class.new({"object" => "error", "message" => "boom"}).tool_calls).to eq([])
+    end
   end
 end
