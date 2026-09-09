@@ -16,8 +16,7 @@ module Langchain::LLM::Response
     end
 
     def tool_calls
-      tool_call = chat_completions&.find { |h| h[:type].to_s == "tool_use" }
-      tool_call ? [tool_call.to_h] : []
+      chat_completions&.select { |h| h[:type].to_s == "tool_use" }&.map(&:to_h) || []
     end
 
     def chat_completions
