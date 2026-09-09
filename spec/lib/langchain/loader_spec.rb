@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "tmpdir"
+require "fileutils"
+
 RSpec.describe Langchain::Loader do
   describe "#load" do
     let(:status) { ["200", "OK"] }
@@ -37,6 +40,26 @@ RSpec.describe Langchain::Loader do
         expect(subject).to be_a(Array)
 
         expect(subject.map(&:value)).to eq(result)
+      end
+    end
+
+    context "Directory with an unsupported file and a subdirectory" do
+      around do |example|
+        Dir.mktmpdir do |dir|
+          File.write(File.join(dir, "notes.txt"), "hello")
+          File.write(File.join(dir, "image.png"), "not really a png")
+          FileUtils.mkdir_p(File.join(dir, "nested"))
+          File.write(File.join(dir, "nested", "more.txt"), "world")
+          @dir = dir
+          example.run
+        end
+      end
+
+      subject { described_class.new(@dir).load }
+
+      it "returns only Data for the loadable files, skipping the rest" do
+        expect(subject).to all(be_a(Langchain::Data))
+        expect(subject.map(&:value)).to contain_exactly("hello", "world")
       end
     end
 

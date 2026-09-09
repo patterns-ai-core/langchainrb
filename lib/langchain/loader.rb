@@ -107,12 +107,16 @@ module Langchain
 
     # rubocop:disable Style/ArgumentsForwarding
     def load_from_directory(&block)
-      Dir.glob(File.join(@path, "**/*")).map do |file|
-        # Only load and add to result files with supported extensions
+      Dir.glob(File.join(@path, "**/*")).filter_map do |file|
+        # `**/*` already yields every nested file, so skip the directory entries
+        # rather than recursing into them and loading their contents twice.
+        next if File.directory?(file)
+
         Langchain::Loader.new(file, @options).load(&block)
-      rescue
-        UnknownFormatError.new("Unknown format: #{source_type}")
-      end.flatten.compact
+      rescue UnknownFormatError
+        # Silently skip files with an unsupported extension.
+        nil
+      end.flatten
     end
     # rubocop:enable Style/ArgumentsForwarding
 
