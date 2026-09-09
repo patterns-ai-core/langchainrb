@@ -14,6 +14,12 @@ RSpec.describe Langchain::LLM::Response::OpenAIResponse do
       expect(described_class.new(raw).tool_calls).to eq([])
     end
 
+    it "returns [] when tool_calls is present but null (see #1011)" do
+      raw = {"choices" => [{"message" => {"role" => "assistant", "content" => "hi", "tool_calls" => nil, "function_call" => nil}}]}
+
+      expect(described_class.new(raw).tool_calls).to eq([])
+    end
+
     it "returns [] when choices is empty" do
       expect(described_class.new({"choices" => []}).tool_calls).to eq([])
     end
