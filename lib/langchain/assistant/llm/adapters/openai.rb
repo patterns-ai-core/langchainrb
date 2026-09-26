@@ -39,7 +39,8 @@ module Langchain
           # @param tool_calls [Array] The tool calls
           # @param tool_call_id [String] The tool call ID
           # @return [Messages::OpenAIMessage] The OpenAI message
-          def build_message(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
+          def build_message(role:, content: nil, image_url: nil, tool_calls: nil, tool_call_id: nil)
+            tool_calls ||= []
             Messages::OpenAIMessage.new(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
