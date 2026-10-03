@@ -52,12 +52,9 @@ module Langchain
 
       # Clean and format the extracted content
       def clean_content(content)
-        # Ensure compatibility with `URI::RFC2396_PARSER` (Ruby 3.4+) and `URI::DEFAULT_PARSER` (<= 3.3).
-        uri_parser = defined?(URI::RFC2396_PARSER) ? URI::RFC2396_PARSER : URI::DEFAULT_PARSER
-
         content
           .gsub(/\[cid:[^\]]+\]/, "") # Remove embedded image references
-          .gsub(uri_parser.make_regexp(%w[http https])) { |match| "<#{match}>" } # Format URLs
+          .gsub(Langchain::Utils::UriParser.make_regexp(%w[http https])) { |match| "<#{match}>" } # Format URLs
           .gsub(/\r\n?/, "\n") # Normalize line endings to Unix style
           .gsub(/[\u200B-\u200D\uFEFF]/, "") # Remove zero width spaces and similar characters
           .gsub(/<\/?[^>]+>/, "") # Remove any HTML tags that might have sneaked in
