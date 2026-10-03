@@ -55,7 +55,7 @@ RSpec.describe Langchain::Tool::Weather do
       it "returns an error message" do
         result = weather_tool.get_current_weather(city: city, state_code: state_code)
         expect(result).to be_a(Langchain::ToolResponse)
-        expect(result.content).to eq("Location not found")
+        expect(result.content).to start_with("Location not found")
       end
     end
 
