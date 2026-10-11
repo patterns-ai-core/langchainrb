@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1055] Stop sending the default `temperature` (0.0) from `Langchain::LLM::Anthropic#chat`; Claude Opus 4.7+ and Sonnet 5+ reject it with a 400. A temperature set in `default_options` or passed to `#chat` is still sent.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1052] Return every `tool_use` block from `AnthropicResponse#tool_calls` instead of only the first, so parallel tool calls from Claude are no longer silently dropped.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1051] Skip unsupported and non-file directory entries when loading a directory instead of returning an `UnknownFormatError` object into the results array.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1050] Return `[]` from `#tool_calls` on `OpenAIResponse`, `MistralAIResponse` and `GoogleGeminiResponse` when the response has no usable choices, instead of raising `NoMethodError`.

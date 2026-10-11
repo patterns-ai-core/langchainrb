@@ -31,7 +31,10 @@ module Langchain::LLM
       @defaults = DEFAULTS.merge(default_options)
       chat_parameters.update(
         model: {default: @defaults[:chat_model]},
-        temperature: {default: @defaults[:temperature]},
+        # Only a temperature the caller set is sent: Claude Opus 4.7 and later reject `temperature`,
+        # and Claude Sonnet 5 and later reject non-default values, so DEFAULTS[:temperature] would
+        # make every chat request with a current model fail with a 400.
+        temperature: {default: default_options[:temperature]},
         max_tokens: {default: @defaults[:max_tokens]},
         metadata: {},
         system: {},
