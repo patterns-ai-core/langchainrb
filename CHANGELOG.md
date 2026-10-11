@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1056] Format `PromptTemplate` and the `FewShotPromptTemplate` suffix in a single pass, so escaped `{{braces}}` stay literal, an inserted value is never expanded as another variable, and backslashes in values (`\'`, `\0`, `\&`) are kept as-is.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1052] Return every `tool_use` block from `AnthropicResponse#tool_calls` instead of only the first, so parallel tool calls from Claude are no longer silently dropped.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1051] Skip unsupported and non-file directory entries when loading a directory instead of returning an `UnknownFormatError` object into the results array.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1050] Return `[]` from `#tool_calls` on `OpenAIResponse`, `MistralAIResponse` and `GoogleGeminiResponse` when the response has no usable choices, instead of raising `NoMethodError`.
