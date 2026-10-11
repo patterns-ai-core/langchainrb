@@ -80,13 +80,39 @@ RSpec.describe Langchain::LLM::Anthropic do
     let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat.json") }
     let(:response) { JSON.parse(fixture, symbolize_names: true) }
 
+    context "with temperature" do
+      it "does not send the library's default temperature, which current Claude models reject" do
+        expect(subject.client.messages).to receive(:create)
+          .with(hash_excluding(:temperature))
+          .and_return(response)
+
+        subject.chat(messages: messages)
+      end
+
+      it "sends a temperature set in default_options" do
+        llm = described_class.new(api_key: "123", default_options: {temperature: 0.2})
+        expect(llm.client.messages).to receive(:create)
+          .with(hash_including(temperature: 0.2))
+          .and_return(response)
+
+        llm.chat(messages: messages)
+      end
+
+      it "sends a temperature passed to #chat" do
+        expect(subject.client.messages).to receive(:create)
+          .with(hash_including(temperature: 0.7))
+          .and_return(response)
+
+        subject.chat(messages: messages, temperature: 0.7)
+      end
+    end
+
     context "with no additional parameters" do
       before do
         allow(subject.client.messages).to receive(:create)
           .with({
             model: described_class::DEFAULTS[:chat_model],
             messages: messages,
-            temperature: described_class::DEFAULTS[:temperature],
             max_tokens: described_class::DEFAULTS[:max_tokens],
             stop_sequences: ["beep"]
           })
