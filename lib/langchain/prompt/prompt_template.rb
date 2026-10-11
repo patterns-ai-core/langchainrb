@@ -57,10 +57,17 @@ module Langchain::Prompt
     # @return [String] A formatted string.
     #
     def format(**kwargs)
-      result = @template
-      result = result.gsub(/{{/, "{").gsub(/}}/, "}")
-      kwargs.each { |key, value| result = result.gsub(/\{#{key}\}/, value.to_s) }
-      result
+      values = kwargs.transform_keys(&:to_s)
+      # A single pass over the template: `{{` and `}}` become literal braces instead of opening a
+      # variable, and an inserted value is never rescanned, so braces or backslashes in it
+      # (JSON, code, user input) come out unchanged.
+      @template.gsub(/\{\{|\}\}|\{([^{}]*)\}/) do |match|
+        case match
+        when "{{" then "{"
+        when "}}" then "}"
+        else values.fetch(Regexp.last_match(1)) { match }.to_s
+        end
+      end
     end
 
     #

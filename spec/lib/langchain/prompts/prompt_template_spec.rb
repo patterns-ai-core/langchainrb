@@ -80,6 +80,26 @@ RSpec.describe Langchain::Prompt::PromptTemplate do
 
       expect(prompt.format(schema: schema)).to eq("Tell me a joke that follows this schema: #{schema}")
     end
+
+    it "keeps escaped braces literal when their content is also a variable name" do
+      prompt = described_class.new(template: "Write {{name}} literally, then {name}.", input_variables: ["name"])
+
+      expect(prompt.format(name: "Ada")).to eq("Write {name} literally, then Ada.")
+    end
+
+    it "does not expand a variable that appears inside another variable's value" do
+      prompt = described_class.new(template: "Question: {question} Context: {context}", input_variables: ["question", "context"])
+
+      expect(prompt.format(question: "what is {context}?", context: "internal notes"))
+        .to eq("Question: what is {context}? Context: internal notes")
+    end
+
+    it "inserts values with backslashes unchanged" do
+      prompt = described_class.new(template: "Code: {code}", input_variables: ["code"])
+      code = %q(s = 'It\'s'; re = /\d+/; path = "C:\\Users"; m = "\0\&")
+
+      expect(prompt.format(code: code)).to eq("Code: #{code}")
+    end
   end
 
   describe "#from_template" do

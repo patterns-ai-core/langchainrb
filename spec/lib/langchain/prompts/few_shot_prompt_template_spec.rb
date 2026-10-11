@@ -39,6 +39,12 @@ RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
       )
     end
 
+    it "inserts a suffix value with backslashes or braces unchanged" do
+      value = %q(It\'s {adjective} \0)
+
+      expect(prompt.format(adjective: value)).to end_with("Input: #{value}\nOutput:")
+    end
+
     context "input_variables is invalid" do
       let(:input_variables) { ["adjective", "extra_adjective"] }
 
