@@ -90,8 +90,11 @@ module Langchain::Prompt
     def format(**kwargs)
       example_string = @examples.map { |example| @example_prompt.format(**example) }
 
-      suffix_string = @suffix
-      kwargs.each { |key, value| suffix_string = suffix_string.gsub(/\{#{key}\}/, value.to_s) }
+      values = kwargs.transform_keys(&:to_s)
+      # A single pass, so an inserted value is never rescanned for variables or backslash escapes.
+      suffix_string = @suffix.gsub(/\{([^{}]*)\}/) do |match|
+        values.fetch(Regexp.last_match(1)) { match }.to_s
+      end
 
       [@prefix, *example_string, suffix_string].join(@example_separator)
     end
