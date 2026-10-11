@@ -341,6 +341,40 @@ RSpec.describe Langchain::Assistant do
         end
       end
 
+      context "when the response carries an explicit tool_calls: null (see #1011)" do
+        let(:raw_openai_response_null_tool_calls) do
+          {
+            "id" => "chatcmpl-BoGVVtq92F0jUwOIs6CU0qs65xbql",
+            "object" => "chat.completion",
+            "created" => 1751319553,
+            "model" => "gpt-4o-mini-2024-07-18",
+            "choices" => [
+              {
+                "index" => 0,
+                "message" => {"role" => "assistant", "content" => "There are no directories under /Home.", "tool_calls" => nil, "function_call" => nil},
+                "finish_reason" => "stop"
+              }
+            ],
+            "usage" => {"prompt_tokens" => 50, "completion_tokens" => 12, "total_tokens" => 62}
+          }
+        end
+
+        before do
+          allow(subject.llm).to receive(:chat).and_return(
+            Langchain::LLM::Response::OpenAIResponse.new(raw_openai_response_null_tool_calls)
+          )
+          subject.add_message(role: "user", content: "how many directories are there under /Home")
+        end
+
+        it "completes the run without raising" do
+          expect { subject.run(auto_tool_execution: true) }.not_to raise_error
+
+          expect(subject.messages.last.role).to eq("assistant")
+          expect(subject.messages.last.content).to eq("There are no directories under /Home.")
+          expect(subject.messages.last.tool_calls).to eq([])
+        end
+      end
+
       context "when messages are empty" do
         let(:instructions) { nil }
 
