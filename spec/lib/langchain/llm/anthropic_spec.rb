@@ -178,6 +178,33 @@ RSpec.describe Langchain::LLM::Anthropic do
       end
     end
 
+    context "with streaming and a thinking block" do
+      let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream_with_thinking.json") }
+      let(:response) { JSON.parse(fixture) }
+      let(:stream_handler) { proc { _1 } }
+
+      before do
+        allow(subject.client.messages).to receive(:create) do |parameters|
+          response.each do |chunk|
+            parameters[:stream].call(chunk)
+          end
+        end
+      end
+
+      it "returns the text after the thinking block" do
+        rsp = subject.chat(messages: messages, &stream_handler)
+        expect(rsp.chat_completion).to eq("Life is pretty good")
+        expect(rsp.tool_calls).to eq([])
+      end
+
+      it "keeps the thinking block with its signature" do
+        rsp = subject.chat(messages: messages, &stream_handler)
+        expect(rsp.chat_completions.first).to eq(
+          {type: "thinking", thinking: "The user is greeting me.", signature: "EqQBCgIYAhIM"}
+        )
+      end
+    end
+
     context "with streaming tools" do
       let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat_stream_with_tool_calls.json") }
       let(:response) { JSON.parse(fixture) }
