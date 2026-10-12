@@ -193,7 +193,10 @@ module Langchain::LLM
           id: first_block.dig("content_block", "id"),
           type: "tool_use",
           name: first_block.dig("content_block", "name"),
-          input: input.empty? ? nil : JSON.parse(input).transform_keys(&:to_sym)
+          # A tool without arguments streams an empty partial_json; the non-streamed
+          # response (and AwsBedrock's streamed one) gives {} for it, and the Assistant
+          # and the replayed tool_use block both need a hash.
+          input: input.empty? ? {} : JSON.parse(input).transform_keys(&:to_sym)
         }
       end.compact
     end
