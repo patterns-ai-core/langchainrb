@@ -60,4 +60,18 @@ RSpec.describe Langchain::LLM::Response::AnthropicResponse do
       )
     end
   end
+
+  describe "#thinking_blocks" do
+    it "returns the thinking and redacted_thinking blocks unchanged, in order" do
+      thinking = {type: "thinking", thinking: "Let me check.", signature: "EqQBCgIYAhIM"}
+      redacted = {type: "redacted_thinking", data: "EmwKAhgBEgy3va3pzix"}
+      response = described_class.new({content: [thinking, redacted, {type: "text", text: "Done."}]})
+
+      expect(response.thinking_blocks).to eq([thinking, redacted])
+    end
+
+    it "returns [] when the response has no thinking" do
+      expect(described_class.new({content: [{type: "text", text: "Hi"}]}).thinking_blocks).to eq([])
+    end
+  end
 end

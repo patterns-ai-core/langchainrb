@@ -89,17 +89,7 @@ module Langchain
     # @param tool_call_id [String] The ID of the tool call to include in the message
     # @return [Array<Langchain::Message>] The messages
     def add_message(role: "user", content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
-      message = build_message(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
-
-      # Call the callback with the message
-      add_message_callback.call(message) if add_message_callback # rubocop:disable Style/SafeNavigation
-
-      # Prepend the message to the messages array
-      messages << message
-
-      @state = :ready
-
-      messages
+      append_message(build_message(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id))
     end
 
     # Convert messages to an LLM APIs-compatible array of hashes
@@ -319,7 +309,7 @@ module Langchain
       @turns += 1
       response = chat_with_llm
 
-      add_message(role: response.role, content: response.chat_completion, tool_calls: response.tool_calls)
+      append_message(@llm_adapter.build_message_from_response(response))
       record_used_tokens(response.prompt_tokens, response.completion_tokens, response.total_tokens)
 
       set_state_for(response: response)
@@ -425,6 +415,22 @@ module Langchain
       else
         submit_tool_output(tool_call_id: tool_call_id, output: output)
       end
+    end
+
+    # Add a message that is already built
+    #
+    # @param message [Langchain::Assistant::Messages::Base] The message to add
+    # @return [Array<Langchain::Message>] The messages
+    def append_message(message)
+      # Call the callback with the message
+      add_message_callback.call(message) if add_message_callback # rubocop:disable Style/SafeNavigation
+
+      # Prepend the message to the messages array
+      messages << message
+
+      @state = :ready
+
+      messages
     end
 
     # Build a message
