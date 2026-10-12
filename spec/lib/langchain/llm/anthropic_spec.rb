@@ -242,7 +242,7 @@ RSpec.describe Langchain::LLM::Anthropic do
 
           # Verify the tool call with empty input is handled correctly
           expect(rsp.tool_calls.first[:name]).to eq("get_weather")
-          expect(rsp.tool_calls.first[:input]).to be_nil  # Should be nil (null in Ruby) because input was empty
+          expect(rsp.tool_calls.first[:input]).to eq({})
         end
       end
     end
