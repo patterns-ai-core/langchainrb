@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1057] Rebuild `thinking` and `redacted_thinking` blocks in streamed `Langchain::LLM::Anthropic#chat` responses instead of leaving `nil` in the content, which made `chat_completion` raise `NoMethodError` whenever Claude thought (by default on Claude 5 models).
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1056] Format `PromptTemplate` and the `FewShotPromptTemplate` suffix in a single pass, so escaped `{{braces}}` stay literal, an inserted value is never expanded as another variable, and backslashes in values (`\'`, `\0`, `\&`) are kept as-is.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1055] Stop sending the default `temperature` (0.0) from `Langchain::LLM::Anthropic#chat`; Claude Opus 4.7+ and Sonnet 5+ reject it with a 400. A temperature set in `default_options` or passed to `#chat` is still sent.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1052] Return every `tool_use` block from `AnthropicResponse#tool_calls` instead of only the first, so parallel tool calls from Claude are no longer silently dropped.
