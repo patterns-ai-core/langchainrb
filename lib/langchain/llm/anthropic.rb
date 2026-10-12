@@ -146,13 +146,16 @@ module Langchain::LLM
       stop_reason = usage_chunk&.dig("delta", "stop_reason")
 
       content = grouped_chunks.map do |_index, chunks|
+        block_type = chunks.find { |chunk| chunk["type"] == "content_block_start" }&.dig("content_block", "type")
         text = chunks.map { |chunk| chunk.dig("delta", "text") }.join
-        if !text.nil? && !text.empty?
+        if block_type == "thinking" || block_type == "redacted_thinking"
+          thinking_block_from_chunks(chunks, block_type)
+        elsif !text.nil? && !text.empty?
           {type: "text", text: text}
         else
           tool_calls_from_choice_chunks(chunks)
         end
-      end.flatten
+      end.flatten.compact
 
       first_chunk = @response_chunks.first
       {
@@ -162,6 +165,21 @@ module Langchain::LLM
         usage: usage,
         role: "assistant",
         stop_reason: stop_reason
+      }
+    end
+
+    # Rebuilds a thinking block from its deltas. The signature is kept so the block
+    # can be passed back unchanged on a later turn.
+    def thinking_block_from_chunks(chunks, block_type)
+      if block_type == "redacted_thinking"
+        start = chunks.find { |chunk| chunk["type"] == "content_block_start" }
+        return {type: "redacted_thinking", data: start.dig("content_block", "data")}
+      end
+
+      {
+        type: "thinking",
+        thinking: chunks.map { |chunk| chunk.dig("delta", "thinking") }.join,
+        signature: chunks.map { |chunk| chunk.dig("delta", "signature") }.join
       }
     end
 
