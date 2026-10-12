@@ -19,6 +19,12 @@ module Langchain::LLM::Response
       chat_completions&.select { |h| h[:type].to_s == "tool_use" }&.map(&:to_h) || []
     end
 
+    # The thinking and redacted_thinking blocks, which must be passed back unchanged
+    # in the assistant turn of a tool-use loop
+    def thinking_blocks
+      chat_completions&.select { |h| %w[thinking redacted_thinking].include?(h[:type].to_s) }&.map(&:to_h) || []
+    end
+
     def chat_completions
       raw_response[:content]
     end

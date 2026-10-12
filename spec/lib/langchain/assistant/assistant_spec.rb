@@ -1530,6 +1530,41 @@ RSpec.describe Langchain::Assistant do
         end
       end
 
+      context "when the response has thinking blocks" do
+        let(:thinking_block) { {type: "thinking", thinking: "I should use the calculator.", signature: "EqQBCgIYAhIM"} }
+        let(:redacted_block) { {type: "redacted_thinking", data: "EmwKAhgBEgy3va3pzix"} }
+        let(:raw_thinking_response) do
+          raw_anthropic_response.merge(content: [thinking_block, redacted_block, *raw_anthropic_response[:content]])
+        end
+        let(:raw_final_response) do
+          {role: "assistant", usage: {input_tokens: 10, output_tokens: 10}, content: [{type: "text", text: "So 2 + 2 = 4."}]}
+        end
+
+        it "passes the thinking blocks back first in the assistant turn of the tool-use loop" do
+          allow(subject.tools[0]).to receive(:execute).with(input: "2+2").and_return("4.0")
+          sent = []
+          allow(subject.llm).to receive(:chat) do |**params|
+            sent << params[:messages]
+            raw = (sent.size == 1) ? raw_thinking_response : raw_final_response
+            Langchain::LLM::Response::AnthropicResponse.new(raw)
+          end
+
+          subject.add_message(role: "user", content: "Please calculate 2+2")
+          subject.run(auto_tool_execution: true)
+
+          expect(sent.size).to eq(2)
+          assistant_turn = sent.last[1]
+          expect(assistant_turn[:role]).to eq("assistant")
+          expect(assistant_turn[:content]).to eq([
+            thinking_block,
+            redacted_block,
+            {type: "text", text: "Sure, let's calculate it!"},
+            raw_anthropic_response[:content].last
+          ])
+          expect(subject.messages.last.content).to eq("So 2 + 2 = 4.")
+        end
+      end
+
       context "when messages are empty" do
         let(:instructions) { nil }
 

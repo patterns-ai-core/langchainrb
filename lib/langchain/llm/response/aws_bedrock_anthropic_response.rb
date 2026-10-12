@@ -24,6 +24,14 @@ module Langchain::LLM::Response
       raw_response.dig("content")
     end
 
+    # The thinking and redacted_thinking blocks, which must be passed back unchanged
+    # in the assistant turn of a tool-use loop
+    def thinking_blocks
+      Array(chat_completions)
+        .select { |h| %w[thinking redacted_thinking].include?(h["type"]) }
+        .map { |h| h.transform_keys(&:to_sym) }
+    end
+
     def completions
       [raw_response.dig("completion")]
     end

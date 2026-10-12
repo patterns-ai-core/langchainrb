@@ -43,6 +43,14 @@ module Langchain
             raise NotImplementedError, "Subclasses must implement build_message"
           end
 
+          # Build the assistant message for an LLM response
+          #
+          # @param response [Langchain::LLM::Response::BaseResponse] The LLM response
+          # @return [Messages::Base] The message
+          def build_message_from_response(response)
+            build_message(role: response.role, content: response.chat_completion, tool_calls: response.tool_calls)
+          end
+
           # Does this adapter accept messages with role="system"?
           #
           # @return [Boolean] Whether the adapter supports system messages

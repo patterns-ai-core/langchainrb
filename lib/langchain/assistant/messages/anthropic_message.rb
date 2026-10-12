@@ -18,12 +18,14 @@ module Langchain
         # @param content [String] The content of the message
         # @param tool_calls [Array<Hash>] The tool calls made in the message
         # @param tool_call_id [String] The ID of the tool call
+        # @param thinking_blocks [Array<Hash>] The thinking blocks that preceded an assistant message
         def initialize(
           role:,
           content: nil,
           image_url: nil,
           tool_calls: [],
-          tool_call_id: nil
+          tool_call_id: nil,
+          thinking_blocks: []
         )
           raise ArgumentError, "Role must be one of #{ROLES.join(", ")}" unless ROLES.include?(role)
           raise ArgumentError, "Tool calls must be an array of hashes" unless tool_calls.is_a?(Array) && tool_calls.all? { |tool_call| tool_call.is_a?(Hash) }
@@ -34,7 +36,10 @@ module Langchain
           @image_url = image_url
           @tool_calls = tool_calls
           @tool_call_id = tool_call_id
+          @thinking_blocks = thinking_blocks
         end
+
+        attr_reader :thinking_blocks
 
         # Convert the message to an Anthropic API-compatible hash
         #
@@ -53,7 +58,9 @@ module Langchain
         #
         # @return [Hash] The message as an Anthropic API-compatible hash, with the role as "assistant"
         def assistant_hash
-          content_array = []
+          # Thinking blocks go first and unchanged: in a tool-use loop with manual
+          # extended thinking, the API rejects an assistant turn that drops them.
+          content_array = thinking_blocks.dup
           if content && !content.empty?
             content_array << {type: "text", text: content}
           end

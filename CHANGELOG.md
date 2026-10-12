@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1058] Pass Anthropic `thinking` and `redacted_thinking` blocks back, first and unchanged, in the assistant turn of `Langchain::Assistant`'s tool-use loop; dropping them made the request carrying the tool result fail whenever Claude thought before calling a tool.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1059] Give a streamed `Langchain::LLM::Anthropic` tool call without arguments `input: {}` instead of `nil`, which made `Langchain::Assistant` end the run in `:failed` with streaming on.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1057] Rebuild `thinking` and `redacted_thinking` blocks in streamed `Langchain::LLM::Anthropic#chat` responses instead of leaving `nil` in the content, which made `chat_completion` raise `NoMethodError` whenever Claude thought (by default on Claude 5 models).
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1056] Format `PromptTemplate` and the `FewShotPromptTemplate` suffix in a single pass, so escaped `{{braces}}` stay literal, an inserted value is never expanded as another variable, and backslashes in values (`\'`, `\0`, `\&`) are kept as-is.

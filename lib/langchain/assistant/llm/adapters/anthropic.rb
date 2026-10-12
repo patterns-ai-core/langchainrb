@@ -41,6 +41,16 @@ module Langchain
             Messages::AnthropicMessage.new(role: role, content: content, image_url: image_url, tool_calls: tool_calls, tool_call_id: tool_call_id)
           end
 
+          # Keeps the response's thinking blocks so they can be passed back on the next call
+          def build_message_from_response(response)
+            Messages::AnthropicMessage.new(
+              role: response.role,
+              content: response.chat_completion,
+              tool_calls: response.tool_calls,
+              thinking_blocks: response.thinking_blocks
+            )
+          end
+
           # Extract the tool call information from the Anthropic tool call hash
           #
           # @param tool_call [Hash] The tool call hash, format: {"type"=>"tool_use", "id"=>"toolu_01TjusbFApEbwKPRWTRwzadR", "name"=>"news_retriever__get_top_headlines", "input"=>{"country"=>"us", "page_size"=>10}}], "stop_reason"=>"tool_use"}
