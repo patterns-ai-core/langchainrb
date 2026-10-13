@@ -15,7 +15,7 @@ module Langchain::LLM
       temperature: 0.0,
       completion_model: "command",
       chat_model: "command-r-plus",
-      embedding_model: "small",
+      embedding_model: "embed-english-v3.0",
       dimensions: 1024,
       truncate: "START"
     }.freeze
@@ -31,8 +31,6 @@ module Langchain::LLM
         response_format: {default: @defaults[:response_format]}
       )
       chat_parameters.remap(
-        system: :preamble,
-        messages: :chat_history,
         stop: :stop_sequences,
         top_k: :k,
         top_p: :p
@@ -43,12 +41,15 @@ module Langchain::LLM
     # Generate an embedding for a given text
     #
     # @param text [String] The text to generate an embedding for
+    # @param input_type [String] "search_document", "search_query", "classification" or "clustering"
     # @return [Langchain::LLM::Response::CohereResponse] Response object
     #
-    def embed(text:)
+    def embed(text:, input_type: "search_document")
       response = client.embed(
         texts: [text],
-        model: @defaults[:embedding_model]
+        model: @defaults[:embedding_model],
+        input_type: input_type,
+        embedding_types: ["float"]
       )
 
       Langchain::LLM::Response::CohereResponse.new response, model: @defaults[:embedding_model]
@@ -98,9 +99,11 @@ module Langchain::LLM
 
       parameters = chat_parameters.to_params(params)
 
-      # Cohere API requires `message:` parameter to be sent separately from `chat_history:`.
-      # We extract the last message from the messages param.
-      parameters[:message] = parameters[:chat_history].pop&.dig(:message)
+      # The v2 Chat API takes the system prompt as the first message.
+      messages = Array(parameters[:messages]).map { |message| v2_message(message) }
+      system = parameters.delete(:system)
+      messages.unshift({role: "system", content: system}) if system
+      parameters[:messages] = messages
 
       response = client.chat(**parameters)
 
@@ -116,6 +119,20 @@ module Langchain::LLM
     def summarize(text:)
       response = client.summarize(text: text)
       response.dig("summary")
+    end
+
+    private
+
+    V1_ROLES = {"USER" => "user", "CHATBOT" => "assistant", "SYSTEM" => "system"}.freeze
+
+    # Converts a v1 chat_history entry ({role: "USER", message: "..."}) to a v2 message
+    # ({role: "user", content: "..."}); v2 messages are returned unchanged.
+    def v2_message(message)
+      message = message.transform_keys(&:to_sym)
+      return message unless message.key?(:message)
+
+      role = message[:role].to_s
+      {role: V1_ROLES.fetch(role.upcase, role.downcase), content: message[:message]}
     end
   end
 end
