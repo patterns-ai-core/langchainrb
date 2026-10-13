@@ -537,6 +537,14 @@ RSpec.describe Langchain::LLM::OpenAI do
       allow(subject.client).to receive(:chat).with(parameters).and_return(response)
     end
 
+    it "sends max_completion_tokens and reasoning_effort, which reasoning models need" do
+      expect(subject.client).to receive(:chat).with(
+        parameters: hash_including(max_completion_tokens: 512, reasoning_effort: "low")
+      ).and_return(response)
+
+      subject.chat(messages: [{role: "user", content: prompt}], max_completion_tokens: 512, reasoning_effort: "low")
+    end
+
     it "ignoresq any invalid parameters provided" do
       response = subject.chat(
         messages: [{role: "user", content: "What is the meaning of life?"}],
