@@ -10,7 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
-- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1067] Send `Langchain::LLM::Anthropic#complete` through the Messages API. It called `client.complete`, which the official `anthropic` gem doesn't have, for the legacy Text Completions API with the retired `claude-2.1` model; `completion_model` now defaults to `claude-sonnet-4-6`.
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1067] Send `Langchain::LLM::Anthropic#complete` through the Messages API. It called `client.complete`, which the official `anthropic` gem doesn't have, for the legacy Text Completions API with the retired `claude-2.1` model; `completion_model` now defaults to `claude-sonnet-4-6`, and the legacy `max_tokens_to_sample` is accepted as `max_tokens` (as `Chunker::Semantic` passes it).
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1066] Read the fixed output with `#chat_completion` in `Langchain::OutputParsers::OutputFixingParser`; `#completion` is `nil` or not implemented on the Anthropic, Ollama, Mistral AI and Google Gemini chat responses, so fixing never succeeded there.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1068] Call the cohere-ruby 1.0 (v2 API) `chat` and `embed` from `Langchain::LLM::Cohere`, which raised `ArgumentError` with the gem version the gemspec requires; v1 `chat_history` messages are converted, and `CohereResponse` reads v2 and v1 bodies.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1065] Leave the tools out of the request when the Ollama assistant adapter gets `tool_choice: "none"`, and stop logging `tool_choice`/`parallel_tool_calls` warnings on every call for the Assistant's defaults.

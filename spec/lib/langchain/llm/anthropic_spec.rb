@@ -46,6 +46,14 @@ RSpec.describe Langchain::LLM::Anthropic do
       expect(subject.complete(prompt: prompt).completion).to eq("The sky doesn't have a defined height or upper limit.")
     end
 
+    it "takes the legacy max_tokens_to_sample name, as Chunker::Semantic passes it" do
+      expect(subject.client.messages).to receive(:create)
+        .with(hash_including(max_tokens: 50000))
+        .and_return(response)
+
+      subject.complete(prompt: prompt, max_tokens_to_sample: 50000)
+    end
+
     it "passes stop_sequences and the sampling parameters that were set" do
       expect(subject.client.messages).to receive(:create)
         .with(hash_including(stop_sequences: ["\n\nHuman:"], temperature: 0.5, top_k: 10))

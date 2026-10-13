@@ -54,6 +54,7 @@ module Langchain::LLM
     # @param prompt [String] Prompt to generate a completion for
     # @param model [String] The model to use
     # @param max_tokens [Integer] The maximum number of tokens to generate
+    # @param max_tokens_to_sample [Integer] The legacy name of max_tokens, still accepted
     # @param stop_sequences [Array<String>] The stop sequences to use
     # @param temperature [Float] The temperature to use (only sent when set)
     # @param top_p [Float] The top p value to use
@@ -66,6 +67,7 @@ module Langchain::LLM
       prompt:,
       model: @defaults[:completion_model],
       max_tokens: @defaults[:max_tokens],
+      max_tokens_to_sample: nil,
       stop_sequences: nil,
       temperature: nil,
       top_p: nil,
@@ -74,6 +76,7 @@ module Langchain::LLM
       stream: nil,
       &block
     )
+      max_tokens = max_tokens_to_sample if max_tokens_to_sample
       raise ArgumentError.new("model argument is required") if model.empty?
       raise ArgumentError.new("max_tokens argument is required") if max_tokens.nil?
 
