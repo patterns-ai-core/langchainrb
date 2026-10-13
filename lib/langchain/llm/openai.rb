@@ -66,7 +66,10 @@ module Langchain::LLM
         n: {default: @defaults[:n]},
         temperature: {default: @defaults[:temperature]},
         user: {},
-        response_format: {default: @defaults[:response_format]}
+        response_format: {default: @defaults[:response_format]},
+        # Reasoning models (o-series, gpt-5) reject `max_tokens` and only cap output with `max_completion_tokens`
+        max_completion_tokens: {},
+        reasoning_effort: {}
       )
       chat_parameters.ignore(:top_k)
     end

@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1061] Pass `max_completion_tokens` and `reasoning_effort` through `Langchain::LLM::OpenAI#chat` and `Langchain::LLM::Azure#chat` instead of dropping them; OpenAI's reasoning models reject `max_tokens`, so their output couldn't be capped.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1060] Find `functionCall` and text parts anywhere in a `GoogleGeminiResponse`, so a tool call that follows text is run instead of ending the `Langchain::Assistant` run, a text part after a call no longer raises `NoMethodError`, and `chat_completion` joins every text part and leaves out thought summaries.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1058] Pass Anthropic `thinking` and `redacted_thinking` blocks back, first and unchanged, in the assistant turn of `Langchain::Assistant`'s tool-use loop; dropping them made the request carrying the tool result fail whenever Claude thought before calling a tool.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1059] Give a streamed `Langchain::LLM::Anthropic` tool call without arguments `input: {}` instead of `nil`, which made `Langchain::Assistant` end the run in `:failed` with streaming on.
