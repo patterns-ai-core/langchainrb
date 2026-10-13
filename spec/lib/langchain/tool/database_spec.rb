@@ -56,4 +56,50 @@ RSpec.describe Langchain::Tool::Database do
       expect(response.content).to eq("CREATE TABLE users(\nid integer PRIMARY KEY,\nname string,\njob string,\nFOREIGN KEY (job) REFERENCES jobs());\n")
     end
   end
+
+  context "with a real SQLite database" do
+    subject { described_class.new(connection_string: "sqlite:/", tables: [:users, :memberships, :logs], exclude_tables: [:logs]) }
+
+    before do
+      subject.db.create_table(:users) do
+        primary_key :id
+        String :name
+      end
+      subject.db.create_table(:memberships) do
+        Integer :user_id
+        Integer :group_id
+        String :role
+        primary_key [:user_id, :group_id]
+      end
+      subject.db.create_table(:logs) { String :line }
+      subject.db.create_table(:audits) { String :line }
+    end
+
+    it "lists only the requested tables, minus the excluded ones" do
+      expect(subject.list_tables.content).to contain_exactly(:users, :memberships)
+    end
+
+    it "dumps the schema of those tables only" do
+      expect(subject.dump_schema.content).to include("CREATE TABLE users(").and include("CREATE TABLE memberships(")
+      expect(subject.dump_schema.content).not_to include("logs")
+      expect(subject.dump_schema.content).not_to include("audits")
+    end
+
+    it "lists every table but the excluded ones when no tables are requested" do
+      tool = described_class.new(connection_string: "sqlite:/", exclude_tables: [:logs])
+      allow(tool).to receive(:db).and_return(subject.db)
+
+      expect(tool.list_tables.content).to contain_exactly(:users, :memberships, :audits)
+    end
+
+    it "names the primary key columns of a composite key" do
+      expect(subject.describe_tables(tables: [:memberships]).content).to eq(
+        "CREATE TABLE memberships(\nuser_id integer,\ngroup_id integer,\nrole string,\nPRIMARY KEY (user_id,group_id));\n"
+      )
+    end
+
+    it "leaves no trailing comma for a table without a primary key" do
+      expect(subject.describe_tables(tables: [:logs]).content).to eq("CREATE TABLE logs(\nline string);\n")
+    end
+  end
 end
