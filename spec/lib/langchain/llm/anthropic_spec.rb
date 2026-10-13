@@ -30,48 +30,28 @@ RSpec.describe Langchain::LLM::Anthropic do
   end
 
   describe "#complete" do
-    let(:completion) { "How high is the sky?" }
-    let(:fixture) { File.read("spec/fixtures/llm/anthropic/complete.json") }
+    let(:prompt) { "How high is the sky?" }
+    let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat.json") }
     let(:response) { JSON.parse(fixture, symbolize_names: true) }
 
-    context "with no additional parameters" do
-      before do
-        allow(subject.client).to receive(:complete)
-          .with(parameters: {
-            model: described_class::DEFAULTS[:completion_model],
-            prompt: completion,
-            temperature: described_class::DEFAULTS[:temperature],
-            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens]
-          })
-          .and_return(response)
-      end
+    it "sends the prompt as a user message through the Messages API" do
+      expect(subject.client.messages).to receive(:create)
+        .with({
+          model: described_class::DEFAULTS[:completion_model],
+          messages: [{role: "user", content: prompt}],
+          max_tokens: described_class::DEFAULTS[:max_tokens]
+        })
+        .and_return(response)
 
-      it "returns a completion" do
-        expect(subject.complete(prompt: completion).completion).to eq(" The sky has no definitive")
-      end
-
-      it "returns model attribute" do
-        expect(subject.complete(prompt: completion).model).to eq("claude-2.1")
-      end
+      expect(subject.complete(prompt: prompt).completion).to eq("The sky doesn't have a defined height or upper limit.")
     end
 
-    context "with failed API call" do
-      let(:fixture) { File.read("spec/fixtures/llm/anthropic/error.json") }
+    it "passes stop_sequences and the sampling parameters that were set" do
+      expect(subject.client.messages).to receive(:create)
+        .with(hash_including(stop_sequences: ["\n\nHuman:"], temperature: 0.5, top_k: 10))
+        .and_return(response)
 
-      before do
-        allow(subject.client).to receive(:complete)
-          .with(parameters: {
-            model: described_class::DEFAULTS[:completion_model],
-            prompt: completion,
-            temperature: described_class::DEFAULTS[:temperature],
-            max_tokens_to_sample: described_class::DEFAULTS[:max_tokens]
-          })
-          .and_return(JSON.parse(fixture))
-      end
-
-      it "raises an error" do
-        expect { subject.complete(prompt: completion) }.to raise_error(Langchain::LLM::ApiError, "Anthropic API error: The request is invalid. Please check the request and try again.")
-      end
+      subject.complete(prompt: prompt, stop_sequences: ["\n\nHuman:"], temperature: 0.5, top_k: 10)
     end
   end
 

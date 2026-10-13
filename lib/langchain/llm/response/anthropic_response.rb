@@ -29,8 +29,10 @@ module Langchain::LLM::Response
       raw_response[:content]
     end
 
+    # A Messages API response carries its text in content blocks; `completion` is
+    # only set on responses from the legacy Text Completions API.
     def completions
-      [raw_response[:completion]]
+      [raw_response[:completion] || chat_completion]
     end
 
     def stop_reason
