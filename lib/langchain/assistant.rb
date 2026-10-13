@@ -349,10 +349,22 @@ module Langchain
         instructions: @instructions,
         messages: array_of_message_hashes,
         tools: @tools,
-        tool_choice: tool_choice,
+        tool_choice: effective_tool_choice,
         parallel_tool_calls: parallel_tool_calls
       )
       @llm.chat(**params, &@block)
+    end
+
+    # A forced tool_choice ("any" or a function name) makes every response call a tool, so a
+    # run could never reach a final answer. Once a tool has been called since the latest
+    # user message, the following requests use "auto".
+    #
+    # @return [String] The tool_choice to send with the next request
+    def effective_tool_choice
+      return tool_choice if ["auto", "none"].include?(tool_choice)
+
+      tool_called = messages.reverse_each.take_while { |message| !message.user? }.any? { |message| message.llm? && message.tool_calls.any? }
+      tool_called ? "auto" : tool_choice
     end
 
     # Run the tools automatically
