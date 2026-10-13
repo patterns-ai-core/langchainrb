@@ -341,6 +341,55 @@ RSpec.describe Langchain::Assistant do
         end
       end
 
+      context "when tool_choice forces a tool" do
+        let(:raw_openai_final_response) do
+          {
+            "id" => "chatcmpl-final",
+            "object" => "chat.completion",
+            "created" => 1711313504,
+            "model" => "gpt-3.5-turbo-0125",
+            "choices" => [{"index" => 0, "message" => {"role" => "assistant", "content" => "The result of 2 + 2 is 4."}, "logprobs" => nil, "finish_reason" => "stop"}],
+            "usage" => {"prompt_tokens" => 121, "completion_tokens" => 13, "total_tokens" => 134}
+          }
+        end
+
+        before do
+          subject.tool_choice = "langchain_tool_calculator__execute"
+          allow(subject.tools[0]).to receive(:execute).with(input: "2+2").and_return("4.0")
+        end
+
+        it "forces the tool once, then sends auto so the run completes (see #825)" do
+          expect(subject.llm).to receive(:chat)
+            .with(hash_including(tool_choice: {"type" => "function", "function" => {"name" => "langchain_tool_calculator__execute"}}))
+            .ordered
+            .and_return(Langchain::LLM::Response::OpenAIResponse.new(raw_openai_response))
+          expect(subject.llm).to receive(:chat)
+            .with(hash_including(tool_choice: "auto"))
+            .ordered
+            .and_return(Langchain::LLM::Response::OpenAIResponse.new(raw_openai_final_response))
+
+          subject.add_message_and_run!(content: "Please calculate 2+2")
+
+          expect(subject.state).to eq(:completed)
+          expect(subject.messages.last.content).to eq("The result of 2 + 2 is 4.")
+          expect(subject.tool_choice).to eq("langchain_tool_calculator__execute")
+        end
+
+        it "forces the tool again for the next user message" do
+          subject.add_message(role: "user", content: "Please calculate 2+2")
+          subject.add_message(role: "assistant", tool_calls: raw_openai_response["choices"][0]["message"]["tool_calls"])
+          subject.add_message(role: "tool", content: "4.0", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV")
+          subject.add_message(role: "assistant", content: "4")
+          subject.add_message(role: "user", content: "And 3+3?")
+
+          expect(subject.llm).to receive(:chat)
+            .with(hash_including(tool_choice: {"type" => "function", "function" => {"name" => "langchain_tool_calculator__execute"}}))
+            .and_return(Langchain::LLM::Response::OpenAIResponse.new(raw_openai_final_response))
+
+          subject.run
+        end
+      end
+
       context "when the response carries an explicit tool_calls: null (see #1011)" do
         let(:raw_openai_response_null_tool_calls) do
           {
