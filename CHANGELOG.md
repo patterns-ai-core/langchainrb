@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1067] Send `Langchain::LLM::Anthropic#complete` through the Messages API. It called `client.complete`, which the official `anthropic` gem doesn't have, for the legacy Text Completions API with the retired `claude-2.1` model; `completion_model` now defaults to `claude-sonnet-4-6`.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1065] Leave the tools out of the request when the Ollama assistant adapter gets `tool_choice: "none"`, and stop logging `tool_choice`/`parallel_tool_calls` warnings on every call for the Assistant's defaults.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1063] Send `tool_choice: "auto"` from `Langchain::Assistant` once a forced tool (`"any"` or a function name) has been called since the latest user message, so a run with a forced tool can finish instead of calling the tool until `max_turns`.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1064] Send `tool_choice: "none"` as the string `"none"` from the OpenAI and Mistral AI assistant adapters instead of a function named `none`, which the APIs rejected.
