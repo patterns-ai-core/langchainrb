@@ -303,12 +303,16 @@ module Langchain::LLM
       Langchain::LLM::Response::OllamaResponse.new(final_response, model: model)
     end
 
-    # BUG: If streamed, this method does not currently return the tool_calls response.
+    # Ollama streams each tool call in a chunk of its own, before the final `done` chunk, which has none.
     def generate_final_chat_completion_response(responses_stream, model)
       final_response = responses_stream.last
-      final_response["message"]["content"] = responses_stream.map { |resp| resp.dig("message", "content") }.join
+      message = final_response["message"].merge(
+        "content" => responses_stream.map { |resp| resp.dig("message", "content") }.join
+      )
+      tool_calls = responses_stream.flat_map { |resp| Array(resp.dig("message", "tool_calls")) }
+      message["tool_calls"] = tool_calls if tool_calls.any?
 
-      Langchain::LLM::Response::OllamaResponse.new(final_response, model: model)
+      Langchain::LLM::Response::OllamaResponse.new(final_response.merge("message" => message), model: model)
     end
   end
 end
