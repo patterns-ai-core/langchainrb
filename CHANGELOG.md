@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1065] Leave the tools out of the request when the Ollama assistant adapter gets `tool_choice: "none"`, and stop logging `tool_choice`/`parallel_tool_calls` warnings on every call for the Assistant's defaults.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1063] Send `tool_choice: "auto"` from `Langchain::Assistant` once a forced tool (`"any"` or a function name) has been called since the latest user message, so a run with a forced tool can finish instead of calling the tool until `max_turns`.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1064] Send `tool_choice: "none"` as the string `"none"` from the OpenAI and Mistral AI assistant adapters instead of a function named `none`, which the APIs rejected.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1062] Return the tool calls of every streamed chunk from `Langchain::LLM::Ollama#chat` instead of only the last chunk's, which has none, so `Langchain::Assistant` runs tools with streaming on.

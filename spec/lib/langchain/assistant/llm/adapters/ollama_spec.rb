@@ -18,6 +18,27 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::Ollama do
     end
   end
 
+  describe "#build_chat_params with tool_choice" do
+    let(:params) do
+      {
+        messages: [{role: "user", content: "Hello"}],
+        instructions: "Instructions",
+        tools: [Langchain::Tool::Calculator.new],
+        parallel_tool_calls: true
+      }
+    end
+
+    it "sends the tools for \"auto\" without logging a warning" do
+      expect(Langchain.logger).not_to receive(:warn)
+
+      expect(subject.build_chat_params(**params, tool_choice: "auto")).to include(:tools)
+    end
+
+    it "leaves the tools out for \"none\"" do
+      expect(subject.build_chat_params(**params, tool_choice: "none")).to eq(messages: [{role: "user", content: "Hello"}])
+    end
+  end
+
   describe "#support_system_message?" do
     it "returns true" do
       expect(subject.support_system_message?).to eq(true)
