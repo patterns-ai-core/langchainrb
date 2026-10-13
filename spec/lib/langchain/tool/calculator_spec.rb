@@ -18,4 +18,10 @@ RSpec.describe Langchain::Tool::Calculator do
       expect(response.content).to eq("\"two plus two\" is an invalid mathematical expression")
     end
   end
+
+  describe "#execute with a division by zero" do
+    it "returns an explanation instead of raising" do
+      expect(described_class.new.execute(input: "1/0").content).to eq("\"1/0\" divides by zero")
+    end
+  end
 end

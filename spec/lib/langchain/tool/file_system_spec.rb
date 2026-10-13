@@ -61,4 +61,27 @@ RSpec.describe Langchain::Tool::FileSystem do
       end
     end
   end
+
+  describe "errors the LLM can recover from" do
+    let(:dir) { Dir.mktmpdir }
+
+    after { FileUtils.remove_entry(dir) }
+
+    it "returns an error instead of raising when listing a file" do
+      file = File.join(dir, "a.txt")
+      File.write(file, "a")
+
+      expect(subject.list_directory(directory_path: file).content).to eq("Not a directory: #{file}")
+    end
+
+    it "returns an error instead of raising when reading a directory" do
+      expect(subject.read_file(file_path: dir).content).to eq("Is a directory, not a file: #{dir}")
+    end
+
+    it "returns an error instead of raising when the parent directory is missing" do
+      path = File.join(dir, "missing", "a.txt")
+
+      expect(subject.write_to_file(file_path: path, content: "a").content).to eq("No such directory: #{File.join(dir, "missing")}")
+    end
+  end
 end

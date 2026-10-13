@@ -27,12 +27,16 @@ module Langchain::Tool
       tool_response(content: Dir.entries(directory_path))
     rescue Errno::ENOENT
       tool_response(content: "No such directory: #{directory_path}")
+    rescue Errno::ENOTDIR
+      tool_response(content: "Not a directory: #{directory_path}")
     end
 
     def read_file(file_path:)
       tool_response(content: File.read(file_path))
     rescue Errno::ENOENT
       tool_response(content: "No such file: #{file_path}")
+    rescue Errno::EISDIR
+      tool_response(content: "Is a directory, not a file: #{file_path}")
     end
 
     def write_to_file(file_path:, content:)
@@ -40,6 +44,10 @@ module Langchain::Tool
       tool_response(content: "File written successfully")
     rescue Errno::EACCES
       tool_response(content: "Permission denied: #{file_path}")
+    rescue Errno::ENOENT
+      tool_response(content: "No such directory: #{File.dirname(file_path)}")
+    rescue Errno::EISDIR
+      tool_response(content: "Is a directory, not a file: #{file_path}")
     end
   end
 end
