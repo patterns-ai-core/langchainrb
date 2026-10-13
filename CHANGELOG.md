@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1064] Send `tool_choice: "none"` as the string `"none"` from the OpenAI and Mistral AI assistant adapters instead of a function named `none`, which the APIs rejected.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1062] Return the tool calls of every streamed chunk from `Langchain::LLM::Ollama#chat` instead of only the last chunk's, which has none, so `Langchain::Assistant` runs tools with streaming on.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1061] Pass `max_completion_tokens` and `reasoning_effort` through `Langchain::LLM::OpenAI#chat` and `Langchain::LLM::Azure#chat` instead of dropping them; OpenAI's reasoning models reject `max_tokens`, so their output couldn't be capped.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1060] Find `functionCall` and text parts anywhere in a `GoogleGeminiResponse`, so a tool call that follows text is run instead of ending the `Langchain::Assistant` run, a text part after a call no longer raises `NoMethodError`, and `chat_completion` joins every text part and leaves out thought summaries.
