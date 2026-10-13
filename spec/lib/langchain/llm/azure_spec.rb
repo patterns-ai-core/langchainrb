@@ -75,5 +75,13 @@ RSpec.describe Langchain::LLM::Azure do
         subject.chat(messages: [{role: "user", content: "Hello json!"}])
       end
     end
+
+    it "sends max_completion_tokens and reasoning_effort, which reasoning models need" do
+      expect(subject.chat_client).to receive(:chat).with(
+        parameters: hash_including(max_completion_tokens: 512, reasoning_effort: "low")
+      ).and_return({})
+
+      subject.chat(messages: [{role: "user", content: "Hello"}], max_completion_tokens: 512, reasoning_effort: "low")
+    end
   end
 end
