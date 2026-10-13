@@ -62,6 +62,7 @@ module Langchain::Tool
 
       params = params.merge(lat: location["lat"], lon: location["lon"]).except(:q)
       weather_data = send_request(path: "data/2.5/weather", params: params)
+      return tool_response(content: weather_data) if weather_data.is_a?(String) # Error occurred
 
       tool_response(content: parse_weather_response(weather_data, units))
     end
