@@ -90,7 +90,7 @@ module Langchain
 
           def build_tool_choice(choice)
             case choice
-            when "auto"
+            when "auto", "none"
               choice
             else
               {"type" => "function", "function" => {"name" => choice}}
