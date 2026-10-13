@@ -142,6 +142,20 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
   end
 
   describe "#parse" do
+    it "reads the fixed output from a chat response that has no #completion (Anthropic, Ollama)" do
+      [
+        [Langchain::LLM::Anthropic.new(api_key: "123"),
+          Langchain::LLM::Response::AnthropicResponse.new({content: [{type: "text", text: json_text_response}]})],
+        [Langchain::LLM::Ollama.new,
+          Langchain::LLM::Response::OllamaResponse.new({"message" => {"role" => "assistant", "content" => json_text_response}, "done" => true})]
+      ].each do |llm, response|
+        parser = described_class.from_llm(llm: llm, parser: kwargs_example[:parser])
+        allow(llm).to receive(:chat).and_return(response)
+
+        expect(parser.parse("Whoops I don't understand")).to eq(json_response)
+      end
+    end
+
     it "parses without need for fixing when completion text is already valid" do
       parser = described_class.new(**kwargs_example)
       expect(parser.parse(json_text_response)).to eq(json_response)
@@ -149,7 +163,7 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
 
     it "when completion text is invalid, sends fix prompt to llm and parses fixing response" do
       parser = described_class.new(**kwargs_example.merge(prompt: fix_prompt_template_example))
-      allow(parser.llm).to receive_message_chain(:chat, :completion)
+      allow(parser.llm).to receive_message_chain(:chat, :chat_completion)
         .with(prompt: match(fix_prompt_matcher_example))
         .with(no_args)
         .and_return(json_text_response)
@@ -159,7 +173,7 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
 
     it "if fixing prompt is not provided, uses the naive fix prompt by default" do
       parser = described_class.from_llm(llm: kwargs_example[:llm], parser: kwargs_example[:parser])
-      allow(parser.llm).to receive_message_chain(:chat, :completion)
+      allow(parser.llm).to receive_message_chain(:chat, :chat_completion)
         .with(prompt: match(naive_fix_prompt_matcher_example))
         .with(no_args)
         .and_return(json_text_response)
@@ -169,7 +183,7 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
 
     it "fails to parse llm fixing response if its borked" do
       parser = described_class.new(**kwargs_example.merge(prompt: fix_prompt_template_example))
-      allow(parser.llm).to receive_message_chain(:chat, :completion)
+      allow(parser.llm).to receive_message_chain(:chat, :chat_completion)
         .with(prompt: match(fix_prompt_matcher_example))
         .with(no_args)
         .and_return("I still don't understand, I'm only a large language model :)")
@@ -179,7 +193,7 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
 
     it "fails to parse llm fixing response if the json does not conform to the schema" do
       parser = described_class.new(**kwargs_example.merge(prompt: fix_prompt_template_example))
-      allow(parser.llm).to receive_message_chain(:chat, :completion)
+      allow(parser.llm).to receive_message_chain(:chat, :chat_completion)
         .with(prompt: match(fix_prompt_matcher_example))
         .with(no_args)
         .and_return(invalid_schema_json_text_response)

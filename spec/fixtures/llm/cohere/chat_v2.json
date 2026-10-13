@@ -1,0 +1,23 @@
+{
+  "id": "c14c80c3-18eb-4519-9460-6c92edd8cfb4",
+  "finish_reason": "COMPLETE",
+  "message": {
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "I'm doing well, thanks for asking! How can I help you today?"
+      }
+    ]
+  },
+  "usage": {
+    "billed_units": {
+      "input_tokens": 12,
+      "output_tokens": 16
+    },
+    "tokens": {
+      "input_tokens": 207,
+      "output_tokens": 16
+    }
+  }
+}
