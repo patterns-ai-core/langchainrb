@@ -33,6 +33,8 @@ module Langchain::Tool
       tool_response(content: result)
     rescue Eqn::ParseError, Eqn::NoVariableValueError
       tool_response(content: "\"#{input}\" is an invalid mathematical expression")
+    rescue Eqn::ZeroDivisionError
+      tool_response(content: "\"#{input}\" divides by zero")
     end
   end
 end

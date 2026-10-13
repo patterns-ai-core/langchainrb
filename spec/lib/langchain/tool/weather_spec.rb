@@ -70,6 +70,18 @@ RSpec.describe Langchain::Tool::Weather do
         expect(result.content).to eq("API request failed: 404 - Not Found")
       end
     end
+
+    context "when the weather request fails after the location was found" do
+      before do
+        allow(weather_tool).to receive(:send_request)
+          .and_return([{"lat" => 40.7128, "lon" => -74.006}], "API request failed: 429 - Too Many Requests")
+      end
+
+      it "returns the error message instead of raising" do
+        result = weather_tool.get_current_weather(city: city, state_code: state_code)
+        expect(result.content).to eq("API request failed: 429 - Too Many Requests")
+      end
+    end
   end
 
   describe "input validation" do
