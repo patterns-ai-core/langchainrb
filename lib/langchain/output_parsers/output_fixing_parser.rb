@@ -53,7 +53,7 @@ module Langchain::OutputParsers
                       completion: completion,
                       error: e
                     )}]
-      ).completion
+      ).chat_completion
       parser.parse(new_completion)
     end
 
