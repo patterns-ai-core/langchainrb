@@ -17,6 +17,19 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::MistralAI do
         tool_choice: {"function" => {"name" => "langchain_tool_calculator__execute"}, "type" => "function"}
       })
     end
+    it "sends \"auto\" and \"none\" as strings, not as a function name" do
+      ["auto", "none"].each do |choice|
+        params = subject.build_chat_params(
+          messages: [{role: "user", content: "Hello"}],
+          instructions: "Instructions",
+          tools: [Langchain::Tool::Calculator.new],
+          tool_choice: choice,
+          parallel_tool_calls: false
+        )
+
+        expect(params[:tool_choice]).to eq(choice)
+      end
+    end
   end
 
   describe "#support_system_message?" do
