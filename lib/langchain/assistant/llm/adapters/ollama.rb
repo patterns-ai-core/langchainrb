@@ -20,11 +20,11 @@ module Langchain
             tool_choice:,
             parallel_tool_calls:
           )
-            Langchain.logger.warn "WARNING: `parallel_tool_calls:` is not supported by Ollama currently" if parallel_tool_calls
-            Langchain.logger.warn "WARNING: `tool_choice:` is not supported by Ollama currently" if tool_choice
-
+            # Ollama has no tool_choice parameter: "none" is honored by not sending the tools,
+            # and "auto" is its default behavior. Assistant#run_tools runs one tool call at a
+            # time when parallel_tool_calls is false.
             params = {messages: messages}
-            if tools.any?
+            if tools.any? && tool_choice != "none"
               params[:tools] = build_tools(tools)
             end
             params
