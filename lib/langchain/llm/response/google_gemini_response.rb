@@ -6,22 +6,21 @@ module Langchain::LLM::Response
       super
     end
 
+    # The model's answer, from every text part. A function call or a thought summary (`"thought": true`)
+    # can come before the text, and a long answer can be split over several text parts.
     def chat_completion
-      raw_response.dig("candidates", 0, "content", "parts", 0, "text")
+      texts = parts.select { |part| part.key?("text") && !part["thought"] }.map { |part| part["text"] }
+      texts.join unless texts.empty?
     end
 
     def role
       raw_response.dig("candidates", 0, "content", "role")
     end
 
+    # The function call parts, wherever they are. The model often explains what it's about to do in a
+    # text part before the call.
     def tool_calls
-      parts = raw_response.dig("candidates", 0, "content", "parts")
-
-      if parts&.first.is_a?(Hash) && parts.first.key?("functionCall")
-        parts
-      else
-        []
-      end
+      parts.select { |part| part.key?("functionCall") }
     end
 
     def embedding
@@ -46,6 +45,12 @@ module Langchain::LLM::Response
 
     def total_tokens
       raw_response.dig("usageMetadata", "totalTokenCount")
+    end
+
+    private
+
+    def parts
+      Array(raw_response.dig("candidates", 0, "content", "parts")).grep(Hash)
     end
   end
 end

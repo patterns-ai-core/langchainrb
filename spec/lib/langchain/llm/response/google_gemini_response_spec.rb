@@ -14,6 +14,38 @@ RSpec.describe Langchain::LLM::Response::GoogleGeminiResponse do
     it "returns role" do
       expect(response.role).to eq("model")
     end
+
+    it "joins the text parts when the model splits its answer" do
+      raw = {"candidates" => [{"content" => {"role" => "model", "parts" => [{"text" => "The answer "}, {"text" => "is 4.0"}]}}]}
+
+      expect(described_class.new(raw).chat_completion).to eq("The answer is 4.0")
+    end
+
+    it "returns the text that comes after a function call" do
+      raw = {"candidates" => [{"content" => {"role" => "model", "parts" => [
+        {"functionCall" => {"name" => "calculator__execute", "args" => {"input" => "2+2"}}},
+        {"text" => "Let me calculate that."}
+      ]}}]}
+
+      expect(described_class.new(raw).chat_completion).to eq("Let me calculate that.")
+    end
+
+    it "leaves out thought summaries" do
+      raw = {"candidates" => [{"content" => {"role" => "model", "parts" => [
+        {"text" => "**Adding the numbers**", "thought" => true},
+        {"text" => "The answer is 4.0", "thoughtSignature" => "c2ln"}
+      ]}}]}
+
+      expect(described_class.new(raw).chat_completion).to eq("The answer is 4.0")
+    end
+
+    it "returns nil when there is no text" do
+      raw = {"candidates" => [{"content" => {"role" => "model", "parts" => [
+        {"functionCall" => {"name" => "calculator__execute", "args" => {"input" => "2+2"}}}
+      ]}}]}
+
+      expect(described_class.new(raw).chat_completion).to be_nil
+    end
   end
 
   describe "#tool_calls" do
@@ -24,6 +56,21 @@ RSpec.describe Langchain::LLM::Response::GoogleGeminiResponse do
 
     it "returns tool_calls" do
       expect(response.tool_calls).to eq([{"functionCall" => {"name" => "calculator__execute", "args" => {"input" => "2+2"}}}])
+    end
+
+    it "returns a function call that follows text" do
+      call = {"functionCall" => {"name" => "calculator__execute", "args" => {"input" => "2+2"}}, "thoughtSignature" => "c2ln"}
+      raw = {"candidates" => [{"content" => {"role" => "model", "parts" => [{"text" => "Let me calculate that."}, call]}}]}
+
+      expect(described_class.new(raw).tool_calls).to eq([call])
+    end
+
+    it "returns only the function call parts" do
+      first = {"functionCall" => {"name" => "calculator__execute", "args" => {"input" => "2+2"}}}
+      second = {"functionCall" => {"name" => "calculator__execute", "args" => {"input" => "3+3"}}}
+      raw = {"candidates" => [{"content" => {"role" => "model", "parts" => [first, {"text" => "Calculating."}, second]}}]}
+
+      expect(described_class.new(raw).tool_calls).to eq([first, second])
     end
 
     it "returns [] when the candidate content has no parts (e.g. finishReason SAFETY)" do
