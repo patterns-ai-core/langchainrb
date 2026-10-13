@@ -150,6 +150,31 @@ RSpec.describe Langchain::LLM::Ollama do
         expect(streamed_responses).to be_all { |resp| resp.is_a?(Langchain::LLM::Response::OllamaResponse) }
         expect(streamed_responses.map(&:chat_completion).join).to include("I'm just a language model")
       end
+
+      context "when the model calls tools" do
+        # Ollama streams each tool call in a chunk of its own, before the final `done` chunk, which has none.
+        let(:chunks) do
+          [
+            {message: {role: "assistant", content: "", tool_calls: [{function: {name: "weather__execute", arguments: {city: "Paris"}}}]}, done: false},
+            {message: {role: "assistant", content: "", tool_calls: [{function: {name: "weather__execute", arguments: {city: "Rome"}}}]}, done: false},
+            {message: {role: "assistant", content: ""}, done_reason: "stop", done: true, prompt_eval_count: 10, eval_count: 5}
+          ]
+        end
+
+        before do
+          body = chunks.map { |chunk| chunk.merge(model: "llama3.2").to_json }.join("\n")
+          allow(client).to receive(:post).with("api/chat", hash_including(stream: true)) do |&block|
+            request = Struct.new(:options).new(Faraday::RequestOptions.new)
+            block.call(request)
+            request.options.on_data.call(body, body.bytesize)
+          end
+        end
+
+        it "returns the tool calls from every chunk" do
+          expect(response.tool_calls.map { |call| call.dig("function", "arguments", "city") }).to eq(["Paris", "Rome"])
+          expect(response.completion_tokens).to eq(5)
+        end
+      end
     end
   end
 
