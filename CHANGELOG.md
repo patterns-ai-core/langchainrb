@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1069] Honor `tables:` and `exclude_tables:` in `Langchain::Tool::Database#list_tables` and `#dump_schema`, list the key columns of a composite primary key, and drop the trailing comma from the schema of a table without a primary key.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1066] Read the fixed output with `#chat_completion` in `Langchain::OutputParsers::OutputFixingParser`; `#completion` is `nil` or not implemented on the Anthropic, Ollama, Mistral AI and Google Gemini chat responses, so fixing never succeeded there.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1068] Call the cohere-ruby 1.0 (v2 API) `chat` and `embed` from `Langchain::LLM::Cohere`, which raised `ArgumentError` with the gem version the gemspec requires; v1 `chat_history` messages are converted, and `CohereResponse` reads v2 and v1 bodies.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1065] Leave the tools out of the request when the Ollama assistant adapter gets `tool_choice: "none"`, and stop logging `tool_choice`/`parallel_tool_calls` warnings on every call for the Assistant's defaults.
