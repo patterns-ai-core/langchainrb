@@ -12,7 +12,7 @@ RSpec.describe Langchain::Evals::Ragas::AnswerRelevance do
     let(:generated_question) { "What is the purpose of the PSLV-C56 mission?" }
 
     before do
-      allow(subject.llm).to receive(:complete).and_return(double("Langchain::LLM::Response::OpenAIResponse", completion: generated_question))
+      allow(subject.llm).to receive(:chat).with(messages: [{role: "user", content: a_string_including(answer)}]).and_return(double("Langchain::LLM::Response::OpenAIResponse", chat_completion: generated_question))
       allow(subject).to receive(:calculate_similarity)
         .with(original_question: question, generated_question: generated_question)
         .and_return(score)

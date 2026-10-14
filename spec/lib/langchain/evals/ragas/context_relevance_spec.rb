@@ -12,7 +12,7 @@ RSpec.describe Langchain::Evals::Ragas::ContextRelevance do
     let(:sentences) { "It was completed in 1896 and named in memory of Chimnabai I (1864–1885), a queen and the first wife of Sayajirao Gaekwad III of Baroda State." }
 
     before do
-      allow(subject.llm).to receive(:complete).and_return(double("Langchain::LLM::Response::OpenAIResponse", completion: sentences))
+      allow(subject.llm).to receive(:chat).with(messages: [{role: "user", content: a_string_including(context)}]).and_return(double("Langchain::LLM::Response::OpenAIResponse", chat_completion: sentences))
     end
 
     it "generates the context_relevance score" do

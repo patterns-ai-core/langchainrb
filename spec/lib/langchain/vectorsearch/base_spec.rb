@@ -61,11 +61,13 @@ RSpec.describe Langchain::Vectorsearch::Base do
 
   describe "#similarity_search_with_hyde" do
     before do
-      allow(subject.llm).to receive_message_chain(:complete, :completion).and_return("fictional passage")
+      allow(subject.llm).to receive(:chat)
+        .with(messages: [{role: "user", content: subject.generate_hyde_prompt(question: "sci-fi")}])
+        .and_return(double(chat_completion: "fictional passage"))
     end
 
     it "raises an error" do
-      expect(subject).to receive(:similarity_search).once
+      expect(subject).to receive(:similarity_search).with(query: "fictional passage", k: 4).once
       subject.similarity_search_with_hyde(query: "sci-fi", k: 4)
     end
   end
