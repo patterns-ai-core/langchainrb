@@ -13,7 +13,6 @@ module Langchain::LLM
   class Anthropic < Base
     DEFAULTS = {
       temperature: 0.0,
-      completion_model: "claude-sonnet-4-6",
       chat_model: "claude-sonnet-4-6",
       max_tokens: 256
     }.freeze
@@ -22,7 +21,7 @@ module Langchain::LLM
     #
     # @param api_key [String] The API key to use
     # @param llm_options [Hash] Options to pass to the Anthropic client
-    # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, completion_model:, chat_model:, max_tokens:, thinking: }
+    # @param default_options [Hash] Default options to use on every call to LLM, e.g.: { temperature:, chat_model:, max_tokens:, thinking: }
     # @return [Langchain::LLM::Anthropic] Langchain::LLM::Anthropic instance
     def initialize(api_key:, llm_options: {}, default_options: {})
       depends_on "anthropic"
@@ -43,55 +42,6 @@ module Langchain::LLM
       )
       chat_parameters.ignore(:n, :user)
       chat_parameters.remap(stop: :stop_sequences)
-    end
-
-    # Generate a completion for a given prompt
-    #
-    # Claude models are only served through the Messages API, so the prompt is sent as a single
-    # user message through #chat. The legacy Text Completions API has no current model, and the
-    # official anthropic gem has no `complete` method.
-    #
-    # @param prompt [String] Prompt to generate a completion for
-    # @param model [String] The model to use
-    # @param max_tokens [Integer] The maximum number of tokens to generate
-    # @param max_tokens_to_sample [Integer] The legacy name of max_tokens, still accepted
-    # @param stop_sequences [Array<String>] The stop sequences to use
-    # @param temperature [Float] The temperature to use (only sent when set)
-    # @param top_p [Float] The top p value to use
-    # @param top_k [Integer] The top k value to use
-    # @param metadata [Hash] The metadata to use
-    # @param stream [Boolean] Ignored; pass a block to stream, as with #chat
-    # @yield [Hash] Stream the response chunks, as with #chat
-    # @return [Langchain::LLM::Response::AnthropicResponse] The completion
-    def complete(
-      prompt:,
-      model: @defaults[:completion_model],
-      max_tokens: @defaults[:max_tokens],
-      max_tokens_to_sample: nil,
-      stop_sequences: nil,
-      temperature: nil,
-      top_p: nil,
-      top_k: nil,
-      metadata: nil,
-      stream: nil,
-      &block
-    )
-      max_tokens = max_tokens_to_sample if max_tokens_to_sample
-      raise ArgumentError.new("model argument is required") if model.empty?
-      raise ArgumentError.new("max_tokens argument is required") if max_tokens.nil?
-
-      params = {
-        messages: [{role: "user", content: prompt}],
-        model: model,
-        max_tokens: max_tokens,
-        stop: stop_sequences,
-        temperature: temperature,
-        top_p: top_p,
-        top_k: top_k,
-        metadata: metadata
-      }.compact
-
-      chat(params, &block)
     end
 
     # Generate a chat completion for given messages

@@ -30,36 +30,9 @@ RSpec.describe Langchain::LLM::Anthropic do
   end
 
   describe "#complete" do
-    let(:prompt) { "How high is the sky?" }
-    let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat.json") }
-    let(:response) { JSON.parse(fixture, symbolize_names: true) }
-
-    it "sends the prompt as a user message through the Messages API" do
-      expect(subject.client.messages).to receive(:create)
-        .with({
-          model: described_class::DEFAULTS[:completion_model],
-          messages: [{role: "user", content: prompt}],
-          max_tokens: described_class::DEFAULTS[:max_tokens]
-        })
-        .and_return(response)
-
-      expect(subject.complete(prompt: prompt).completion).to eq("The sky doesn't have a defined height or upper limit.")
-    end
-
-    it "takes the legacy max_tokens_to_sample name, as Chunker::Semantic passes it" do
-      expect(subject.client.messages).to receive(:create)
-        .with(hash_including(max_tokens: 50000))
-        .and_return(response)
-
-      subject.complete(prompt: prompt, max_tokens_to_sample: 50000)
-    end
-
-    it "passes stop_sequences and the sampling parameters that were set" do
-      expect(subject.client.messages).to receive(:create)
-        .with(hash_including(stop_sequences: ["\n\nHuman:"], temperature: 0.5, top_k: 10))
-        .and_return(response)
-
-      subject.complete(prompt: prompt, stop_sequences: ["\n\nHuman:"], temperature: 0.5, top_k: 10)
+    it "is not supported, as Claude models are only served through the Messages API" do
+      expect { subject.complete(prompt: "How high is the sky?") }
+        .to raise_error(NotImplementedError, "Langchain::LLM::Anthropic does not support completion")
     end
   end
 
