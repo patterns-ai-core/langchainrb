@@ -42,7 +42,6 @@ module Langchain::Tool
       raise StandardError, "connection_string parameter cannot be blank" if connection_string.empty?
 
       @db = Sequel.connect(connection_string)
-      # TODO: This is a bug, these 2 parameters are completely ignored.
       @requested_tables = tables
       @excluded_tables = exclude_tables
     end
@@ -51,7 +50,7 @@ module Langchain::Tool
     #
     # @return [Langchain::Tool::Response] List of tables in the database
     def list_tables
-      tool_response(content: db.tables)
+      tool_response(content: tables)
     end
 
     # Database Tool: Returns the schema for a list of tables
@@ -78,7 +77,7 @@ module Langchain::Tool
     def dump_schema
       Langchain.logger.debug("#{self.class} - Dumping schema tables and keys")
 
-      schemas = db.tables.map do |table|
+      schemas = tables.map do |table|
         describe_table(table)
       end
 
@@ -100,38 +99,35 @@ module Langchain::Tool
 
     private
 
+    # The tables the tool works with: the requested ones (all if none were given) minus the excluded ones
+    #
+    # @return [Array<Symbol>] The table names
+    def tables
+      names = db.tables
+      names &= requested_tables.map(&:to_sym) if requested_tables.any?
+      names - excluded_tables.map(&:to_sym)
+    end
+
     # Describes a table and its schema
     #
     # @param table [String] The table to describe
     # @return [Langchain::Tool::Response] The schema for the table
     def describe_table(table)
-      # TODO: There's probably a clear way to do all of this below
+      columns = db.schema(table)
+      primary_keys = columns.select { |_name, info| info[:primary_key] == true }.map(&:first)
 
-      primary_key_columns = []
-      primary_key_column_count = db.schema(table).count { |column| column[1][:primary_key] == true }
-
-      schema = "CREATE TABLE #{table}(\n"
-      db.schema(table).each do |column|
-        schema << "#{column[0]} #{column[1][:type]}"
-        if column[1][:primary_key] == true
-          schema << " PRIMARY KEY" if primary_key_column_count == 1
-        else
-          primary_key_columns << column[0]
-        end
-        schema << " COMMENT '#{column[1][:comment]}'" if column[1][:comment]
-        schema << ",\n" unless column == db.schema(table).last && primary_key_column_count == 1
+      definitions = columns.map do |name, info|
+        definition = "#{name} #{info[:type]}"
+        definition << " PRIMARY KEY" if primary_keys == [name]
+        definition << " COMMENT '#{info[:comment]}'" if info[:comment]
+        definition
       end
-      if primary_key_column_count > 1
-        schema << "PRIMARY KEY (#{primary_key_columns.join(",")})"
-      end
+      definitions << "PRIMARY KEY (#{primary_keys.join(",")})" if primary_keys.size > 1
       db.foreign_key_list(table).each do |fk|
-        schema << ",\n" if fk == db.foreign_key_list(table).first
-        schema << "FOREIGN KEY (#{fk[:columns]&.first}) REFERENCES #{fk[:table]}(#{fk[:key]&.first})"
-        schema << ",\n" unless fk == db.foreign_key_list(table).last
+        definitions << "FOREIGN KEY (#{fk[:columns]&.first}) REFERENCES #{fk[:table]}(#{fk[:key]&.first})"
       end
-      schema << ");\n"
 
-      tool_response(content: schema)
+      tool_response(content: "CREATE TABLE #{table}(\n#{definitions.join(",\n")});\n")
     end
   end
 end
