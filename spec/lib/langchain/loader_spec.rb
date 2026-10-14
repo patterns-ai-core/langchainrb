@@ -61,6 +61,26 @@ RSpec.describe Langchain::Loader do
         expect(subject).to all(be_a(Langchain::Data))
         expect(subject.map(&:value)).to contain_exactly("hello", "world")
       end
+
+      it "chunks every file with the chunker given to the loader" do
+        data = described_class.new(@dir, {}, chunker: Langchain::Chunker::Sentence).load
+
+        expect(data.map { |d| d.instance_variable_get(:@chunker_klass) }).to all(eq(Langchain::Chunker::Sentence))
+      end
+    end
+
+    context "File with an upper-case extension" do
+      around do |example|
+        Dir.mktmpdir do |dir|
+          @path = File.join(dir, "NOTES.TXT")
+          File.write(@path, "hello")
+          example.run
+        end
+      end
+
+      it "is loaded with the processor for the lower-case extension" do
+        expect(described_class.new(@path).load.value).to eq("hello")
+      end
     end
 
     context "Text" do

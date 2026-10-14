@@ -112,7 +112,7 @@ module Langchain
         # rather than recursing into them and loading their contents twice.
         next if File.directory?(file)
 
-        Langchain::Loader.new(file, @options).load(&block)
+        Langchain::Loader.new(file, @options, chunker: @chunker).load(&block)
       rescue UnknownFormatError
         # Silently skip files with an unsupported extension.
         nil
@@ -151,7 +151,7 @@ module Langchain
     end
 
     def source_type
-      url? ? @raw_data.content_type : File.extname(@path)
+      url? ? @raw_data.content_type : File.extname(@path).downcase
     end
 
     def lookup_constant
