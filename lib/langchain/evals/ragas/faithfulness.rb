@@ -55,7 +55,7 @@ module Langchain
             statements: statements,
             context: context
           )
-          llm.complete(prompt: prompt).completion
+          llm.chat(messages: [{role: "user", content: prompt}]).chat_completion
         end
 
         def statements_extraction(question:, answer:)
@@ -63,7 +63,7 @@ module Langchain
             question: question,
             answer: answer
           )
-          llm.complete(prompt: prompt).completion
+          llm.chat(messages: [{role: "user", content: prompt}]).chat_completion
         end
 
         # @return [PromptTemplate] PromptTemplate instance
