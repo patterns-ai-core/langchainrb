@@ -259,6 +259,32 @@ RSpec.describe Langchain::Vectorsearch::Pinecone do
     end
   end
 
+  describe "#remove_texts" do
+    let(:vector) { double(Pinecone::Vector) }
+
+    before do
+      allow(subject.client).to receive(:index).with(index_name).and_return(vector)
+    end
+
+    it "deletes the vectors by id, as strings" do
+      expect(vector).to receive(:delete).with(ids: ["123", "456"], namespace: "").and_return({})
+
+      expect(subject.remove_texts(ids: [123, "456"])).to eq({})
+    end
+
+    it "deletes from the given namespace" do
+      expect(vector).to receive(:delete).with(ids: ["123"], namespace: "docs").and_return({})
+
+      subject.remove_texts(ids: [123], namespace: "docs")
+    end
+
+    it "raises instead of sending a delete without ids" do
+      expect(vector).not_to receive(:delete)
+
+      expect { subject.remove_texts(ids: []) }.to raise_error(ArgumentError)
+    end
+  end
+
   describe "#similarity_search_by_vector" do
     before do
       allow(subject.llm).to receive_message_chain(:embed, :embedding).with(text: text).and_return(embedding)
