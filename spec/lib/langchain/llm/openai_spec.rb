@@ -321,164 +321,6 @@ RSpec.describe Langchain::LLM::OpenAI do
     end
   end
 
-  describe "#complete" do
-    let(:response) do
-      {
-        "id" => "chatcmpl-9orgr5hNUdCsQeNWGnmNnbXQVIcPN",
-        "object" => "chat.completion",
-        "created" => 1721906887,
-        "model" => "gpt-4o-mini-2024-07-18",
-        "choices" => [
-          {
-            "message" => {
-              "role" => "assistant",
-              "content" => "The meaning of life is subjective and can vary from person to person."
-            },
-            "finish_reason" => "stop",
-            "index" => 0
-          }
-        ],
-        "usage" => {
-          "prompt_tokens" => 7,
-          "completion_tokens" => 16,
-          "total_tokens" => 23
-        }
-      }
-    end
-
-    before do
-      allow(subject.client).to receive(:chat).with(parameters).and_return(response)
-      allow(subject.client).to receive(:chat).with(parameters).and_return(response)
-    end
-
-    context "with default parameters" do
-      let(:parameters) do
-        {
-          parameters: {
-            n: 1,
-            model: "gpt-4o-mini",
-            messages: [{content: "Hello World", role: "user"}]
-          }
-        }
-      end
-
-      it "returns valid llm response object" do
-        response = subject.complete(prompt: "Hello World")
-
-        expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
-        expect(response.model).to eq("gpt-4o-mini-2024-07-18")
-        expect(response.completion).to eq("The meaning of life is subjective and can vary from person to person.")
-        expect(response.prompt_tokens).to eq(7)
-        expect(response.completion_tokens).to eq(16)
-        expect(response.total_tokens).to eq(23)
-      end
-
-      it "returns a completion" do
-        response = subject.complete(prompt: "Hello World")
-
-        expect(response).to be_a(Langchain::LLM::Response::OpenAIResponse)
-        expect(response.model).to eq("gpt-4o-mini-2024-07-18")
-        expect(response.completions).to eq([{"message" => {"role" => "assistant", "content" => "The meaning of life is subjective and can vary from person to person."}, "finish_reason" => "stop", "index" => 0}])
-        expect(response.completion).to eq("The meaning of life is subjective and can vary from person to person.")
-      end
-    end
-
-    context "with custom default_options" do
-      context "with legacy model" do
-        let(:logger) { double("logger") }
-        let(:subject) {
-          described_class.new(
-            api_key: "123",
-            default_options: {completion_model: "text-davinci-003"}
-          )
-        }
-        let(:parameters) do
-          {
-            parameters:
-            {
-              n: 1,
-              model: "text-davinci-003",
-              prompt: "Hello World"
-            }
-          }
-        end
-
-        before do
-          allow(Langchain).to receive(:logger).and_return(logger)
-          allow(logger).to receive(:warn)
-        end
-
-        it "passes correct options to the completions method" do
-          expect(subject.client).to receive(:chat).with({
-            parameters: {
-              n: 1,
-              model: "gpt-4o-mini",
-              messages: [{content: "Hello World", role: "user"}]
-            }
-          }).and_return(response)
-          subject.complete(prompt: "Hello World")
-        end
-      end
-
-      context "with new model" do
-        let(:subject) {
-          described_class.new(
-            api_key: "123",
-            default_options: {completion_model: "gpt-3.5-turbo-16k"}
-          )
-        }
-
-        let(:parameters) do
-          {
-            parameters: {
-              n: 1,
-              model: "gpt-3.5-turbo",
-              messages: [{content: "Hello World", role: "user"}]
-            }
-          }
-        end
-
-        it "passes correct options to the chat method" do
-          expect(subject.client).to receive(:chat).with({
-            parameters: {
-              n: 1,
-              model: "gpt-4o-mini",
-              messages: [{content: "Hello World", role: "user"}]
-            }
-          }).and_return(response)
-          subject.complete(prompt: "Hello World")
-        end
-      end
-    end
-
-    context "with prompt and parameters" do
-      let(:parameters) do
-        {parameters: {n: 1, model: "gpt-3.5-turbo", messages: [{content: "Hello World", role: "user"}]}}
-      end
-
-      it "returns a completion" do
-        response = subject.complete(prompt: "Hello World", model: "gpt-3.5-turbo")
-
-        expect(response.completion).to eq("The meaning of life is subjective and can vary from person to person.")
-      end
-    end
-
-    context "with failed API call" do
-      let(:parameters) do
-        {parameters: {n: 1, model: "gpt-4o-mini", messages: [{content: "Hello World", role: "user"}]}}
-      end
-      let(:response) do
-        {"error" => {"code" => 400, "message" => "User location is not supported for the API use.", "type" => "invalid_request_error"}}
-      end
-
-      it "raises an error" do
-        expect {
-          subject.complete(prompt: "Hello World")
-        }.to raise_error(Langchain::LLM::ApiError, "OpenAI API error: User location is not supported for the API use.")
-      end
-    end
-  end
-
   describe "#default_dimensions" do
     it "returns the default dimensions" do
       expect(subject.default_dimensions).to eq(1536)
@@ -626,7 +468,7 @@ RSpec.describe Langchain::LLM::OpenAI do
       let(:model) { "gpt-3.5-turbo-0301" }
 
       it "sends prompt as message and additional params and returns a response message" do
-        response = subject.complete(prompt: prompt, model: model)
+        response = subject.chat(messages: [{role: "user", content: prompt}], model: model)
 
         expect(response.chat_completion).to eq(answer)
       end
@@ -852,7 +694,7 @@ RSpec.describe Langchain::LLM::OpenAI do
     let(:text) { "Text to summarize" }
 
     before do
-      allow(subject).to receive(:complete).and_return("Summary")
+      allow(subject).to receive(:chat).and_return("Summary")
     end
 
     it "returns a summary" do

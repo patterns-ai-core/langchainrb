@@ -13,7 +13,6 @@ module Langchain::LLM
   class Cohere < Base
     DEFAULTS = {
       temperature: 0.0,
-      completion_model: "command",
       chat_model: "command-r-plus",
       embedding_model: "embed-english-v3.0",
       dimensions: 1024,
@@ -53,31 +52,6 @@ module Langchain::LLM
       )
 
       Langchain::LLM::Response::CohereResponse.new response, model: @defaults[:embedding_model]
-    end
-
-    #
-    # Generate a completion for a given prompt
-    #
-    # @param prompt [String] The prompt to generate a completion for
-    # @param params[:stop_sequences]
-    # @return [Langchain::LLM::Response::CohereResponse] Response object
-    #
-    def complete(prompt:, **params)
-      default_params = {
-        prompt: prompt,
-        temperature: @defaults[:temperature],
-        model: @defaults[:completion_model],
-        truncate: @defaults[:truncate]
-      }
-
-      if params[:stop_sequences]
-        default_params[:stop_sequences] = params.delete(:stop_sequences)
-      end
-
-      default_params.merge!(params)
-
-      response = client.generate(**default_params)
-      Langchain::LLM::Response::CohereResponse.new response, model: @defaults[:completion_model]
     end
 
     # Generate a chat completion for given messages

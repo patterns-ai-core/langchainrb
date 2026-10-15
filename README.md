@@ -104,23 +104,12 @@ embedding = response.embedding
 
 ### Prompt completions
 
-Use the `complete` method to generate completions for a given prompt:
+Most providers have deprecated their text completions APIs, so use `chat` (below). Only `Langchain::LLM::Ollama`, `Langchain::LLM::LlamaCpp`, `Langchain::LLM::Replicate` and `Langchain::LLM::AI21` still have a `complete` method:
 
 ```ruby
 response = llm.complete(prompt: "Once upon a time")
 completion = response.completion
 ```
-
-#### Accepted parameters for `complete()`
-
-- `prompt`: (Required) The input prompt for completion.
-- `max_tokens`: (Optional) The maximum number of tokens to generate.
-- `temperature`: (Optional) Controls randomness in generation. Higher values (e.g., 0.8) make output more random, while lower values (e.g., 0.2) make it more deterministic.
-- `top_p`: (Optional) An alternative to temperature, controls diversity of generated tokens.
-- `n`: (Optional) Number of completions to generate for each prompt.
-- `stop`: (Optional) Sequences where the API will stop generating further tokens.
-- `presence_penalty`: (Optional) Penalizes new tokens based on their presence in the text so far.
-- `frequency_penalty`: (Optional) Penalizes new tokens based on their frequency in the text so far.
 
 ### Generating Chat Completions
 

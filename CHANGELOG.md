@@ -10,7 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
-- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/1067] Remove `Langchain::LLM::Anthropic#complete` and the `completion_model` default. It called `client.complete`, which the official `anthropic` gem doesn't have, for the deprecated Text Completions API, so it always raised `NoMethodError`; it now raises `NotImplementedError` like the other LLMs without completions. Use `#chat`.
+- [BREAKING] [https://github.com/patterns-ai-core/langchainrb/pull/1067] Remove `#complete` from `Langchain::LLM::Anthropic`, `OpenAI`, `Azure`, `Cohere` and `AwsBedrock`, with their `completion_model` defaults; use `#chat`. Anthropic's called `client.complete`, which the official `anthropic` gem doesn't have, so it always raised `NoMethodError`; OpenAI's and Azure's already wrapped `#chat`; Cohere's and Bedrock's used the deprecated Generate and Text Completions APIs. They now raise `NotImplementedError`. `OpenAI#summarize` now uses `#chat`. Ollama, LlamaCpp, Replicate and AI21 keep `#complete`.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1078] Add `Langchain::Vectorsearch::Milvus#update_texts`; with the default `auto_id` schema Milvus gives each updated text a new id, returned under `"data" => "upsertIds"`.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1074] Add `Langchain::Vectorsearch::Pinecone#remove_texts`.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1075] Add `Langchain::Vectorsearch::Hnswlib#update_texts` and `#remove_texts`.

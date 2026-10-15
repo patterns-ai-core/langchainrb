@@ -115,26 +115,6 @@ module Langchain::LLM
       Langchain::LLM::Response::OpenAIResponse.new(response)
     end
 
-    # rubocop:disable Style/ArgumentsForwarding
-    # Generate a completion for a given prompt
-    #
-    # @param prompt [String] The prompt to generate a completion for
-    # @param params [Hash] The parameters to pass to the `chat()` method
-    # @return [Langchain::LLM::Response::OpenAIResponse] Response object
-    # @deprecated Use {chat} instead.
-    def complete(prompt:, **params)
-      Langchain.logger.warn "DEPRECATED: `Langchain::LLM::OpenAI#complete` is deprecated, and will be removed in the next major version. Use `Langchain::LLM::OpenAI#chat` instead."
-
-      if params[:stop_sequences]
-        params[:stop] = params.delete(:stop_sequences)
-      end
-      # Should we still accept the `messages: []` parameter here?
-      messages = [{role: "user", content: prompt}]
-      chat(messages: messages, **params)
-    end
-
-    # rubocop:enable Style/ArgumentsForwarding
-
     # Generate a chat completion for given messages.
     #
     # @param [Hash] params unified chat parmeters from [Langchain::LLM::Parameters::Chat::SCHEMA]
@@ -179,7 +159,7 @@ module Langchain::LLM
       )
       prompt = prompt_template.format(text: text)
 
-      complete(prompt: prompt)
+      chat(messages: [{role: "user", content: prompt}])
     end
 
     def default_dimensions
