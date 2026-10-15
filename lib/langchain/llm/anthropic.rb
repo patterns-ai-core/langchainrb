@@ -15,7 +15,9 @@ module Langchain::LLM
       temperature: 0.0,
       completion_model: "claude-2.1",
       chat_model: "claude-sonnet-4-6",
-      max_tokens: 256
+      # Claude Sonnet 5 and later, Haiku 5.5 and Opus 5 and later think by default, and the thinking
+      # counts against max_tokens: with a small cap they can stop on "max_tokens" before writing any text.
+      max_tokens: 16_000
     }.freeze
 
     # Initialize an Anthropic LLM instance
