@@ -11,6 +11,7 @@
 
 ## [Unreleased]
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1080] `require "langchain"` works outside Rails again: without `Rails::Engine` the gem sets up Zeitwerk itself. Since the move to a Rails engine it raised `NameError` (uninitialized constant Rails) in a plain Ruby script.
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1079] `Langchain::DependencyHelper#depends_on` accepts a gem that's in the bundle through another gem's gemspec instead of the `Gemfile`, such as `aws-sdk-bedrockruntime` declared by a gem that depends on langchainrb; it raised `LoadError` before.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1078] Add `Langchain::Vectorsearch::Milvus#update_texts`; with the default `auto_id` schema Milvus gives each updated text a new id, returned under `"data" => "upsertIds"`.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1074] Add `Langchain::Vectorsearch::Pinecone#remove_texts`.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1075] Add `Langchain::Vectorsearch::Hnswlib#update_texts` and `#remove_texts`.
