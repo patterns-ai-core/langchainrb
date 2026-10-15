@@ -4,6 +4,8 @@ module Langchain::LLM
   # Usage:
   #     llm = Langchain::LLM::GoogleGemini.new(api_key: ENV['GOOGLE_GEMINI_API_KEY'])
   class GoogleGemini < Base
+    include GoogleMessageFormat
+
     DEFAULTS = {
       chat_model: "gemini-1.5-pro-latest",
       embedding_model: "text-embedding-004",
@@ -37,6 +39,7 @@ module Langchain::LLM
     # @param tool_choice [String] Specifies the mode in which function calling should execute. If unspecified, the default value will be set to AUTO. Possible values: AUTO, ANY, NONE
     # @param system [String] Developer set system instruction
     def chat(params = {})
+      params = to_google_messages(params)
       params[:system] = {parts: [{text: params[:system]}]} if params[:system]
       params[:tools] = {function_declarations: params[:tools]} if params[:tools]
 

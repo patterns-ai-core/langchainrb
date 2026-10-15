@@ -51,7 +51,38 @@ module Langchain::Vectorsearch
       client.save_index(path_to_index)
     end
 
-    # TODO: Add update_texts method
+    #
+    # Update the texts stored under existing IDs
+    #
+    # @param texts [Array<String>] The list of texts to update
+    # @param ids [Array<Integer>] The list of corresponding IDs (integers) to the texts
+    # @return [Boolean] The response from the HNSW library
+    #
+    def update_texts(texts:, ids:)
+      ensure_ids_exist(ids)
+
+      Array(texts).each_with_index do |text, i|
+        # add_point with a label that is already in the index replaces its vector
+        client.add_point(llm.embed(text: text).embedding, ids[i])
+      end
+
+      client.save_index(path_to_index)
+    end
+
+    #
+    # Remove texts from the index by ID
+    #
+    # @param ids [Array<Integer>] The IDs of the texts to remove
+    # @return [Boolean] The response from the HNSW library
+    #
+    def remove_texts(ids:)
+      ensure_ids_exist(ids)
+
+      # HNSW can't delete a point: a marked one is left out of searches, and stays marked once saved
+      Array(ids).each { |id| client.mark_deleted(id) }
+
+      client.save_index(path_to_index)
+    end
 
     #
     # Search for similar texts
@@ -91,6 +122,16 @@ module Langchain::Vectorsearch
     # end
 
     private
+
+    #
+    # Raises before the index is changed if an ID is not in it
+    #
+    # @param ids [Array<Integer>] The IDs to check
+    #
+    def ensure_ids_exist(ids)
+      missing = Array(ids) - client.get_ids
+      raise ArgumentError, "IDs not in the index: #{missing.join(", ")}" if missing.any?
+    end
 
     #
     # Optionally resizes the index if there's no space for new data

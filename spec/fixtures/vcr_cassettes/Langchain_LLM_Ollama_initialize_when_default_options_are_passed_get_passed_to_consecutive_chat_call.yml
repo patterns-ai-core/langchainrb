@@ -6,7 +6,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"messages":[{"role":"user","content":"Return data from the following
-        sentence: John is a 30 year old software engineer living in SF."}],"model":"llama3.2","stream":true,"temperature":0.0,"options":{"num_ctx":8192},"format":"json"}'
+        sentence: John is a 30 year old software engineer living in SF."}],"model":"llama3.2","stream":true,"options":{"temperature":0.0,"num_ctx":8192},"format":"json"}'
     headers:
       User-Agent:
       - Faraday v2.12.0

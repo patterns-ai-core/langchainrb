@@ -91,6 +91,36 @@ RSpec.describe Langchain::LLM::GoogleGemini do
       subject.chat(params)
     end
 
+    context "with messages in the {role:, content:} shape" do
+      let(:sent) { [] }
+
+      before do
+        allow_any_instance_of(Net::HTTP::Post).to receive(:body=) { |_request, body| sent << JSON.parse(body) }
+      end
+
+      it "sends them as parts, with the assistant as model and system messages as the system instruction" do
+        subject.chat(messages: [
+          {role: "system", content: "Be brief."},
+          {role: "user", content: "How high is the sky?"},
+          {"role" => "assistant", "content" => "Very high."},
+          {role: "user", content: "How high exactly?"}
+        ])
+
+        expect(sent.first["contents"]).to eq([
+          {"role" => "user", "parts" => [{"text" => "How high is the sky?"}]},
+          {"role" => "model", "parts" => [{"text" => "Very high."}]},
+          {"role" => "user", "parts" => [{"text" => "How high exactly?"}]}
+        ])
+        expect(sent.first["system_instruction"]).to eq({"parts" => [{"text" => "Be brief."}]})
+      end
+
+      it "joins a system message to the system: param" do
+        subject.chat(system: "You are a bot.", messages: [{role: "system", content: "Be brief."}, {role: "user", content: "Hi"}])
+
+        expect(sent.first["system_instruction"]).to eq({"parts" => [{"text" => "You are a bot.\n\nBe brief."}]})
+      end
+    end
+
     it "configures the HTTP read timeout from the default options" do
       subject = described_class.new(api_key: "123", default_options: {read_timeout: 120})
       http = instance_double(Net::HTTP)

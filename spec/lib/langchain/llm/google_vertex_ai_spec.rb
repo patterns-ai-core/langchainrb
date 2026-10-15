@@ -69,6 +69,18 @@ RSpec.describe Langchain::LLM::GoogleVertexAI do
       expect(response.chat_completion).to eq("The sky is not a physical object with a defined height.")
     end
 
+    it "sends {role:, content:} messages as parts" do
+      expect(subject).to receive(:http_post).with(
+        anything,
+        hash_including(
+          contents: [{role: "user", parts: [{text: "How high is the sky?"}]}],
+          system_instruction: {parts: [{text: "Be brief."}]}
+        )
+      ).and_call_original
+
+      subject.chat(messages: [{role: "system", content: "Be brief."}, {role: "user", content: "How high is the sky?"}])
+    end
+
     it "uses default options if provided" do
       default_options = {
         safety_settings: [
