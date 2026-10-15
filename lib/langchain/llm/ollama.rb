@@ -21,6 +21,19 @@ module Langchain::LLM
       options: {}
     }.freeze
 
+    # Unified chat parameters that Ollama only reads from `options`, with their Ollama names
+    CHAT_OPTIONS = {
+      temperature: :temperature,
+      top_p: :top_p,
+      top_k: :top_k,
+      seed: :seed,
+      stop: :stop,
+      max_tokens: :num_predict,
+      frequency_penalty: :frequency_penalty,
+      presence_penalty: :presence_penalty,
+      repetition_penalty: :repeat_penalty
+    }.freeze
+
     EMBEDDING_SIZES = {
       codellama: 4_096,
       "dolphin-mixtral": 4_096,
@@ -182,6 +195,7 @@ module Langchain::LLM
     #   images (optional): a list of images to include in the message (for multimodal models such as llava)
     def chat(messages:, model: nil, **params, &block)
       parameters = chat_parameters.to_params(params.merge(messages:, model:, stream: block_given?)) # rubocop:disable Performance/BlockGivenWithExplicitBlock
+      parameters = move_chat_options(parameters)
       responses_stream = []
 
       client.post("api/chat", parameters) do |req|
@@ -284,6 +298,17 @@ module Langchain::LLM
       return unless @api_key
 
       {"Authorization" => "Bearer #{@api_key}"}
+    end
+
+    # Ollama ignores sampling parameters at the top level of /api/chat, like #complete and #embed
+    # already send them. Values given in `options:` win over the unified parameters.
+    def move_chat_options(parameters)
+      options = CHAT_OPTIONS.each_with_object({}) do |(param, option), moved|
+        moved[option] = parameters.delete(param) if parameters.key?(param)
+      end
+      return parameters if options.empty?
+
+      parameters.merge(options: options.merge(parameters[:options] || {}))
     end
 
     def json_responses_chunk_handler(&block)
