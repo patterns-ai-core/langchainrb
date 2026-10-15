@@ -92,12 +92,54 @@ RSpec.describe Langchain::Vectorsearch::Qdrant do
         expect(result).to eq(true)
       end
     end
+
+    context "with metadata for each text" do
+      let(:other_text) { "Goodbye World" }
+
+      before do
+        allow(subject.llm).to receive_message_chain(:embed, :embedding).with(text: other_text).with(no_args).and_return(embedding)
+      end
+
+      it "stores each text's metadata in its own payload, next to the shared payload" do
+        expect(subject.client.points).to receive(:upsert).with(
+          collection_name: index_name,
+          batch: {
+            ids: [1, 2],
+            vectors: [embedding, embedding],
+            payloads: [
+              {content: text, source: "a.pdf", author: "Ann"},
+              {content: other_text, source: "a.pdf", author: "Bob", page: 2}
+            ]
+          }
+        ).and_return(true)
+
+        subject.add_texts(
+          texts: [text, other_text],
+          ids: [1, 2],
+          payload: {source: "a.pdf"},
+          metadata: [{author: "Ann"}, {author: "Bob", page: 2}]
+        )
+      end
+
+      it "stores no extra fields for a text without metadata" do
+        expect(subject.client.points).to receive(:upsert).with(
+          hash_including(batch: hash_including(payloads: [{content: text, author: "Ann"}, {content: other_text}]))
+        ).and_return(true)
+
+        subject.add_texts(texts: [text, other_text], ids: [1, 2], metadata: [{author: "Ann"}])
+      end
+    end
   end
 
   describe "updates_texts" do
     it "adds texts" do
-      expect(subject).to receive(:add_texts).with(texts: [text], ids: [1]).and_return(true)
+      expect(subject).to receive(:add_texts).with(texts: [text], ids: [1], payload: {}, metadata: nil).and_return(true)
       subject.update_texts(texts: [text], ids: [1])
+    end
+
+    it "keeps the payload and metadata it is given, since Qdrant replaces the whole payload" do
+      expect(subject).to receive(:add_texts).with(texts: [text], ids: [1], payload: {source: "a.pdf"}, metadata: [{author: "Ann"}]).and_return(true)
+      subject.update_texts(texts: [text], ids: [1], payload: {source: "a.pdf"}, metadata: [{author: "Ann"}])
     end
   end
 

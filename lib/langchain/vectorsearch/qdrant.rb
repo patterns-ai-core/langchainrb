@@ -43,15 +43,18 @@ module Langchain::Vectorsearch
 
     # Add a list of texts to the index
     # @param texts [Array<String>] The list of texts to add
+    # @param ids [Array<String, Integer>] The ids to use for the texts, in the same order as the texts (optional)
+    # @param payload [Hash] Payload fields to store with every text (optional)
+    # @param metadata [Array<Hash>] The metadata to store with each text, in the same order as the texts (optional)
     # @return [Hash] The response from the server
-    def add_texts(texts:, ids: [], payload: {})
+    def add_texts(texts:, ids: [], payload: {}, metadata: nil)
       batch = {ids: [], vectors: [], payloads: []}
 
       Array(texts).each_with_index do |text, i|
         id = ids[i] || SecureRandom.uuid
         batch[:ids].push(id)
         batch[:vectors].push(llm.embed(text: text).embedding)
-        batch[:payloads].push({content: text}.merge(payload))
+        batch[:payloads].push({content: text}.merge(payload).merge(metadata&.dig(i) || {}))
       end
 
       client.points.upsert(
@@ -60,8 +63,17 @@ module Langchain::Vectorsearch
       )
     end
 
-    def update_texts(texts:, ids:)
-      add_texts(texts: texts, ids: ids)
+    # Update a list of texts in the index
+    #
+    # Qdrant replaces the whole payload of an updated point, so pass the payload and metadata to keep.
+    #
+    # @param texts [Array<String>] The list of texts to update
+    # @param ids [Array<String, Integer>] The ids of the texts to update, in the same order as the texts
+    # @param payload [Hash] Payload fields to store with every text (optional)
+    # @param metadata [Array<Hash>] The metadata to store with each text, in the same order as the texts (optional)
+    # @return [Hash] The response from the server
+    def update_texts(texts:, ids:, payload: {}, metadata: nil)
+      add_texts(texts: texts, ids: ids, payload: payload, metadata: metadata)
     end
 
     # Remove a list of texts from the index
