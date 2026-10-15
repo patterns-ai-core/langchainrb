@@ -546,6 +546,8 @@ assistant.tool_execution_callback = -> (tool_call_id, tool_name, method_name, to
 * `add_message_and_run!`: Combines adding a message and running the assistant
 * `submit_tool_output`: Manually submit output to a tool call
 * `messages`: Returns a list of ongoing messages
+* `total_prompt_tokens`, `total_completion_tokens`, `total_tokens`: Tokens used by every run of this assistant so far
+* `last_run_usage`: Tokens used by the last `run` alone, e.g. `{prompt_tokens: 121, completion_tokens: 13, total_tokens: 134}`; useful when you execute the tools yourself and call `run` once per step
 
 ### Built-in Tools 🛠️
 * `Langchain::Tool::Calculator`: Useful for evaluating math expressions. Requires `gem "eqn"`.
