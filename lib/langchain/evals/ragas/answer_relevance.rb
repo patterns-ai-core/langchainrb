@@ -28,7 +28,7 @@ module Langchain
               question: question,
               answer: answer
             )
-            generated_questions << llm.complete(prompt: prompt).completion
+            generated_questions << llm.chat(messages: [{role: "user", content: prompt}]).chat_completion
           end
 
           scores = generated_questions.map do |generated_question|

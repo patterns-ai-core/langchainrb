@@ -156,6 +156,18 @@ RSpec.describe Langchain::OutputParsers::OutputFixingParser do
       end
     end
 
+    it "fixes the output with Google Gemini, which only accepts messages as parts (#1015)" do
+      llm = Langchain::LLM::GoogleGemini.new(api_key: "123")
+      parser = described_class.from_llm(llm: llm, parser: kwargs_example[:parser])
+      gemini_body = {candidates: [{content: {role: "model", parts: [{text: json_text_response}]}}]}.to_json
+      allow_any_instance_of(Net::HTTP).to receive(:request).and_return(double(body: gemini_body))
+      sent = []
+      allow_any_instance_of(Net::HTTP::Post).to receive(:body=) { |_request, body| sent << JSON.parse(body) }
+
+      expect(parser.parse("Whoops I don't understand")).to eq(json_response)
+      expect(sent.first["contents"].first).to include("role" => "user", "parts" => [hash_including("text")])
+    end
+
     it "parses without need for fixing when completion text is already valid" do
       parser = described_class.new(**kwargs_example)
       expect(parser.parse(json_text_response)).to eq(json_response)

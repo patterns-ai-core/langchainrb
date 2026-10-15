@@ -33,7 +33,24 @@ module Langchain::Vectorsearch
       )
     end
 
-    # TODO: Add update_texts method
+    # Updates a list of texts in the index
+    #
+    # With the default schema (auto_id), Milvus deletes each entity and inserts it again under a new id;
+    # the response lists the new ids, in order, under "data" => "upsertIds".
+    #
+    # @param texts [Array<String>] The texts to update
+    # @param ids [Array<Integer>] The ids of the texts to update
+    # @return [Hash] The response from the server
+    def update_texts(texts:, ids:)
+      raise ArgumentError, "texts and ids must have the same size" unless Array(texts).size == Array(ids).size
+
+      client.entities.upsert(
+        collection_name: index_name,
+        data: texts.zip(ids).map do |text, id|
+          {id: id, content: text, vector: llm.embed(text: text).embedding}
+        end
+      )
+    end
 
     # Deletes a list of texts in the index
     #
@@ -47,8 +64,6 @@ module Langchain::Vectorsearch
         filter: "id in #{ids}"
       )
     end
-
-    # TODO: Add update_texts method
 
     # Create default schema
     # @return [Hash] The response from the server

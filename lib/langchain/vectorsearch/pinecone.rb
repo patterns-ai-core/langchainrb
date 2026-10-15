@@ -97,6 +97,16 @@ module Langchain::Vectorsearch
       end
     end
 
+    # Remove a list of texts from the index
+    # @param ids [Array<Integer, String>] The ids of the texts to remove
+    # @param namespace [String] The namespace to remove the texts from
+    # @return [Hash] The response from the server
+    def remove_texts(ids:, namespace: "")
+      raise ArgumentError, "ids must not be empty" if Array(ids).empty?
+
+      index.delete(ids: Array(ids).map(&:to_s), namespace: namespace)
+    end
+
     # Create the index with the default schema
     # @return [Hash] The response from the server
     def create_default_schema

@@ -22,7 +22,7 @@ module Langchain
             question: question,
             context: context
           )
-          sentences = llm.complete(prompt: prompt).completion
+          sentences = llm.chat(messages: [{role: "user", content: prompt}]).chat_completion
 
           (sentence_count(sentences).to_f / sentence_count(context).to_f)
         end

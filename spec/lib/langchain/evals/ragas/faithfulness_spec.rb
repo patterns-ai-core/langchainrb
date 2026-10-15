@@ -21,6 +21,23 @@ RSpec.describe Langchain::Evals::Ragas::Faithfulness do
       expect(subject.score(question: question, answer: answer, context: context)).to eq(0.5)
     end
 
+    context "when the statements come from the LLM" do
+      before do
+        allow(subject).to receive(:statements_extraction).and_call_original
+        allow(subject).to receive(:statements_verification).and_call_original
+        allow(subject.llm).to receive(:chat)
+          .with(messages: [{role: "user", content: a_string_including(answer)}])
+          .and_return(double(chat_completion: statements))
+        allow(subject.llm).to receive(:chat)
+          .with(messages: [{role: "user", content: a_string_including(context)}])
+          .and_return(double(chat_completion: verifications))
+      end
+
+      it "asks the LLM through chat" do
+        expect(subject.score(question: question, answer: answer, context: context)).to eq(0.5)
+      end
+    end
+
     context "when no verified statements are found" do
       before do
         allow(subject).to receive(:statements_verification).and_return("No verified statements found.")

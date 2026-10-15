@@ -41,6 +41,25 @@ RSpec.describe Langchain::LLM::Anthropic do
     let(:fixture) { File.read("spec/fixtures/llm/anthropic/chat.json") }
     let(:response) { JSON.parse(fixture, symbolize_names: true) }
 
+    context "with max_tokens" do
+      it "leaves room for the thinking that current Claude models do by default" do
+        expect(subject.client.messages).to receive(:create)
+          .with(hash_including(max_tokens: 16_000))
+          .and_return(response)
+
+        subject.chat(messages: messages)
+      end
+
+      it "sends a max_tokens set in default_options" do
+        llm = described_class.new(api_key: "123", default_options: {max_tokens: 1024})
+        expect(llm.client.messages).to receive(:create)
+          .with(hash_including(max_tokens: 1024))
+          .and_return(response)
+
+        llm.chat(messages: messages)
+      end
+    end
+
     context "with temperature" do
       it "does not send the library's default temperature, which current Claude models reject" do
         expect(subject.client.messages).to receive(:create)
