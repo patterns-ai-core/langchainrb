@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1081] Add `Langchain::Assistant#last_run_usage`, the prompt, completion and total tokens of the last `run` alone; the `total_*` counters add up every run.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1079] `Langchain::DependencyHelper#depends_on` accepts a gem that's in the bundle through another gem's gemspec instead of the `Gemfile`, such as `aws-sdk-bedrockruntime` declared by a gem that depends on langchainrb; it raised `LoadError` before.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1078] Add `Langchain::Vectorsearch::Milvus#update_texts`; with the default `auto_id` schema Milvus gives each updated text a new id, returned under `"data" => "upsertIds"`.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1074] Add `Langchain::Vectorsearch::Pinecone#remove_texts`.
