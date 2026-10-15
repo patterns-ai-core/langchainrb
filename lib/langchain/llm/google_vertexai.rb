@@ -11,6 +11,8 @@ module Langchain::LLM
   #     llm = Langchain::LLM::GoogleVertexAI.new(project_id: ENV["GOOGLE_VERTEX_AI_PROJECT_ID"], region: "us-central1")
   #
   class GoogleVertexAI < Base
+    include GoogleMessageFormat
+
     DEFAULTS = {
       temperature: 0.1,
       max_output_tokens: 1000,
@@ -78,6 +80,7 @@ module Langchain::LLM
     # @param system [String] The system instruction to use
     # @return [Langchain::LLM::Response::GoogleGeminiResponse] Response object
     def chat(params = {})
+      params = to_google_messages(params)
       params[:system] = {parts: [{text: params[:system]}]} if params[:system]
       params[:tools] = {function_declarations: params[:tools]} if params[:tools]
 
