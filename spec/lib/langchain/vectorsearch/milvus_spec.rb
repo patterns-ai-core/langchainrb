@@ -50,6 +50,30 @@ RSpec.describe Langchain::Vectorsearch::Milvus do
     end
   end
 
+  describe "#update_texts" do
+    let(:fixture) { {"code" => 0, "data" => {"upsertCount" => 2, "upsertIds" => [11, 12]}} }
+
+    before do
+      allow(subject.llm).to receive(:embed) { |text:| double(embedding: (text == "one") ? [0.1, 0.2, 0.3] : [0.4, 0.5, 0.6]) }
+    end
+
+    it "upserts each text with its id and new embedding" do
+      expect(subject.client).to receive_message_chain(:entities, :upsert).with(
+        collection_name: index_name,
+        data: [
+          {id: 1, content: "one", vector: [0.1, 0.2, 0.3]},
+          {id: 2, content: "two", vector: [0.4, 0.5, 0.6]}
+        ]
+      ).and_return(fixture)
+
+      expect(subject.update_texts(texts: ["one", "two"], ids: [1, 2])).to eq(fixture)
+    end
+
+    it "raises when texts and ids don't match up" do
+      expect { subject.update_texts(texts: ["one"], ids: [1, 2]) }.to raise_error(ArgumentError)
+    end
+  end
+
   let(:text) { "Hello World" }
   let(:embedding) { [0.1, 0.2, 0.3] }
   let(:count) { 1 }
