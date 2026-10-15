@@ -37,7 +37,7 @@ RSpec.describe Langchain::LLM::Ollama do
       end
 
       it "get passed to consecutive chat() call", vcr: {record: :once} do
-        expect(client).to receive(:post).with("api/chat", hash_including(format: "json", options: {num_ctx: 8_192})).and_call_original
+        expect(client).to receive(:post).with("api/chat", hash_including(format: "json", options: {temperature: 0.0, num_ctx: 8_192})).and_call_original
         expect(JSON.parse(response.chat_completion)).to eq({"name" => "John", "age" => 30, "occupation" => "software engineer", "location" => "SF"})
       end
     end
@@ -128,6 +128,48 @@ RSpec.describe Langchain::LLM::Ollama do
     it "does not use streamed responses", vcr: {cassette_name: "Langchain_LLM_Ollama_chat_returns_a_chat_completion"} do
       expect(client).to receive(:post).with("api/chat", hash_including(stream: false)).and_call_original
       response
+    end
+
+    context "with sampling parameters" do
+      include WebMock::API
+
+      let(:body) { {"model" => "llama3.2", "message" => {"role" => "assistant", "content" => "Hi"}, "done" => true}.to_json }
+      let(:sent) { [] }
+
+      # Outside a cassette the suite disables WebMock; this stubs the endpoint for these examples only
+      around do |example|
+        WebMock.enable!
+        example.run
+      ensure
+        WebMock.reset!
+        WebMock.disable!
+      end
+
+      before do
+        stub_request(:post, "#{default_url}/api/chat").to_return do |request|
+          sent << JSON.parse(request.body)
+          {body: body}
+        end
+      end
+
+      it "sends them in options, where Ollama reads them" do
+        subject.chat(messages: messages, temperature: 0.4, seed: 7, top_p: 0.9, max_tokens: 50, stop: ["\n"])
+
+        expect(sent.first).not_to include("temperature", "seed", "top_p", "max_tokens", "stop")
+        expect(sent.first["options"]).to eq("temperature" => 0.4, "seed" => 7, "top_p" => 0.9, "num_predict" => 50, "stop" => ["\n"])
+      end
+
+      it "sends the default temperature in options" do
+        subject.chat(messages: messages)
+
+        expect(sent.first["options"]).to eq("temperature" => 0.0)
+      end
+
+      it "lets options: override them" do
+        subject.chat(messages: messages, temperature: 0.4, options: {temperature: 0.9, num_ctx: 4096})
+
+        expect(sent.first["options"]).to eq("temperature" => 0.9, "num_ctx" => 4096)
+      end
     end
 
     context "when passing a block" do
