@@ -52,11 +52,6 @@ module Langchain::LLM
       super
     end
 
-    def complete(...)
-      @client = @chat_client
-      super
-    end
-
     def chat(...)
       @client = @chat_client
       super
