@@ -19,12 +19,13 @@ module Langchain
 
       return true unless defined?(Bundler) # If we're in a non-bundler environment, we're no longer able to determine if we'll meet requirements
 
+      # The gem can come into the bundle through another gem's gemspec rather than the Gemfile
+      raise LoadError unless Bundler.load.specs.any? { |spec| spec.name == gem_name }
+
       gem_version = Gem.loaded_specs[gem_name].version
       gem_requirement = Bundler.load.dependencies.find { |g| g.name == gem_name }&.requirement
 
-      raise LoadError unless gem_requirement
-
-      unless gem_requirement.satisfied_by?(gem_version)
+      if gem_requirement && !gem_requirement.satisfied_by?(gem_version)
         raise VersionError, "The #{gem_name} gem is installed, but version #{gem_requirement} is required. You have #{gem_version}."
       end
 
