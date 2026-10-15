@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1075] Add `Langchain::Vectorsearch::Hnswlib#update_texts` and `#remove_texts`.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1076] Accept `{role:, content:}` messages in `Langchain::LLM::GoogleGemini#chat` and `Langchain::LLM::GoogleVertexAI#chat`, converting them to `parts` with system messages as the system instruction; `OutputFixingParser`, `Vectorsearch#ask`, `Chunker::Semantic`, the Ragas evals and HyDE got a 400 from Google before.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1077] Send `temperature`, `seed`, `top_p`, `max_tokens` (as `num_predict`) and the other sampling parameters of `Langchain::LLM::Ollama#chat` in `options`, where Ollama reads them; at the top level they were ignored, including the default `temperature: 0.0`.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1073] Raise `Langchain::LLM::Anthropic`'s default `max_tokens` from 256 to 16,000; Claude Sonnet 5 and later, Haiku 5.5 and Opus 5 and later think by default within that cap, so they often stopped before writing any text and `#chat_completion` returned `nil`.
