@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1076] Accept `{role:, content:}` messages in `Langchain::LLM::GoogleGemini#chat` and `Langchain::LLM::GoogleVertexAI#chat`, converting them to `parts` with system messages as the system instruction; `OutputFixingParser`, `Vectorsearch#ask`, `Chunker::Semantic`, the Ragas evals and HyDE got a 400 from Google before.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1073] Raise `Langchain::LLM::Anthropic`'s default `max_tokens` from 256 to 16,000; Claude Sonnet 5 and later, Haiku 5.5 and Opus 5 and later think by default within that cap, so they often stopped before writing any text and `#chat_completion` returned `nil`.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1072] Ask the LLM with `#chat` in `Langchain::Chunker::Semantic`, the Ragas evals and `Vectorsearch::Base#similarity_search_with_hyde`; they called `#complete`, which Google Gemini, Vertex AI and Mistral AI don't implement, and the semantic chunker passed `max_tokens_to_sample:`, which `Langchain::LLM::Anthropic#complete` rejected.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1069] Honor `tables:` and `exclude_tables:` in `Langchain::Tool::Database#list_tables` and `#dump_schema`, list the key columns of a composite primary key, and drop the trailing comma from the schema of a table without a primary key.
