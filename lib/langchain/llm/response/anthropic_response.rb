@@ -46,7 +46,9 @@ module Langchain::LLM::Response
     end
 
     def prompt_tokens
-      raw_response[:usage][:input_tokens].to_i
+      usage = raw_response[:usage]
+      # Anthropic reports tokens read from or written to the prompt cache apart from input_tokens
+      usage[:input_tokens].to_i + usage[:cache_read_input_tokens].to_i + usage[:cache_creation_input_tokens].to_i
     end
 
     def completion_tokens
