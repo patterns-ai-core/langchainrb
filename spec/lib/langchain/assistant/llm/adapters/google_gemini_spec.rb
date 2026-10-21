@@ -18,6 +18,18 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::GoogleGemini do
         system: "Instructions"
       })
     end
+
+    it "does not log a warning for the default parallel_tool_calls" do
+      expect(Langchain.logger).not_to receive(:warn)
+
+      subject.build_chat_params(
+        messages: [{role: "user", content: "Hello"}],
+        instructions: "Instructions",
+        tools: [Langchain::Tool::Calculator.new],
+        tool_choice: "auto",
+        parallel_tool_calls: true
+      )
+    end
   end
 
   describe "#support_system_message?" do

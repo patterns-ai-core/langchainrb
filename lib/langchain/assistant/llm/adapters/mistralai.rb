@@ -20,12 +20,11 @@ module Langchain
             tool_choice:,
             parallel_tool_calls:
           )
-            Langchain.logger.warn "WARNING: `parallel_tool_calls:` is not supported by Mistral AI currently" if parallel_tool_calls
-
             params = {messages: messages}
             if tools.any?
               params[:tools] = build_tools(tools)
               params[:tool_choice] = build_tool_choice(tool_choice)
+              params[:parallel_tool_calls] = parallel_tool_calls
             end
             params
           end

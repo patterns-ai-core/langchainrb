@@ -768,7 +768,8 @@ RSpec.describe Langchain::Assistant do
                 {role: "user", content: [{type: "text", text: "Please calculate 2+2"}]}
               ],
               tools: calculator.class.function_schemas.to_openai_format,
-              tool_choice: "auto"
+              tool_choice: "auto",
+              parallel_tool_calls: true
             )
             .and_return(Langchain::LLM::Response::MistralAIResponse.new(raw_mistralai_response))
 
@@ -820,7 +821,8 @@ RSpec.describe Langchain::Assistant do
                 {content: "4.0", role: "tool", tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV"}
               ],
               tools: calculator.class.function_schemas.to_openai_format,
-              tool_choice: "auto"
+              tool_choice: "auto",
+              parallel_tool_calls: true
             )
             .and_return(Langchain::LLM::Response::MistralAIResponse.new(raw_mistralai_response2))
 
