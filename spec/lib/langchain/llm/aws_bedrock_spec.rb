@@ -121,6 +121,136 @@ RSpec.describe Langchain::LLM::AwsBedrock do
     end
   end
 
+  describe "#chat with a Converse model" do
+    let(:model_id) { "us.amazon.nova-micro-v1:0" }
+    let(:types) { Aws::BedrockRuntime::Types }
+    let(:converse_response) do
+      types::ConverseResponse.new(
+        output: types::ConverseOutput::Message.new(
+          message: types::Message.new(role: "assistant", content: [types::ContentBlock::Text.new(text: "The capital of France is Paris.")])
+        ),
+        stop_reason: "end_turn",
+        usage: types::TokenUsage.new(input_tokens: 14, output_tokens: 10, total_tokens: 24),
+        metrics: types::ConverseMetrics.new(latency_ms: 100)
+      )
+    end
+
+    it "sends the Converse request format and returns an AwsBedrockConverseResponse" do
+      expect(subject.client).to receive(:converse).with({
+        model_id: model_id,
+        messages: [{role: "user", content: [{text: "What is the capital of France?"}]}],
+        system: [{text: "Be brief."}, {text: "Answer in English."}],
+        inference_config: {max_tokens: 300, temperature: 0.5, stop_sequences: ["stop"]}
+      }).and_return(converse_response)
+
+      response = subject.chat(
+        messages: [
+          {role: "system", content: "Answer in English."},
+          {role: "user", content: "What is the capital of France?"}
+        ],
+        system: "Be brief.",
+        model: model_id,
+        temperature: 0.5,
+        stop: ["stop"]
+      )
+
+      expect(response).to be_a(Langchain::LLM::Response::AwsBedrockConverseResponse)
+      expect(response.chat_completion).to eq("The capital of France is Paris.")
+      expect(response.role).to eq("assistant")
+      expect(response.stop_reason).to eq("end_turn")
+      expect(response.prompt_tokens).to eq(14)
+      expect(response.completion_tokens).to eq(10)
+      expect(response.total_tokens).to eq(24)
+      expect(response.model).to eq(model_id)
+    end
+
+    it "passes content blocks through and converts tools and tool_choice to the tool_config" do
+      expect(subject.client).to receive(:converse).with(hash_including(
+        messages: [{role: "user", content: [{text: "Weather in Paris?"}, {image: {format: "png", source: {bytes: "..."}}}]}],
+        tool_config: {
+          tools: [
+            {tool_spec: {name: "weather", description: "Get the weather", input_schema: {json: {type: "object", properties: {city: {type: "string"}}}}}},
+            {tool_spec: {name: "time", input_schema: {json: {type: "object", properties: {}}}}}
+          ],
+          tool_choice: {tool: {name: "weather"}}
+        }
+      )).and_return(converse_response)
+
+      subject.chat(
+        messages: [{"role" => "user", "content" => [{"text" => "Weather in Paris?"}, {image: {format: "png", source: {bytes: "..."}}}]}],
+        model: model_id,
+        tools: [
+          {type: "function", function: {name: "weather", description: "Get the weather", parameters: {type: "object", properties: {city: {type: "string"}}}}},
+          {name: "time"}
+        ],
+        tool_choice: "weather"
+      )
+    end
+
+    it "returns the toolUse blocks as tool_calls" do
+      allow(subject.client).to receive(:converse).and_return(
+        types::ConverseResponse.new(
+          output: types::ConverseOutput::Message.new(
+            message: types::Message.new(role: "assistant", content: [
+              types::ContentBlock::ToolUse.new(tool_use: types::ToolUseBlock.new(tool_use_id: "tooluse_1", name: "weather", input: {"city" => "Paris"}))
+            ])
+          ),
+          stop_reason: "tool_use",
+          usage: types::TokenUsage.new(input_tokens: 20, output_tokens: 5, total_tokens: 25)
+        )
+      )
+
+      response = subject.chat(messages: [{role: "user", content: "Weather in Paris?"}], model: model_id)
+
+      expect(response.tool_calls).to eq([{"tool_use_id" => "tooluse_1", "name" => "weather", "input" => {"city" => "Paris"}}])
+      expect(response.chat_completion).to be_nil
+    end
+
+    it "uses Converse for a global cross-region model that InvokeModel doesn't support" do
+      expect(subject.client).to receive(:converse).with(hash_including(model_id: "global.meta.llama4-maverick-17b-instruct-v1:0")).and_return(converse_response)
+      expect(subject.client).not_to receive(:invoke_model)
+
+      subject.chat(messages: [{role: "user", content: "Hi"}], model: "global.meta.llama4-maverick-17b-instruct-v1:0")
+    end
+
+    context "with streaming" do
+      let(:events) do
+        [
+          types::MessageStartEvent.new(role: "assistant", event_type: :message_start),
+          types::ContentBlockDeltaEvent.new(content_block_index: 0, delta: types::ContentBlockDelta::Text.new(text: "The capital"), event_type: :content_block_delta),
+          types::ContentBlockDeltaEvent.new(content_block_index: 0, delta: types::ContentBlockDelta::Text.new(text: " is Paris."), event_type: :content_block_delta),
+          types::ContentBlockStopEvent.new(content_block_index: 0, event_type: :content_block_stop),
+          types::ContentBlockStartEvent.new(content_block_index: 1, start: types::ContentBlockStart::ToolUse.new(tool_use: types::ToolUseBlockStart.new(tool_use_id: "tooluse_1", name: "weather")), event_type: :content_block_start),
+          types::ContentBlockDeltaEvent.new(content_block_index: 1, delta: types::ContentBlockDelta::ToolUse.new(tool_use: types::ToolUseBlockDelta.new(input: "{\"city\":")), event_type: :content_block_delta),
+          types::ContentBlockDeltaEvent.new(content_block_index: 1, delta: types::ContentBlockDelta::ToolUse.new(tool_use: types::ToolUseBlockDelta.new(input: "\"Paris\"}")), event_type: :content_block_delta),
+          types::ContentBlockStopEvent.new(content_block_index: 1, event_type: :content_block_stop),
+          types::MessageStopEvent.new(stop_reason: "tool_use", event_type: :message_stop),
+          types::ConverseStreamMetadataEvent.new(usage: types::TokenUsage.new(input_tokens: 14, output_tokens: 10, total_tokens: 24), metrics: types::ConverseStreamMetrics.new(latency_ms: 100), event_type: :metadata)
+        ]
+      end
+
+      before do
+        allow(subject.client).to receive(:converse_stream) do |_params, &block|
+          handler = Aws::BedrockRuntime::EventStreams::ConverseStreamOutput.new
+          block.call(handler)
+          events.each { |event| handler.event_emitter.signal(event.event_type, event) }
+        end
+      end
+
+      it "yields every event as a hash and rebuilds the response" do
+        yielded = []
+        response = subject.chat(messages: [{role: "user", content: "Weather in Paris?"}], model: model_id) { |event| yielded << event }
+
+        expect(yielded).to eq(events.map(&:to_h))
+        expect(response).to be_a(Langchain::LLM::Response::AwsBedrockConverseResponse)
+        expect(response.chat_completion).to eq("The capital is Paris.")
+        expect(response.tool_calls).to eq([{"tool_use_id" => "tooluse_1", "name" => "weather", "input" => {"city" => "Paris"}}])
+        expect(response.stop_reason).to eq("tool_use")
+        expect(response.total_tokens).to eq(24)
+      end
+    end
+  end
+
   describe "#complete" do
     context "with anthropic provider" do
       let(:response) do
@@ -629,6 +759,13 @@ RSpec.describe Langchain::LLM::AwsBedrock do
       input = "us-gov.anthropic.claude-3-5-sonnet-20240620-v1:0"
       result = subject.send(:parse_model_id, input)
       expect(result).to eq(["anthropic", "claude-3-5-sonnet-20240620-v1:0"])
+    end
+
+    %w[jp au ca global].each do |prefix|
+      it "strips the '#{prefix}.' prefix" do
+        result = subject.send(:parse_model_id, "#{prefix}.anthropic.claude-sonnet-4-5-20250929-v1:0")
+        expect(result).to eq(["anthropic", "claude-sonnet-4-5-20250929-v1:0"])
+      end
     end
 
     it "returns the correct output when no region prefix is present" do
