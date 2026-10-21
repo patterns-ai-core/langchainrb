@@ -88,6 +88,22 @@ llm = Langchain::LLM::OpenAI.new(
 )
 ```
 
+#### OpenAI-compatible APIs (xAI Grok, ...)
+
+Providers with an OpenAI-compatible API, such as [xAI](https://docs.x.ai) (Grok), can be used through `Langchain::LLM::OpenAI` by pointing its client at the provider with `llm_options: { uri_base: ... }` and choosing one of the provider's models:
+
+```ruby
+llm = Langchain::LLM::OpenAI.new(
+  api_key: ENV["XAI_API_KEY"],
+  llm_options: { uri_base: "https://api.x.ai/" },
+  default_options: { chat_model: "grok-4" } # any model listed at https://docs.x.ai/docs/models
+)
+
+llm.chat(messages: [{role: "user", content: "Hello!"}]).chat_completion
+```
+
+Such an `llm` works with `Langchain::Assistant` like `OpenAI` does, as long as the provider supports the parameters and tool calling the request uses.
+
 ### Generating Embeddings
 
 Use the `embed` method to generate embeddings for given text:
