@@ -495,6 +495,66 @@ RSpec.describe Langchain::Assistant do
           expect(last_message.tool_call_id).to eq("call_123")
         end
       end
+
+      context "when the tool call arguments don't match the tool method" do
+        let(:signup_tool_class) do
+          Class.new do
+            extend Langchain::ToolDefinition
+
+            def self.name
+              "SignupTool"
+            end
+
+            define_function :register, description: "Register a user" do
+              property :name, type: "string", description: "Name", required: true
+              property :email, type: "string", description: "Email", required: true
+              property :plan, type: "string", description: "Plan"
+            end
+
+            def register(name:, email:, plan: "free")
+              "Registered #{name} <#{email}> on #{plan}"
+            end
+          end
+        end
+        let(:assistant) { described_class.new(llm: llm, tools: [signup_tool_class.new]) }
+
+        def tool_call_with(arguments)
+          {
+            "id" => "call_123",
+            "type" => "function",
+            "function" => {"name" => "signup_tool__register", "arguments" => arguments.to_json}
+          }
+        end
+
+        it "runs the tool when the arguments match" do
+          assistant.send(:run_tool, tool_call_with(name: "Ada", email: "ada@example.com"))
+
+          expect(assistant.messages.last.content).to eq("Registered Ada <ada@example.com> on free")
+        end
+
+        it "returns the missing required arguments to the LLM" do
+          assistant.send(:run_tool, tool_call_with(plan: "pro"))
+
+          last_message = assistant.messages.last
+          expect(last_message.content).to eq("Error: missing required arguments: name, email")
+          expect(last_message.tool_call_id).to eq("call_123")
+        end
+
+        it "returns the unknown arguments to the LLM" do
+          assistant.send(:run_tool, tool_call_with(name: "Ada", email: "ada@example.com", user_name: "Ada"))
+
+          expect(assistant.messages.last.content).to eq("Error: unknown arguments: user_name")
+        end
+
+        it "keeps the run going instead of failing it" do
+          assistant.add_message(role: "user", content: "Sign me up")
+          assistant.add_message(role: "assistant", tool_calls: [tool_call_with(plan: "pro")])
+          assistant.instance_variable_set(:@state, :requires_action)
+
+          expect(assistant.send(:handle_state)).to eq(:in_progress)
+          expect(assistant.messages.last.content).to eq("Error: missing required arguments: name, email")
+        end
+      end
     end
 
     describe "#extract_tool_call_args" do

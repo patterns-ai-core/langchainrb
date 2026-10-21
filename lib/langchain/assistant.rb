@@ -419,6 +419,12 @@ module Langchain
       # Call the callback if set
       tool_execution_callback.call(tool_call_id, tool_name, method_name, tool_arguments) if tool_execution_callback # rubocop:disable Style/SafeNavigation
 
+      # Let the LLM correct the call instead of failing the run with an ArgumentError
+      if (argument_error = tool_argument_error(tool_instance, method_name, tool_arguments))
+        Langchain.logger.warn("#{self.class} - #{tool_name}__#{method_name}: #{argument_error}")
+        return submit_tool_output(tool_call_id: tool_call_id, output: "Error: #{argument_error}")
+      end
+
       output = tool_instance.public_send(method_name, **tool_arguments)
 
       # Handle both ToolResponse and legacy return values
@@ -427,6 +433,32 @@ module Langchain
       else
         submit_tool_output(tool_call_id: tool_call_id, output: output)
       end
+    end
+
+    # Check the arguments of a tool call against the keyword parameters of the tool method
+    #
+    # @param tool_instance [Object] The tool
+    # @param method_name [String] The name of the tool method
+    # @param tool_arguments [Hash] The arguments of the tool call
+    # @return [String, nil] A description of the missing and unknown arguments, or nil if they match
+    def tool_argument_error(tool_instance, method_name, tool_arguments)
+      parameters = tool_instance.method(method_name).parameters
+      return unless parameters.any? { |type, _| [:key, :keyreq, :keyrest].include?(type) }
+
+      missing = parameters.filter_map { |type, name| name if type == :keyreq && !tool_arguments.key?(name) }
+      unknown = if parameters.any? { |type, _| type == :keyrest }
+        []
+      else
+        tool_arguments.keys - parameters.filter_map { |type, name| name if [:key, :keyreq].include?(type) }
+      end
+
+      errors = []
+      errors << "missing required arguments: #{missing.join(", ")}" if missing.any?
+      errors << "unknown arguments: #{unknown.join(", ")}" if unknown.any?
+      errors.join("; ") if errors.any?
+    rescue NameError
+      # The tool responds to the method through method_missing
+      nil
     end
 
     # Add a message that is already built
