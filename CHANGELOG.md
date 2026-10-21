@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1084] `Langchain::LLM::Response::GoogleGeminiResponse#completion_tokens` includes the thinking tokens (`thoughtsTokenCount`), so prompt plus completion tokens match `total_tokens` for thinking models.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1079] `Langchain::DependencyHelper#depends_on` accepts a gem that's in the bundle through another gem's gemspec instead of the `Gemfile`, such as `aws-sdk-bedrockruntime` declared by a gem that depends on langchainrb; it raised `LoadError` before.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1078] Add `Langchain::Vectorsearch::Milvus#update_texts`; with the default `auto_id` schema Milvus gives each updated text a new id, returned under `"data" => "upsertIds"`.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1074] Add `Langchain::Vectorsearch::Pinecone#remove_texts`.
