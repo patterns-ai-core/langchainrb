@@ -10,7 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
-- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/PR_NUMBER] `Langchain::LLM::Response::AnthropicResponse#prompt_tokens` (and `#total_tokens`) include the prompt-cache read and creation tokens that Anthropic reports apart from `input_tokens`; they were left out before.
+- [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1083] `Langchain::LLM::Response::AnthropicResponse#prompt_tokens` (and `#total_tokens`) include the prompt-cache read and creation tokens that Anthropic reports apart from `input_tokens`; they were left out before.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1079] `Langchain::DependencyHelper#depends_on` accepts a gem that's in the bundle through another gem's gemspec instead of the `Gemfile`, such as `aws-sdk-bedrockruntime` declared by a gem that depends on langchainrb; it raised `LoadError` before.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1078] Add `Langchain::Vectorsearch::Milvus#update_texts`; with the default `auto_id` schema Milvus gives each updated text a new id, returned under `"data" => "upsertIds"`.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1074] Add `Langchain::Vectorsearch::Pinecone#remove_texts`.
