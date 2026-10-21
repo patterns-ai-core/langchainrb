@@ -20,6 +20,15 @@ RSpec.describe Langchain::Assistant::LLM::Adapters::GoogleGemini do
     end
   end
 
+  describe "#build_message" do
+    it "keeps the image_url" do
+      message = subject.build_message(role: "user", content: "Describe this image.", image_url: "gs://bucket/cat.png")
+
+      expect(message.image_url).to eq("gs://bucket/cat.png")
+      expect(message.to_hash[:parts].last).to eq({fileData: {mimeType: "image/png", fileUri: "gs://bucket/cat.png"}})
+    end
+  end
+
   describe "#support_system_message?" do
     it "returns true" do
       expect(subject.support_system_message?).to eq(false)

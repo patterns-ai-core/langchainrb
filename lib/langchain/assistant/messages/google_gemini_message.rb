@@ -13,19 +13,33 @@ module Langchain
 
         TOOL_ROLE = "function"
 
+        # Mime types of the files that can be referenced by a Cloud Storage (gs://) URI
+        FILE_URI_MIME_TYPES = {
+          "png" => "image/png",
+          "jpg" => "image/jpeg",
+          "jpeg" => "image/jpeg",
+          "webp" => "image/webp",
+          "heic" => "image/heic",
+          "heif" => "image/heif",
+          "gif" => "image/gif",
+          "pdf" => "application/pdf"
+        }.freeze
+
         # Initialize a new Google Gemini message
         #
         # @param role [String] The role of the message
         # @param content [String] The content of the message
+        # @param image_url [String] The URL of the image to include in the message: an http(s) URL, sent inline, or a Cloud Storage gs:// URI, sent by reference
         # @param tool_calls [Array<Hash>] The tool calls made in the message
         # @param tool_call_id [String] The ID of the tool call
-        def initialize(role:, content: nil, tool_calls: [], tool_call_id: nil)
+        def initialize(role:, content: nil, image_url: nil, tool_calls: [], tool_call_id: nil)
           raise ArgumentError, "Role must be one of #{ROLES.join(", ")}" unless ROLES.include?(role)
           raise ArgumentError, "Tool calls must be an array of hashes" unless tool_calls.is_a?(Array) && tool_calls.all? { |tool_call| tool_call.is_a?(Hash) }
 
           @role = role
           # Some Tools return content as a JSON hence `.to_s`
           @content = content.is_a?(Array) ? content : content.to_s
+          @image_url = image_url
           @tool_calls = tool_calls
           @tool_call_id = tool_call_id
         end
@@ -129,12 +143,24 @@ module Langchain
         end
 
         # Builds the part value for the message hash
-        # @return [Array<Hash>] An array of content hashes of the text or of the tool calls if present
+        # @return [Array<Hash>] An array of content hashes of the text and image, or of the tool calls if present
         def build_parts
-          if tool_calls.any?
-            tool_calls
+          return tool_calls if tool_calls.any?
+          return [{text: content}] unless image_url
+
+          parts = []
+          parts << {text: content} unless content.empty?
+          parts << image_part
+          parts
+        end
+
+        # Builds the part of the image: a gs:// URI is passed by reference, other URLs are downloaded and sent inline
+        # @return [Hash] The image part
+        def image_part
+          if image_url.start_with?("gs://")
+            {fileData: {mimeType: file_uri_mime_type, fileUri: image_url}}
           else
-            [{text: content}]
+            {inlineData: {mimeType: image.mime_type, data: image.base64}}
           end
         end
 
@@ -143,6 +169,15 @@ module Langchain
         # @return [Boolean] true/false whether this message was produced by an LLM
         def model?
           role == "model"
+        end
+
+        private
+
+        def file_uri_mime_type
+          extension = File.extname(URI.parse(image_url).path).delete_prefix(".").downcase
+          FILE_URI_MIME_TYPES.fetch(extension) do
+            raise ArgumentError, "Cannot infer the mime type of #{image_url}; supported extensions: #{FILE_URI_MIME_TYPES.keys.join(", ")}"
+          end
         end
       end
     end
