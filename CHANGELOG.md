@@ -10,7 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
-- [DOCS] [https://github.com/patterns-ai-core/langchainrb/pull/PRNUM] Document using `Langchain::LLM::OpenAI` with OpenAI-compatible APIs such as xAI (Grok) through `llm_options: {uri_base: ...}`.
+- [DOCS] [https://github.com/patterns-ai-core/langchainrb/pull/1093] Document using `Langchain::LLM::OpenAI` with OpenAI-compatible APIs such as xAI (Grok) through `llm_options: {uri_base: ...}`.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1085] Add `Langchain::Tool::SearchApi`, a wrapper around [SearchApi](https://www.searchapi.io) to search Google, Bing and other search engines.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1083] `Langchain::LLM::Response::AnthropicResponse#prompt_tokens` (and `#total_tokens`) include the prompt-cache read and creation tokens that Anthropic reports apart from `input_tokens`; they were left out before.
 - [BUGFIX] [https://github.com/patterns-ai-core/langchainrb/pull/1084] `Langchain::LLM::Response::GoogleGeminiResponse#completion_tokens` includes the thinking tokens (`thoughtsTokenCount`), so prompt plus completion tokens match `total_tokens` for thinking models.
