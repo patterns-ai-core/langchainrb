@@ -125,4 +125,25 @@ RSpec.describe Langchain::LLM::Response::GoogleGeminiResponse do
       end
     end
   end
+
+  describe "token counts" do
+    it "counts the thinking tokens as completion tokens" do
+      raw = {"usageMetadata" => {"promptTokenCount" => 8, "candidatesTokenCount" => 20, "thoughtsTokenCount" => 150, "totalTokenCount" => 178}}
+      response = described_class.new(raw)
+
+      expect(response.prompt_tokens).to eq(8)
+      expect(response.completion_tokens).to eq(170)
+      expect(response.total_tokens).to eq(178)
+    end
+
+    it "keeps reporting candidatesTokenCount when the model did not think" do
+      raw = {"usageMetadata" => {"promptTokenCount" => 8, "candidatesTokenCount" => 20, "totalTokenCount" => 28}}
+
+      expect(described_class.new(raw).completion_tokens).to eq(20)
+    end
+
+    it "returns nil when the response has no usage" do
+      expect(described_class.new({}).completion_tokens).to be_nil
+    end
+  end
 end

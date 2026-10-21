@@ -40,7 +40,13 @@ module Langchain::LLM::Response
     end
 
     def completion_tokens
-      raw_response.dig("usageMetadata", "candidatesTokenCount")
+      usage = raw_response["usageMetadata"]
+      return unless usage
+
+      # Gemini reports the thinking tokens apart from candidatesTokenCount but bills them as output
+      candidates = usage["candidatesTokenCount"]
+      thoughts = usage["thoughtsTokenCount"]
+      (candidates || thoughts) && candidates.to_i + thoughts.to_i
     end
 
     def total_tokens
