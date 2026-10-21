@@ -12,6 +12,26 @@ RSpec.describe Langchain::LLM::Response::AnthropicResponse do
     end
   end
 
+  describe "token counts" do
+    it "counts the cached prompt tokens as prompt tokens" do
+      raw = raw_chat_completions_response.merge(
+        usage: {input_tokens: 10, cache_creation_input_tokens: 200, cache_read_input_tokens: 3000, output_tokens: 25}
+      )
+      response = described_class.new(raw)
+
+      expect(response.prompt_tokens).to eq(3210)
+      expect(response.completion_tokens).to eq(25)
+      expect(response.total_tokens).to eq(3235)
+    end
+
+    it "keeps counting input_tokens alone when nothing is cached" do
+      response = described_class.new(raw_chat_completions_response.merge(usage: {input_tokens: 10, output_tokens: 25}))
+
+      expect(response.prompt_tokens).to eq(10)
+      expect(response.total_tokens).to eq(35)
+    end
+  end
+
   describe "#tool_calls" do
     let(:raw_response) {
       JSON.parse File.read("spec/fixtures/llm/anthropic/chat_with_tool_calls.json"), symbolize_names: true
