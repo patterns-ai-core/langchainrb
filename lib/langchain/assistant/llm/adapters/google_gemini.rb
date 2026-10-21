@@ -20,8 +20,8 @@ module Langchain
             tool_choice:,
             parallel_tool_calls:
           )
-            Langchain.logger.warn "WARNING: `parallel_tool_calls:` is not supported by Google Gemini currently" if parallel_tool_calls
-
+            # Google Gemini has no option to disable parallel function calls: Assistant#run_tools
+            # runs one tool call at a time when parallel_tool_calls is false.
             params = {messages: messages}
             if tools.any?
               params[:tools] = build_tools(tools)
