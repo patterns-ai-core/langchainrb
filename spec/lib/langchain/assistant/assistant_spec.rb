@@ -551,7 +551,7 @@ RSpec.describe Langchain::Assistant do
           assistant.add_message(role: "assistant", tool_calls: [tool_call_with(plan: "pro")])
           assistant.instance_variable_set(:@state, :requires_action)
 
-          expect(assistant.send(:execute_tools)).to eq(:in_progress)
+          expect(assistant.send(:handle_state)).to eq(:in_progress)
           expect(assistant.messages.last.content).to eq("Error: missing required arguments: name, email")
         end
       end
