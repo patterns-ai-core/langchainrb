@@ -23,5 +23,20 @@ RSpec.describe Langchain::Evals::Ragas::Main do
         faithfulness_score: 0.5
       })
     end
+
+    it "adds the semantic_similarity_score when a ground_truth is given" do
+      ground_truth = "Christopher Nolan directed it and Cillian Murphy stars as Oppenheimer."
+      allow_any_instance_of(Langchain::Evals::Ragas::SemanticSimilarity).to receive(:score)
+        .with(answer: answer, ground_truth: ground_truth)
+        .and_return(0.92)
+
+      expect(subject.score(question: question, answer: answer, context: context, ground_truth: ground_truth)).to eq({
+        ragas_score: 0.6601257446503674,
+        answer_relevance_score: 0.9573145866787608,
+        context_relevance_score: 0.6666666666666666,
+        faithfulness_score: 0.5,
+        semantic_similarity_score: 0.92
+      })
+    end
   end
 end
