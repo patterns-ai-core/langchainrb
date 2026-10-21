@@ -44,6 +44,10 @@ RSpec.describe Langchain::Assistant do
       expect(described_class.new(llm: llm).parallel_tool_calls).to eq(true)
     end
 
+    it "execute_tools defaults to true" do
+      expect(described_class.new(llm: llm).execute_tools).to eq(true)
+    end
+
     it "marks the run as failed when the automatic turn limit is reached" do
       assistant = described_class.new(llm: llm, max_turns: 1)
       assistant.instance_variable_set(:@turns, 1)
@@ -55,6 +59,87 @@ RSpec.describe Langchain::Assistant do
     it "limits automatic runs to a positive number of turns" do
       expect(described_class.new(llm: llm).max_turns).to eq(10)
       expect { described_class.new(llm: llm, max_turns: 0) }.to raise_error(ArgumentError, /max_turns/)
+    end
+  end
+
+  describe "execute_tools" do
+    let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
+    let(:calculator) { Langchain::Tool::Calculator.new }
+    let(:tool_call) do
+      {
+        "id" => "call_123",
+        "type" => "function",
+        "function" => {"name" => "langchain_tool_calculator__execute", "arguments" => {input: "2+2"}.to_json}
+      }
+    end
+    let(:final_response) do
+      Langchain::LLM::Response::OpenAIResponse.new({
+        "choices" => [{"message" => {"role" => "assistant", "content" => "2+2 is 4"}, "finish_reason" => "stop"}]
+      })
+    end
+
+    def build_assistant(**options)
+      described_class.new(llm: llm, tools: [calculator], **options).tap do |assistant|
+        assistant.add_message(role: "user", content: "What is 2+2?")
+        assistant.add_message(role: "assistant", tool_calls: [tool_call])
+        allow(llm).to receive(:chat).and_return(final_response)
+      end
+    end
+
+    it "runs the tools by default" do
+      assistant = build_assistant
+      assistant.run
+
+      expect(assistant.state).to eq(:completed)
+      expect(assistant.messages.last.content).to eq("2+2 is 4")
+    end
+
+    it "stops for the caller to run the tools when set to false on the assistant" do
+      assistant = build_assistant(execute_tools: false)
+      assistant.run
+
+      expect(assistant.state).to eq(:requires_action)
+      expect(llm).not_to have_received(:chat)
+    end
+
+    it "can be changed on the assistant" do
+      assistant = build_assistant
+      assistant.execute_tools = false
+      assistant.run
+
+      expect(assistant.state).to eq(:requires_action)
+    end
+
+    it "is overridden by run(execute_tools:)" do
+      assistant = build_assistant(execute_tools: false)
+      assistant.run(execute_tools: true)
+
+      expect(assistant.state).to eq(:completed)
+
+      assistant = build_assistant
+      assistant.run(execute_tools: false)
+
+      expect(assistant.state).to eq(:requires_action)
+    end
+
+    it "is overridden by add_message_and_run(execute_tools:)" do
+      assistant = build_assistant(execute_tools: false)
+      assistant.messages.pop
+      allow(llm).to receive(:chat).and_return(
+        Langchain::LLM::Response::OpenAIResponse.new({"choices" => [{"message" => {"role" => "assistant", "content" => nil, "tool_calls" => [tool_call]}}]}),
+        final_response
+      )
+      assistant.add_message_and_run(content: "And now?", execute_tools: true)
+
+      expect(assistant.state).to eq(:completed)
+    end
+
+    it "still accepts the deprecated auto_tool_execution: with a warning" do
+      assistant = build_assistant
+      expect(Langchain.logger).to receive(:warn).with("#{described_class} - `auto_tool_execution:` is deprecated, use `execute_tools:` instead")
+      assistant.run(auto_tool_execution: false)
+
+      expect(assistant.state).to eq(:requires_action)
     end
   end
 
@@ -247,7 +332,7 @@ RSpec.describe Langchain::Assistant do
         }
       end
 
-      context "when auto_tool_execution is false" do
+      context "when execute_tools is false" do
         before do
           allow(subject.llm).to receive(:chat)
             .with(
@@ -265,14 +350,14 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "runs the assistant" do
-          subject.run(auto_tool_execution: false)
+          subject.run(execute_tools: false)
 
           expect(subject.messages.last.role).to eq("assistant")
           expect(subject.messages.last.tool_calls).to eq([raw_openai_response["choices"][0]["message"]["tool_calls"]][0])
         end
 
         it "records the used tokens totals" do
-          subject.run(auto_tool_execution: false)
+          subject.run(execute_tools: false)
 
           expect(subject.total_tokens).to eq(109)
           expect(subject.total_prompt_tokens).to eq(91)
@@ -280,7 +365,7 @@ RSpec.describe Langchain::Assistant do
         end
       end
 
-      context "when auto_tool_execution is true" do
+      context "when execute_tools is true" do
         let(:raw_openai_response2) do
           {
             "id" => "chatcmpl-96P6eEMDDaiwzRIHJZAliYHQ8ov3q",
@@ -323,7 +408,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "runs the assistant and automatically executes tool calls" do
-          subject.run(auto_tool_execution: true)
+          subject.run(execute_tools: true)
 
           expect(subject.messages[-2].role).to eq("tool")
           expect(subject.messages[-2].content).to eq("4.0")
@@ -333,7 +418,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "records the used tokens totals" do
-          subject.run(auto_tool_execution: true)
+          subject.run(execute_tools: true)
 
           expect(subject.total_tokens).to eq(134)
           expect(subject.total_prompt_tokens).to eq(121)
@@ -416,7 +501,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "completes the run without raising" do
-          expect { subject.run(auto_tool_execution: true) }.not_to raise_error
+          expect { subject.run(execute_tools: true) }.not_to raise_error
 
           expect(subject.messages.last.role).to eq("assistant")
           expect(subject.messages.last.content).to eq("There are no directories under /Home.")
@@ -759,7 +844,7 @@ RSpec.describe Langchain::Assistant do
         }
       end
 
-      context "when auto_tool_execution is false" do
+      context "when execute_tools is false" do
         before do
           allow(subject.llm).to receive(:chat)
             .with(
@@ -776,14 +861,14 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "runs the assistant" do
-          subject.run(auto_tool_execution: false)
+          subject.run(execute_tools: false)
 
           expect(subject.messages.last.role).to eq("assistant")
           expect(subject.messages.last.tool_calls).to eq([raw_mistralai_response["choices"][0]["message"]["tool_calls"]][0])
         end
 
         it "records the used tokens totals" do
-          subject.run(auto_tool_execution: false)
+          subject.run(execute_tools: false)
 
           expect(subject.total_tokens).to eq(109)
           expect(subject.total_prompt_tokens).to eq(91)
@@ -791,7 +876,7 @@ RSpec.describe Langchain::Assistant do
         end
       end
 
-      context "when auto_tool_execution is true" do
+      context "when execute_tools is true" do
         let(:raw_mistralai_response2) do
           {
             "id" => "chatcmpl-96P6eEMDDaiwzRIHJZAliYHQ8ov3q",
@@ -833,7 +918,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "runs the assistant and automatically executes tool calls" do
-          subject.run(auto_tool_execution: true)
+          subject.run(execute_tools: true)
 
           expect(subject.messages[-2].role).to eq("tool")
           expect(subject.messages[-2].content).to eq("4.0")
@@ -843,7 +928,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         it "records the used tokens totals" do
-          subject.run(auto_tool_execution: true)
+          subject.run(execute_tools: true)
 
           expect(subject.total_tokens).to eq(134)
           expect(subject.total_prompt_tokens).to eq(121)
@@ -1109,7 +1194,7 @@ RSpec.describe Langchain::Assistant do
         }
       end
 
-      context "when auto_tool_execution is false" do
+      context "when execute_tools is false" do
         before do
           allow(subject.llm).to receive(:chat)
             .with(
@@ -1123,7 +1208,7 @@ RSpec.describe Langchain::Assistant do
 
         it "runs the assistant" do
           subject.add_message(role: "user", content: "Please calculate 2+2")
-          subject.run(auto_tool_execution: false)
+          subject.run(execute_tools: false)
 
           expect(subject.messages.last.role).to eq("model")
           expect(subject.messages.last.tool_calls).to eq([raw_google_gemini_response["candidates"][0]["content"]["parts"]][0])
@@ -1244,7 +1329,7 @@ RSpec.describe Langchain::Assistant do
         end
       end
 
-      context "when auto_tool_execution is true" do
+      context "when execute_tools is true" do
         let(:raw_google_gemini_response2) do
           {
             "candidates" => [
@@ -1284,7 +1369,7 @@ RSpec.describe Langchain::Assistant do
           subject.add_message(role: "user", content: "Please calculate 2+2")
           subject.add_message(role: "model", tool_calls: raw_google_gemini_response["candidates"][0]["content"]["parts"])
 
-          subject.run(auto_tool_execution: true)
+          subject.run(execute_tools: true)
 
           expect(subject.messages[-2].role).to eq("function")
           expect(subject.messages[-2].content).to eq("4.0")
@@ -1423,7 +1508,7 @@ RSpec.describe Langchain::Assistant do
         end
 
         subject.add_message(role: "user", content: "What time is it?")
-        subject.run(auto_tool_execution: true)
+        subject.run(execute_tools: true)
 
         expect(subject.state).to eq(:completed)
         expect(subject.messages.last.content).to eq("It's 12:00.")
@@ -1482,7 +1567,7 @@ RSpec.describe Langchain::Assistant do
         end
       end
 
-      context "when auto_tool_execution is false" do
+      context "when execute_tools is false" do
         before do
           allow(subject.llm).to receive(:chat)
             .with(
@@ -1496,7 +1581,7 @@ RSpec.describe Langchain::Assistant do
 
         it "runs the assistant" do
           subject.add_message(role: "user", content: "Please calculate 2+2")
-          subject.run(auto_tool_execution: false)
+          subject.run(execute_tools: false)
 
           expect(subject.messages.last.role).to eq("assistant")
           expect(subject.messages.last.tool_calls).to eq([raw_anthropic_response[:content].last])
@@ -1510,11 +1595,11 @@ RSpec.describe Langchain::Assistant do
               )
             ).and_return(Langchain::LLM::Response::AnthropicResponse.new(raw_anthropic_response))
           subject.add_message content: "Please calculate 2+2"
-          subject.run
+          subject.run(execute_tools: false)
         end
       end
 
-      context "when auto_tool_execution is true" do
+      context "when execute_tools is true" do
         let(:raw_anthropic_response2) do
           {
             role: "assistant",
@@ -1569,7 +1654,7 @@ RSpec.describe Langchain::Assistant do
             tool_calls: [raw_anthropic_response[:content].last]
           )
 
-          subject.run(auto_tool_execution: true)
+          subject.run(execute_tools: true)
 
           expect(subject.messages[-2].role).to eq("tool_result")
           expect(subject.messages[-2].content).to eq("4.0")
@@ -1599,7 +1684,7 @@ RSpec.describe Langchain::Assistant do
           end
 
           subject.add_message(role: "user", content: "Please calculate 2+2")
-          subject.run(auto_tool_execution: true)
+          subject.run(execute_tools: true)
 
           expect(sent.size).to eq(2)
           assistant_turn = sent.last[1]

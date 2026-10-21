@@ -507,8 +507,11 @@ assistant.add_message_and_run!(
 # Access the conversation thread
 messages = assistant.messages
 
-# Run the assistant with automatic tool execution
-assistant.run(auto_tool_execution: true)
+# Run the assistant; tools are executed automatically
+assistant.run
+
+# Stop when the LLM requests a tool call, to run the tool and `submit_tool_output` yourself
+assistant.run(execute_tools: false)
 
 # If you want to stream the response, you can add a response handler
 assistant = Langchain::Assistant.new(
@@ -520,7 +523,7 @@ assistant = Langchain::Assistant.new(
   # print(response_chunk.inspect)
 end
 assistant.add_message(content: "Hello")
-assistant.run(auto_tool_execution: true)
+assistant.run
 ```
 
 Note that streaming is not currently supported for all LLMs.
@@ -531,6 +534,7 @@ Note that streaming is not currently supported for all LLMs.
 * `instructions`: System instructions for the assistant (optional)
 * `tool_choice`: Specifies how tools should be selected. Default: "auto". A specific tool function name can be passed. This will force the Assistant to **always** use this function.
 * `parallel_tool_calls`: Whether to make multiple parallel tool calls. Default: true
+* `execute_tools`: Whether `run` executes the tools the LLM calls. Default: true. Set it with `assistant.execute_tools = false` or override it for one run with `assistant.run(execute_tools: false)`; the run then stops in the `:requires_action` state.
 * `add_message_callback`: A callback function (proc, lambda) that is called when any message is added to the conversation (optional)
 ```ruby
 assistant.add_message_callback = -> (message) { puts "New message: #{message}" }
@@ -542,7 +546,8 @@ assistant.tool_execution_callback = -> (tool_call_id, tool_name, method_name, to
 
 ### Key Methods
 * `add_message`: Adds a user message to the messages array
-* `run!`: Processes the conversation and generates responses
+* `run`: Processes the conversation and generates responses
+* `run!`: Same as `run(execute_tools: true)`
 * `add_message_and_run!`: Combines adding a message and running the assistant
 * `submit_tool_output`: Manually submit output to a tool call
 * `messages`: Returns a list of ongoing messages
