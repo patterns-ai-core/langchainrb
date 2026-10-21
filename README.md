@@ -554,6 +554,7 @@ assistant.tool_execution_callback = -> (tool_call_id, tool_name, method_name, to
 * `Langchain::Tool::GoogleSearch`: Wrapper around SerpApi's Google Search API. Requires `gem "google_search_results"`.
 * `Langchain::Tool::NewsRetriever`: A wrapper around [NewsApi.org](https://newsapi.org) to fetch news articles.
 * `Langchain::Tool::RubyCodeInterpreter`: Useful for evaluating generated Ruby code. Requires `gem "safe_ruby"` (In need of a better solution).
+* `Langchain::Tool::SearchApi`: A wrapper around [SearchApi](https://www.searchapi.io) to search Google, Bing and other search engines.
 * `Langchain::Tool::Tavily`: A wrapper around [Tavily AI](https://tavily.com).
 * `Langchain::Tool::Vectorsearch`: A wrapper for vector search classes.
 * `Langchain::Tool::Weather`: Calls [Open Weather API](https://home.openweathermap.org) to retrieve the current weather.
