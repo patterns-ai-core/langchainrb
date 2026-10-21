@@ -6,6 +6,9 @@ module Langchain
   module Chunker
     # Simple text chunker
     #
+    # Splits the text on `separator`. A piece that is still longer than `chunk_size`
+    # (for example a page without blank lines) is split further on newlines, then on spaces.
+    #
     # Usage:
     #     Langchain::Chunker::Text.new(text).chunks
     class Text < Base
@@ -24,10 +27,10 @@ module Langchain
 
       # @return [Array<Langchain::Chunk>]
       def chunks
-        splitter = Baran::CharacterTextSplitter.new(
+        splitter = Baran::RecursiveCharacterTextSplitter.new(
           chunk_size: chunk_size,
           chunk_overlap: chunk_overlap,
-          separator: separator
+          separators: [separator, "\n", " "].uniq
         )
 
         splitter.chunks(text).map do |chunk|
