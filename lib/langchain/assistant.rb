@@ -24,6 +24,7 @@ module Langchain
       :total_tokens
 
     attr_accessor :tools,
+      :execute_tools,
       :add_message_callback,
       :tool_execution_callback,
       :parallel_tool_calls
@@ -35,6 +36,7 @@ module Langchain
     # @param instructions [String] The system instructions
     # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
     # @param parallel_tool_calls [Boolean] Whether or not to run tools in parallel
+    # @param execute_tools [Boolean] Whether or not to run tools automatically. Can be overridden per call with `run(execute_tools:)`
     # @param max_turns [Integer] Maximum number of LLM turns for an automatic run
     # @param messages [Array<Langchain::Assistant::Messages::Base>] The messages
     # @param add_message_callback [Proc] A callback function (Proc or lambda) that is called when any message is added to the conversation
@@ -45,6 +47,7 @@ module Langchain
       instructions: nil,
       tool_choice: "auto",
       parallel_tool_calls: true,
+      execute_tools: true,
       max_turns: 10,
       messages: [],
       # Callbacks
@@ -65,6 +68,7 @@ module Langchain
       self.messages = messages
       @tools = tools
       @parallel_tool_calls = parallel_tool_calls
+      @execute_tools = execute_tools
       @max_turns = max_turns
       unless @max_turns.is_a?(Integer) && @max_turns.positive?
         raise ArgumentError, "max_turns must be a positive integer"
@@ -128,9 +132,12 @@ module Langchain
 
     # Run the assistant
     #
-    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
+    # @param execute_tools [Boolean] Whether or not to run tools automatically. Default: `assistant.execute_tools`
+    # @param auto_tool_execution [Boolean] Deprecated, use `execute_tools:`
     # @return [Array<Langchain::Message>] The messages
-    def run(auto_tool_execution: false)
+    def run(execute_tools: nil, auto_tool_execution: nil)
+      execute_tools = resolve_execute_tools(execute_tools, auto_tool_execution)
+
       if messages.empty?
         Langchain.logger.warn("#{self.class} - No messages to process")
         @state = :completed
@@ -139,7 +146,7 @@ module Langchain
 
       @turns = 0
       @state = :in_progress
-      @state = handle_state until run_finished?(auto_tool_execution)
+      @state = handle_state until run_finished?(execute_tools)
 
       messages
     end
@@ -148,17 +155,18 @@ module Langchain
     #
     # @return [Array<Langchain::Message>] The messages
     def run!
-      run(auto_tool_execution: true)
+      run(execute_tools: true)
     end
 
     # Add a user message and run the assistant
     #
     # @param content [String] The content of the message
-    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
+    # @param execute_tools [Boolean] Whether or not to run tools automatically. Default: `assistant.execute_tools`
+    # @param auto_tool_execution [Boolean] Deprecated, use `execute_tools:`
     # @return [Array<Langchain::Message>] The messages
-    def add_message_and_run(content: nil, image_url: nil, auto_tool_execution: false)
+    def add_message_and_run(content: nil, image_url: nil, execute_tools: nil, auto_tool_execution: nil)
       add_message(content: content, image_url: image_url, role: "user")
-      run(auto_tool_execution: auto_tool_execution)
+      run(execute_tools: execute_tools, auto_tool_execution: auto_tool_execution)
     end
 
     # Add a user message and run the assistant with automatic tool execution
@@ -166,7 +174,7 @@ module Langchain
     # @param content [String] The content of the message
     # @return [Array<Langchain::Message>] The messages
     def add_message_and_run!(content: nil, image_url: nil)
-      add_message_and_run(content: content, image_url: image_url, auto_tool_execution: true)
+      add_message_and_run(content: content, image_url: image_url, execute_tools: true)
     end
 
     # Submit tool output
@@ -231,14 +239,30 @@ module Langchain
       end
     end
 
+    # Pick the execute_tools value of a run: the argument, then the deprecated auto_tool_execution argument, then the assistant's setting
+    #
+    # @param execute_tools [Boolean, nil] The execute_tools argument
+    # @param auto_tool_execution [Boolean, nil] The deprecated auto_tool_execution argument
+    # @return [Boolean] Whether or not to run tools automatically
+    def resolve_execute_tools(execute_tools, auto_tool_execution)
+      unless auto_tool_execution.nil?
+        Langchain.logger.warn("#{self.class} - `auto_tool_execution:` is deprecated, use `execute_tools:` instead")
+      end
+
+      return execute_tools unless execute_tools.nil?
+      return auto_tool_execution unless auto_tool_execution.nil?
+
+      self.execute_tools
+    end
+
     # Check if the run is finished
     #
-    # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
+    # @param execute_tools [Boolean] Whether or not to run tools automatically
     # @return [Boolean] Whether the run is finished
-    def run_finished?(auto_tool_execution)
+    def run_finished?(execute_tools)
       finished_states = [:completed, :failed]
 
-      requires_manual_action = (@state == :requires_action) && !auto_tool_execution
+      requires_manual_action = (@state == :requires_action) && !execute_tools
       finished_states.include?(@state) || requires_manual_action
     end
 
@@ -250,7 +274,7 @@ module Langchain
       when :in_progress
         process_latest_message
       when :requires_action
-        execute_tools
+        execute_tool_calls
       end
     end
 
@@ -331,7 +355,7 @@ module Langchain
     # Execute the tools based on the tool calls in the last message
     #
     # @return [Symbol] The next state
-    def execute_tools
+    def execute_tool_calls
       run_tools(messages.last.tool_calls)
       :in_progress
     rescue => e
