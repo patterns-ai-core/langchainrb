@@ -620,6 +620,8 @@ Ragas helps you evaluate your Retrieval Augmented Generation (RAG) pipelines. Th
 * Context Relevance - the retrieved context is focused, containing little to no irrelevant information.
 * Answer Relevance - the generated answer addresses the actual question that was provided.
 
+When you pass a `ground_truth:` (reference answer), Ragas also returns the Semantic Similarity score: the cosine similarity between the embeddings of the generated answer and the ground truth. It isn't part of the `ragas_score`.
+
 ```ruby
 # We recommend using Langchain::LLM::OpenAI as your llm for Ragas
 ragas = Langchain::Evals::Ragas::Main.new(llm: llm)
@@ -635,6 +637,13 @@ ragas.score(answer: "", question: "", context: "")
 #   context_relevance_score: 0.6666666666666666,
 #   faithfulness_score: 0.5
 # }
+
+# Semantic Similarity between the generated answer and a reference answer
+ragas.score(answer: "", question: "", context: "", ground_truth: "")
+# => {..., semantic_similarity_score: 0.8151}
+
+# Or on its own, optionally with a threshold that turns the score into 1.0 or 0.0
+Langchain::Evals::Ragas::SemanticSimilarity.new(llm: llm, threshold: 0.8).score(answer: "", ground_truth: "")
 ```
 
 ## Examples

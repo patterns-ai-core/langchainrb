@@ -20,21 +20,27 @@ module Langchain
         #   faithfulness_score: 0.5
         # }
         #
+        # When a ground_truth is given, the result also includes the semantic_similarity_score.
+        # It is not part of the ragas_score.
+        #
         # @param question [String] Question
         # @param answer [String] Answer
         # @param context [String] Context
+        # @param ground_truth [String] Ground truth (reference) answer (optional)
         # @return [Hash] RAGAS scores
-        def score(question:, answer:, context:)
+        def score(question:, answer:, context:, ground_truth: nil)
           answer_relevance_score = answer_relevance.score(question: question, answer: answer)
           context_relevance_score = context_relevance.score(question: question, context: context)
           faithfulness_score = faithfulness.score(question: question, answer: answer, context: context)
 
-          {
+          scores = {
             ragas_score: ragas_score(answer_relevance_score, context_relevance_score, faithfulness_score),
             answer_relevance_score: answer_relevance_score,
             context_relevance_score: context_relevance_score,
             faithfulness_score: faithfulness_score
           }
+          scores[:semantic_similarity_score] = semantic_similarity.score(answer: answer, ground_truth: ground_truth) if ground_truth
+          scores
         end
 
         private
@@ -63,6 +69,11 @@ module Langchain
         # @return [Langchain::Evals::Ragas::Faithfulness] Class instance
         def faithfulness
           @faithfulness ||= Langchain::Evals::Ragas::Faithfulness.new(llm: llm)
+        end
+
+        # @return [Langchain::Evals::Ragas::SemanticSimilarity] Class instance
+        def semantic_similarity
+          @semantic_similarity ||= Langchain::Evals::Ragas::SemanticSimilarity.new(llm: llm)
         end
       end
     end
