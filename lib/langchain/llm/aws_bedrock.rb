@@ -12,24 +12,14 @@ module Langchain::LLM
   class AwsBedrock < Base
     DEFAULTS = {
       chat_model: "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      completion_model: "anthropic.claude-v2:1",
       embedding_model: "amazon.titan-embed-text-v1",
       max_tokens_to_sample: 300,
       temperature: 1,
       top_k: 250,
-      top_p: 0.999,
-      stop_sequences: ["\n\nHuman:"],
-      return_likelihoods: "NONE"
+      top_p: 0.999
     }.freeze
 
     attr_reader :client, :defaults
-
-    SUPPORTED_COMPLETION_PROVIDERS = %i[
-      anthropic
-      ai21
-      cohere
-      meta
-    ].freeze
 
     SUPPORTED_CHAT_COMPLETION_PROVIDERS = %i[
       anthropic
@@ -79,34 +69,6 @@ module Langchain::LLM
       })
 
       parse_embedding_response response
-    end
-
-    #
-    # Generate a completion for a given prompt
-    #
-    # @param prompt [String] The prompt to generate a completion for
-    # @param params  extra parameters passed to Aws::BedrockRuntime::Client#invoke_model
-    # @return [Langchain::LLM::Response::AnthropicResponse], [Langchain::LLM::Response::CohereResponse] or [Langchain::LLM::AI21Response] Response object
-    #
-    def complete(
-      prompt:,
-      model: @defaults[:completion_model],
-      **params
-    )
-      raise "Completion provider #{model} is not supported." unless SUPPORTED_COMPLETION_PROVIDERS.include?(provider_name(model))
-
-      parameters = compose_parameters(params, model)
-
-      parameters[:prompt] = wrap_prompt prompt
-
-      response = client.invoke_model({
-        model_id: model,
-        body: parameters.to_json,
-        content_type: "application/json",
-        accept: "application/json"
-      })
-
-      parse_response(response, model)
     end
 
     # Generate a chat completion for a given prompt
@@ -179,37 +141,13 @@ module Langchain::LLM
       parse_model_id(model_id).last
     end
 
-    def completion_provider
-      @defaults[:completion_model].split(".").first.to_sym
-    end
-
     def embedding_provider
       @defaults[:embedding_model].split(".").first.to_sym
-    end
-
-    def wrap_prompt(prompt)
-      if completion_provider == :anthropic
-        "\n\nHuman: #{prompt}\n\nAssistant:"
-      else
-        prompt
-      end
-    end
-
-    def max_tokens_key
-      if completion_provider == :anthropic
-        :max_tokens_to_sample
-      elsif completion_provider == :cohere
-        :max_tokens
-      elsif completion_provider == :ai21
-        :maxTokens
-      end
     end
 
     def compose_parameters(params, model_id)
       if provider_name(model_id) == :anthropic
         compose_parameters_anthropic(params)
-      elsif provider_name(model_id) == :cohere
-        compose_parameters_cohere(params)
       elsif provider_name(model_id) == :ai21
         params
       elsif provider_name(model_id) == :meta
@@ -230,8 +168,6 @@ module Langchain::LLM
     def parse_response(response, model_id)
       if provider_name(model_id) == :anthropic
         Langchain::LLM::Response::AwsBedrockAnthropicResponse.new(JSON.parse(response.body.string))
-      elsif provider_name(model_id) == :cohere
-        Langchain::LLM::Response::CohereResponse.new(JSON.parse(response.body.string))
       elsif provider_name(model_id) == :ai21
         Langchain::LLM::Response::AI21Response.new(JSON.parse(response.body.string, symbolize_names: true))
       elsif provider_name(model_id) == :meta
@@ -270,18 +206,6 @@ module Langchain::LLM
         input_type: default_params[:input_type],
         embedding_types: default_params[:embedding_types]
       }.compact
-    end
-
-    def compose_parameters_cohere(params)
-      default_params = @defaults.merge(params)
-
-      {
-        max_tokens: default_params[:max_tokens_to_sample],
-        temperature: default_params[:temperature],
-        p: default_params[:top_p],
-        k: default_params[:top_k],
-        stop_sequences: default_params[:stop_sequences]
-      }
     end
 
     def compose_parameters_anthropic(params)
