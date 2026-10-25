@@ -21,7 +21,8 @@ module Langchain
       :max_turns,
       :total_prompt_tokens,
       :total_completion_tokens,
-      :total_tokens
+      :total_tokens,
+      :last_run_usage
 
     attr_accessor :tools,
       :add_message_callback,
@@ -78,6 +79,7 @@ module Langchain
       @total_prompt_tokens = 0
       @total_completion_tokens = 0
       @total_tokens = 0
+      @last_run_usage = empty_usage
     end
 
     # Add a user message to the messages array
@@ -128,9 +130,13 @@ module Langchain
 
     # Run the assistant
     #
+    # The tokens used by this run alone are in {#last_run_usage}; {#total_tokens} and the other totals add up every run.
+    #
     # @param auto_tool_execution [Boolean] Whether or not to automatically run tools
     # @return [Array<Langchain::Message>] The messages
     def run(auto_tool_execution: false)
+      @last_run_usage = empty_usage
+
       if messages.empty?
         Langchain.logger.warn("#{self.class} - No messages to process")
         @state = :completed
@@ -467,6 +473,14 @@ module Langchain
       @total_prompt_tokens += prompt_tokens if prompt_tokens
       @total_completion_tokens += completion_tokens if completion_tokens
       @total_tokens += total_tokens_from_operation if total_tokens_from_operation
+
+      @last_run_usage[:prompt_tokens] += prompt_tokens if prompt_tokens
+      @last_run_usage[:completion_tokens] += completion_tokens if completion_tokens
+      @last_run_usage[:total_tokens] += total_tokens_from_operation if total_tokens_from_operation
+    end
+
+    def empty_usage
+      {prompt_tokens: 0, completion_tokens: 0, total_tokens: 0}
     end
 
     def available_tool_names

@@ -433,6 +433,45 @@ RSpec.describe Langchain::Assistant do
           subject.run
         end
       end
+
+      context "when the caller executes the tools between runs" do
+        let(:raw_openai_final_response) do
+          {
+            "choices" => [{"index" => 0, "message" => {"role" => "assistant", "content" => "The result of 2 + 2 is 4."}, "finish_reason" => "stop"}],
+            "usage" => {"prompt_tokens" => 121, "completion_tokens" => 13, "total_tokens" => 134}
+          }
+        end
+
+        before do
+          allow(subject.llm).to receive(:chat).and_return(
+            Langchain::LLM::Response::OpenAIResponse.new(raw_openai_response),
+            Langchain::LLM::Response::OpenAIResponse.new(raw_openai_final_response)
+          )
+          subject.add_message(role: "user", content: "Please calculate 2+2")
+        end
+
+        it "reports each run's tokens in last_run_usage and adds them up in the totals" do
+          subject.run
+          expect(subject.last_run_usage).to eq(prompt_tokens: 91, completion_tokens: 18, total_tokens: 109)
+
+          subject.submit_tool_output(tool_call_id: "call_9TewGANaaIjzY31UCpAAGLeV", output: "4.0")
+          subject.run
+          expect(subject.last_run_usage).to eq(prompt_tokens: 121, completion_tokens: 13, total_tokens: 134)
+
+          expect(subject.total_prompt_tokens).to eq(212)
+          expect(subject.total_completion_tokens).to eq(31)
+          expect(subject.total_tokens).to eq(243)
+        end
+
+        it "resets last_run_usage when a run makes no LLM call" do
+          subject.run
+          subject.clear_messages!
+          subject.run
+
+          expect(subject.last_run_usage).to eq(prompt_tokens: 0, completion_tokens: 0, total_tokens: 0)
+          expect(subject.total_tokens).to eq(109)
+        end
+      end
     end
 
     describe "#handle_tool_call" do
