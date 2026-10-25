@@ -1,6 +1,33 @@
 require "logger"
 require "langchain/version"
-require "langchain/engine"
+if defined?(Rails::Engine)
+  require "langchain/engine"
+else
+  # Outside a Rails app there's no engine to autoload the gem, so set up Zeitwerk with the
+  # same acronyms as config/initializers/inflections.rb
+  require "zeitwerk"
+
+  loader = Zeitwerk::Loader.for_gem
+  loader.ignore("#{__dir__}/langchainrb.rb", "#{__dir__}/langchain/engine.rb", "#{__dir__}/langchain/application_record.rb")
+  loader.inflector.inflect(
+    "ai21" => "AI21",
+    "ai21_response" => "AI21Response",
+    "csv" => "CSV",
+    "google_vertexai" => "GoogleVertexAI",
+    "html" => "HTML",
+    "json" => "JSON",
+    "jsonl" => "JSONL",
+    "llm" => "LLM",
+    "mistralai" => "MistralAI",
+    "mistralai_message" => "MistralAIMessage",
+    "mistralai_response" => "MistralAIResponse",
+    "openai" => "OpenAI",
+    "openai_message" => "OpenAIMessage",
+    "openai_response" => "OpenAIResponse",
+    "pdf" => "PDF"
+  )
+  loader.setup
+end
 
 module Langchain
   class << self
