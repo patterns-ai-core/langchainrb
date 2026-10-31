@@ -122,7 +122,7 @@ module Langchain
     # @return [Array<Langchain::Message>] The messages
     def add_messages(messages:)
       messages.each do |message_hash|
-        add_message(**message_hash.slice(:content, :role, :tool_calls, :tool_call_id))
+        add_message(**message_hash.slice(:content, :role, :tool_calls, :tool_call_id, :image_url))
       end
     end
 

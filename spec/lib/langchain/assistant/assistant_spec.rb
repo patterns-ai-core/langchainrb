@@ -4,6 +4,61 @@ require "spec_helper"
 require "googleauth"
 
 RSpec.describe Langchain::Assistant do
+  [Langchain::LLM::OpenAI, Langchain::LLM::Anthropic, Langchain::LLM::GoogleGemini].each do |llm_class|
+    context "bulk image import with #{llm_class}" do
+      let(:llm) { llm_class.new(api_key: "123") }
+      let(:image_url) { "https://fixture.invalid/image.png" }
+
+      it "preserves text and image fields through the normal message builder" do
+        assistant = described_class.new(llm: llm)
+        assistant.add_messages(messages: [{role: "user", content: "Describe", image_url: image_url}])
+        expect(assistant.messages.last.content).to eq("Describe")
+        expect(assistant.messages.last.image_url).to eq(image_url)
+      end
+
+      it "preserves image-only messages just like the single-message API" do
+        input = {role: "user", image_url: image_url}
+        single = described_class.new(llm: llm)
+        single.add_message(**input)
+        bulk = described_class.new(llm: llm)
+        bulk.add_messages(messages: [input])
+        expect(bulk.messages.last.image_url).to eq(image_url)
+        expect(bulk.messages.last.content).to eq(single.messages.last.content)
+        expect(bulk.messages.last.role).to eq(single.messages.last.role)
+      end
+
+      it "keeps message and callback order, no-image messages, and unknown-field filtering" do
+        captured = []
+        assistant = described_class.new(llm: llm, add_message_callback: ->(message) { captured << message })
+        input = [
+          {role: "user", content: "First", image_url: image_url, ignored: "metadata"},
+          {role: "user", content: "Plain"},
+          {role: "user", image_url: "https://fixture.invalid/second.png"}
+        ]
+        assistant.add_messages(messages: input)
+        expect(assistant.messages.map(&:content)).to eq(["First", "Plain", ""])
+        expect(assistant.messages.map(&:image_url)).to eq([image_url, nil, input.last[:image_url]])
+        expect(captured).to eq(assistant.messages)
+      end
+
+      if llm_class == Langchain::LLM::OpenAI
+        it "builds the same request hashes as adding the messages individually" do
+          input = [
+            {role: "user", content: "Describe", image_url: image_url},
+            {role: "user", image_url: "https://fixture.invalid/second.png"},
+            {role: "user", content: "Plain"}
+          ]
+          single = described_class.new(llm: llm)
+          input.each { |message| single.add_message(**message) }
+          bulk = described_class.new(llm: llm)
+          bulk.add_messages(messages: input)
+          expect(bulk.messages.map(&:to_hash)).to eq(single.messages.map(&:to_hash))
+          expect(bulk.messages.first.to_hash[:content].last).to eq(type: "image_url", image_url: {url: image_url})
+        end
+      end
+    end
+  end
+
   context "initialization" do
     let(:llm) { Langchain::LLM::OpenAI.new(api_key: "123") }
 
