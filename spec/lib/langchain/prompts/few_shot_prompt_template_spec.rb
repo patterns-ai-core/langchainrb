@@ -62,6 +62,34 @@ RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
         expect(prompt.format(adjective: "good")).to start_with("Keep {missing}\n\n")
       end
     end
+
+    ["{{adjective}}", "{{{adjective}}}", "{{adjective}"].each do |literal|
+      context "when the prefix contains the literal #{literal}" do
+        let(:prefix) { "Literal: #{literal}" }
+        let(:input_variables) { ["adjective"] }
+
+        it "keeps the prefix region ignored by variable extraction unchanged" do
+          expect(prompt.format(adjective: "good")).to start_with("Literal: #{literal}\n\n")
+        end
+      end
+    end
+
+    context "when variable extraction trims whitespace" do
+      let(:prefix) { "Topic: { topic }" }
+
+      it "formats the variable accepted by validation" do
+        expect(prompt.format(topic: "Ruby", adjective: "good")).to start_with("Topic: Ruby\n\n")
+      end
+    end
+
+    context "when whitespace precedes an ignored brace region" do
+      let(:prefix) { "Literal: { {adjective}}" }
+      let(:input_variables) { ["adjective"] }
+
+      it "keeps that region literal as variable extraction does" do
+        expect(prompt.format(adjective: "good")).to start_with("Literal: { {adjective}}\n\n")
+      end
+    end
   end
 
   describe "#initialize" do
