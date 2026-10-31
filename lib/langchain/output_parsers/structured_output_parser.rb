@@ -63,8 +63,8 @@ module Langchain::OutputParsers
       parsed = begin
         JSON.parse(json)
       rescue JSON::ParserError
-        # A JSON string may itself contain backticks; only remove an outer fence.
-        fenced = json[/```(?:json)?\s*(.*?)```[ \t]*(?=\r?\n|\z)/m, 1]
+        # Consume quoted JSON strings whole so their backticks cannot close the outer fence.
+        fenced = json[/```(?:json)?\s*((?:"(?:\\.|[^"\\])*"|[^"])*?)```/m, 1]
         JSON.parse(fenced || json.split(/```(?:json)?/, 2)[1] || json)
       end
       JSON::Validator.validate!(schema, parsed)

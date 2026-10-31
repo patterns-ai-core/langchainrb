@@ -105,6 +105,18 @@ RSpec.describe Langchain::OutputParsers::StructuredOutputParser do
       expect(parser.parse("```json #{value.to_json}```")).to eq(value)
     end
 
+    it "accepts inline fences surrounded by same-line narrative" do
+      parser = described_class.from_json_schema(schema_example)
+      value = json_response.merge("name" => 'a "quote", a \\ slash, and ``` backticks')
+      expect(parser.parse("Before. ```json #{value.to_json}``` After.")).to eq(value)
+    end
+
+    it "does not skip a malformed first block for a later valid block" do
+      parser = described_class.from_json_schema(schema_example)
+      text = "```json {broken}``` then ```json #{json_response.to_json}```"
+      expect { parser.parse(text) }.to raise_error(Langchain::OutputParsers::OutputParserException)
+    end
+
     it "accepts CRLF outer fences and trailing spaces" do
       parser = described_class.from_json_schema(schema_example)
       value = json_response.merge("name" => "a ``` token")
