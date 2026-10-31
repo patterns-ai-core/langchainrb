@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "securerandom"
+
 module Langchain
   # Assistants are Agent-like objects that leverage helpful instructions, LLMs, tools and knowledge to respond to user queries.
   # Assistants can be configured with an LLM of your choice, any vector search database and easily extended with additional tools.
@@ -12,6 +14,9 @@ module Langchain
   #       tools: [Langchain::Tool::NewsRetriever.new(api_key: ENV["NEWS_API_KEY"])]
   #     )
   class Assistant
+    DEFAULT_TOOLS = Object.new.freeze
+    private_constant :DEFAULT_TOOLS
+
     attr_reader :llm,
       :instructions,
       :state,
@@ -31,7 +36,7 @@ module Langchain
     # Create a new assistant
     #
     # @param llm [Langchain::LLM::Base] LLM instance that the assistant will use
-    # @param tools [Array<Langchain::Tool::Base>] Tools that the assistant has access to
+    # @param tools [Array<Langchain::Tool::Base>] Tools that the assistant has access to. Omit for keyless Parallel search; pass [] to disable tools.
     # @param instructions [String] The system instructions
     # @param tool_choice [String] Specify how tools should be selected. Options: "auto", "any", "none", or <specific function name>
     # @param parallel_tool_calls [Boolean] Whether or not to run tools in parallel
@@ -41,7 +46,7 @@ module Langchain
     # @param tool_execution_callback [Proc] A callback function (Proc or lambda) that is called right before a tool function is executed
     def initialize(
       llm:,
-      tools: [],
+      tools: DEFAULT_TOOLS,
       instructions: nil,
       tool_choice: "auto",
       parallel_tool_calls: true,
@@ -52,6 +57,10 @@ module Langchain
       tool_execution_callback: nil,
       &block
     )
+      if tools.equal?(DEFAULT_TOOLS)
+        tools = (tool_choice == "none") ? [] : [Langchain::Tool::ParallelSearch.new]
+      end
+
       unless tools.is_a?(Array) && tools.all? { |tool| tool.class.singleton_class.include?(Langchain::ToolDefinition) }
         raise ArgumentError, "Tools must be an array of objects extending Langchain::ToolDefinition"
       end
@@ -113,6 +122,7 @@ module Langchain
     def messages=(messages)
       raise ArgumentError, "messages array must only contain Langchain::Message instance(s)" unless messages.is_a?(Array) && messages.all? { |m| m.is_a?(Messages::Base) }
 
+      @search_session_id = SecureRandom.uuid
       @messages = messages
     end
 
@@ -184,7 +194,7 @@ module Langchain
     # @return [Array] Empty messages array
     def clear_messages!
       # TODO: If this a bug? Should we keep the "system" message?
-      @messages = []
+      self.messages = []
     end
 
     # Set new instructions
@@ -419,7 +429,17 @@ module Langchain
       # Call the callback if set
       tool_execution_callback.call(tool_call_id, tool_name, method_name, tool_arguments) if tool_execution_callback # rubocop:disable Style/SafeNavigation
 
-      output = tool_instance.public_send(method_name, **tool_arguments)
+      output = if tool_instance.is_a?(Langchain::Tool::ParallelSearch)
+        raise ArgumentError, "Parallel search is disabled by tool_choice" if tool_choice == "none"
+
+        unless %w[search fetch].include?(method_name)
+          raise ArgumentError, "Unknown ParallelSearch function: #{method_name}"
+        end
+        # The Assistant owns the conversation, even when a tool instance is shared.
+        tool_instance.public_send(method_name, **tool_arguments, session_id: @search_session_id)
+      else
+        tool_instance.public_send(method_name, **tool_arguments)
+      end
 
       # Handle both ToolResponse and legacy return values
       if output.is_a?(ToolResponse)

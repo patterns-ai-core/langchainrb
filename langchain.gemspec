@@ -33,6 +33,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency "zeitwerk", "~> 2.5"
   spec.add_dependency "pragmatic_segmenter", "~> 0.3.0"
   spec.add_dependency "matrix"
+  spec.add_dependency "mcp", "~> 1.8"
+  spec.add_dependency "faraday", ">= 2.5", "< 3"
+  spec.add_dependency "event_stream_parser", "~> 1.0"
 
   # development dependencies
   spec.add_development_dependency "dotenv-rails", "~> 3.1.6"
@@ -51,7 +54,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "docx", "~> 0.8.0"
   spec.add_development_dependency "elasticsearch", "~> 8.2.0"
   spec.add_development_dependency "eqn", "~> 1.6.5"
-  spec.add_development_dependency "faraday"
   spec.add_development_dependency "faraday-retry"
   spec.add_development_dependency "googleauth"
   spec.add_development_dependency "google_search_results", "~> 2.2.0"
