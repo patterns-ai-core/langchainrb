@@ -84,6 +84,74 @@ RSpec.describe Langchain::OutputParsers::StructuredOutputParser do
       expect(parser.parse(json_with_backticks_text_response)).to eq(json_response)
     end
 
+    it "preserves code fences inside raw JSON string values" do
+      parser = described_class.from_json_schema(schema_example)
+      value = json_response.merge("name" => "```ruby\nputs 1\n```")
+      expect(parser.parse(value.to_json)).to eq(value)
+    end
+
+    ["json", ""].each do |language|
+      it "preserves inner backticks in an outer #{language.inspect} fence" do
+        parser = described_class.from_json_schema(schema_example)
+        value = json_response.merge("name" => "```ruby\nputs 1\n```")
+        text = "Narrative before.\n```#{language}\n#{value.to_json}\n```\nNarrative after."
+        expect(parser.parse(text)).to eq(value)
+      end
+    end
+
+    it "accepts inline outer fences containing inner backticks" do
+      parser = described_class.from_json_schema(schema_example)
+      value = json_response.merge("name" => "literal ``` backticks")
+      expect(parser.parse("```json #{value.to_json}```")).to eq(value)
+    end
+
+    it "accepts inline fences surrounded by same-line narrative" do
+      parser = described_class.from_json_schema(schema_example)
+      value = json_response.merge("name" => 'a "quote", a \\ slash, and ``` backticks')
+      expect(parser.parse("Before. ```json #{value.to_json}``` After.")).to eq(value)
+    end
+
+    it "does not skip a malformed first block for a later valid block" do
+      parser = described_class.from_json_schema(schema_example)
+      text = "```json {broken}``` then ```json #{json_response.to_json}```"
+      expect { parser.parse(text) }.to raise_error(Langchain::OutputParsers::OutputParserException)
+    end
+
+    it "accepts CRLF outer fences and trailing spaces" do
+      parser = described_class.from_json_schema(schema_example)
+      value = json_response.merge("name" => "a ``` token")
+      expect(parser.parse("```json\r\n#{value.to_json}\r\n```  \r\n")).to eq(value)
+    end
+
+    it "keeps parsing the first ordinary block when several are present" do
+      parser = described_class.from_json_schema(schema_example)
+      other = json_response.merge("name" => "Another person")
+      text = "```json\n#{json_response.to_json}\n```\n```json\n#{other.to_json}\n```"
+      expect(parser.parse(text)).to eq(json_response)
+    end
+
+    it "still validates raw JSON containing backticks and retains its original text on failure" do
+      parser = described_class.from_json_schema(schema_example)
+      value = json_response.merge("name" => "```", "interests" => [])
+      text = value.to_json
+      expect { parser.parse(text) }.to raise_error(Langchain::OutputParsers::OutputParserException) { |error|
+        expect(error.to_s).to include("minimum number of items", text)
+      }
+    end
+
+    it "rejects malformed JSON inside a closed outer fence" do
+      parser = described_class.from_json_schema(schema_example)
+      text = "```json\n{broken}\n```"
+      expect { parser.parse(text) }.to raise_error(Langchain::OutputParsers::OutputParserException) { |error|
+        expect(error.to_s).to include(text)
+      }
+    end
+
+    it "retains the existing opening-fence-only input support" do
+      parser = described_class.from_json_schema(schema_example)
+      expect(parser.parse("```json\n#{json_response.to_json}")).to eq(json_response)
+    end
+
     it "fails to parse response text if its borked" do
       parser = described_class.from_json_schema(schema_example)
       expect {

@@ -59,8 +59,14 @@ module Langchain::OutputParsers
     # @param text [String] Text output from the LLM call
     # @return [Object] object that abides by the @schema
     def parse(text)
-      json = text.include?("```") ? text.strip.split(/```(?:json)?/)[1] : text.strip
-      parsed = JSON.parse(json)
+      json = text.strip
+      parsed = begin
+        JSON.parse(json)
+      rescue JSON::ParserError
+        # Consume quoted JSON strings whole so their backticks cannot close the outer fence.
+        fenced = json[/```(?:json)?\s*((?:"(?:\\.|[^"\\])*"|[^"])*?)```/m, 1]
+        JSON.parse(fenced || json.split(/```(?:json)?/, 2)[1] || json)
+      end
       JSON::Validator.validate!(schema, parsed)
       parsed
     rescue => e
