@@ -547,11 +547,39 @@ assistant.tool_execution_callback = -> (tool_call_id, tool_name, method_name, to
 * `submit_tool_output`: Manually submit output to a tool call
 * `messages`: Returns a list of ongoing messages
 
+### Default web search
+
+When `tools:` is omitted, Assistants now include `Langchain::Tool::ParallelSearch`
+for free web search and page fetching through [Parallel Search MCP](https://docs.parallel.ai/integrations/mcp/search-mcp).
+Search uses Fast mode and needs no account or API key. Anonymous access has lower
+rate limits; service errors are returned to the assistant as tool output.
+
+```ruby
+assistant = Langchain::Assistant.new(llm: llm)
+assistant.add_message_and_run!(content: "Find recent Ruby releases and read the release notes")
+```
+
+Pass `tools: []` to disable tools, or `tool_choice: "none"` to disable model tool
+selection. Explicit tool arrays remain unchanged, including configured search
+providers such as `tools: [Langchain::Tool::Tavily.new(api_key: ENV["TAVILY_API_KEY"])]`.
+`run` still waits for manual tool execution by default; `run!` enables automatic
+execution. Search never falls back to another provider after an error.
+
+To customize the request budget, explicitly pass
+`tools: [Langchain::Tool::ParallelSearch.new(timeout: 15)]`. The budget includes
+MCP discovery and execution, with at most one additional second for cleanup.
+Search and fetch share an opaque conversation ID owned by the Assistant;
+`clear_messages!` or replacing `messages` starts a new conversation. A shared
+tool instance can serve multiple Assistants without sharing conversation IDs.
+For related standalone tool calls, pass the same randomly generated `session_id`
+to `search` and `fetch`; omitting it starts a standalone research run per call.
+
 ### Built-in Tools 🛠️
 * `Langchain::Tool::Calculator`: Useful for evaluating math expressions. Requires `gem "eqn"`.
 * `Langchain::Tool::Database`: Connect your SQL database. Requires `gem "sequel"`.
 * `Langchain::Tool::FileSystem`: Interact with the file system (read & write).
 * `Langchain::Tool::GoogleSearch`: Wrapper around SerpApi's Google Search API. Requires `gem "google_search_results"`.
+* `Langchain::Tool::ParallelSearch`: Keyless web search and page fetching with Parallel Search MCP.
 * `Langchain::Tool::NewsRetriever`: A wrapper around [NewsApi.org](https://newsapi.org) to fetch news articles.
 * `Langchain::Tool::RubyCodeInterpreter`: Useful for evaluating generated Ruby code. Requires `gem "safe_ruby"` (In need of a better solution).
 * `Langchain::Tool::SearchApi`: A wrapper around [SearchApi](https://www.searchapi.io) to search Google, Bing and other search engines.
