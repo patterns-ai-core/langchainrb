@@ -92,11 +92,21 @@ module Langchain::Prompt
 
       values = kwargs.transform_keys(&:to_s)
       # A single pass, so an inserted value is never rescanned for variables or backslash escapes.
+      # Follow variable extraction: trim names and leave ignored brace regions literal.
+      prefix_string = @prefix.gsub(/\{([^}]*)\}/) do |match|
+        variable = Regexp.last_match(1).strip
+        if variable.empty? || variable.start_with?("{")
+          match
+        else
+          values.fetch(variable) { match }.to_s
+        end
+      end
+      # Keep the suffix's existing escaping behavior.
       suffix_string = @suffix.gsub(/\{([^{}]*)\}/) do |match|
         values.fetch(Regexp.last_match(1)) { match }.to_s
       end
 
-      [@prefix, *example_string, suffix_string].join(@example_separator)
+      [prefix_string, *example_string, suffix_string].join(@example_separator)
     end
 
     #

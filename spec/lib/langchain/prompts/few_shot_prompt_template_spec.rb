@@ -2,10 +2,12 @@
 
 RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
   let(:input_variables) { ["adjective"] }
+  let(:prefix) { "Write antonyms for the following words." }
+  let(:example_separator) { "\n\n" }
   let(:validate_template) { true }
   let(:prompt) do
     described_class.new(
-      prefix: "Write antonyms for the following words.",
+      prefix: prefix,
       suffix: "Input: {adjective}\nOutput:",
       example_prompt: Langchain::Prompt::PromptTemplate.new(
         input_variables: ["input", "output"],
@@ -16,8 +18,78 @@ RSpec.describe Langchain::Prompt::FewShotPromptTemplate do
         {input: "tall", output: "short"}
       ],
       input_variables: input_variables,
+      example_separator: example_separator,
       validate_template: validate_template
     )
+  end
+
+  describe "#format with prefix variables" do
+    let(:prefix) { "Topic: {topic}" }
+    let(:input_variables) { ["topic", "adjective"] }
+
+    it "substitutes variables used only by the prefix" do
+      expect(prompt.format(topic: "Ruby", adjective: "good")).to start_with("Topic: Ruby\n\nInput: happy")
+    end
+
+    it "keeps inserted braces and backslashes as data in one pass" do
+      value = %q(It\'s {adjective} \0)
+      formatted = prompt.format(topic: value, adjective: "good")
+      expect(formatted).to start_with("Topic: #{value}\n\n")
+      expect(formatted).to end_with("Input: good\nOutput:")
+      expect(prompt.prefix).to eq("Topic: {topic}")
+    end
+
+    it "accepts string argument keys in the prefix too" do
+      expect(prompt.format(**{"topic" => "Ruby", "adjective" => "good"})).to start_with("Topic: Ruby\n\n")
+    end
+
+    context "when a variable is shared with the suffix" do
+      let(:prefix) { "Word: {adjective}" }
+      let(:input_variables) { ["adjective"] }
+      let(:example_separator) { " | " }
+
+      it "formats both ends while retaining examples and the custom separator" do
+        expect(prompt.format(adjective: "good")).to eq("Word: good | Input: happy\nOutput: sad | Input: tall\nOutput: short | Input: good\nOutput:")
+      end
+    end
+
+    context "when an unknown prefix variable is allowed" do
+      let(:prefix) { "Keep {missing}" }
+      let(:input_variables) { ["adjective"] }
+      let(:validate_template) { false }
+
+      it "preserves the unknown placeholder" do
+        expect(prompt.format(adjective: "good")).to start_with("Keep {missing}\n\n")
+      end
+    end
+
+    ["{{adjective}}", "{{{adjective}}}", "{{adjective}"].each do |literal|
+      context "when the prefix contains the literal #{literal}" do
+        let(:prefix) { "Literal: #{literal}" }
+        let(:input_variables) { ["adjective"] }
+
+        it "keeps the prefix region ignored by variable extraction unchanged" do
+          expect(prompt.format(adjective: "good")).to start_with("Literal: #{literal}\n\n")
+        end
+      end
+    end
+
+    context "when variable extraction trims whitespace" do
+      let(:prefix) { "Topic: { topic }" }
+
+      it "formats the variable accepted by validation" do
+        expect(prompt.format(topic: "Ruby", adjective: "good")).to start_with("Topic: Ruby\n\n")
+      end
+    end
+
+    context "when whitespace precedes an ignored brace region" do
+      let(:prefix) { "Literal: { {adjective}}" }
+      let(:input_variables) { ["adjective"] }
+
+      it "keeps that region literal as variable extraction does" do
+        expect(prompt.format(adjective: "good")).to start_with("Literal: { {adjective}}\n\n")
+      end
+    end
   end
 
   describe "#initialize" do
