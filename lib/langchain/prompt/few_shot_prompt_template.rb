@@ -92,11 +92,13 @@ module Langchain::Prompt
 
       values = kwargs.transform_keys(&:to_s)
       # A single pass, so an inserted value is never rescanned for variables or backslash escapes.
-      suffix_string = @suffix.gsub(/\{([^{}]*)\}/) do |match|
-        values.fetch(Regexp.last_match(1)) { match }.to_s
+      prefix_string, suffix_string = [@prefix, @suffix].map do |template|
+        template.gsub(/\{([^{}]*)\}/) do |match|
+          values.fetch(Regexp.last_match(1)) { match }.to_s
+        end
       end
 
-      [@prefix, *example_string, suffix_string].join(@example_separator)
+      [prefix_string, *example_string, suffix_string].join(@example_separator)
     end
 
     #
