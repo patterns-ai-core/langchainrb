@@ -67,6 +67,24 @@ RSpec.describe Langchain::LLM::Ollama do
       end
     end
 
+    ["Hello", ["Hello", "World"]].each do |input|
+      [0, 8].each do |count|
+        it "exposes input count #{count} for #{input.inspect}" do
+          vectors = Array(input).map { [0.1, 0.2, 0.3] }
+          response_body.merge!("embeddings" => vectors, "prompt_eval_count" => count)
+          response = subject.embed(text: input)
+          expect(response.prompt_tokens).to eq(count)
+          expect(response.completion_tokens).to be_nil
+          expect(response.total_tokens).to be_nil
+          expect(response.embeddings).to eq(vectors)
+        end
+      end
+    end
+
+    it "keeps an absent input count unknown" do
+      expect(subject.embed(text: "Hello").prompt_tokens).to be_nil
+    end
+
     context "when the JSON response contains no embeddings" do
       let(:response_body) {
         {"embeddings" => []}

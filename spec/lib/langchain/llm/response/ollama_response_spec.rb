@@ -3,6 +3,32 @@
 RSpec.describe Langchain::LLM::Response::OllamaResponse do
   subject { described_class.new(raw_response) }
 
+  describe "embedding input usage" do
+    let(:raw_response) { {"embeddings" => [[0.1, 0.2]]} }
+
+    [0, 8].each do |count|
+      it "retains a supplied input count of #{count} without a done flag" do
+        raw_response["prompt_eval_count"] = count
+        expect(subject.prompt_tokens).to eq(count)
+        expect(subject.completion_tokens).to be_nil
+        expect(subject.total_tokens).to be_nil
+        expect(subject.embeddings).to eq([[0.1, 0.2]])
+      end
+    end
+
+    it "keeps absent input counts unknown" do
+      expect(subject.prompt_tokens).to be_nil
+    end
+
+    it "does not expose provisional counts from unfinished chat chunks" do
+      raw_response.delete("embeddings")
+      raw_response.merge!("done" => false, "prompt_eval_count" => 8, "eval_count" => 2)
+      expect(subject.prompt_tokens).to be_nil
+      expect(subject.completion_tokens).to be_nil
+      expect(subject.total_tokens).to be_nil
+    end
+  end
+
   describe "chat completions" do
     let(:raw_response) { JSON.parse File.read("spec/fixtures/llm/ollama/chat.json") }
 

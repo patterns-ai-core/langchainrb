@@ -36,6 +36,8 @@ module Langchain::LLM::Response
     end
 
     def prompt_tokens
+      return raw_response["prompt_eval_count"] if raw_response.key?("embeddings")
+
       raw_response.fetch("prompt_eval_count", 0) if done?
     end
 
