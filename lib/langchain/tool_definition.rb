@@ -176,7 +176,7 @@ module Langchain::ToolDefinition
           if nested_schema[:properties].empty?
             raise ArgumentError, "Object properties must have at least one property defined within it"
           end
-          prop = nested_schema
+          prop.merge!(nested_schema)
         when "array"
           if nested_schema.empty?
             raise ArgumentError, "Array properties must have at least one item defined within it"

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+require "json-schema"
 
 RSpec.describe Langchain::ToolDefinition do
   let(:dummy_class) do
@@ -267,6 +268,70 @@ RSpec.describe Langchain::ToolDefinition do
         expect(result).to be_an(Array)
         expect(result.first).not_to have_key(:type)
         expect(result.first[:name]).to eq("test_tool__test_method")
+      end
+    end
+  end
+  describe "nested object metadata" do
+    it "preserves metadata and required fields on recursive objects" do
+      builder = Langchain::ToolDefinition::ParameterBuilder.new(parent_type: "object")
+      schema = builder.build do
+        property :destination, type: "object", description: "Approved destination", enum: [{city: "Paris"}], required: true do
+          property :city, type: "string", required: true
+          property :details, type: "object", description: "Address", enum: [{street: "Main"}] do
+            property :street, type: "string", required: true
+          end
+        end
+      end
+      destination = schema[:properties][:destination]
+      expect(schema[:required]).to eq(["destination"])
+      expect(destination).to include(type: "object", description: "Approved destination", enum: [{city: "Paris"}], required: ["city"])
+      expect(destination[:properties][:details]).to eq({
+        type: "object", description: "Address", enum: [{street: "Main"}],
+        properties: {street: {type: "string"}}, required: ["street"]
+      })
+    end
+
+    it "preserves metadata on array object items without losing the array metadata" do
+      builder = Langchain::ToolDefinition::ParameterBuilder.new(parent_type: "object")
+      schema = builder.build do
+        property :destinations, type: "array", description: "Allowed list", enum: [[{city: "Paris"}]], required: true do
+          item type: "object", description: "Allowed item", enum: [{city: "Paris"}] do
+            property :city, type: "string", required: true
+          end
+        end
+      end
+      expect(schema[:required]).to eq(["destinations"])
+      expect(schema[:properties][:destinations]).to eq({
+        type: "array", description: "Allowed list", enum: [[{city: "Paris"}]],
+        items: {type: "object", description: "Allowed item", enum: [{city: "Paris"}],
+                properties: {city: {type: "string"}}, required: ["city"]}
+      })
+    end
+
+    it "keeps metadata-free nested objects unchanged" do
+      builder = Langchain::ToolDefinition::ParameterBuilder.new(parent_type: "object")
+      schema = builder.build do
+        property :destination, type: "object" do
+          property :city, type: "string"
+        end
+      end
+      expect(schema[:properties][:destination]).to eq(type: "object", properties: {city: {type: "string"}}, required: [])
+    end
+
+    [:to_openai_format, :to_anthropic_format, :to_google_gemini_format].each do |format|
+      it "retains a nested enum constraint in #{format}" do
+        dummy_class.define_function :choose, description: "Choose" do
+          property :destination, type: "object", description: "Only approved destination", enum: [{city: "Paris"}], required: true do
+            property :city, type: "string", required: true
+          end
+        end
+        exported = dummy_class.function_schemas.public_send(format).first
+        function = (format == :to_openai_format) ? exported[:function] : exported
+        schema = function[(format == :to_anthropic_format) ? :input_schema : :parameters]
+        expect(schema[:properties][:destination][:description]).to eq("Only approved destination")
+        json_schema = JSON.parse(schema.to_json)
+        expect(JSON::Validator.validate(json_schema, {destination: {city: "Paris"}})).to be(true)
+        expect(JSON::Validator.validate(json_schema, {destination: {city: "Cairo"}})).to be(false)
       end
     end
   end
