@@ -143,9 +143,16 @@ module Langchain::LLM
     def response_from_chunks
       grouped_chunks = @response_chunks.group_by { |chunk| chunk["index"] }.except(nil)
 
-      usage_chunk = @response_chunks.find { |chunk| chunk["type"] == "message_delta" }
-      usage = usage_chunk&.dig("usage")&.transform_keys(&:to_sym)
-      stop_reason = usage_chunk&.dig("delta", "stop_reason")
+      start_chunk = @response_chunks.find { |chunk| chunk["type"] == "message_start" }
+      usage = start_chunk&.dig("message", "usage")&.transform_keys(&:to_sym) || {}
+      stop_reason = nil
+      @response_chunks.each do |chunk|
+        next unless chunk["type"] == "message_delta"
+
+        # Delta counters are cumulative; absent fields retain their initial values.
+        usage.merge!((chunk["usage"] || {}).compact.transform_keys(&:to_sym))
+        stop_reason = chunk.dig("delta", "stop_reason") || stop_reason
+      end
 
       content = grouped_chunks.map do |_index, chunks|
         block_type = chunks.find { |chunk| chunk["type"] == "content_block_start" }&.dig("content_block", "type")

@@ -192,8 +192,52 @@ RSpec.describe Langchain::LLM::Anthropic do
         rsp = subject.chat(messages: messages, &stream_handler)
         expect(rsp).to be_a(Langchain::LLM::Response::AnthropicResponse)
         expect(rsp.completion_tokens).to eq(10)
-        expect(rsp.total_tokens).to eq(10)
+        expect(rsp.prompt_tokens).to eq(5)
+        expect(rsp.total_tokens).to eq(15)
         expect(rsp.chat_completion).to eq("Life is pretty good")
+      end
+
+      it "retains initial cached input and nested usage details" do
+        response.first["message"]["usage"].merge!(
+          "cache_read_input_tokens" => 8, "cache_creation_input_tokens" => 2,
+          "cache_creation" => {"ephemeral_5m_input_tokens" => 2}
+        )
+        rsp = subject.chat(messages: messages, &stream_handler)
+        expect(rsp.raw_response[:usage]).to include(
+          input_tokens: 5, output_tokens: 10, cache_read_input_tokens: 8,
+          cache_creation_input_tokens: 2, cache_creation: {"ephemeral_5m_input_tokens" => 2}
+        )
+        expect(rsp.prompt_tokens).to eq(15)
+        expect(rsp.total_tokens).to eq(25)
+      end
+
+      it "uses later cumulative values, keeps zero updates and ignores nil fields" do
+        response.first["message"]["usage"].merge!("cache_read_input_tokens" => 8, "cache_creation_input_tokens" => 2)
+        response.insert(-2, {
+          "type" => "message_delta", "delta" => {"stop_reason" => "end_turn"},
+          "usage" => {"input_tokens" => 6, "output_tokens" => 12, "cache_read_input_tokens" => 0, "cache_creation_input_tokens" => nil}
+        })
+        rsp = subject.chat(messages: messages, &stream_handler)
+        expect(rsp.raw_response[:usage]).to include(input_tokens: 6, output_tokens: 12, cache_read_input_tokens: 0, cache_creation_input_tokens: 2)
+        expect(rsp.prompt_tokens).to eq(8)
+        expect(rsp.completion_tokens).to eq(12)
+        expect(rsp.total_tokens).to eq(20)
+        expect(rsp.stop_reason).to eq("end_turn")
+      end
+
+      it "retains usage and stop reason when a later delta omits them" do
+        response.insert(-2, {"type" => "message_delta", "delta" => {}, "usage" => nil})
+        rsp = subject.chat(messages: messages, &stream_handler)
+        expect(rsp.prompt_tokens).to eq(5)
+        expect(rsp.completion_tokens).to eq(10)
+        expect(rsp.stop_reason).to eq("max_tokens")
+      end
+
+      it "handles streams whose start omits usage" do
+        response.first["message"].delete("usage")
+        rsp = subject.chat(messages: messages, &stream_handler)
+        expect(rsp.prompt_tokens).to eq(0)
+        expect(rsp.completion_tokens).to eq(10)
       end
     end
 
@@ -214,6 +258,9 @@ RSpec.describe Langchain::LLM::Anthropic do
         rsp = subject.chat(messages: messages, &stream_handler)
         expect(rsp.chat_completion).to eq("Life is pretty good")
         expect(rsp.tool_calls).to eq([])
+        expect(rsp.prompt_tokens).to eq(12)
+        expect(rsp.completion_tokens).to eq(30)
+        expect(rsp.total_tokens).to eq(42)
       end
 
       it "keeps the thinking block with its signature" do
@@ -241,7 +288,8 @@ RSpec.describe Langchain::LLM::Anthropic do
         rsp = subject.chat(messages: messages, &stream_handler)
         expect(rsp).to be_a(Langchain::LLM::Response::AnthropicResponse)
         expect(rsp.completion_tokens).to eq(89)
-        expect(rsp.total_tokens).to eq(89)
+        expect(rsp.prompt_tokens).to eq(472)
+        expect(rsp.total_tokens).to eq(561)
         expect(rsp.chat_completion).to eq("Okay, let's check the weather for San Francisco, CA:")
 
         expect(rsp.tool_calls.first[:name]).to eq("get_weather")
