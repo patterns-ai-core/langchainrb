@@ -10,6 +10,7 @@
 - [SECURITY]: A change which fixes a security vulnerability.
 
 ## [Unreleased]
+- [BUGFIX] Preserve provider-supplied Ollama embedding input token counts, including zero, without treating missing counts as zero or changing unfinished chat counters.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1086] Send the `image_url:` of `Langchain::Assistant` messages to Google Gemini and Vertex AI: an http(s) image is downloaded and sent inline (`inlineData`), and a Cloud Storage `gs://` URI is passed by reference (`fileData`); the image was dropped with a warning before.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1089] Send `Langchain::Assistant#parallel_tool_calls` to Mistral AI, which accepts `parallel_tool_calls`, and stop the Mistral AI and Google Gemini assistant adapters from logging an "is not supported" warning on every call with the default `parallel_tool_calls: true`; for Google Gemini, which has no such option, the Assistant still runs one tool call at a time when it is `false`.
 - [FEATURE] [https://github.com/patterns-ai-core/langchainrb/pull/1085] Add `Langchain::Tool::SearchApi`, a wrapper around [SearchApi](https://www.searchapi.io) to search Google, Bing and other search engines.
